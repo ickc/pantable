@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
 """
-from .context import pandoc_tables
-import panflute
+from .context import parse_table_options
 
 
 def test_parse_table_options():
@@ -17,16 +16,16 @@ def test_parse_table_options():
     }
     raw_table_list = [['1', '2', '3', '4'], ['5', '6', '7', '8']]
     # check init is preserved
-    assert pandoc_tables.parse_table_options(
+    assert parse_table_options(
         options, raw_table_list) == options
     # check caption
     options['caption'] = '**sad**'
-    assert str(pandoc_tables.parse_table_options(
+    assert str(parse_table_options(
         options, raw_table_list
     )['caption'][0]) == 'Strong(Str(sad))'
     # check alignment
     options['alignment'] = 'LRCD'
-    assert pandoc_tables.parse_table_options(
+    assert parse_table_options(
         options, raw_table_list
     )['alignment'] == [
         'AlignLeft',
@@ -35,7 +34,7 @@ def test_parse_table_options():
         'AlignDefault'
     ]
     options['alignment'] = 'LRC'
-    assert pandoc_tables.parse_table_options(
+    assert parse_table_options(
         options, raw_table_list
     )['alignment'] == [
         'AlignLeft',
@@ -45,7 +44,7 @@ def test_parse_table_options():
     ]
     # check width
     options['width'] = [0.1, 0.2, 0.3, 0.4]
-    assert pandoc_tables.parse_table_options(
+    assert parse_table_options(
         options, raw_table_list
     )['width'] == [0.1, 0.2, 0.3, 0.4]
     # auto-width
@@ -55,7 +54,7 @@ def test_parse_table_options():
     ]
     options['width'] = None
     options['table-width'] = 1.2
-    assert pandoc_tables.parse_table_options(
+    assert parse_table_options(
         options, raw_table_list
     )['width'] == [22 / 32 * 1.2, 3 / 32 * 1.2, 6 / 32 * 1.2, 1 / 32 * 1.2]
     return

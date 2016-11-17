@@ -2,7 +2,7 @@
 """
 `header` and `markdown` is checked by `test_to_bool` instead
 """
-from .context import pandoc_tables
+from .context import check_table_options
 
 
 def test_check_table_options():
@@ -16,27 +16,27 @@ def test_check_table_options():
         'include': None
     }
     # check init is preserved
-    assert pandoc_tables.check_table_options(options) == options
+    assert check_table_options(options) == options
     # check width
     # negative
     options['width'] = [0.1, -0.2]
-    assert pandoc_tables.check_table_options(options)['width'] == [0.1, 0]
+    assert check_table_options(options)['width'] == [0.1, 0]
     # invalid
     options['width'] = "happy"
-    assert pandoc_tables.check_table_options(options)['width'] is None
+    assert check_table_options(options)['width'] is None
     # check table-width
     # negative
     options['table-width'] = -1
-    assert pandoc_tables.check_table_options(options)['table-width'] == 1.0
+    assert check_table_options(options)['table-width'] == 1.0
     # invalid
     options['table-width'] = "happy"
-    assert pandoc_tables.check_table_options(options)['table-width'] == 1.0
+    assert check_table_options(options)['table-width'] == 1.0
     # check include
     options['include'] = 'abc.xyz'
-    assert pandoc_tables.check_table_options(options)['include'] is None
+    assert check_table_options(options)['include'] is None
     options['include'] = 'tests/csv_tables.csv'
     assert (
-        pandoc_tables.check_table_options(options)['include'] ==
+        check_table_options(options)['include'] ==
         'tests/csv_tables.csv'
     )
     return

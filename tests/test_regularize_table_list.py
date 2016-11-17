@@ -2,11 +2,11 @@
 """
 
 """
-from .context import pandoc_tables
+from .context import regularize_table_list
 
 
 def test_regularize_table_list():
     raw_table_list = [['1'], ['2', '3', '4', '5', '6', '7']]
-    assert pandoc_tables.regularize_table_list(raw_table_list) == [
+    assert regularize_table_list(raw_table_list) == [
         ['1', '', '', '', '', ''], ['2', '3', '4', '5', '6', '7']]
     return
