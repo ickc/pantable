@@ -35,7 +35,7 @@ before_install:
     sudo dpkg -i pandoc-$pandocVersion-amd64.deb
 # command to run tests
 script:
-  - make -j4
+  - make -j4 travis
   - cd tests && pytest
 cache:
   - pip
