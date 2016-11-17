@@ -1,6 +1,6 @@
 # Comparison
 
-~~~table
+``` {.table}
 ---
 table-width: 1.3
 ---
@@ -15,17 +15,17 @@ width,,"widths=""0.5 0.2 0.3""",,"column-width: [0.5, 0.2, 0.3]"
 ,,delimiter,,
 ,,quotechar,,
 ,,id (wrapped by div),,
-~~~
+```
 
 # Simple Test
 
-~~~table
+``` {.table}
 **_Fruit_**,~~Price~~,_Number_,`Advantages`
-*Bananas~1~*,$1.34,12~units~,"Benefits of eating bananas 
+*Bananas~1~*,$1.34,12~units~,"Benefits of eating bananas
 (**Note the appropriately
-rendered block markdown**):    
+rendered block markdown**):
 
-- _built-in wrapper_        
+- _built-in wrapper_
 - ~~**bright color**~~
 
 "
@@ -33,12 +33,11 @@ rendered block markdown**):
 
 - **cures** scurvy
 - `tasty`"
-~~~
+```
 
 # Full Test
 
-
-~~~table
+``` {.table}
 ---
 caption: "*Great* Title"
 alignment: LRC
@@ -51,11 +50,11 @@ header: False
 markdown: True
 ...
 **_Fruit_**,~~Price~~,_Number_,`Advantages`
-*Bananas~1~*,$1.34,12~units~,"Benefits of eating bananas 
+*Bananas~1~*,$1.34,12~units~,"Benefits of eating bananas
 (**Note the appropriately
-rendered block markdown**):    
+rendered block markdown**):
 
-- _built-in wrapper_        
+- _built-in wrapper_
 - ~~**bright color**~~
 
 "
@@ -63,18 +62,17 @@ rendered block markdown**):
 
 - **cures** scurvy
 - `tasty`"
-~~~
+```
 
 # Testing Wrong Type
 
-
-~~~table
+``` {.table}
 **_Fruit_**,~~Price~~,_Number_,`Advantages`
-*Bananas~1~*,$1.34,12~units~,"Benefits of eating bananas 
+*Bananas~1~*,$1.34,12~units~,"Benefits of eating bananas
 (**Note the appropriately
-rendered block markdown**):    
+rendered block markdown**):
 
-- _built-in wrapper_        
+- _built-in wrapper_
 - ~~**bright color**~~
 
 ---
@@ -89,7 +87,6 @@ markdown: false
 - **cures** scurvy
 - `tasty`"
 
-
 ---
 width:
 - -0.1
@@ -98,23 +95,23 @@ width:
 - -0.4
 alignment: 0.1
 ---
-~~~
+```
 
 # Testing 0 Table Width
 
-
-~~~table
+``` {.table}
 ,
 ,
-~~~
+```
 
 # Include External CSV
 
-~~~table
+``` {.table}
 ---
 caption: "*Great* Title"
 header: True
 alignment: AlignLeft, AlignRight, AlignCenter, AlignDefault
 include: ../source/grid.csv
 ...
-~~~
+```
+
