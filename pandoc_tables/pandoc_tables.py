@@ -105,7 +105,7 @@ def check_table_options(options):
             (float(x) if float(x) >= 0 else 0)
             for x in options['width']
         ]
-    except (TypeError, ValueError):
+    except (ValueError, TypeError):
         options['width'] = None
     try:
         options['table-width'] = (
@@ -113,7 +113,7 @@ def check_table_options(options):
             if float(options['table-width']) > 0
             else 1.0
         )
-    except (TypeError, ValueError):
+    except ValueError:
         options['table-width'] = 1.0
     options['header'] = to_bool(options['header'])
     options['markdown'] = to_bool(options['markdown'])
