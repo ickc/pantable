@@ -1,19 +1,19 @@
 SHELL := /usr/bin/env bash
 
-test := $(wildcard test/*.md)
+test := $(wildcard tests/*.md)
 native := $(patsubst %.md,%.native,$(test))
 pdf := $(patsubst %.md,%.pdf,$(test))
 
-filter := ./pandoc-tables.py
+filter := pandoc_tables/pandoc_tables.py
 
 # Main Targets ########################################################################################################################################################################################
 
 all: $(native) $(pdf)
 
-test/%.native: test/%.md $(filter)
+tests/%.native: tests/%.md $(filter)
 	pandoc -t native -F $(filter) -o $@ $<
 
-test/%.pdf: test/%.md $(filter)
+tests/%.pdf: tests/%.md $(filter)
 	pandoc -F $(filter) -o $@ $<
 
 # update submodule
@@ -24,7 +24,7 @@ update:
 
 # autopep8
 pep8:
-	find . -maxdepth 2 -iname "*.py" | xargs -i -n1 -P8 autopep8 --in-place --aggressive --aggressive {}
+	find . -maxdepth 2 -mindepth 2 -iname "*.py" | xargs -i -n1 -P8 autopep8 --in-place --aggressive --aggressive {}
 
 # cleanup source code
 cleanup: style normalize

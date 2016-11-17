@@ -117,7 +117,7 @@ Include External CSV
 caption: "*Great* Title"
 header: True
 alignment: AlignLeft, AlignRight, AlignCenter, AlignDefault
-include: test/csv-tables.csv
+include: tests/csv_tables.csv
 ...
 ```
 
