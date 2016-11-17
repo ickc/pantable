@@ -29,15 +29,16 @@ test: $(native)
 	py.test tests
 
 # check python
-checkLoose:
-	pep8 . --ignore=E402
 check:
+	pep8 . --ignore=E402,E501
+checkStrict:
 	pep8 .
 
 # cleanup python
 pep8:
-	# find . -maxdepth 2 -mindepth 2 -iname "*.py" | xargs -i -n1 -P8 autopep8 {} --in-place
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose
+pep8Super:
+	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose --aggressive --aggressive
 
 # cleanup markdown
 cleanup: style normalize
