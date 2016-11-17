@@ -35,8 +35,7 @@ before_install:
     sudo dpkg -i pandoc-$pandocVersion-amd64.deb
 # command to run tests
 script:
-  - make -j4 travis
-  - cd tests && pytest
+  - make -j4 test
 cache:
   - pip
 matrix:
@@ -45,4 +44,13 @@ matrix:
     - python: "3.6-dev"
     - python: "nightly"
     - python: "pypy3"
+    - env: pandocVersion=1.13.2-1
+    - env: pandocVersion=1.14-1
+    - env: pandocVersion=1.14.0.1-1
+    - env: pandocVersion=1.14.1-1
+    - env: pandocVersion=1.15-1
+    - env: pandocVersion=1.15.0.5-1
+    - env: pandocVersion=1.15.0.6-1
+    - env: pandocVersion=1.15.1-1
+    - env: pandocVersion=1.15.2-1
   fast_finish: true
