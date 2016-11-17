@@ -7,3 +7,4 @@ tests/csv_tables.pdf
 # python auxiliary 
 __pycache__/
 .cache
+*.pyc
