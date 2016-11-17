@@ -28,9 +28,14 @@ init:
 test: $(native)
 	py.test tests
 
+# check python
+check:
+	pep8 .
+
 # cleanup python
 pep8:
-	find . -maxdepth 2 -mindepth 2 -iname "*.py" | xargs -i -n1 -P8 autopep8 --in-place --aggressive --aggressive {}
+	# find . -maxdepth 2 -mindepth 2 -iname "*.py" | xargs -i -n1 -P8 autopep8 {} --in-place
+	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose
 
 # cleanup markdown
 cleanup: style normalize
