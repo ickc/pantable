@@ -2,15 +2,19 @@ SHELL := /usr/bin/env bash
 
 test := $(wildcard test/*.md)
 native := $(patsubst %.md,%.native,$(test))
+pdf := $(patsubst %.md,%.pdf,$(test))
 
 filter := ./pandoc-tables.py
 
 # Main Targets ########################################################################################################################################################################################
 
-all: $(native)
+all: $(native) $(pdf)
 
 test/%.native: test/%.md $(filter)
 	pandoc -t native -F $(filter) -o $@ $<
+
+test/%.pdf: test/%.md $(filter)
+	pandoc -F $(filter) -o $@ $<
 
 # update submodule
 update:
@@ -37,4 +41,4 @@ normalize:
 ### 1. pandoc from markdown to markdown
 ### 2. transform unicode non-breaking space back to `\ `
 style:
-	find . -maxdepth 2 -mindepth 2 -iname "*.md" | xargs -i -n1 -P8 bash -c 'pandoc $(pandocArgMD) -o $$0 $$0 && sed -i -e '"'"'s/ /\\ /g'"'"' $$0' {}
+	find . -maxdepth 2 -mindepth 2 -iname "*.md" | xargs -i -n1 -P8 bash -c 'pandoc -o $$0 $$0 && sed -i -e '"'"'s/ /\\ /g'"'"' $$0' {}

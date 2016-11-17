@@ -1,0 +1,4 @@
+# macOS files
+.DS_Store
+
+test/*.pdf

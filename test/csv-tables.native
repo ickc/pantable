@@ -24,7 +24,7 @@
   ,[Para [Str "source"]]
   ,[Para [Str "file"]]
   ,[Para [Str "source"]]
-  ,[Para [Str "source"]]]
+  ,[Para [Str "include"]]]
  ,[[Para [Str "aligns"]]
   ,[Para [Str "aligns=LRCD"]]
   ,[Para [Str "aligns=LRCD"]]
