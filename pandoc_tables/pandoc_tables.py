@@ -74,96 +74,92 @@ def to_bool(x):
     return x
 
 
-def get_table_options(options):
+def init_table_options(options):
     """
-    It parses the options output from `panflute.yaml_filter` and
-    return it as variables `(caption, alignment, width, table_width, header, markdown)`.
+    Initialize the options output from `panflute.yaml_filter`.
     """
-    caption = options.get('caption')
-    alignment = options.get('alignment')
-    width = options.get('width')
-    table_width = options.get('table-width', 1.0)
-    header = options.get('header', True)
-    markdown = options.get('markdown', True)
-    include = options.get('include', None)
-    return (caption, alignment, width, table_width, header, markdown, include)
+    options['caption'] = options.get('caption', None)
+    options['alignment'] = options.get('alignment', None)
+    options['width'] = options.get('width', None)
+    options['table-width'] = options.get('table-width', 1.0)
+    options['header'] = options.get('header', True)
+    options['markdown'] = options.get('markdown', True)
+    options['include'] = options.get('include', None)
+    return options
 
 
-def check_table_options(width, table_width, header, markdown, include):
+def check_table_options(options):
     """
-    It sets the varaibles to default if they are invalid:
+    It sets the values in options to default if they are invalid:
 
     - `width` set to `None` when invalid, each element in `width` set to `0` when negative
-    - `table_width`: set to `1.0` if invalid or not positive
-    - set `header` to `True` if invalid
-    - set `markdown` to `True` if invalid
+    - `table-width`: set to `1.0` if invalid or not positive
+    - `header` set to `True` if invalid
+    - `markdown` set to `True` if invalid
     """
     try:
-        width = [(float(x) if float(x) >= 0 else 0) for x in width]
+        options['width'] = [(float(x) if float(x) >= 0 else 0) for x in options['width']]
     except (TypeError, ValueError):
-        width = None
+        options['width'] = None
     try:
-        table_width = float(table_width) if float(table_width) > 0 else 1.0
+        options['table-width'] = float(options['table-width']) if float(options['table-width']) > 0 else 1.0
     except (TypeError, ValueError):
-        table_width = 1.0
-    header = to_bool(header)
-    markdown = to_bool(markdown)
-    if include is not None:
-        if not os.path.isfile(include):
-            include = None
-    return (width, table_width, header, markdown, include)
+        options['table-width'] = 1.0
+    options['header'] = to_bool(options['header'])
+    options['markdown'] = to_bool(options['markdown'])
+    if options['include'] is not None:
+        if not os.path.isfile(options['include']):
+            options['include'] = None
+    return options
 
 
-def parse_table_options(
-        caption,
-        alignment,
-        width,
-        table_width,
-        raw_table_list):
+def parse_table_options(options, raw_table_list):
     """
     `caption` is assumed to contain markdown, as in standard pandoc YAML metadata
     `alignment` string is parsed into pandoc format (AlignDefault, etc.)
     `width` is auto-calculated if not given in YAML
     """
     # parse caption
-    if caption is not None:
-        caption = panflute.convert_text(str(caption))[0].content
+    if options['caption'] is not None:
+        options['caption'] = panflute.convert_text(str(options['caption']))[0].content
     # preparation: get no of columns of the table
     number_of_columns = len(raw_table_list[0])
     # parse alignment
-    if alignment is not None:
-        alignment = str(alignment)
+    if options['alignment'] is not None:
+        options['alignment'] = str(options['alignment'])
         parsed_alignment = []
         for i in range(number_of_columns):
             try:
-                if alignment[i].lower() == "l":
+                if options['alignment'][i].lower() == "l":
                     parsed_alignment.append("AlignLeft")
-                elif alignment[i].lower() == "c":
+                elif options['alignment'][i].lower() == "c":
                     parsed_alignment.append("AlignCenter")
-                elif alignment[i].lower() == "r":
+                elif options['alignment'][i].lower() == "r":
                     parsed_alignment.append("AlignRight")
                 else:
                     parsed_alignment.append("AlignDefault")
             except IndexError:
                 for i in range(number_of_columns - len(parsed_alignment)):
                     parsed_alignment.append("AlignDefault")
-        alignment = parsed_alignment
+        options['alignment'] = parsed_alignment
     # calculate width
-    if width is None:
-        width_abs = [max([max([len(line) for line in row[i].split("\n")])
-                          for row in raw_table_list]) for i in range(number_of_columns)]
+    if options['width'] is None:
+        width_abs = [max(
+                        [max(
+                            [len(line) for line in row[i].split("\n")]
+                        ) for row in raw_table_list]
+                    ) for i in range(number_of_columns)]
         width_tot = sum(width_abs)
         try:
-            width = [
+            options['width'] = [
                 width_abs[i] /
                 width_tot *
-                table_width for i in range(number_of_columns)]
+                options['table-width'] for i in range(number_of_columns)]
         except ZeroDivisionError:
-            width = None
-    return (caption, alignment, width)
+            options['width'] = None
+    return options
 
-
-def read_csv(data, include):
+def read_csv(include, data):
     """
     read csv and return the table in list
     """
@@ -176,7 +172,7 @@ def read_csv(data, include):
     return raw_table_list
 
 
-def parse_table_list(raw_table_list, markdown):
+def parse_table_list(markdown, raw_table_list):
     """
     read table in list and return panflute table format
     """
@@ -196,26 +192,23 @@ def parse_table_list(raw_table_list, markdown):
 
 
 def convert2table(options, data, element, doc):
-    # get table options from YAML metadata
-    caption, alignment, width, table_width, header, markdown, include = get_table_options(
-        options)
+    # initialize table options from YAML metadata
+    options = init_table_options(options)
     # check table options
-    width, table_width, header, markdown, include = check_table_options(
-        width, table_width, header, markdown, include)
+    options = check_table_options(options)
     # parse csv to list
-    raw_table_list = read_csv(data, include)
+    raw_table_list = read_csv(options['include'], data)
     # parse list to panflute table
-    body = parse_table_list(raw_table_list, markdown)
+    body = parse_table_list(options['markdown'], raw_table_list)
     # parse table options
-    caption, alignment, width = parse_table_options(
-        caption, alignment, width, table_width, raw_table_list)
+    options = parse_table_options(options, raw_table_list)
     # finalize table according to metadata
-    header_row = body.pop(0) if header else None
+    header_row = body.pop(0) if options['header'] else None
     table = panflute.Table(
         *body,
-        caption=caption,
-        alignment=alignment,
-        width=width,
+        caption=options['caption'],
+        alignment=options['alignment'],
+        width=options['width'],
         header=header_row)
     return table
 
