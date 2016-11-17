@@ -121,3 +121,30 @@ include: tests/csv_tables.csv
 ...
 ```
 
+Empty CSV
+=========
+
+``` {.table}
+---
+...
+```
+
+Empty CSV 2
+===========
+
+``` {.table}
+,
+,
+```
+
+Irregular CSV
+=============
+
+``` {.table}
+---
+markdown: False
+...
+2,3,4,5,6,7
+1
+```
+

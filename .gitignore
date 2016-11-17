@@ -1,8 +1,8 @@
 # macOS files
 .DS_Store
 
-tests/csv_tables.native
-tests/csv_tables.pdf
+tests/test_convert2table.native
+tests/*.pdf
 
 # python auxiliary 
 __pycache__/
