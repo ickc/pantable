@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-`header` and `markdown` is checked by `test_to_bool` instead
 """
 from .context import pandoc_tables
 import panflute
