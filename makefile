@@ -29,6 +29,8 @@ test: $(native)
 	py.test tests
 
 # check python
+checkLoose:
+	pep8 . --ignore=E402
 check:
 	pep8 .
 
