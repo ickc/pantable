@@ -9,6 +9,7 @@ filter := pandoc_tables/pandoc_tables.py
 # Main Targets ########################################################################################################################################################################################
 
 all: $(native) $(pdf)
+travis: $(native)
 
 tests/%.native: tests/%.md $(filter)
 	pandoc -t native -F $(filter) -o $@ $<
