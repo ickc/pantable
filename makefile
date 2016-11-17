@@ -17,17 +17,19 @@ tests/%.native: tests/%.md $(filter)
 tests/%.pdf: tests/%.md $(filter)
 	pandoc -F $(filter) -o $@ $<
 
-# update submodule
-update:
-	git submodule update --recursive --remote
+# maintenance #########################################################################################################################################################################################
 
-# Automation on */*.md, in the order from draft to finish #############################################################################################################################################
+init:
+	pip install -r requirements.txt
 
-# autopep8
+test: $(native)
+	py.test tests
+
+# cleanup python
 pep8:
 	find . -maxdepth 2 -mindepth 2 -iname "*.py" | xargs -i -n1 -P8 autopep8 --in-place --aggressive --aggressive {}
 
-# cleanup source code
+# cleanup markdown
 cleanup: style normalize
 ## Normalize white spaces:
 ### 1. Add 2 trailing newlines

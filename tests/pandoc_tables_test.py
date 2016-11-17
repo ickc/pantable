@@ -2,7 +2,7 @@
 """
 
 """
-from pandoc_tables import pandoc_tables
+from .context import pandoc_tables
 
 
 def test_to_bool():
