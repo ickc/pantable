@@ -9,7 +9,7 @@ filter := ./pandoc-tables.py
 
 all: $(native)
 
-%.native: %.md $(filter)
+test/%.native: test/%.md $(filter)
 	pandoc -t native -F $(filter) -o $@ $<
 
 # update submodule

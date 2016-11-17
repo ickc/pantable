@@ -111,7 +111,7 @@ alignment: 0.1
 caption: "*Great* Title"
 header: True
 alignment: AlignLeft, AlignRight, AlignCenter, AlignDefault
-include: ../source/grid.csv
+include: test/csv-tables.csv
 ...
 ```
 
