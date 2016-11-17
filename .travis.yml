@@ -10,15 +10,15 @@ python:
   - "nightly" # currently points to 3.7-dev
   - "pypy3"
 env:
-  - pandocVersion=1.13.2-1
-  - pandocVersion=1.14-1
-  - pandocVersion=1.14.0.1-1
-  - pandocVersion=1.14.1-1
-  - pandocVersion=1.15-1
-  - pandocVersion=1.15.0.5-1
-  - pandocVersion=1.15.0.6-1
-  - pandocVersion=1.15.1-1
-  - pandocVersion=1.15.2-1
+  # - pandocVersion=1.13.2-1
+  # - pandocVersion=1.14-1
+  # - pandocVersion=1.14.0.1-1
+  # - pandocVersion=1.14.1-1
+  # - pandocVersion=1.15-1
+  # - pandocVersion=1.15.0.5-1
+  # - pandocVersion=1.15.0.6-1
+  # - pandocVersion=1.15.1-1
+  # - pandocVersion=1.15.2-1
   - pandocVersion=1.16-3
   - pandocVersion=1.16.0.1-1
   - pandocVersion=1.16.0.2-1
@@ -44,13 +44,13 @@ matrix:
     - python: "3.6-dev"
     - python: "nightly"
     - python: "pypy3"
-    - env: pandocVersion=1.13.2-1
-    - env: pandocVersion=1.14-1
-    - env: pandocVersion=1.14.0.1-1
-    - env: pandocVersion=1.14.1-1
-    - env: pandocVersion=1.15-1
-    - env: pandocVersion=1.15.0.5-1
-    - env: pandocVersion=1.15.0.6-1
-    - env: pandocVersion=1.15.1-1
-    - env: pandocVersion=1.15.2-1
+    # - env: pandocVersion=1.13.2-1
+    # - env: pandocVersion=1.14-1
+    # - env: pandocVersion=1.14.0.1-1
+    # - env: pandocVersion=1.14.1-1
+    # - env: pandocVersion=1.15-1
+    # - env: pandocVersion=1.15.0.5-1
+    # - env: pandocVersion=1.15.0.6-1
+    # - env: pandocVersion=1.15.1-1
+    # - env: pandocVersion=1.15.2-1
   fast_finish: true
