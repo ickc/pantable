@@ -7,6 +7,10 @@
 
 import filecmp
 
+
 def test_native():
-    assert filecmp.cmp('tests/csv_tables.native', 'tests/csv_tables_test.native') == True
+    assert filecmp.cmp(
+        'tests/csv_tables.native',
+        'tests/csv_tables_test.native'
+    )
     return
