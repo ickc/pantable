@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """
 """
-from .context import pandoc_tables
-import panflute
+from .context import read_csv
 
 
 def test_read_csv():
@@ -11,7 +10,7 @@ def test_read_csv():
     data = r"""1,2
 3,4
 """
-    assert pandoc_tables.read_csv(include, data) == [
+    assert read_csv(include, data) == [
         ['1', '2'],
         ['3', '4']
     ]
@@ -19,13 +18,13 @@ def test_read_csv():
     data = r"""asdfdfdfguhfdhghfdgkla,"334
 2",**la**,4
 5,6,7,8"""
-    assert pandoc_tables.read_csv(include, data) == [
+    assert read_csv(include, data) == [
         ['asdfdfdfguhfdhghfdgkla', '334\n2', '**la**', '4'],
         ['5', '6', '7', '8']
     ]
     # check include
     include = 'tests/csv_tables.csv'
-    assert pandoc_tables.read_csv(include,
+    assert read_csv(include,
                                   data) == [['**_Fruit_**',
                                              '~~Price~~',
                                              '_Number_',
@@ -41,5 +40,5 @@ def test_read_csv():
     # check empty table
     include = None
     data = ''
-    assert pandoc_tables.read_csv(include, data) == []
+    assert read_csv(include, data) == []
     return

@@ -2,11 +2,11 @@
 """
 
 """
-from .context import pandoc_tables
+from .context import init_table_options
 
 
 def test_init_table_options():
-    assert pandoc_tables.init_table_options({}) == {
+    assert init_table_options({}) == {
         'caption': None,
         'alignment': None,
         'width': None,
