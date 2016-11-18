@@ -1,0 +1,12 @@
+,pandoc-csv2table,pandoc-placetable,panflute example,my proposal
+type,type=simple|multiline|grid|pipe,,,
+caption,caption,caption,title,caption
+aligns,aligns=LRCD,aligns=LRCD,,alignment: LRCD
+width,,"widths=""0.5 0.2 0.3""",,"width: [0.5, 0.2, 0.3]"
+table-width,,,,table-width: 1.0
+header,header=yes|no,header=yes|no,header: True|False,header: True|False|yes|NO
+markdown,,inlinemarkdown,,markdown: True|False|YES|no
+source,source,file,source,include
+others,,delimiter,,
+,,quotechar,,
+,,id (wrapped by div),,
