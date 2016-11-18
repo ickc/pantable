@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="dcterms.date" content="2016-11-18">
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="https://ickc.github.io/markdown-latex-css/css/common.css">
+  <link rel="stylesheet" href="https://ickc.github.io/markdown-latex-css/fonts/fonts.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<nav id="TOC">
+<ul>
+<li><a href="#csv-tables-in-markdown-pandoc-filter-for-csv-tables"><span class="toc-section-number">1</span> CSV Tables in Markdown: Pandoc Filter for CSV Tables</a></li>
+<li><a href="#example"><span class="toc-section-number">2</span> Example</a></li>
+<li><a href="#install-and-use"><span class="toc-section-number">3</span> Install and Use</a></li>
+<li><a href="#syntax"><span class="toc-section-number">4</span> Syntax</a></li>
+<li><a href="#related-filters"><span class="toc-section-number">5</span> Related Filters</a></li>
+</ul>
+</nav>
+<h1 id="csv-tables-in-markdown-pandoc-filter-for-csv-tables"><span class="header-section-number">1</span> CSV Tables in Markdown: Pandoc Filter for CSV Tables</h1>
+<p>This allows CSV tables, optionally containing markdown syntax (enabled by default), to be put in markdown as a fenced code blocks.</p>
+<h1 id="example"><span class="header-section-number">2</span> Example</h1>
+<p>This won’t work on GitHub’s markdown rendering. See the README in <a href="https://ickc.github.io/pantable">GitHub-pages</a>.</p>
+<pre><code>```table
+---
+caption: &#39;*Awesome* **Markdown** Table&#39;
+alignment: RC
+table-width: 0.7
+---
+First row,defaulted to be header row,can be disabled
+1,cell can contain **markdown**,&quot;It can be aribrary block element:
+
+- following standard markdown syntax
+- like this&quot;
+2,&quot;Any markdown syntax, e.g.&quot;,$$E = mc^2$$
+```</code></pre>
+<p>becomes</p>
+<table style="width:70%;">
+<caption><em>Awesome</em> <strong>Markdown</strong> Table</caption>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 27%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;"><p>First row</p></th>
+<th style="text-align: center;"><p>defaulted to be header row</p></th>
+<th><p>can be disabled</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;"><p>1</p></td>
+<td style="text-align: center;"><p>cell can contain <strong>markdown</strong></p></td>
+<td><p>It can be aribrary block element:</p>
+<ul>
+<li>following standard markdown syntax</li>
+<li>like this</li>
+</ul></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;"><p>2</p></td>
+<td style="text-align: center;"><p>Any markdown syntax, e.g.</p></td>
+<td><p><br /><span class="math display"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span><br /></p></td>
+</tr>
+</tbody>
+</table>
+<h1 id="install-and-use"><span class="header-section-number">3</span> Install and Use</h1>
+<p>Install:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip</span> install -U pantable</code></pre></div>
+<p>Use:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pandoc</span> -F pantable -o README.html README.md</code></pre></div>
+<h1 id="syntax"><span class="header-section-number">4</span> Syntax</h1>
+<p>Fenced code blocks is used, with a class <code>table</code>. See <a href="#example">Example</a>.</p>
+<p>Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML metadata block syntax. 7 metadata keys are recognized:</p>
+<ul>
+<li><p><code>caption</code>: the caption of the table. If omitted, no caption will be inserted. Default: disabled.</p></li>
+<li><p><code>alignment</code>: a string of characters among <code>L,R,C,D</code>, case-insensitive, corresponds to Left-aligned, Right-aligned, Center-aligned, Default-aligned respectively. e.g. <code>LCRD</code> for a table with 4 columns. Default: <code>DDD...</code></p></li>
+<li><p><code>width</code>: a list of relative width corresponding to the width of each columns. e.g.</p>
+<div class="sourceCode"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span class="kw">-</span> width
+    <span class="kw">-</span> 0.1
+    <span class="kw">-</span> 0.2
+    <span class="kw">-</span> 0.3
+    <span class="kw">-</span> 0.4</code></pre></div>
+<p>Default: auto calculated from the length of each line in table cells.</p></li>
+<li><p><code>table-width</code>: the relative width of the table (e.g. relative to <code>\linewidth</code>). default: 1.0</p></li>
+<li><p><code>header</code>: If it has a header row or not. True/False/yes/NO are accepted, case-insensitive. default: True</p></li>
+<li><p><code>markdown</code>: If CSV table cell contains markdown syntax or not. Same as above. Default: True</p></li>
+<li><p><code>include</code>: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None</p></li>
+</ul>
+<p>When the metadata keys is invalid, the default will be used instead.</p>
+<h1 id="related-filters"><span class="header-section-number">5</span> Related Filters</h1>
+<p>The followings are pandoc filters written in Haskell that provide similar functionality. This filter is born after testing with theirs.</p>
+<ul>
+<li><a href="https://github.com/baig/pandoc-csv2table">baig/pandoc-csv2table: A Pandoc filter that renders CSV as Pandoc Markdown Tables.</a></li>
+<li><a href="https://github.com/mb21/pandoc-placetable">mb21/pandoc-placetable: Pandoc filter to include CSV data (from file or URL)</a></li>
+<li><a href="https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py">panflute/csv-tables.py at 1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a · sergiocorreia/panflute</a></li>
+</ul>
+<table>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 28%" />
+<col style="width: 18%" />
+<col style="width: 16%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th><p>pandoc-csv2table</p></th>
+<th><p>pandoc-placetable</p></th>
+<th><p>panflute example</p></th>
+<th><p>my proposal</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>type</p></td>
+<td><p>type=simple|multiline|grid|pipe</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><p>caption</p></td>
+<td><p>caption</p></td>
+<td><p>caption</p></td>
+<td><p>title</p></td>
+<td><p>caption</p></td>
+</tr>
+<tr class="odd">
+<td><p>aligns</p></td>
+<td><p>aligns=LRCD</p></td>
+<td><p>aligns=LRCD</p></td>
+<td></td>
+<td><p>alignment: LRCD</p></td>
+</tr>
+<tr class="even">
+<td><p>width</p></td>
+<td></td>
+<td><p>widths=&quot;0.5 0.2 0.3&quot;</p></td>
+<td></td>
+<td><p>width: [0.5, 0.2, 0.3]</p></td>
+</tr>
+<tr class="odd">
+<td><p>table-width</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>table-width: 1.0</p></td>
+</tr>
+<tr class="even">
+<td><p>header</p></td>
+<td><p>header=yes|no</p></td>
+<td><p>header=yes|no</p></td>
+<td><p>header: True|False</p></td>
+<td><p>header: True|False|yes|NO</p></td>
+</tr>
+<tr class="odd">
+<td><p>markdown</p></td>
+<td></td>
+<td><p>inlinemarkdown</p></td>
+<td></td>
+<td><p>markdown: True|False|YES|no</p></td>
+</tr>
+<tr class="even">
+<td><p>source</p></td>
+<td><p>source</p></td>
+<td><p>file</p></td>
+<td><p>source</p></td>
+<td><p>include</p></td>
+</tr>
+<tr class="odd">
+<td><p>others</p></td>
+<td></td>
+<td><p>delimiter</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td><p>quotechar</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td><p>id (wrapped by div)</p></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
