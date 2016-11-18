@@ -12,7 +12,7 @@ This allows CSV tables, optionally containing markdown syntax (enabled by defaul
 Example
 =======
 
-This won’t work on GitHub’s markdown rendering. See the README in [GitHub-pages](https://ickc.github.io/pantable).
+This won’t work on GitHub’s markdown rendering. See the README in [GitHub-pages](https://ickc.github.io/pantable). There’s a [LaTeX output](https://ickc.github.io/pantable/README.pdf) too.
 
     ```table
     ---
