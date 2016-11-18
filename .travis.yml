@@ -30,8 +30,7 @@ env:
   - pandocVersion=1.18-1
 before_install:
   - pip install -U pip
-                   shutilwhich
-                   panflute
+  - pip install -r requirements.txt
   - wget https://github.com/jgm/pandoc/releases/download/${pandocVersion%-*}/pandoc-$pandocVersion-amd64.deb &&
     sudo dpkg -i pandoc-$pandocVersion-amd64.deb
 # command to run tests
