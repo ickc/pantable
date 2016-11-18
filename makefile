@@ -66,6 +66,9 @@ README.md: tests/README.md
 
 # maintenance #########################################################################################################################################################################################
 
+pypi:
+	python setup.py register -r pypitest && python setup.py sdist upload -r pypitest && python setup.py register -r pypi && python setup.py sdist upload -r pypi
+
 init:
 	pip install -r requirements.txt
 
