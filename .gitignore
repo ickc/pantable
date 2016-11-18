@@ -8,3 +8,7 @@ tests/*.pdf
 __pycache__/
 .cache
 *.pyc
+
+# pypi
+dist/
+pantable.egg-info/
