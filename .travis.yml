@@ -2,13 +2,13 @@
 language: python
 # build matrix: different python and pandoc versions
 python:
-  - "3.3"
-  - "3.4"
+  # - "3.3"
+  # - "3.4"
   - "3.5"
-  - "3.5-dev" # 3.5 development branch
-  - "3.6-dev" # 3.6 development branch
-  - "nightly" # currently points to 3.7-dev
-  - "pypy3"
+  # - "3.5-dev" # 3.5 development branch
+  # - "3.6-dev" # 3.6 development branch
+  # - "nightly" # currently points to 3.7-dev
+  # - "pypy3"
 env:
   # - pandocVersion=1.13.2-1
   # - pandocVersion=1.14-1
@@ -19,14 +19,14 @@ env:
   # - pandocVersion=1.15.0.6-1
   # - pandocVersion=1.15.1-1
   # - pandocVersion=1.15.2-1
-  - pandocVersion=1.16-3
-  - pandocVersion=1.16.0.1-1
-  - pandocVersion=1.16.0.2-1
-  - pandocVersion=1.17-1
-  - pandocVersion=1.17.0.1-1
-  - pandocVersion=1.17.0.2-1
-  - pandocVersion=1.17.1-2
-  - pandocVersion=1.17.2-1
+  # - pandocVersion=1.16-3
+  # - pandocVersion=1.16.0.1-1
+  # - pandocVersion=1.16.0.2-1
+  # - pandocVersion=1.17-1
+  # - pandocVersion=1.17.0.1-1
+  # - pandocVersion=1.17.0.2-1
+  # - pandocVersion=1.17.1-2
+  # - pandocVersion=1.17.2-1
   - pandocVersion=1.18-1
 before_install:
   - pip install -U pip
