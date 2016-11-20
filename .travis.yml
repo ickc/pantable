@@ -59,6 +59,7 @@ deploy:
   provider: pypi
   user: ickc
   password: $pypi_password
+  skip_cleanup: true
   on:
     tags: true
 after_success:
