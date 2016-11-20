@@ -6,7 +6,7 @@ from .context import init_table_options
 
 
 def test_init_table_options():
-    assert init_table_options({}) == {
+    init_options = {
         'caption': None,
         'alignment': None,
         'width': None,
@@ -15,4 +15,7 @@ def test_init_table_options():
         'markdown': True,
         'include': None
     }
+    options = {}
+    init_table_options(options)
+    assert options == init_options
     return

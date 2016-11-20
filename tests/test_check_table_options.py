@@ -2,41 +2,41 @@
 """
 `header` and `markdown` is checked by `test_to_bool` instead
 """
-from .context import check_table_options
+from .context import init_table_options, check_table_options
 
 
 def test_check_table_options():
-    options = {
-        'caption': None,
-        'alignment': None,
-        'width': None,
-        'table-width': 1.0,
-        'header': True,
-        'markdown': True,
-        'include': None
-    }
+    init_options = {}
+    init_table_options(init_options)
+    options = init_options.copy()
     # check init is preserved
-    assert check_table_options(options) == options
+    check_table_options(options)
+    assert options == init_options
     # check width
-    # negative
+    # negative width
     options['width'] = [0.1, -0.2]
-    assert check_table_options(options)['width'] == [0.1, 0]
-    # invalid
+    check_table_options(options)
+    assert options['width'] == [0.1, 0]
+    # invalid width
     options['width'] = "happy"
-    assert check_table_options(options)['width'] is None
+    check_table_options(options)
+    assert options['width'] is None
     # check table-width
-    # negative
+    # negative table-width
     options['table-width'] = -1
-    assert check_table_options(options)['table-width'] == 1.0
-    # invalid
+    check_table_options(options)
+    assert options['table-width'] == 1.0
+    # invalid table-width
     options['table-width'] = "happy"
-    assert check_table_options(options)['table-width'] == 1.0
+    check_table_options(options)
+    assert options['table-width'] == 1.0
     # check include
+    # invalid include
     options['include'] = 'abc.xyz'
-    assert check_table_options(options)['include'] is None
+    check_table_options(options)
+    assert options['include'] is None
+    # valid include
     options['include'] = 'tests/csv_tables.csv'
-    assert (
-        check_table_options(options)['include'] ==
-        'tests/csv_tables.csv'
-    )
+    check_table_options(options)
+    assert options['include'] == 'tests/csv_tables.csv'
     return
