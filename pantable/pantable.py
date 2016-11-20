@@ -156,8 +156,7 @@ def parse_table_options(options, raw_table_list):
                 else:
                     parsed_alignment.append("AlignDefault")
             except IndexError:
-                for i in range(number_of_columns - len(parsed_alignment)):
-                    parsed_alignment.append("AlignDefault")
+                parsed_alignment += ["AlignDefault" for __ in range(number_of_columns - len(parsed_alignment))]
         options['alignment'] = parsed_alignment
     # calculate width
     if options['width'] is None:
@@ -195,9 +194,9 @@ def regularize_table_list(raw_table_list):
         [len(row) for row in raw_table_list]
     )
     for row in raw_table_list:
-        if len(row) < max_number_of_columns:
-            for i in range(max_number_of_columns - len(row)):
-                row.append('')
+        missing_number_of_columns = max_number_of_columns - len(row)
+        if missing_number_of_columns > 0:
+            row += ['' for __ in range(missing_number_of_columns)]
     return
 
 
