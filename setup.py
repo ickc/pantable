@@ -20,13 +20,19 @@ except (IOError, ImportError):
     with open(path.join(here, 'README.md'), encoding='utf-8') as f:
         long_description = f.read()
 
+# Import version number
+version = {}
+with open("pantable/version.py") as f:
+    exec(f.read(), version)
+version = version['__version__']
+
 setup(
     name='pantable',
 
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.0.5',
+    version=version,
 
     description='CSV Tables in Markdown: Pandoc Filter for CSV Tables',
     long_description=long_description,
