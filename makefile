@@ -83,6 +83,7 @@ pypiManual:
 
 init:
 	pip install -r requirements.txt
+	pip install -r tests/requirements.txt
 
 test: pytest pep8 pylint
 
