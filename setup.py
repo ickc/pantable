@@ -15,7 +15,7 @@ here = path.abspath(path.dirname(__file__))
 # Get the long description from the README file
 try:
     import pypandoc
-    long_description = pypandoc.convert('tests/README.md', 'rst')
+    long_description = pypandoc.convert('README.md', 'rst')
 except (IOError, ImportError):
     with open(path.join(here, 'README.md'), encoding='utf-8') as f:
         long_description = f.read()
