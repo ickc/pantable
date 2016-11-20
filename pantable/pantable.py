@@ -87,7 +87,7 @@ def init_table_options(options):
     options['header'] = options.get('header', True)
     options['markdown'] = options.get('markdown', True)
     options['include'] = options.get('include', None)
-    return options
+    return
 
 
 def check_table_options(options):
@@ -120,7 +120,7 @@ def check_table_options(options):
     if options['include'] is not None:
         if not os.path.isfile(options['include']):
             options['include'] = None
-    return options
+    return
 
 
 def parse_table_options(options, raw_table_list):
@@ -170,7 +170,7 @@ def parse_table_options(options, raw_table_list):
             ]
         except ZeroDivisionError:
             options['width'] = None
-    return options
+    return
 
 
 def read_csv(include, data):
@@ -219,9 +219,9 @@ def parse_table_list(markdown, raw_table_list):
 
 def convert2table(options, data, element, doc):
     # initialize table options from YAML metadata
-    options = init_table_options(options)
+    init_table_options(options)
     # check table options
-    options = check_table_options(options)
+    check_table_options(options)
     # parse csv to list
     raw_table_list = read_csv(options['include'], data)
     # check empty table
@@ -232,7 +232,7 @@ def convert2table(options, data, element, doc):
     # parse list to panflute table
     table_body = parse_table_list(options['markdown'], raw_table_list)
     # parse table options
-    options = parse_table_options(options, raw_table_list)
+    parse_table_options(options, raw_table_list)
     # finalize table according to metadata
     header_row = table_body.pop(0) if options['header'] else None
     table = panflute.Table(
