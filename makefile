@@ -46,8 +46,8 @@ docsAll := $(docsHtml) $(docsPdf) README.md docs/index.html
 
 all: $(testAll) $(docsAll)
 docs: $(docsAll)
-readme: docs
-travis: $(testNative)
+readme: README.md
+test: pytest pep8 pylint
 
 clean:
 	rm -f $(testAll) $(docsAll)
@@ -94,8 +94,6 @@ pypiManual:
 init:
 	pip install -r requirements.txt
 	pip install -r tests/requirements.txt
-
-test: pytest pep8 pylint
 
 pytest: $(testNative)
 	py.test tests
