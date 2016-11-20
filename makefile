@@ -84,21 +84,27 @@ pypiManual:
 init:
 	pip install -r requirements.txt
 
-test: pytest check
+test: pytest pep8
 
 pytest: $(testNative)
 	py.test tests
 
-# check python
-check:
+# check python styles
+pep8:
 	pep8 . --ignore=E402,E501
-checkStrict:
+pep8Strict:
 	pep8 .
+pyflakes:
+	pyflakes .
+flake8:
+	flake8 .
+pylint:
+	pylint pantable/pantable.py
 
 # cleanup python
-pep8:
+autopep8:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose
-pep8Super:
+autopep8Aggressive:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose --aggressive --aggressive
 
 # cleanup markdown
