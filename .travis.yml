@@ -61,3 +61,5 @@ deploy:
   password: $pypi_password
   on:
     tags: true
+after_success:
+  - coveralls
