@@ -108,24 +108,21 @@ def check_table_options(options):
     -   `markdown` set to `True` if invalid
     """
     try:
-        options['width'] = [
-            (float(x) if float(x) >= 0 else 0)
-            for x in options['width']
-        ]
+        options['width'] = [(float(x) if x > 0 else 0) for x in options['width']]
     except (ValueError, TypeError):
         options['width'] = None
     try:
         options['table-width'] = (
             float(options['table-width'])
-            if float(options['table-width']) > 0
+            if options['table-width'] > 0
             else 1.0
         )
-    except ValueError:
+    except (ValueError, TypeError):
         options['table-width'] = 1.0
     options['header'] = to_bool(options['header'])
     options['markdown'] = to_bool(options['markdown'])
     if options['include'] is not None:
-        if not os.path.isfile(options['include']):
+        if not os.path.isfile(str(options['include'])):
             options['include'] = None
     return
 

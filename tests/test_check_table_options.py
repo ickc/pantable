@@ -21,6 +21,10 @@ def test_check_table_options():
     options['width'] = "happy"
     check_table_options(options)
     assert options['width'] is None
+    # invalid width 2
+    options['width'] = ["happy", "birthday"]
+    check_table_options(options)
+    assert options['width'] is None
     # check table-width
     # negative table-width
     options['table-width'] = -1
@@ -31,8 +35,12 @@ def test_check_table_options():
     check_table_options(options)
     assert options['table-width'] == 1.0
     # check include
-    # invalid include
+    # invalid include: file doesn't exist
     options['include'] = 'abc.xyz'
+    check_table_options(options)
+    assert options['include'] is None
+    # invalid include: wrong type
+    options['include'] = True
     check_table_options(options)
     assert options['include'] is None
     # valid include
