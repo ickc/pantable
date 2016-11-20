@@ -84,7 +84,7 @@ pypiManual:
 init:
 	pip install -r requirements.txt
 
-test: pytest pep8
+test: pytest pep8 pylint
 
 pytest: $(testNative)
 	py.test tests
