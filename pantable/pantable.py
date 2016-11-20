@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""
+r"""
 Panflute filter to parse table in fenced YAML code blocks.
 Currently only CSV table is supported.
 
@@ -56,24 +56,24 @@ rendered block markdown**):
 ```
 """
 
+import csv
 import io
 import os
-import csv
 import panflute
 
 
-def to_bool(x):
+def to_bool(to_be_bool):
     """
-    Do nothing if x is boolean,
+    Do nothing if to_be_bool is boolean,
     return `False` if it is "false" or "no" (case-insensitive),
     otherwise return `True`.
     """
-    if not isinstance(x, bool):
-        if str(x).lower() in ("false", "no"):
-            x = False
+    if not isinstance(to_be_bool, bool):
+        if str(to_be_bool).lower() in ("false", "no"):
+            to_be_bool = False
         else:
-            x = True
-    return x
+            to_be_bool = True
+    return to_be_bool
 
 
 def init_table_options(options):
@@ -183,15 +183,18 @@ def read_csv(include, data):
     read csv and return the table in list
     """
     if include is not None:
-        with open(include) as f:
-            raw_table_list = list(csv.reader(f))
+        with open(include) as file:
+            raw_table_list = list(csv.reader(file))
     else:
-        with io.StringIO(data) as f:
-            raw_table_list = list(csv.reader(f))
+        with io.StringIO(data) as file:
+            raw_table_list = list(csv.reader(file))
     return raw_table_list
 
 
 def regularize_table_list(raw_table_list):
+    """
+    When the length of rows are uneven, make it as long as the longest row.
+    """
     max_number_of_columns = max(
         [len(row) for row in raw_table_list]
     )
@@ -222,7 +225,10 @@ def parse_table_list(markdown, raw_table_list):
     return table_body
 
 
-def convert2table(options, data, element, doc):
+def convert2table(options, data, **__):
+    """
+    provided to panflute.yaml_filter to parse its content as pandoc table.
+    """
     # initialize table options from YAML metadata
     init_table_options(options)
     # check table options
@@ -250,8 +256,11 @@ def convert2table(options, data, element, doc):
     return table
 
 
-def main(doc=None):
-    # We'll only run this for CodeBlock elements of class 'table'
+def main(_=None):
+    """
+    Fenced code block with class table will be parsed using
+    panflute.yaml_filter with the fuction convert2table above.
+    """
     return panflute.run_filter(
         panflute.yaml_filter,
         tag='table',
