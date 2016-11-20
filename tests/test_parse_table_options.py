@@ -37,5 +37,6 @@ def test_parse_table_options():
     options['width'] = None
     options['table-width'] = 1.2
     parse_table_options(options, raw_table_list)
-    assert options['width'] == [22 / 32 * 1.2, 3 / 32 * 1.2, 6 / 32 * 1.2, 1 / 32 * 1.2]
+    assert options['width'] == [22 / 32 * 1.2,
+                                3 / 32 * 1.2, 6 / 32 * 1.2, 1 / 32 * 1.2]
     return

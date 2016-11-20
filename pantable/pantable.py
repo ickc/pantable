@@ -108,7 +108,8 @@ def check_table_options(options):
     -   `markdown` set to `True` if invalid
     """
     try:
-        options['width'] = [(float(x) if x > 0 else 0) for x in options['width']]
+        options['width'] = [(float(x) if x > 0 else 0)
+                            for x in options['width']]
     except (ValueError, TypeError):
         options['width'] = None
     try:
@@ -156,7 +157,8 @@ def parse_table_options(options, raw_table_list):
                 else:
                     parsed_alignment.append("AlignDefault")
             except IndexError:
-                parsed_alignment += ["AlignDefault" for __ in range(number_of_columns - len(parsed_alignment))]
+                parsed_alignment += ["AlignDefault" for __ in range(
+                    number_of_columns - len(parsed_alignment))]
         options['alignment'] = parsed_alignment
     # calculate width
     if options['width'] is None:
