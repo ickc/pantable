@@ -80,13 +80,20 @@ def init_table_options(options):
     """
     Initialize the `options` output from `panflute.yaml_filter`.
     """
-    options['caption'] = options.get('caption', None)
-    options['alignment'] = options.get('alignment', None)
-    options['width'] = options.get('width', None)
-    options['table-width'] = options.get('table-width', 1.0)
-    options['header'] = options.get('header', True)
-    options['markdown'] = options.get('markdown', True)
-    options['include'] = options.get('include', None)
+    if 'caption' not in options:
+        options['caption'] = None
+    if 'alignment' not in options:
+        options['alignment'] = None
+    if 'width' not in options:
+        options['width'] = None
+    if 'table-width' not in options:
+        options['table-width'] = 1.0
+    if 'header' not in options:
+        options['header'] = True
+    if 'markdown' not in options:
+        options['markdown'] = True
+    if 'include' not in options:
+        options['include'] = None
     return
 
 
