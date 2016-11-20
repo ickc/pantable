@@ -84,7 +84,9 @@ pypiManual:
 init:
 	pip install -r requirements.txt
 
-test: $(testNative)
+test: pytest check
+
+pytest: $(testNative)
 	py.test tests
 
 # check python
