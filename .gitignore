@@ -2,7 +2,7 @@
 .DS_Store
 
 tests/test_*.native
-docs/test_*.pdf
+tests/test_*.pdf
 
 # python auxiliary 
 __pycache__/
