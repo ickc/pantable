@@ -16,7 +16,7 @@ def test_check_table_options():
     # negative width
     options['width'] = [0.1, -0.2]
     check_table_options(options)
-    assert options['width'] == [0.1, 0]
+    assert options['width'] is None
     # invalid width
     options['width'] = "happy"
     check_table_options(options)

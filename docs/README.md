@@ -12,9 +12,13 @@ This won't work on GitHub's markdown rendering nor PyPI. See the README in [GitH
 caption: '*Awesome* **Markdown** Table'
 alignment: RC
 table-width: 0.7
+markdown: True
 ---
 First row,defaulted to be header row,can be disabled
-1,cell can contain **markdown**,"It can be aribrary block element:- following standard markdown syntax- like this"
+1,cell can contain **markdown**,"It can be aribrary block element:
+
+- following standard markdown syntax
+- like this"
 2,"Any markdown syntax, e.g.",$$E = mc^2$$
 ```
 ~~~
@@ -26,9 +30,13 @@ becomes
 caption: '*Awesome* **Markdown** Table'
 alignment: RC
 table-width: 0.7
+markdown: True
 ---
 First row,defaulted to be header row,can be disabled
-1,cell can contain **markdown**,"It can be aribrary block element:- following standard markdown syntax- like this"
+1,cell can contain **markdown**,"It can be aribrary block element:
+
+- following standard markdown syntax
+- like this"
 2,"Any markdown syntax, e.g.",$$E = mc^2$$
 ```
 
@@ -83,7 +91,7 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
 
 -   `markdown`: If CSV table cell contains markdown syntax or not.
      Same as above.
-     Default: True
+     Default: False
 
 -   `include`: the path to an CSV file, can be relative/absolute.
     If non-empty, override the CSV in the CodeBlock.

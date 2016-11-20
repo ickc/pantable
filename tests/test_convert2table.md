@@ -78,7 +78,7 @@ rendered block markdown**):
 ---
 caption: 0.1
 header: IDK
-markdown: false
+markdown: true
 ...
 
 "
@@ -110,6 +110,7 @@ alignment: 0.1
 ---
 caption: "*Great* Title"
 header: True
+markdown: True
 alignment: AlignLeft, AlignRight, AlignCenter, AlignDefault
 include: tests/csv_tables.csv
 ...

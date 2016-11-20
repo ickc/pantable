@@ -69,6 +69,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 caption: &#39;*Awesome* **Markdown** Table&#39;
 alignment: RC
 table-width: 0.7
+markdown: True
 ---
 First row,defaulted to be header row,can be disabled
 1,cell can contain **markdown**,&quot;It can be aribrary block element:
@@ -129,7 +130,7 @@ First row,defaulted to be header row,can be disabled
 <p>Default: auto calculated from the length of each line in table cells.</p></li>
 <li><p><code>table-width</code>: the relative width of the table (e.g. relative to <code>\linewidth</code>). default: 1.0</p></li>
 <li><p><code>header</code>: If it has a header row or not. True/False/yes/NO are accepted, case-insensitive. default: True</p></li>
-<li><p><code>markdown</code>: If CSV table cell contains markdown syntax or not. Same as above. Default: True</p></li>
+<li><p><code>markdown</code>: If CSV table cell contains markdown syntax or not. Same as above. Default: False</p></li>
 <li><p><code>include</code>: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None</p></li>
 </ul>
 <p>When the metadata keys is invalid, the default will be used instead.</p>
@@ -151,87 +152,87 @@ First row,defaulted to be header row,can be disabled
 <thead>
 <tr class="header">
 <th></th>
-<th><p>pandoc-csv2table</p></th>
-<th><p>pandoc-placetable</p></th>
-<th><p>panflute example</p></th>
-<th><p>my proposal</p></th>
+<th>pandoc-csv2table</th>
+<th>pandoc-placetable</th>
+<th>panflute example</th>
+<th>my proposal</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><p>type</p></td>
-<td><p>type=simple|multiline|grid|pipe</p></td>
+<td>type</td>
+<td>type=simple|multiline|grid|pipe</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
-<td><p>caption</p></td>
-<td><p>caption</p></td>
-<td><p>caption</p></td>
-<td><p>title</p></td>
-<td><p>caption</p></td>
+<td>caption</td>
+<td>caption</td>
+<td>caption</td>
+<td>title</td>
+<td>caption</td>
 </tr>
 <tr class="odd">
-<td><p>aligns</p></td>
-<td><p>aligns=LRCD</p></td>
-<td><p>aligns=LRCD</p></td>
+<td>aligns</td>
+<td>aligns=LRCD</td>
+<td>aligns=LRCD</td>
 <td></td>
-<td><p>alignment: LRCD</p></td>
+<td>alignment: LRCD</td>
 </tr>
 <tr class="even">
-<td><p>width</p></td>
+<td>width</td>
 <td></td>
-<td><p>widths=&quot;0.5 0.2 0.3&quot;</p></td>
+<td>widths=&quot;0.5 0.2 0.3&quot;</td>
 <td></td>
-<td><p>width: [0.5, 0.2, 0.3]</p></td>
+<td>width: [0.5, 0.2, 0.3]</td>
 </tr>
 <tr class="odd">
-<td><p>table-width</p></td>
+<td>table-width</td>
 <td></td>
 <td></td>
 <td></td>
-<td><p>table-width: 1.0</p></td>
+<td>table-width: 1.0</td>
 </tr>
 <tr class="even">
-<td><p>header</p></td>
-<td><p>header=yes|no</p></td>
-<td><p>header=yes|no</p></td>
-<td><p>header: True|False</p></td>
-<td><p>header: True|False|yes|NO</p></td>
+<td>header</td>
+<td>header=yes|no</td>
+<td>header=yes|no</td>
+<td>header: True|False</td>
+<td>header: True|False|yes|NO</td>
 </tr>
 <tr class="odd">
-<td><p>markdown</p></td>
+<td>markdown</td>
 <td></td>
-<td><p>inlinemarkdown</p></td>
+<td>inlinemarkdown</td>
 <td></td>
-<td><p>markdown: True|False|YES|no</p></td>
+<td>markdown: True|False|YES|no</td>
 </tr>
 <tr class="even">
-<td><p>source</p></td>
-<td><p>source</p></td>
-<td><p>file</p></td>
-<td><p>source</p></td>
-<td><p>include</p></td>
+<td>source</td>
+<td>source</td>
+<td>file</td>
+<td>source</td>
+<td>include</td>
 </tr>
 <tr class="odd">
-<td><p>others</p></td>
+<td>others</td>
 <td></td>
-<td><p>delimiter</p></td>
+<td>delimiter</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
 <td></td>
 <td></td>
-<td><p>quotechar</p></td>
+<td>quotechar</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="odd">
 <td></td>
 <td></td>
-<td><p>id (wrapped by div)</p></td>
+<td>id (wrapped by div)</td>
 <td></td>
 <td></td>
 </tr>
