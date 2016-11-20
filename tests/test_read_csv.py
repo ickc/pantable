@@ -25,18 +25,18 @@ def test_read_csv():
     # check include
     include = 'tests/csv_tables.csv'
     assert read_csv(include,
-                                  data) == [['**_Fruit_**',
-                                             '~~Price~~',
-                                             '_Number_',
-                                             '`Advantages`'],
-                                            ['*Bananas~1~*',
-                                             '$1.34',
-                                             '12~units~',
-                                             'Benefits of eating bananas \n(**Note the appropriately\nrendered block markdown**):    \n\n- _built-in wrapper_        \n- ~~**bright color**~~\n\n'],
-                                            ['*Oranges~2~*',
-                                             '$2.10',
-                                             '5^10^~units~',
-                                             'Benefits of eating oranges:\n\n- **cures** scurvy\n- `tasty`']]
+                    data) == [['**_Fruit_**',
+                               '~~Price~~',
+                               '_Number_',
+                               '`Advantages`'],
+                              ['*Bananas~1~*',
+                               '$1.34',
+                               '12~units~',
+                               'Benefits of eating bananas \n(**Note the appropriately\nrendered block markdown**):    \n\n- _built-in wrapper_        \n- ~~**bright color**~~\n\n'],
+                              ['*Oranges~2~*',
+                               '$2.10',
+                               '5^10^~units~',
+                               'Benefits of eating oranges:\n\n- **cures** scurvy\n- `tasty`']]
     # check empty table
     include = None
     data = ''
