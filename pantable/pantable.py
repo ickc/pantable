@@ -17,7 +17,7 @@ Currently only CSV table is supported.
 -   table-width: the relative width of the table (e.g. relative to \linewidth).
     default: 1.0
 -   header: If it has a header row. default: true
--   markdown: If CSV table cell contains markdown syntax. default: True
+-   markdown: If CSV table cell contains markdown syntax. default: False
 -   include: the path to an CSV file.
     If non-empty, override the CSV in the CodeBlock.
     default: None
@@ -26,33 +26,19 @@ When the metadata keys is invalid, the default will be used instead.
 
 e.g.
 
-```markdown
-~~~table
+```table
 ---
-caption: "*Great* Title"
-alignment: LRC
-width:
-  - 0.1
-  - 0.2
-  - 0.3
-  - 0.4
-header: False
+caption: '*Awesome* **Markdown** Table'
+alignment: RC
+table-width: 0.7
 markdown: True
-...
-**_Fruit_**,~~Price~~,_Number_,`Advantages`
-*Bananas~1~*,$1.34,12~units~,"Benefits of eating bananas
-(**Note the appropriately
-rendered block markdown**):
+---
+First row,defaulted to be header row,can be disabled
+1,cell can contain **markdown**,"It can be aribrary block element:
 
-- _built-in wrapper_
-- ~~**bright color**~~
-
-"
-*Oranges~2~*,$2.10,5^10^~units~,"Benefits of eating oranges:
-
-- **cures** scurvy
-- `tasty`"
-~~~
+- following standard markdown syntax
+- like this"
+2,"Any markdown syntax, e.g.",$$E = mc^2$$
 ```
 """
 
@@ -91,7 +77,7 @@ def init_table_options(options):
     if 'header' not in options:
         options['header'] = True
     if 'markdown' not in options:
-        options['markdown'] = True
+        options['markdown'] = False
     if 'include' not in options:
         options['include'] = None
     return
@@ -108,8 +94,10 @@ def check_table_options(options):
     -   `markdown` set to `True` if invalid
     """
     try:
-        options['width'] = [(float(x) if x > 0 else 0)
+        options['width'] = [(float(x) if x >= 0 else None)
                             for x in options['width']]
+        if None in options['width']:
+            options['width'] = None
     except (ValueError, TypeError):
         options['width'] = None
     try:

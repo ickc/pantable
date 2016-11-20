@@ -12,7 +12,7 @@ def test_init_table_options():
         'width': None,
         'table-width': 1.0,
         'header': True,
-        'markdown': True,
+        'markdown': False,
         'include': None
     }
     options = {}

@@ -23,6 +23,7 @@ This won’t work on GitHub’s markdown rendering nor PyPI. See the README in [
     caption: '*Awesome* **Markdown** Table'
     alignment: RC
     table-width: 0.7
+    markdown: True
     ---
     First row,defaulted to be header row,can be disabled
     1,cell can contain **markdown**,"It can be aribrary block element:
@@ -39,6 +40,7 @@ becomes
 caption: '*Awesome* **Markdown** Table'
 alignment: RC
 table-width: 0.7
+markdown: True
 ---
 First row,defaulted to be header row,can be disabled
 1,cell can contain **markdown**,"It can be aribrary block element:
@@ -90,7 +92,7 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
 
 -   `header`: If it has a header row or not. True/False/yes/NO are accepted, case-insensitive. default: True
 
--   `markdown`: If CSV table cell contains markdown syntax or not. Same as above. Default: True
+-   `markdown`: If CSV table cell contains markdown syntax or not. Same as above. Default: False
 
 -   `include`: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None
 
