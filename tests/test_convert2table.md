@@ -1,5 +1,4 @@
-Comparison
-==========
+# Comparison
 
 ``` {.table}
 ---
@@ -18,8 +17,7 @@ width,,"widths=""0.5 0.2 0.3""",,"column-width: [0.5, 0.2, 0.3]"
 ,,id (wrapped by div),,
 ```
 
-Simple Test
-===========
+# Simple Test
 
 ``` {.table}
 **_Fruit_**,~~Price~~,_Number_,`Advantages`
@@ -37,8 +35,7 @@ rendered block markdown**):
 - `tasty`"
 ```
 
-Full Test
-=========
+# Full Test
 
 ``` {.table}
 ---
@@ -67,8 +64,7 @@ rendered block markdown**):
 - `tasty`"
 ```
 
-Testing Wrong Type
-==================
+# Testing Wrong Type
 
 ``` {.table}
 **_Fruit_**,~~Price~~,_Number_,`Advantages`
@@ -101,16 +97,14 @@ alignment: 0.1
 ---
 ```
 
-Testing 0 Table Width
-=====================
+# Testing 0 Table Width
 
 ``` {.table}
 ,
 ,
 ```
 
-Include External CSV
-====================
+# Include External CSV
 
 ``` {.table}
 ---
@@ -121,24 +115,21 @@ include: tests/csv_tables.csv
 ...
 ```
 
-Empty CSV
-=========
+# Empty CSV
 
 ``` {.table}
 ---
 ...
 ```
 
-Empty CSV 2
-===========
+# Empty CSV 2
 
 ``` {.table}
 ,
 ,
 ```
 
-Irregular CSV
-=============
+# Irregular CSV
 
 ``` {.table}
 ---
