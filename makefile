@@ -51,6 +51,7 @@ travis: $(testNative)
 
 clean:
 	rm -f $(testAll) $(docsAll)
+	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 
 # Making dependancies #################################################################################################################################################################################
 
