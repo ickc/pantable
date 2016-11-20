@@ -75,7 +75,7 @@ README.md: docs/README.md
 # Deploy to PyPI
 ## by Travis, properly git tagged
 pypi:
-	git tag -a v$(python setup.py --version) -m 'Deploy to PyPI'
+	git tag -a v$$(python setup.py --version) -m 'Deploy to PyPI'
 ## Manually
 pypiManual:
 	python setup.py register -r pypitest && python setup.py sdist upload -r pypitest && python setup.py register -r pypi && python setup.py sdist upload -r pypi
