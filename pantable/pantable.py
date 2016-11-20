@@ -194,7 +194,7 @@ def regularize_table_list(raw_table_list):
         if len(row) < max_number_of_columns:
             for i in range(max_number_of_columns - len(row)):
                 row.append('')
-    return raw_table_list
+    return
 
 
 def parse_table_list(markdown, raw_table_list):
@@ -228,7 +228,7 @@ def convert2table(options, data, element, doc):
     if raw_table_list == []:
         return []
     # regularize table: all rows should have same length
-    raw_table_list = regularize_table_list(raw_table_list)
+    regularize_table_list(raw_table_list)
     # parse list to panflute table
     table_body = parse_table_list(options['markdown'], raw_table_list)
     # parse table options
