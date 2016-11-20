@@ -31,6 +31,7 @@ env:
 before_install:
   - pip install -U pip
   - pip install -r requirements.txt
+  - pip install -r tests/requirements.txt
   - wget https://github.com/jgm/pandoc/releases/download/${pandocVersion%-*}/pandoc-$pandocVersion-amd64.deb &&
     sudo dpkg -i pandoc-$pandocVersion-amd64.deb
 # command to run tests
