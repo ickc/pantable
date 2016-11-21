@@ -1,12 +1,13 @@
-,pandoc-csv2table,pandoc-placetable,panflute example,my proposal
-type,type=simple|multiline|grid|pipe,,,
+,pandoc-csv2table,pandoc-placetable,panflute example,pantable
 caption,caption,caption,title,caption
-aligns,aligns=LRCD,aligns=LRCD,,alignment: LRCD
-width,,"widths=""0.5 0.2 0.3""",,"width: [0.5, 0.2, 0.3]"
+aligns,aligns = LRCD,aligns = LRCD,,aligns = LRCD
+width,,"widths = ""0.5 0.2 0.3""",,"width: [0.5, 0.2, 0.3]"
 table-width,,,,table-width: 1.0
-header,header=yes|no,header=yes|no,header: True|False,header: True|False|yes|NO
-markdown,,inlinemarkdown,,markdown: True|False|YES|no
+header,header = yes | no,header = yes | no,header: True | False,header: True | False | yes | NO
+markdown,,inlinemarkdown,,markdown: True | False | yes | NO
 source,source,file,source,include
-others,,delimiter,,
+others,type = simple | multiline | grid | pipe,,,
+,,delimiter,,
 ,,quotechar,,
 ,,id (wrapped by div),,
+Notes,,,,width are auto-calculated when width is not specified
