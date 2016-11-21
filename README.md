@@ -103,7 +103,7 @@ The followings are pandoc filters written in Haskell that provide similar functi
 
 -   [baig/pandoc-csv2table: A Pandoc filter that renders CSV as Pandoc Markdown Tables.](https://github.com/baig/pandoc-csv2table)
 -   [mb21/pandoc-placetable: Pandoc filter to include CSV data (from file or URL)](https://github.com/mb21/pandoc-placetable)
--   [panflute/csv-tables.py at 1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a · sergiocorreia/panflute](https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py)
+-   [sergiocorreia/panflute/csv-tables.py](https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py)
 
 ``` table
 ---
