@@ -14,14 +14,14 @@
 CSV Tables in Markdown: Pandoc Filter for CSV Tables
 ====================================================
 
-This allows CSV tables, optionally containing markdown syntax (enabled
+This allows CSV tables, optionally containing markdown syntax (disabled
 by default), to be put in markdown as a fenced code blocks.
 
 Example
 =======
 
-This won’t work on GitHub’s markdown rendering nor PyPI. See the README
-in `GitHub-pages <https://ickc.github.io/pantable/>`__. There’s a `LaTeX
+Also see the README in `GitHub
+Pages <https://ickc.github.io/pantable/>`__. There’s a `LaTeX
 output <https://ickc.github.io/pantable/README.pdf>`__ too.
 
 ::
@@ -59,6 +59,8 @@ becomes
 +--------+---------------------+--------------------------+
 
 Table: *Awesome* **Markdown** Table
+
+(The equation might not work if you view this on PyPI.)
 
 Install and Use
 ===============
