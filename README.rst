@@ -11,7 +11,7 @@
 ..
 
 |Build Status| |GitHub Releases| |PyPI version| |Development Status|
-|Python version| |License| |Coveralls| |Scrutinizer|
+|Python version| |License| |Coveralls|
 
 CSV Tables in Markdown: Pandoc Filter for CSV Tables
 ====================================================
@@ -193,5 +193,3 @@ similar functionality. This filter is born after testing with theirs.
 .. |License| image:: https://img.shields.io/pypi/l/pantable.svg
 .. |Coveralls| image:: https://img.shields.io/coveralls/ickc/pantable.svg
    :target: https://coveralls.io/github/ickc/pantable
-.. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/ickc/pantable.svg
-   :target: https://scrutinizer-ci.com/g/ickc/pantable/
