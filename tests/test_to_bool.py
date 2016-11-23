@@ -11,4 +11,5 @@ def test_to_bool():
     assert to_bool("yes")
     assert to_bool("no") is False
     assert to_bool("NO") is False
+    assert to_bool("xzy") is True
     return
