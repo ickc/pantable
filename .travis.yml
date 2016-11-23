@@ -36,6 +36,7 @@ before_install:
     sudo dpkg -i pandoc-$pandocVersion-amd64.deb
 # command to run tests
 script:
+  - coverage run --source=pantable setup.py test
   - make -j4 test
 cache:
   - pip
