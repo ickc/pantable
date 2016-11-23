@@ -97,12 +97,7 @@ alignment: 0.1
 ---
 ```
 
-# Testing 0 Table Width
 
-``` {.table}
-,
-,
-```
 
 # Include External CSV
 
@@ -123,7 +118,7 @@ include: tests/csv_tables.csv
 ...
 ```
 
-# Empty CSV 2
+# Testing 0 Table Width
 
 ``` {.table}
 ,
@@ -147,4 +142,10 @@ caption: *unquoted*
 ...
 1,2
 3,4
+```
+
+# One Row Table
+
+``` {.table}
+1,2
 ```
