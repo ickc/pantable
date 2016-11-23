@@ -1,3 +1,2 @@
 - bugs
     - apply the filter twice got error
-    - handle invalid YAML e.g. `caption: *unquoted*`
