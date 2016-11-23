@@ -4,8 +4,8 @@ cache:
   - pip
 # build matrix: different python and pandoc versions
 python:
-  # - "3.3"
-  # - "3.4"
+  - "3.3"
+  - "3.4"
   - "3.5"
   # - "3.5-dev" # 3.5 development branch
   # - "3.6-dev" # 3.6 development branch
@@ -28,7 +28,7 @@ env:
   # - pandocVersion=1.17.0.1-1
   # - pandocVersion=1.17.0.2-1
   # - pandocVersion=1.17.1-2
-  # - pandocVersion=1.17.2-1
+  - pandocVersion=1.17.2-1
   - pandocVersion=1.18-1
 matrix:
   allow_failures:
@@ -55,7 +55,9 @@ install:
 script:
   - make -j4 test
 after_success:
-  - coveralls
+  if [[ "$pandocVersion" == "1.18-1" ]] && [[ "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then
+    coveralls
+  fi
 deploy:
   provider: pypi
   user: ickc
@@ -63,3 +65,5 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
+    python: "3.5"
+    pandocVersion=1.18-1
