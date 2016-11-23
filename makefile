@@ -49,9 +49,15 @@ all: $(testAll) $(docsAll)
 docs: $(docsAll)
 readme: docs
 test: pytest pep8 pylint
+	coverage html
 
 clean:
-	rm -f $(testAll) $(docsAll)
+	rm -f .coverage $(testAll)
+	rm -rf htmlcov pantable.egg-info
+	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
+Clean:
+	rm -f .coverage $(testAll) $(docsAll)
+	rm -rf htmlcov pantable.egg-info
 	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 
 # Making dependancies #################################################################################################################################################################################
@@ -91,7 +97,7 @@ init:
 	pip install -r tests/requirements.txt
 
 pytest: $(testNative)
-	py.test tests
+	py.test -vv --cov=pantable tests
 
 # check python styles
 pep8:

@@ -12,3 +12,7 @@ __pycache__/
 # pypi
 dist/
 pantable.egg-info/
+
+# coverage
+.coverage
+htmlcov/
