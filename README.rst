@@ -1,0 +1,152 @@
+:Date:   November 22, 2016
+
+.. contents::
+   :depth: 3
+..
+
+|Build Status| |GitHub Releases| |PyPI version| |Development Status|
+|Python version| |Downloads| |License| |Coveralls| |Scrutinizer|
+
+CSV Tables in Markdown: Pandoc Filter for CSV Tables
+====================================================
+
+This allows CSV tables, optionally containing markdown syntax (enabled
+by default), to be put in markdown as a fenced code blocks.
+
+Example
+=======
+
+This won’t work on GitHub’s markdown rendering nor PyPI. See the README
+in `GitHub-pages <https://ickc.github.io/pantable/>`__. There’s a `LaTeX
+output <https://ickc.github.io/pantable/README.pdf>`__ too.
+
+::
+
+    ```table
+    ---
+    caption: '*Awesome* **Markdown** Table'
+    alignment: RC
+    table-width: 0.7
+    markdown: True
+    ---
+    First row,defaulted to be header row,can be disabled
+    1,cell can contain **markdown**,"It can be aribrary block element:
+
+    - following standard markdown syntax
+    - like this"
+    2,"Any markdown syntax, e.g.",$$E = mc^2$$
+    ```
+
+becomes
+
+.. code:: table
+
+    ---
+    caption: '*Awesome* **Markdown** Table'
+    alignment: RC
+    table-width: 0.7
+    markdown: True
+    ---
+    First row,defaulted to be header row,can be disabled
+    1,cell can contain **markdown**,"It can be aribrary block element:
+
+    - following standard markdown syntax
+    - like this"
+    2,"Any markdown syntax, e.g.",$$E = mc^2$$
+
+Install and Use
+===============
+
+Install:
+
+.. code:: bash
+
+    pip install -U pantable
+
+Use:
+
+.. code:: bash
+
+    pandoc -F pantable -o README.html README.md
+
+Syntax
+======
+
+Fenced code blocks is used, with a class ``table``. See
+`Example <#example>`__.
+
+Optionally, YAML metadata block can be used within the fenced code
+block, following standard pandoc YAML metadata block syntax. 7 metadata
+keys are recognized:
+
+-  ``caption``: the caption of the table. If omitted, no caption will be
+   inserted. Default: disabled.
+
+-  ``alignment``: a string of characters among ``L,R,C,D``,
+   case-insensitive, corresponds to Left-aligned, Right-aligned,
+   Center-aligned, Default-aligned respectively. e.g. ``LCRD`` for a
+   table with 4 columns. Default: ``DDD...``
+
+-  ``width``: a list of relative width corresponding to the width of
+   each columns. e.g.
+
+   .. code:: yaml
+
+       - width
+           - 0.1
+           - 0.2
+           - 0.3
+           - 0.4
+
+   Default: auto calculated from the length of each line in table cells.
+
+-  ``table-width``: the relative width of the table (e.g. relative to
+   ``\linewidth``). default: 1.0
+
+-  ``header``: If it has a header row or not. True/False/yes/NO are
+   accepted, case-insensitive. default: True
+
+-  ``markdown``: If CSV table cell contains markdown syntax or not. Same
+   as above. Default: False
+
+-  ``include``: the path to an CSV file, can be relative/absolute. If
+   non-empty, override the CSV in the CodeBlock. default: None
+
+When the metadata keys is invalid, the default will be used instead.
+
+Related Filters
+===============
+
+The followings are pandoc filters written in Haskell that provide
+similar functionality. This filter is born after testing with theirs.
+
+-  `baig/pandoc-csv2table: A Pandoc filter that renders CSV as Pandoc
+   Markdown Tables. <https://github.com/baig/pandoc-csv2table>`__
+-  `mb21/pandoc-placetable: Pandoc filter to include CSV data (from file
+   or URL) <https://github.com/mb21/pandoc-placetable>`__
+-  `sergiocorreia/panflute/csv-tables.py <https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py>`__
+
+.. code:: table
+
+    ---
+    Caption: Comparison
+    include: docs/comparison.csv
+    ...
+
+.. |Build Status| image:: https://travis-ci.org/ickc/pantable.svg?branch=master
+   :target: https://travis-ci.org/ickc/pantable
+.. |GitHub Releases| image:: https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release
+   :target: https://github.com/ickc/pantable/releases
+.. |PyPI version| image:: https://img.shields.io/pypi/v/pantable.svg
+   :target: https://pypi.python.org/pypi/pantable/
+.. |Development Status| image:: https://img.shields.io/pypi/status/pantable.svg
+   :target: https://pypi.python.org/pypi/pantable/
+.. |Python version| image:: https://img.shields.io/pypi/pyversions/pantable.svg
+   :target: https://pypi.python.org/pypi/pantable/
+.. |Downloads| image:: https://img.shields.io/pypi/dm/pantable.svg
+   :target: https://pypi.python.org/pypi/pantable/
+.. |License| image:: https://img.shields.io/pypi/l/pantable.svg
+.. |Coveralls| image:: https://img.shields.io/coveralls/ickc/pantable.svg
+   :target: https://coveralls.io/github/ickc/pantable
+.. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/ickc/pantable.svg
+   :target: https://scrutinizer-ci.com/g/ickc/pantable/
