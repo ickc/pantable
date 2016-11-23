@@ -1,2 +1,0 @@
-- bugs
-    - apply the filter twice got error
