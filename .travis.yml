@@ -66,4 +66,4 @@ deploy:
   on:
     tags: true
     python: "3.5"
-    pandocVersion=1.18-1
+    env: pandocVersion=1.18-1
