@@ -1,0 +1,8 @@
+[report]
+
+exclude_lines =
+    if __name__ == .__main__.:
+    def main
+    except ZeroDivisionError
+    return \[\]
+    __version__

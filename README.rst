@@ -7,7 +7,7 @@
 ..
 
 .. contents::
-   :depth: 2
+   :depth: 3
 ..
 
 |Build Status| |GitHub Releases| |PyPI version| |Development Status|
