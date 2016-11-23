@@ -1,5 +1,7 @@
 # os: linux and sudo: false is assumed, which means it is using container-based Ubuntu 12.04
 language: python
+cache:
+  - pip
 # build matrix: different python and pandoc versions
 python:
   # - "3.3"
@@ -28,18 +30,6 @@ env:
   # - pandocVersion=1.17.1-2
   # - pandocVersion=1.17.2-1
   - pandocVersion=1.18-1
-before_install:
-  - pip install -U pip
-  - pip install -r requirements.txt
-  - pip install -r tests/requirements.txt
-  - wget https://github.com/jgm/pandoc/releases/download/${pandocVersion%-*}/pandoc-$pandocVersion-amd64.deb &&
-    sudo dpkg -i pandoc-$pandocVersion-amd64.deb
-# command to run tests
-script:
-  - coverage run --source=pantable setup.py test
-  - make -j4 test
-cache:
-  - pip
 matrix:
   allow_failures:
     - python: "3.5-dev"
@@ -56,6 +46,16 @@ matrix:
     # - env: pandocVersion=1.15.1-1
     # - env: pandocVersion=1.15.2-1
   fast_finish: true
+install:
+  - wget https://github.com/jgm/pandoc/releases/download/${pandocVersion%-*}/pandoc-$pandocVersion-amd64.deb &&
+    sudo dpkg -i pandoc-$pandocVersion-amd64.deb
+  - pip install -U pip
+  - pip install -e .[test]
+# command to run tests
+script:
+  - make -j4 test
+after_success:
+  - coveralls
 deploy:
   provider: pypi
   user: ickc
@@ -63,5 +63,3 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-after_success:
-  - coveralls
