@@ -55,9 +55,7 @@ install:
 script:
   - make -j4 test
 after_success:
-  if [ "$pandocVersion" == "1.18-1" ] && [ "$TRAVIS_PYTHON_VERSION" == "3.5" ]; then
-    coveralls
-  fi
+  - if [[ "$pandocVersion" == "1.18-1" ]] && [[ "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then coveralls else printf "skip coveralls" fi
 deploy:
   provider: pypi
   user: ickc
