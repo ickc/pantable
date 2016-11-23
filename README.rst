@@ -1,5 +1,9 @@
 :Date:   November 22, 2016
 
+.. role:: math(raw)
+   :format: html latex
+..
+
 .. contents::
    :depth: 3
 ..
@@ -39,20 +43,22 @@ output <https://ickc.github.io/pantable/README.pdf>`__ too.
 
 becomes
 
-.. code:: table
++--------+---------------------+--------------------------+
+| First  | defaulted to be     | can be disabled          |
+| row    | header row          |                          |
++========+=====================+==========================+
+| 1      | cell can contain    | It can be aribrary block |
+|        | **markdown**        | element:                 |
+|        |                     |                          |
+|        |                     | -  following standard    |
+|        |                     |    markdown syntax       |
+|        |                     | -  like this             |
++--------+---------------------+--------------------------+
+| 2      | Any markdown        | .. math:: E = mc^2       |
+|        | syntax, e.g.        |                          |
++--------+---------------------+--------------------------+
 
-    ---
-    caption: '*Awesome* **Markdown** Table'
-    alignment: RC
-    table-width: 0.7
-    markdown: True
-    ---
-    First row,defaulted to be header row,can be disabled
-    1,cell can contain **markdown**,"It can be aribrary block element:
-
-    - following standard markdown syntax
-    - like this"
-    2,"Any markdown syntax, e.g.",$$E = mc^2$$
+Table: *Awesome* **Markdown** Table
 
 Install and Use
 ===============
@@ -126,12 +132,49 @@ similar functionality. This filter is born after testing with theirs.
    or URL) <https://github.com/mb21/pandoc-placetable>`__
 -  `sergiocorreia/panflute/csv-tables.py <https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py>`__
 
-.. code:: table
-
-    ---
-    Caption: Comparison
-    include: docs/comparison.csv
-    ...
++-------+---------------------+------------+-----------+----------------------------+
+|       | pandoc-csv2table    | pandoc-pla | panflute  | pantable                   |
+|       |                     | cetable    | example   |                            |
++=======+=====================+============+===========+============================+
+| capti | caption             | caption    | title     | caption                    |
+| on    |                     |            |           |                            |
++-------+---------------------+------------+-----------+----------------------------+
+| align | aligns = LRCD       | aligns = L |           | aligns = LRCD              |
+| s     |                     | RCD        |           |                            |
++-------+---------------------+------------+-----------+----------------------------+
+| width |                     | widths = " |           | width: [0.5, 0.2, 0.3]     |
+|       |                     | 0.5 0.2 0. |           |                            |
+|       |                     | 3"         |           |                            |
++-------+---------------------+------------+-----------+----------------------------+
+| table |                     |            |           | table-width: 1.0           |
+| -widt |                     |            |           |                            |
+| h     |                     |            |           |                            |
++-------+---------------------+------------+-----------+----------------------------+
+| heade | header = yes \| no  | header = y | header: T | header: True \| False \| y |
+| r     |                     | es \| no   | rue \| Fa | es \| NO                   |
+|       |                     |            | lse       |                            |
++-------+---------------------+------------+-----------+----------------------------+
+| markd |                     | inlinemark |           | markdown: True \| False \| |
+| own   |                     | down       |           |  yes \| NO                 |
++-------+---------------------+------------+-----------+----------------------------+
+| sourc | source              | file       | source    | include                    |
+| e     |                     |            |           |                            |
++-------+---------------------+------------+-----------+----------------------------+
+| other | type = simple \| mu |            |           |                            |
+| s     | ltiline \| grid \|  |            |           |                            |
+|       | pipe                |            |           |                            |
++-------+---------------------+------------+-----------+----------------------------+
+|       |                     | delimiter  |           |                            |
++-------+---------------------+------------+-----------+----------------------------+
+|       |                     | quotechar  |           |                            |
++-------+---------------------+------------+-----------+----------------------------+
+|       |                     | id (wrappe |           |                            |
+|       |                     | d by div)  |           |                            |
++-------+---------------------+------------+-----------+----------------------------+
+| Notes |                     |            |           | width are auto-calculated  |
+|       |                     |            |           | when width is not specifie |
+|       |                     |            |           | d                          |
++-------+---------------------+------------+-----------+----------------------------+
 
 .. |Build Status| image:: https://travis-ci.org/ickc/pantable.svg?branch=master
    :target: https://travis-ci.org/ickc/pantable
