@@ -5,5 +5,5 @@
 [![Python version](https://img.shields.io/pypi/pyversions/pantable.svg)](https://pypi.python.org/pypi/pantable/)
 <!-- [![Downloads](https://img.shields.io/pypi/dm/pantable.svg)](https://pypi.python.org/pypi/pantable/) -->
 ![License](https://img.shields.io/pypi/l/pantable.svg)
-<!-- [![Coveralls](https://img.shields.io/coveralls/ickc/pantable.svg)](https://coveralls.io/github/ickc/pantable) -->
+[![Coveralls](https://img.shields.io/coveralls/ickc/pantable.svg)](https://coveralls.io/github/ickc/pantable)
 [![Scrutinizer](https://img.shields.io/scrutinizer/g/ickc/pantable.svg)](https://scrutinizer-ci.com/g/ickc/pantable/)
