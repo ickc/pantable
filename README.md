@@ -35,20 +35,37 @@ This won’t work on GitHub’s markdown rendering nor PyPI. See the README in [
 
 becomes
 
-``` table
----
-caption: '*Awesome* **Markdown** Table'
-alignment: RC
-table-width: 0.7
-markdown: True
----
-First row,defaulted to be header row,can be disabled
-1,cell can contain **markdown**,"It can be aribrary block element:
-
-- following standard markdown syntax
-- like this"
-2,"Any markdown syntax, e.g.",$$E = mc^2$$
-```
+<table style="width:70%;">
+<caption><em>Awesome</em> <strong>Markdown</strong> Table</caption>
+<colgroup>
+<col width="8%" />
+<col width="27%" />
+<col width="34%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right"><p>First row</p></th>
+<th align="center"><p>defaulted to be header row</p></th>
+<th><p>can be disabled</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right"><p>1</p></td>
+<td align="center"><p>cell can contain <strong>markdown</strong></p></td>
+<td><p>It can be aribrary block element:</p>
+<ul>
+<li>following standard markdown syntax</li>
+<li>like this</li>
+</ul></td>
+</tr>
+<tr class="even">
+<td align="right"><p>2</p></td>
+<td align="center"><p>Any markdown syntax, e.g.</p></td>
+<td><p><br /><span class="math display"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span><br /></p></td>
+</tr>
+</tbody>
+</table>
 
 Install and Use
 ===============
@@ -107,9 +124,107 @@ The followings are pandoc filters written in Haskell that provide similar functi
 -   [mb21/pandoc-placetable: Pandoc filter to include CSV data (from file or URL)](https://github.com/mb21/pandoc-placetable)
 -   [sergiocorreia/panflute/csv-tables.py](https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py)
 
-``` table
----
-Caption: Comparison
-include: docs/comparison.csv
-...
-```
+<table>
+<colgroup>
+<col width="7%" />
+<col width="26%" />
+<col width="15%" />
+<col width="13%" />
+<col width="36%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>pandoc-csv2table</th>
+<th>pandoc-placetable</th>
+<th>panflute example</th>
+<th>pantable</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>caption</td>
+<td>caption</td>
+<td>caption</td>
+<td>title</td>
+<td>caption</td>
+</tr>
+<tr class="even">
+<td>aligns</td>
+<td>aligns = LRCD</td>
+<td>aligns = LRCD</td>
+<td></td>
+<td>aligns = LRCD</td>
+</tr>
+<tr class="odd">
+<td>width</td>
+<td></td>
+<td>widths = &quot;0.5 0.2 0.3&quot;</td>
+<td></td>
+<td>width: [0.5, 0.2, 0.3]</td>
+</tr>
+<tr class="even">
+<td>table-width</td>
+<td></td>
+<td></td>
+<td></td>
+<td>table-width: 1.0</td>
+</tr>
+<tr class="odd">
+<td>header</td>
+<td>header = yes | no</td>
+<td>header = yes | no</td>
+<td>header: True | False</td>
+<td>header: True | False | yes | NO</td>
+</tr>
+<tr class="even">
+<td>markdown</td>
+<td></td>
+<td>inlinemarkdown</td>
+<td></td>
+<td>markdown: True | False | yes | NO</td>
+</tr>
+<tr class="odd">
+<td>source</td>
+<td>source</td>
+<td>file</td>
+<td>source</td>
+<td>include</td>
+</tr>
+<tr class="even">
+<td>others</td>
+<td>type = simple | multiline | grid | pipe</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>delimiter</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>quotechar</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>id (wrapped by div)</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Notes</td>
+<td></td>
+<td></td>
+<td></td>
+<td>width are auto-calculated when width is not specified</td>
+</tr>
+</tbody>
+</table>
