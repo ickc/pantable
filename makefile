@@ -91,7 +91,7 @@ init:
 	pip install -r tests/requirements.txt
 
 pytest: $(testNative)
-	py.test tests
+	py.test --cov=pantable tests
 
 # check python styles
 pep8:
