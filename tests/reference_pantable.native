@@ -156,4 +156,6 @@
   ,[Plain [Str ""]]
   ,[Plain [Str ""]]
   ,[Plain [Str ""]]
-  ,[Plain [Str ""]]]]]
+  ,[Plain [Str ""]]]]
+,Header 1 ("invalid-yaml",[],[]) [Str "Invalid",Space,Str "YAML"]
+,CodeBlock ("",["table"],[]) "---\ncaption: *unquoted*\n...\n1,2\n3,4"]

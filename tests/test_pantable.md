@@ -140,3 +140,11 @@ markdown: False
 1
 ```
 
+# Invalid YAML
+``` {.table}
+---
+caption: *unquoted*
+...
+1,2
+3,4
+```
