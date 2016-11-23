@@ -11,7 +11,7 @@
 ..
 
 |Build Status| |GitHub Releases| |PyPI version| |Development Status|
-|Python version| |License| |Scrutinizer|
+|Python version| |License| |Coveralls| |Scrutinizer|
 
 CSV Tables in Markdown: Pandoc Filter for CSV Tables
 ====================================================
@@ -58,6 +58,7 @@ becomes
 +--------+---------------------+--------------------------+
 | 2      | Any markdown        | .. math:: E = mc^2       |
 |        | syntax, e.g.        |                          |
+                                                         
 +--------+---------------------+--------------------------+
 
 Table: *Awesome* **Markdown** Table
@@ -191,5 +192,7 @@ similar functionality. This filter is born after testing with theirs.
 .. |Python version| image:: https://img.shields.io/pypi/pyversions/pantable.svg
    :target: https://pypi.python.org/pypi/pantable/
 .. |License| image:: https://img.shields.io/pypi/l/pantable.svg
+.. |Coveralls| image:: https://img.shields.io/coveralls/ickc/pantable.svg
+   :target: https://coveralls.io/github/ickc/pantable
 .. |Scrutinizer| image:: https://img.shields.io/scrutinizer/g/ickc/pantable.svg
    :target: https://scrutinizer-ci.com/g/ickc/pantable/
