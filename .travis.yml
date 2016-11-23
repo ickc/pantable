@@ -55,7 +55,7 @@ install:
 script:
   - make -j4 test
 after_success:
-  if [[ "$pandocVersion" == "1.18-1" ]] && [[ "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then
+  if [ "$pandocVersion" == "1.18-1" ] && [ "$TRAVIS_PYTHON_VERSION" == "3.5" ]; then
     coveralls
   fi
 deploy:
