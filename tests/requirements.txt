@@ -3,4 +3,3 @@ pylint
 pytest
 pytest-cov
 coveralls
-pypandoc
