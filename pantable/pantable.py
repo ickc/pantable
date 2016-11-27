@@ -233,7 +233,7 @@ def convert2table(options, data, **__):
     # parse csv to list
     raw_table_list = read_csv(options['include'], data)
     # check empty table
-    if raw_table_list == []:
+    if not raw_table_list:
         panflute.debug("pantable: table is empty")
         return []
     # regularize table: all rows should have same length
