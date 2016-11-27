@@ -16,3 +16,6 @@ pantable.egg-info/
 # coverage
 .coverage
 htmlcov/
+
+# pycharm
+.idea/
