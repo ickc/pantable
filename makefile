@@ -96,8 +96,14 @@ init:
 	pip install -r requirements.txt
 	pip install -r tests/requirements.txt
 
-pytest: $(testNative)
+pytest: $(testNative) tests/tables.pkl tests/test_idempotent.native
 	python3 -m pytest -vv --cov=pantable tests
+%.pkl: %.md
+	pandoc -F tests/to_pkl.py $< > /dev/null
+tests/reference_idempotent.native: tests/test_pantable.md
+	pandoc --normalize -t native -F pantable/pantable.py -F pantable/pantable2csv.py -F pantable/pantable.py -F pantable/pantable2csv.py -o $@ $<
+tests/test_idempotent.native: tests/reference_idempotent.native
+	pandoc --normalize -f native -t native -F pantable/pantable.py -F pantable/pantable2csv.py -o $@ $<
 
 # check python styles
 pep8:

@@ -5,4 +5,5 @@ exclude_lines =
     def main
     except ZeroDivisionError
     return \[\]
+    return None
     __version__
