@@ -44,7 +44,7 @@ def test_check_table_options():
     check_table_options(options)
     assert options['include'] is None
     # valid include
-    options['include'] = 'tests/csv_tables.csv'
+    options['include'] = 'tests/pantable/csv_tables.csv'
     check_table_options(options)
-    assert options['include'] == 'tests/csv_tables.csv'
+    assert options['include'] == 'tests/pantable/csv_tables.csv'
     return

@@ -23,7 +23,7 @@ def test_read_csv():
         ['5', '6', '7', '8']
     ]
     # check include
-    include = 'tests/csv_tables.csv'
+    include = 'tests/pantable/csv_tables.csv'
     assert read_csv(include,
                     data) == [['**_Fruit_**',
                                '~~Price~~',
