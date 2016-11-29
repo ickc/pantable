@@ -154,7 +154,8 @@ def parse_table_options(options, raw_table_list):
             except IndexError:
                 parsed_alignment += ["AlignDefault" for __ in range(
                     number_of_columns - len(parsed_alignment))]
-                panflute.debug("pantable: alignment string is either invalid or too short")
+                panflute.debug(
+                    "pantable: alignment string is either invalid or too short")
         options['alignment'] = parsed_alignment
     # calculate width
     if options['width'] is None:
