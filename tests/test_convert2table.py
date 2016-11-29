@@ -13,6 +13,9 @@ def test_convert2table():
 '''
     table = convert2table({'width': [0, 0]}, data)
     assert str(table) == "Table(TableRow(TableCell(Plain(Str(1))) TableCell(Plain(Str(2)))) TableRow(TableCell(Plain(Str(3))) TableCell(Plain(Str(4)))); alignment=['AlignDefault', 'AlignDefault'], width=[0.0, 0.0], rows=2, cols=2)"
+    # empty header_row
+    table = convert2table({'header': False}, data)
+    assert str(table) == "Table(TableRow(TableCell(Plain(Str())) TableCell(Plain(Str()))) TableRow(TableCell(Plain(Str(1))) TableCell(Plain(Str(2)))) TableRow(TableCell(Plain(Str(3))) TableCell(Plain(Str(4)))); alignment=['AlignDefault', 'AlignDefault'], width=[0.5, 0.5], rows=3, cols=2)"
     # empty table
     data = ','
     table = convert2table({}, data)
