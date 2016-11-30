@@ -107,8 +107,7 @@ Use:
 Syntax
 ------
 
-Fenced code blocks is used, with a class ``table``. See
-`Example <#example>`__.
+Fenced code blocks is used, with a class ``table``. See [Example].
 
 Optionally, YAML metadata block can be used within the fenced code
 block, following standard pandoc YAML metadata block syntax. 7 metadata
