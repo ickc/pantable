@@ -65,7 +65,7 @@ output <https://ickc.github.io/pantable/README.pdf>`__ too.
 
     - following standard markdown syntax
     - like this"
-    2,"Any markdown syntax, e.g.",$$E = mc^2$$
+    2,"Any markdown syntax, e.g.",$E = mc^2$
     ```
 
 becomes
@@ -81,7 +81,7 @@ becomes
 |        |                     |    markdown syntax       |
 |        |                     | -  like this             |
 +--------+---------------------+--------------------------+
-| 2      | Any markdown        | .. math:: E = mc^2       |
+| 2      | Any markdown        | :math:`E = mc^2`         |
 |        | syntax, e.g.        |                          |
 +--------+---------------------+--------------------------+
 
@@ -161,7 +161,7 @@ these 2 formats.
 
 For example, in the markdown source:
 
-.. code:: markdown
+::
 
     +--------+---------------------+--------------------------+
     | First  | defaulted to be     | can be disabled          |
@@ -182,7 +182,7 @@ For example, in the markdown source:
 
 running ``pandoc -F pantable2csv -o output.md input.md``, it becomes
 
-.. code:: markdown
+::
 
     ``` {.table}
     ---

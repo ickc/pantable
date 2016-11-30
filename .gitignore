@@ -19,3 +19,6 @@ htmlcov/
 
 # pycharm
 .idea/
+
+# rst2html
+README.html
