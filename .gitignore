@@ -1,8 +1,8 @@
 # macOS files
 .DS_Store
 
-tests/test_*.native
-tests/test_*.pdf
+tests/*.native
+tests/*.pdf
 
 # python auxiliary 
 __pycache__/
