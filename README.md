@@ -4,8 +4,8 @@
     -   [Example](#example)
     -   [Install and Use](#install-and-use)
     -   [Syntax](#syntax)
-    -   [Related Filters](#related-filters)
 -   [`pantable2csv`](#pantable2csv)
+-   [Related Filters](#related-filters)
 
 [![Build Status](https://travis-ci.org/ickc/pantable.svg?branch=master)](https://travis-ci.org/ickc/pantable) [![GitHub Releases](https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release)](https://github.com/ickc/pantable/releases) [![PyPI version](https://img.shields.io/pypi/v/pantable.svg)](https://pypi.python.org/pypi/pantable/) [![Development Status](https://img.shields.io/pypi/status/pantable.svg)](https://pypi.python.org/pypi/pantable/) [![Python version](https://img.shields.io/pypi/pyversions/pantable.svg)](https://pypi.python.org/pypi/pantable/) <!-- [![Downloads](https://img.shields.io/pypi/dm/pantable.svg)](https://pypi.python.org/pypi/pantable/) --> ![License](https://img.shields.io/pypi/l/pantable.svg) [![Coveralls](https://img.shields.io/coveralls/ickc/pantable.svg)](https://coveralls.io/github/ickc/pantable) <!-- [![Scrutinizer](https://img.shields.io/scrutinizer/g/ickc/pantable.svg)](https://scrutinizer-ci.com/g/ickc/pantable/) -->
 
@@ -132,8 +132,58 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
 
 When the metadata keys is invalid, the default will be used instead.
 
+`pantable2csv`
+==============
+
+This one is the inverse of `pantable`, a panflute filter to convert any native pandoc tables into the CSV table format used by pantable.
+
+Effectively, `pantable` forms a “CSV Reader”, and `pantable2csv` forms a “CSV Writer”. It allows you to convert back and forth between these 2 formats.
+
+For example, in the markdown source:
+
+``` markdown
++--------+---------------------+--------------------------+
+| First  | defaulted to be     | can be disabled          |
+| row    | header row          |                          |
++========+=====================+==========================+
+| 1      | cell can contain    | It can be aribrary block |
+|        | **markdown**        | element:                 |
+|        |                     |                          |
+|        |                     | -   following standard   |
+|        |                     |     markdown syntax      |
+|        |                     | -   like this            |
++--------+---------------------+--------------------------+
+| 2      | Any markdown        | $$E = mc^2$$             |
+|        | syntax, e.g.        |                          |
++--------+---------------------+--------------------------+
+
+: *Awesome* **Markdown** Table
+```
+
+running `pandoc -F pantable2csv -o output.md input.md`, it becomes
+
+```` markdown
+``` {.table}
+---
+alignment: DDD
+caption: '*Awesome* **Markdown** Table'
+header: true
+markdown: true
+table-width: 0.8055555555555556
+width: [0.125, 0.3055555555555556, 0.375]
+---
+First row,defaulted to be header row,can be disabled
+1,cell can contain **markdown**,"It can be aribrary block element:
+
+-   following standard markdown syntax
+-   like this
+"
+2,"Any markdown syntax, e.g.",$$E = mc^2$$
+```
+````
+
 Related Filters
----------------
+===============
 
 The followings are pandoc filters written in Haskell that provide similar functionality. This filter is born after testing with theirs.
 
@@ -245,53 +295,3 @@ The followings are pandoc filters written in Haskell that provide similar functi
 </tr>
 </tbody>
 </table>
-
-`pantable2csv`
-==============
-
-This one is the inverse of `pantable`, a panflute filter to convert any native pandoc tables into the CSV table format used by pantable.
-
-Effectively, `pantable` forms a “CSV Reader”, and `pantable2csv` forms a “CSV Writer”. It allows you to convert back and forth between these 2 formats.
-
-For example, in the markdown source:
-
-``` markdown
-+--------+---------------------+--------------------------+
-| First  | defaulted to be     | can be disabled          |
-| row    | header row          |                          |
-+========+=====================+==========================+
-| 1      | cell can contain    | It can be aribrary block |
-|        | **markdown**        | element:                 |
-|        |                     |                          |
-|        |                     | -   following standard   |
-|        |                     |     markdown syntax      |
-|        |                     | -   like this            |
-+--------+---------------------+--------------------------+
-| 2      | Any markdown        | $$E = mc^2$$             |
-|        | syntax, e.g.        |                          |
-+--------+---------------------+--------------------------+
-
-: *Awesome* **Markdown** Table
-```
-
-running `pandoc -F pantable2csv -o output.md input.md`, it becomes
-
-```` markdown
-``` {.table}
----
-alignment: DDD
-caption: '*Awesome* **Markdown** Table'
-header: true
-markdown: true
-table-width: 0.8055555555555556
-width: [0.125, 0.3055555555555556, 0.375]
----
-First row,defaulted to be header row,can be disabled
-1,cell can contain **markdown**,"It can be aribrary block element:
-
--   following standard markdown syntax
--   like this
-"
-2,"Any markdown syntax, e.g.",$$E = mc^2$$
-```
-````
