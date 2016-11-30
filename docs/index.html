@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <meta name="dcterms.date" content="2016-11-22">
-  <title></title>
+  <meta name="dcterms.date" content="2016-11-30">
+  <title>CSV Tables in Markdown — Pandoc Filter for CSV Tables</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
 div.sourceCode { overflow-x: auto; }
@@ -51,19 +51,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   <![endif]-->
 </head>
 <body>
+<header>
+<h1 class="title">CSV Tables in Markdown — Pandoc Filter for CSV Tables</h1>
+<p class="date">November 30, 2016</p>
+</header>
 <nav id="TOC">
 <ul>
-<li><a href="#csv-tables-in-markdown-pandoc-filter-for-csv-tables"><span class="toc-section-number">1</span> CSV Tables in Markdown: Pandoc Filter for CSV Tables</a></li>
-<li><a href="#example"><span class="toc-section-number">2</span> Example</a></li>
-<li><a href="#install-and-use"><span class="toc-section-number">3</span> Install and Use</a></li>
-<li><a href="#syntax"><span class="toc-section-number">4</span> Syntax</a></li>
-<li><a href="#related-filters"><span class="toc-section-number">5</span> Related Filters</a></li>
+<li><a href="#pantable"><span class="toc-section-number">1</span> <code>pantable</code></a><ul>
+<li><a href="#example"><span class="toc-section-number">1.1</span> Example</a></li>
+<li><a href="#install-and-use"><span class="toc-section-number">1.2</span> Install and Use</a></li>
+<li><a href="#syntax"><span class="toc-section-number">1.3</span> Syntax</a></li>
+<li><a href="#related-filters"><span class="toc-section-number">1.4</span> Related Filters</a></li>
+</ul></li>
+<li><a href="#pantable2csv"><span class="toc-section-number">2</span> <code>pantable2csv</code></a></li>
 </ul>
 </nav>
 <p><a href="https://travis-ci.org/ickc/pantable"><img src="https://travis-ci.org/ickc/pantable.svg?branch=master" alt="Build Status" /></a> <a href="https://github.com/ickc/pantable/releases"><img src="https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release" alt="GitHub Releases" /></a> <a href="https://pypi.python.org/pypi/pantable/"><img src="https://img.shields.io/pypi/v/pantable.svg" alt="PyPI version" /></a> <a href="https://pypi.python.org/pypi/pantable/"><img src="https://img.shields.io/pypi/status/pantable.svg" alt="Development Status" /></a> <a href="https://pypi.python.org/pypi/pantable/"><img src="https://img.shields.io/pypi/pyversions/pantable.svg" alt="Python version" /></a> <!-- [![Downloads](https://img.shields.io/pypi/dm/pantable.svg)](https://pypi.python.org/pypi/pantable/) --> <img src="https://img.shields.io/pypi/l/pantable.svg" alt="License" /> <a href="https://coveralls.io/github/ickc/pantable"><img src="https://img.shields.io/coveralls/ickc/pantable.svg" alt="Coveralls" /></a> <!-- [![Scrutinizer](https://img.shields.io/scrutinizer/g/ickc/pantable.svg)](https://scrutinizer-ci.com/g/ickc/pantable/) --></p>
-<h1 id="csv-tables-in-markdown-pandoc-filter-for-csv-tables"><span class="header-section-number">1</span> CSV Tables in Markdown: Pandoc Filter for CSV Tables</h1>
+<p>The pantable package comes with 2 pandoc filters, <code>pantable.py</code> and <code>pantable2csv.py</code>. <code>pantable</code> is the main filter, introducing a syntax to include CSV table in markdown source. <code>pantable2csv</code> complements <code>pantable</code>, is the inverse of <code>pantable</code>, which convert native pandoc tables into the CSV table format defined by <code>pantable</code>.</p>
+<p>Some example uses are:</p>
+<ol>
+<li><p>You already have tables in CSV format.</p></li>
+<li><p>You feel that directly editing markdown table is troublesome. You want a spreadsheet interface to edit, but want to convert it to native pandoc table for higher readability. And this process might go back and forth.</p></li>
+<li><p>You want lower-level control on the table and column widths.</p></li>
+<li><p>You want to use all table features supported by the pandoc’s internal AST table format, which is not possible in markdown for pandoc &lt;= 1.18.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p></li>
+</ol>
+<h1 id="pantable"><span class="header-section-number">1</span> <code>pantable</code></h1>
 <p>This allows CSV tables, optionally containing markdown syntax (disabled by default), to be put in markdown as a fenced code blocks.</p>
-<h1 id="example"><span class="header-section-number">2</span> Example</h1>
+<h2 id="example"><span class="header-section-number">1.1</span> Example</h2>
 <p>Also see the README in <a href="https://ickc.github.io/pantable/">GitHub Pages</a>. There’s a <a href="https://ickc.github.io/pantable/README.pdf">LaTeX output</a> too.</p>
 <pre><code>```table
 ---
@@ -112,12 +126,12 @@ First row,defaulted to be header row,can be disabled
 </tbody>
 </table>
 <p>(The equation might not work if you view this on PyPI.)</p>
-<h1 id="install-and-use"><span class="header-section-number">3</span> Install and Use</h1>
+<h2 id="install-and-use"><span class="header-section-number">1.2</span> Install and Use</h2>
 <p>Install:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip</span> install -U pantable</code></pre></div>
 <p>Use:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pandoc</span> -F pantable -o README.html README.md</code></pre></div>
-<h1 id="syntax"><span class="header-section-number">4</span> Syntax</h1>
+<h2 id="syntax"><span class="header-section-number">1.3</span> Syntax</h2>
 <p>Fenced code blocks is used, with a class <code>table</code>. See <a href="#example">Example</a>.</p>
 <p>Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML metadata block syntax. 7 metadata keys are recognized:</p>
 <ul>
@@ -136,7 +150,7 @@ First row,defaulted to be header row,can be disabled
 <li><p><code>include</code>: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None</p></li>
 </ul>
 <p>When the metadata keys is invalid, the default will be used instead.</p>
-<h1 id="related-filters"><span class="header-section-number">5</span> Related Filters</h1>
+<h2 id="related-filters"><span class="header-section-number">1.4</span> Related Filters</h2>
 <p>The followings are pandoc filters written in Haskell that provide similar functionality. This filter is born after testing with theirs.</p>
 <ul>
 <li><a href="https://github.com/baig/pandoc-csv2table">baig/pandoc-csv2table: A Pandoc filter that renders CSV as Pandoc Markdown Tables.</a></li>
@@ -247,5 +261,49 @@ First row,defaulted to be header row,can be disabled
 </tr>
 </tbody>
 </table>
+<h1 id="pantable2csv"><span class="header-section-number">2</span> <code>pantable2csv</code></h1>
+<p>This one is the inverse of <code>pantable</code>, a panflute filter to convert any native pandoc tables into the CSV table format used by pantable.</p>
+<p>Effectively, <code>pantable</code> forms a “CSV Reader”, and <code>pantable2csv</code> forms a “CSV Writer”. It allows you to convert back and forth between these 2 formats.</p>
+<p>For example, in the markdown source:</p>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">+--------+---------------------+--------------------------+
+| First  | defaulted to be     | can be disabled          |
+| row    | header row          |                          |
++========+=====================+==========================+
+| 1      | cell can contain    | It can be aribrary block |
+|        | **markdown**        | element:                 |
+|        |                     |                          |
+|        |                     | -   following standard   |
+|        |                     |     markdown syntax      |
+|        |                     | -   like this            |
++--------+---------------------+--------------------------+
+| 2      | Any markdown        | $$E = mc^2$$             |
+|        | syntax, e.g.        |                          |
++--------+---------------------+--------------------------+
+
+: *Awesome* **Markdown** Table</code></pre></div>
+<p>running <code class="sourceCode bash"><span class="ex">pandoc</span> -F pantable2csv -o output.md input.md</code>, it becomes</p>
+<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">``` {.table}
+---
+alignment: DDD
+caption: &#39;*Awesome* **Markdown** Table&#39;
+header: true
+markdown: true
+table-width: 0.8055555555555556
+width: [0.125, 0.3055555555555556, 0.375]
+---
+First row,defaulted to be header row,can be disabled
+1,cell can contain **markdown**,&quot;It can be aribrary block element:
+
+- <span class="fl">  following standard markdown syntax</span>
+<span class="fl">-   like this</span>
+<span class="fl">&quot;</span>
+<span class="fl">2,&quot;Any markdown syntax, e.g.&quot;,$$E = mc^2$$</span>
+<span class="fl">```</span></code></pre></div>
+<section class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>In pandoc 1.19, grid-tables is improved to support all features available to the AST too.<a href="#fnref1">↩</a></p></li>
+</ol>
+</section>
 </body>
 </html>

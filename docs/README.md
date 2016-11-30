@@ -3,13 +3,26 @@ fontsize:	11pt
 documentclass:	memoir
 classoption: article
 geometry:	inner=1in, outer=1in, top=1in, bottom=1.25in
+title:	CSV Tables in Markdown --- Pandoc Filter for CSV Tables
 ...
 
-# CSV Tables in Markdown: Pandoc Filter for CSV Tables
+The pantable package comes with 2 pandoc filters, `pantable.py` and `pantable2csv.py`. `pantable` is the main filter, introducing a syntax to include CSV table in markdown source. `pantable2csv` complements `pantable`, is the inverse of `pantable`, which convert native pandoc tables into the CSV table format defined by `pantable`.
+
+Some example uses are:
+
+1. You already have tables in CSV format.
+
+2. You feel that directly editing markdown table is troublesome. You want a spreadsheet interface to edit, but want to convert it to native pandoc table for higher readability. And this process might go back and forth.
+
+3. You want lower-level control on the table and column widths.
+
+4. You want to use all table features supported by the pandoc's internal AST table format, which is not possible in markdown for pandoc \<= 1.18.^[In pandoc 1.19, grid-tables is improved to support all features available to the AST too.]
+
+# `pantable`
 
 This allows CSV tables, optionally containing markdown syntax (disabled by default), to be put in markdown as a fenced code blocks.
 
-# Example
+## Example
 
 Also see the README in [GitHub Pages](https://ickc.github.io/pantable/). There's a [LaTeX output](https://ickc.github.io/pantable/README.pdf) too.
 
@@ -49,7 +62,7 @@ First row,defaulted to be header row,can be disabled
 
 (The equation might not work if you view this on PyPI.)
 
-# Install and Use
+## Install and Use
 
 Install:
 
@@ -63,7 +76,7 @@ Use:
 pandoc -F pantable -o README.html README.md
 ```
 
-# Syntax
+## Syntax
 
 Fenced code blocks is used, with a class `table`. See [Example].
 
@@ -108,7 +121,7 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
 
 When the metadata keys is invalid, the default will be used instead.
 
-# Related Filters
+## Related Filters
 
 The followings are pandoc filters written in Haskell that provide similar functionality. This filter is born after testing with theirs.
 
@@ -122,3 +135,52 @@ Caption: Comparison
 include: docs/comparison.csv
 ...
 ```
+
+# `pantable2csv`
+
+This one is the inverse of `pantable`, a panflute filter to convert any native pandoc tables into the CSV table format used by pantable.
+
+Effectively, `pantable` forms a "CSV Reader", and `pantable2csv` forms a "CSV Writer". It allows you to convert back and forth between these 2 formats.
+
+For example, in the markdown source:
+
+~~~markdown
++--------+---------------------+--------------------------+
+| First  | defaulted to be     | can be disabled          |
+| row    | header row          |                          |
++========+=====================+==========================+
+| 1      | cell can contain    | It can be aribrary block |
+|        | **markdown**        | element:                 |
+|        |                     |                          |
+|        |                     | -   following standard   |
+|        |                     |     markdown syntax      |
+|        |                     | -   like this            |
++--------+---------------------+--------------------------+
+| 2      | Any markdown        | $$E = mc^2$$             |
+|        | syntax, e.g.        |                          |
++--------+---------------------+--------------------------+
+
+: *Awesome* **Markdown** Table
+~~~
+
+running `pandoc -F pantable2csv -o output.md input.md`{.bash}, it becomes
+
+~~~markdown
+``` {.table}
+---
+alignment: DDD
+caption: '*Awesome* **Markdown** Table'
+header: true
+markdown: true
+table-width: 0.8055555555555556
+width: [0.125, 0.3055555555555556, 0.375]
+---
+First row,defaulted to be header row,can be disabled
+1,cell can contain **markdown**,"It can be aribrary block element:
+
+-   following standard markdown syntax
+-   like this
+"
+2,"Any markdown syntax, e.g.",$$E = mc^2$$
+```
+~~~
