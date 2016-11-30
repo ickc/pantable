@@ -121,21 +121,6 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
 
 When the metadata keys is invalid, the default will be used instead.
 
-## Related Filters
-
-The followings are pandoc filters written in Haskell that provide similar functionality. This filter is born after testing with theirs.
-
--   [baig/pandoc-csv2table: A Pandoc filter that renders CSV as Pandoc Markdown Tables.](https://github.com/baig/pandoc-csv2table)
--   [mb21/pandoc-placetable: Pandoc filter to include CSV data (from file or URL)](https://github.com/mb21/pandoc-placetable)
--   [sergiocorreia/panflute/csv-tables.py](https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py)
-
-```table
----
-Caption: Comparison
-include: docs/comparison.csv
-...
-```
-
 # `pantable2csv`
 
 This one is the inverse of `pantable`, a panflute filter to convert any native pandoc tables into the CSV table format used by pantable.
@@ -184,3 +169,19 @@ First row,defaulted to be header row,can be disabled
 2,"Any markdown syntax, e.g.",$$E = mc^2$$
 ```
 ~~~
+
+# Related Filters
+
+The followings are pandoc filters written in Haskell that provide similar functionality. This filter is born after testing with theirs.
+
+-   [baig/pandoc-csv2table: A Pandoc filter that renders CSV as Pandoc Markdown Tables.](https://github.com/baig/pandoc-csv2table)
+-   [mb21/pandoc-placetable: Pandoc filter to include CSV data (from file or URL)](https://github.com/mb21/pandoc-placetable)
+-   [sergiocorreia/panflute/csv-tables.py](https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py)
+
+```table
+---
+Caption: Comparison
+include: docs/comparison.csv
+...
+```
+
