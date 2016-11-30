@@ -31,7 +31,7 @@ pandocArgHTML := $(pandocArgFragment) -t $(HTMLVersion) --toc-depth=2 -s -N -c $
 pandocArgePub := $(pandocArgHTML) -t $(ePubVersion) --epub-chapter-level=2
 # GitHub README
 pandocArgReadmeGitHub := $(pandocArgFragment) --toc-depth=2 -s -t markdown_github --reference-location=block
-pandocArgReadmePypi := $(pandocArgFragment) -s -t rst --reference-location=block
+pandocArgReadmePypi := $(pandocArgFragment) -s -t rst --reference-location=block -f markdown+autolink_bare_uris-fancy_lists-implicit_header_references
 
 test := $(wildcard tests/*.md)
 testNative := $(patsubst %.md,%.native,$(test))
