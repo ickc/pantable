@@ -39,7 +39,7 @@ First row,defaulted to be header row,can be disabled
 
 - following standard markdown syntax
 - like this"
-2,"Any markdown syntax, e.g.",$$E = mc^2$$
+2,"Any markdown syntax, e.g.",$E = mc^2$
 ```
 ~~~
 
@@ -57,7 +57,7 @@ First row,defaulted to be header row,can be disabled
 
 - following standard markdown syntax
 - like this"
-2,"Any markdown syntax, e.g.",$$E = mc^2$$
+2,"Any markdown syntax, e.g.",$E = mc^2$
 ```
 
 (The equation might not work if you view this on PyPI.)
@@ -129,7 +129,7 @@ Effectively, `pantable` forms a "CSV Reader", and `pantable2csv` forms a "CSV Wr
 
 For example, in the markdown source:
 
-~~~markdown
+~~~
 +--------+---------------------+--------------------------+
 | First  | defaulted to be     | can be disabled          |
 | row    | header row          |                          |
@@ -150,7 +150,7 @@ For example, in the markdown source:
 
 running `pandoc -F pantable2csv -o output.md input.md`{.bash}, it becomes
 
-~~~markdown
+~~~
 ``` {.table}
 ---
 alignment: DDD

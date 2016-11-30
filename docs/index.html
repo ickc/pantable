@@ -91,7 +91,7 @@ First row,defaulted to be header row,can be disabled
 
 - following standard markdown syntax
 - like this&quot;
-2,&quot;Any markdown syntax, e.g.&quot;,$$E = mc^2$$
+2,&quot;Any markdown syntax, e.g.&quot;,$E = mc^2$
 ```</code></pre>
 <p>becomes</p>
 <table style="width:70%;">
@@ -121,7 +121,7 @@ First row,defaulted to be header row,can be disabled
 <tr class="even">
 <td style="text-align: right;"><p>2</p></td>
 <td style="text-align: center;"><p>Any markdown syntax, e.g.</p></td>
-<td><p><br /><span class="math display"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span><br /></p></td>
+<td><p><span class="math inline"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span></p></td>
 </tr>
 </tbody>
 </table>
@@ -154,7 +154,7 @@ First row,defaulted to be header row,can be disabled
 <p>This one is the inverse of <code>pantable</code>, a panflute filter to convert any native pandoc tables into the CSV table format used by pantable.</p>
 <p>Effectively, <code>pantable</code> forms a “CSV Reader”, and <code>pantable2csv</code> forms a “CSV Writer”. It allows you to convert back and forth between these 2 formats.</p>
 <p>For example, in the markdown source:</p>
-<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">+--------+---------------------+--------------------------+
+<pre><code>+--------+---------------------+--------------------------+
 | First  | defaulted to be     | can be disabled          |
 | row    | header row          |                          |
 +========+=====================+==========================+
@@ -169,9 +169,9 @@ First row,defaulted to be header row,can be disabled
 |        | syntax, e.g.        |                          |
 +--------+---------------------+--------------------------+
 
-: *Awesome* **Markdown** Table</code></pre></div>
+: *Awesome* **Markdown** Table</code></pre>
 <p>running <code class="sourceCode bash"><span class="ex">pandoc</span> -F pantable2csv -o output.md input.md</code>, it becomes</p>
-<div class="sourceCode"><pre class="sourceCode markdown"><code class="sourceCode markdown">``` {.table}
+<pre><code>``` {.table}
 ---
 alignment: DDD
 caption: &#39;*Awesome* **Markdown** Table&#39;
@@ -183,11 +183,11 @@ width: [0.125, 0.3055555555555556, 0.375]
 First row,defaulted to be header row,can be disabled
 1,cell can contain **markdown**,&quot;It can be aribrary block element:
 
-- <span class="fl">  following standard markdown syntax</span>
-<span class="fl">-   like this</span>
-<span class="fl">&quot;</span>
-<span class="fl">2,&quot;Any markdown syntax, e.g.&quot;,$$E = mc^2$$</span>
-<span class="fl">```</span></code></pre></div>
+-   following standard markdown syntax
+-   like this
+&quot;
+2,&quot;Any markdown syntax, e.g.&quot;,$$E = mc^2$$
+```</code></pre>
 <h1 id="related-filters"><span class="header-section-number">3</span> Related Filters</h1>
 <p>The followings are pandoc filters written in Haskell that provide similar functionality. This filter is born after testing with theirs.</p>
 <ul>

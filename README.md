@@ -45,7 +45,7 @@ Also see the README in [GitHub Pages](https://ickc.github.io/pantable/). There�
 
     - following standard markdown syntax
     - like this"
-    2,"Any markdown syntax, e.g.",$$E = mc^2$$
+    2,"Any markdown syntax, e.g.",$E = mc^2$
     ```
 
 becomes
@@ -77,7 +77,7 @@ becomes
 <tr class="even">
 <td align="right"><p>2</p></td>
 <td align="center"><p>Any markdown syntax, e.g.</p></td>
-<td><p><br /><span class="math display"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span><br /></p></td>
+<td><p><span class="math inline"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span></p></td>
 </tr>
 </tbody>
 </table>
@@ -141,46 +141,42 @@ Effectively, `pantable` forms a “CSV Reader”, and `pantable2csv` forms a “
 
 For example, in the markdown source:
 
-``` markdown
-+--------+---------------------+--------------------------+
-| First  | defaulted to be     | can be disabled          |
-| row    | header row          |                          |
-+========+=====================+==========================+
-| 1      | cell can contain    | It can be aribrary block |
-|        | **markdown**        | element:                 |
-|        |                     |                          |
-|        |                     | -   following standard   |
-|        |                     |     markdown syntax      |
-|        |                     | -   like this            |
-+--------+---------------------+--------------------------+
-| 2      | Any markdown        | $$E = mc^2$$             |
-|        | syntax, e.g.        |                          |
-+--------+---------------------+--------------------------+
+    +--------+---------------------+--------------------------+
+    | First  | defaulted to be     | can be disabled          |
+    | row    | header row          |                          |
+    +========+=====================+==========================+
+    | 1      | cell can contain    | It can be aribrary block |
+    |        | **markdown**        | element:                 |
+    |        |                     |                          |
+    |        |                     | -   following standard   |
+    |        |                     |     markdown syntax      |
+    |        |                     | -   like this            |
+    +--------+---------------------+--------------------------+
+    | 2      | Any markdown        | $$E = mc^2$$             |
+    |        | syntax, e.g.        |                          |
+    +--------+---------------------+--------------------------+
 
-: *Awesome* **Markdown** Table
-```
+    : *Awesome* **Markdown** Table
 
 running `pandoc -F pantable2csv -o output.md input.md`, it becomes
 
-```` markdown
-``` {.table}
----
-alignment: DDD
-caption: '*Awesome* **Markdown** Table'
-header: true
-markdown: true
-table-width: 0.8055555555555556
-width: [0.125, 0.3055555555555556, 0.375]
----
-First row,defaulted to be header row,can be disabled
-1,cell can contain **markdown**,"It can be aribrary block element:
+    ``` {.table}
+    ---
+    alignment: DDD
+    caption: '*Awesome* **Markdown** Table'
+    header: true
+    markdown: true
+    table-width: 0.8055555555555556
+    width: [0.125, 0.3055555555555556, 0.375]
+    ---
+    First row,defaulted to be header row,can be disabled
+    1,cell can contain **markdown**,"It can be aribrary block element:
 
--   following standard markdown syntax
--   like this
-"
-2,"Any markdown syntax, e.g.",$$E = mc^2$$
-```
-````
+    -   following standard markdown syntax
+    -   like this
+    "
+    2,"Any markdown syntax, e.g.",$$E = mc^2$$
+    ```
 
 Related Filters
 ===============
