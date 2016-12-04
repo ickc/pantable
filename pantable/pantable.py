@@ -72,30 +72,24 @@ def get_caption(options):
     """
     get caption: parsed in panflute AST if non-empty
     """
-    caption = options.get('caption', None)
-    # parse caption
-    if caption is not None:
-        caption = panflute.convert_text(
-            str(caption)
-        )[0].content
-    return caption
+    return panflute.convert_text(str(options['caption']))[0].content if 'caption' in options else None
 
 
 def get_width(options):
     """
     get width: set to `None` when invalid
     """
-    width = options.get('width', None)
-    try:
-        if width is not None:
-            width = [(float(x) if x >= 0 else None)
-                                for x in width]
-            if None in width:
-                width = None
-                panflute.debug("pantable: invalid width")
-    except (ValueError, TypeError):
+    if 'width' not in options:
         width = None
-        panflute.debug("pantable: invalid width")
+    else:
+        width = options['width']
+        try:
+            width = [float(x) for x in options['width']]
+            if not all(i >= 0 for i in width):
+                raise ValueError
+        except (ValueError, TypeError):
+            width = None
+            panflute.debug("pantable: invalid width")
     return width
 
 
@@ -110,14 +104,16 @@ def get_table_width(options):
     """
     `table-width` set to `1.0` if invalid
     """
-    table_width = options.get('table-width', 1.0)
-    try:
-        if table_width <= 0:
+    if 'table-width' not in options:
+        table_width = 1.0
+    else:
+        try:
+            table_width = float(options.get('table-width'))
+            if table_width <= 0:
+                raise ValueError
+        except (ValueError, TypeError):
             table_width = 1.0
             panflute.debug("pantable: invalid table-width")
-    except (ValueError, TypeError):
-        table_width = 1.0
-        panflute.debug("pantable: invalid table-width")
     return table_width
 
 
@@ -139,11 +135,13 @@ def get_include(options):
     """
     include set to None if invalid
     """
-    include = options.get('include', None)
-    if include is not None:
+    if 'include' not in options:
+        include = None
+    else:
+        include = options.get('include')
         if not os.path.isfile(include):
             include = None
-            panflute.debug("pantable: include path is invalid")
+            panflute.debug("pantable: invalid path from 'include'")
     return include
 
 
