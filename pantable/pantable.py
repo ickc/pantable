@@ -71,19 +71,6 @@ Should be true/false/yes/no, case-insensitive.""")
 def init_table_options(options):
     """
     Initialize the `options` output from `panflute.yaml_filter`.
-    """
-    caption = options.get('caption', None)
-    alignment = options.get('alignment', None)
-    width = options.get('width', None)
-    table_width = options.get('table-width', 1.0)
-    header = options.get('header', True)
-    markdown = options.get('markdown', False)
-    include = options.get('include', None)
-    return (caption, alignment, width, table_width, header, markdown, include)
-
-
-def check_table_options(caption, alignment, width, table_width, header, markdown, include):
-    """
     Set the values in options to default if they are invalid:
 
     -   `width` set to `None` when invalid,
@@ -92,6 +79,13 @@ def check_table_options(caption, alignment, width, table_width, header, markdown
     -   `header` set to `True` if invalid
     -   `markdown` set to `True` if invalid
     """
+    caption = options.get('caption', None)
+    alignment = options.get('alignment', None)
+    width = options.get('width', None)
+    table_width = options.get('table-width', 1.0)
+    header = options.get('header', True)
+    markdown = options.get('markdown', False)
+    include = options.get('include', None)
     try:
         if width is not None:
             width = [(float(x) if x >= 0 else None)
@@ -229,8 +223,6 @@ def convert2table(options, data, **__):
     """
     # initialize table options from YAML metadata
     caption, alignment, width, table_width, header, markdown, include = init_table_options(options)
-    # check table options: reset to default if invalid
-    caption, alignment, width, table_width, header, markdown, include = check_table_options(caption, alignment, width, table_width, header, markdown, include)
     # parse csv data to list
     raw_table_list = read_data(include, data)
     # check empty table
