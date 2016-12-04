@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
 """
-from .context import read_csv
+from .context import read_data
 
 
-def test_read_csv():
+def test_read_data():
     include = None
     # check type
     data = r"""1,2
 3,4
 """
-    assert read_csv(include, data) == [
+    assert read_data(include, data) == [
         ['1', '2'],
         ['3', '4']
     ]
@@ -18,13 +18,13 @@ def test_read_csv():
     data = r"""asdfdfdfguhfdhghfdgkla,"334
 2",**la**,4
 5,6,7,8"""
-    assert read_csv(include, data) == [
+    assert read_data(include, data) == [
         ['asdfdfdfguhfdhghfdgkla', '334\n2', '**la**', '4'],
         ['5', '6', '7', '8']
     ]
     # check include
     include = 'tests/csv_tables.csv'
-    assert read_csv(include,
+    assert read_data(include,
                     data) == [['**_Fruit_**',
                                '~~Price~~',
                                '_Number_',
@@ -40,5 +40,5 @@ def test_read_csv():
     # check empty table
     include = None
     data = ''
-    assert read_csv(include, data) == []
+    assert read_data(include, data) == []
     return
