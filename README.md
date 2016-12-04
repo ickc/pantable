@@ -37,7 +37,7 @@ Also see the README in [GitHub Pages](https://ickc.github.io/pantable/). Thereâ€
     ---
     caption: '*Awesome* **Markdown** Table'
     alignment: RC
-    table-width: 0.7
+    table-width: 2/3
     markdown: True
     ---
     First row,defaulted to be header row,can be disabled
@@ -50,12 +50,12 @@ Also see the README in [GitHub Pages](https://ickc.github.io/pantable/). Thereâ€
 
 becomes
 
-<table style="width:70%;">
+<table style="width:67%;">
 <caption><em>Awesome</em> <strong>Markdown</strong> Table</caption>
 <colgroup>
-<col width="10%" />
-<col width="26%" />
-<col width="32%" />
+<col width="9%" />
+<col width="25%" />
+<col width="31%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -130,7 +130,7 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
 
 -   `include`: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None
 
-When the metadata keys is invalid, the default will be used instead.
+When the metadata keys is invalid, the default will be used instead. Note that width and table-width accept fractions as well.
 
 `pantable2csv`
 ==============

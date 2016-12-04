@@ -31,7 +31,7 @@ Also see the README in [GitHub Pages](https://ickc.github.io/pantable/). There's
 ---
 caption: '*Awesome* **Markdown** Table'
 alignment: RC
-table-width: 0.7
+table-width: 2/3
 markdown: True
 ---
 First row,defaulted to be header row,can be disabled
@@ -49,7 +49,7 @@ becomes
 ---
 caption: '*Awesome* **Markdown** Table'
 alignment: RC
-table-width: 0.7
+table-width: 2/3
 markdown: True
 ---
 First row,defaulted to be header row,can be disabled
@@ -120,6 +120,7 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
     default: None
 
 When the metadata keys is invalid, the default will be used instead.
+Note that width and table-width accept fractions as well.
 
 # `pantable2csv`
 

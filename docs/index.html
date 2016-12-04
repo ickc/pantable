@@ -82,7 +82,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ---
 caption: &#39;*Awesome* **Markdown** Table&#39;
 alignment: RC
-table-width: 0.7
+table-width: 2/3
 markdown: True
 ---
 First row,defaulted to be header row,can be disabled
@@ -93,12 +93,12 @@ First row,defaulted to be header row,can be disabled
 2,&quot;Any markdown syntax, e.g.&quot;,$$E = mc^2$$
 ```</code></pre>
 <p>becomes</p>
-<table style="width:70%;">
+<table style="width:67%;">
 <caption><em>Awesome</em> <strong>Markdown</strong> Table</caption>
 <colgroup>
-<col style="width: 10%" />
-<col style="width: 26%" />
-<col style="width: 32%" />
+<col style="width: 9%" />
+<col style="width: 25%" />
+<col style="width: 31%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -148,7 +148,7 @@ First row,defaulted to be header row,can be disabled
 <li><p><code>markdown</code>: If CSV table cell contains markdown syntax or not. Same as above. Default: False</p></li>
 <li><p><code>include</code>: the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None</p></li>
 </ul>
-<p>When the metadata keys is invalid, the default will be used instead.</p>
+<p>When the metadata keys is invalid, the default will be used instead. Note that width and table-width accept fractions as well.</p>
 <h1 id="pantable2csv"><span class="header-section-number">2</span> <code>pantable2csv</code></h1>
 <p>This one is the inverse of <code>pantable</code>, a panflute filter to convert any native pandoc tables into the CSV table format used by pantable.</p>
 <p>Effectively, <code>pantable</code> forms a “CSV Reader”, and <code>pantable2csv</code> forms a “CSV Writer”. It allows you to convert back and forth between these 2 formats.</p>
