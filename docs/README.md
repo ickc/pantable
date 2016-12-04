@@ -39,7 +39,7 @@ First row,defaulted to be header row,can be disabled
 
 - following standard markdown syntax
 - like this"
-2,"Any markdown syntax, e.g.",$E = mc^2$
+2,"Any markdown syntax, e.g.",$$E = mc^2$$
 ```
 ~~~
 
@@ -57,7 +57,7 @@ First row,defaulted to be header row,can be disabled
 
 - following standard markdown syntax
 - like this"
-2,"Any markdown syntax, e.g.",$E = mc^2$
+2,"Any markdown syntax, e.g.",$$E = mc^2$$
 ```
 
 (The equation might not work if you view this on PyPI.)
