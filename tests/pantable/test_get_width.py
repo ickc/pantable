@@ -17,4 +17,7 @@ def test_get_width():
     # invalid width 2
     options['width'] = ["happy", "birthday"]
     assert get_width(options) is None
+    # fractional
+    options['width'] = ["1/2", "1/10"]
+    assert get_width(options) == [0.5, 0.1]
     return

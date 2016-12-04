@@ -57,7 +57,7 @@ output <https://ickc.github.io/pantable/README.pdf>`__ too.
     ---
     caption: '*Awesome* **Markdown** Table'
     alignment: RC
-    table-width: 0.7
+    table-width: 2/3
     markdown: True
     ---
     First row,defaulted to be header row,can be disabled
@@ -70,20 +70,20 @@ output <https://ickc.github.io/pantable/README.pdf>`__ too.
 
 becomes
 
-+---------+---------------------+-------------------------+
-| First   | defaulted to be     | can be disabled         |
-| row     | header row          |                         |
-+=========+=====================+=========================+
-| 1       | cell can contain    | It can be aribrary      |
-|         | **markdown**        | block element:          |
-|         |                     |                         |
-|         |                     | -  following standard   |
-|         |                     |    markdown syntax      |
-|         |                     | -  like this            |
-+---------+---------------------+-------------------------+
-| 2       | Any markdown        | .. math:: E = mc^2      |
-|         | syntax, e.g.        |                         |
-+---------+---------------------+-------------------------+
++--------+--------------------+------------------------+
+| First  | defaulted to be    | can be disabled        |
+| row    | header row         |                        |
++========+====================+========================+
+| 1      | cell can contain   | It can be aribrary     |
+|        | **markdown**       | block element:         |
+|        |                    |                        |
+|        |                    | -  following standard  |
+|        |                    |    markdown syntax     |
+|        |                    | -  like this           |
++--------+--------------------+------------------------+
+| 2      | Any markdown       | .. math:: E = mc^2     |
+|        | syntax, e.g.       |                        |
++--------+--------------------+------------------------+
 
 Table: *Awesome* **Markdown** Table
 
@@ -147,6 +147,7 @@ keys are recognized:
    non-empty, override the CSV in the CodeBlock. default: None
 
 When the metadata keys is invalid, the default will be used instead.
+Note that width and table-width accept fractions as well.
 
 ``pantable2csv``
 ================

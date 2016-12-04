@@ -30,7 +30,7 @@ e.g.
 ---
 caption: '*Awesome* **Markdown** Table'
 alignment: RC
-table-width: 0.7
+table-width: 2/3
 markdown: True
 ---
 First row,defaulted to be header row,can be disabled
@@ -43,6 +43,7 @@ First row,defaulted to be header row,can be disabled
 """
 
 import csv
+from fractions import Fraction
 import io
 import os
 import panflute
@@ -76,7 +77,7 @@ def get_width(options):
     else:
         width = options['width']
         try:
-            width = [float(x) for x in options['width']]
+            width = [float(Fraction(x)) for x in options['width']]
             if not all(i >= 0 for i in width):
                 raise ValueError
         except (ValueError, TypeError):
@@ -93,7 +94,7 @@ def get_table_width(options):
         table_width = 1.0
     else:
         try:
-            table_width = float(options.get('table-width'))
+            table_width = float(Fraction(options.get('table-width')))
             if table_width <= 0:
                 raise ValueError
         except (ValueError, TypeError):
