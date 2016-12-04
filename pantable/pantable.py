@@ -117,11 +117,13 @@ def get_include(options):
     return include
 
 
-def parse_width(width, table_width, raw_table_list, number_of_columns):
+def parse_width(options, raw_table_list, number_of_columns):
     """
     `width` is auto-calculated if not given in YAML
     It also returns isempty=True when table has 0 total width.
     """
+    width = get_width(options)
+    table_width = get_table_width(options)
     # calculate width
     isempty = False
     if width is None:
@@ -142,10 +144,11 @@ def parse_width(width, table_width, raw_table_list, number_of_columns):
     return (width, isempty)
 
 
-def parse_alignment(alignment, raw_table_list, number_of_columns):
+def parse_alignment(options, raw_table_list, number_of_columns):
     """
     `alignment` string is parsed into pandoc format (AlignDefault, etc.)
     """
+    alignment = options.get('alignment', None)
     # parse alignment
     if alignment is not None:
         alignment = str(alignment)
@@ -227,9 +230,6 @@ def convert2table(options, data, **__):
     # get caption: parsed as markdown into panflute AST if non-empty.
     caption = panflute.convert_text(str(options['caption']))[
         0].content if 'caption' in options else None
-    alignment = options.get('alignment', None)
-    width = get_width(options)
-    table_width = get_table_width(options)
     # `header` set to `True` if invalid
     header = to_bool(options.get('header', True))
     markdown = to_bool(options.get('markdown', False))
@@ -248,9 +248,9 @@ def convert2table(options, data, **__):
     # preparation: get no of columns of the table
     number_of_columns = len(raw_table_list[0])
     # parse table options
-    alignment = parse_alignment(alignment, raw_table_list, number_of_columns)
+    alignment = parse_alignment(options, raw_table_list, number_of_columns)
     width, isempty = parse_width(
-        width, table_width, raw_table_list, number_of_columns)
+        options, raw_table_list, number_of_columns)
     # check empty table
     if isempty:
         panflute.debug("pantable: table is empty")
