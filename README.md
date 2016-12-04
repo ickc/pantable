@@ -53,9 +53,9 @@ becomes
 <table style="width:70%;">
 <caption><em>Awesome</em> <strong>Markdown</strong> Table</caption>
 <colgroup>
-<col width="8%" />
-<col width="27%" />
-<col width="34%" />
+<col width="10%" />
+<col width="26%" />
+<col width="32%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -189,11 +189,11 @@ The followings are pandoc filters written in Haskell that provide similar functi
 
 <table>
 <colgroup>
-<col width="7%" />
-<col width="26%" />
+<col width="8%" />
+<col width="25%" />
 <col width="15%" />
-<col width="13%" />
-<col width="36%" />
+<col width="16%" />
+<col width="34%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -237,7 +237,7 @@ The followings are pandoc filters written in Haskell that provide similar functi
 <td>header</td>
 <td>header = yes | no</td>
 <td>header = yes | no</td>
-<td>header: True | False</td>
+<td>has_header: True | False</td>
 <td>header: True | False | yes | NO</td>
 </tr>
 <tr class="even">
