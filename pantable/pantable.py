@@ -49,11 +49,11 @@ import panflute
 
 
 # begin helper functions
-def to_bool(to_be_bool):
+def to_bool(to_be_bool, default = True):
     """
     Do nothing if to_be_bool is boolean,
     return `False` if it is "false" or "no" (case-insensitive),
-    otherwise return `True`.
+    otherwise return default.
     """
     if not isinstance(to_be_bool, bool):
         if str(to_be_bool).lower() in ("false", "no"):
@@ -61,7 +61,7 @@ def to_bool(to_be_bool):
         elif str(to_be_bool).lower() in ("true", "yes"):
             to_be_bool = True
         else:
-            to_be_bool = True
+            to_be_bool = default
             panflute.debug("""pantable: invalid boolean. \
 Should be true/false/yes/no, case-insensitive.""")
     return to_be_bool
@@ -125,7 +125,6 @@ def parse_width(options, raw_table_list, number_of_columns):
     width = get_width(options)
     table_width = get_table_width(options)
     # calculate width
-    isempty = False
     if width is None:
         width_abs = [max(
             [max(
@@ -140,11 +139,11 @@ def parse_width(options, raw_table_list, number_of_columns):
             ]
         except ZeroDivisionError:
             panflute.debug("pantable: table has zero total width")
-            isempty = True
-    return (width, isempty)
+            width = None
+    return width
 
 
-def parse_alignment(options, raw_table_list, number_of_columns):
+def parse_alignment(options, number_of_columns):
     """
     `alignment` string is parsed into pandoc format (AlignDefault, etc.)
     """
@@ -226,35 +225,35 @@ def convert2table(options, data, **__):
     """
     provided to panflute.yaml_filter to parse its content as pandoc table.
     """
-    # Initialize the `options` output from `panflute.yaml_filter`
-    # get caption: parsed as markdown into panflute AST if non-empty.
-    caption = panflute.convert_text(str(options['caption']))[
-        0].content if 'caption' in options else None
-    # `header` set to `True` if invalid
-    header = to_bool(options.get('header', True))
-    markdown = to_bool(options.get('markdown', False))
-    include = get_include(options)
-
-    # parse csv data to list
-    raw_table_list = read_data(include, data)
+    # prepare table in list from data/include
+    raw_table_list = read_data(get_include(options), data)
     # check empty table
     if not raw_table_list:
         panflute.debug("pantable: table is empty")
         return []
     # regularize table: all rows should have same length
     regularize_table_list(raw_table_list)
-    # parse list to panflute table
-    table_body = parse_table_list(markdown, raw_table_list)
     # preparation: get no of columns of the table
     number_of_columns = len(raw_table_list[0])
-    # parse table options
-    alignment = parse_alignment(options, raw_table_list, number_of_columns)
-    width, isempty = parse_width(
+
+    # Initialize the `options` output from `panflute.yaml_filter`
+    # parse width
+    width = parse_width(
         options, raw_table_list, number_of_columns)
     # check empty table
-    if isempty:
+    if width is None:
         panflute.debug("pantable: table is empty")
         return []
+    # parse alignment
+    alignment = parse_alignment(options, number_of_columns)
+    header = to_bool(options.get('header', True), True)
+    markdown = to_bool(options.get('markdown', False), False)
+
+    # get caption: parsed as markdown into panflute AST if non-empty.
+    caption = panflute.convert_text(str(options['caption']))[
+        0].content if 'caption' in options else None
+    # parse list to panflute table
+    table_body = parse_table_list(markdown, raw_table_list)
     # extract header row
     header_row = table_body.pop(0) if (
         len(table_body) > 1 and header
