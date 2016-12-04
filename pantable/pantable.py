@@ -117,16 +117,35 @@ def get_include(options):
     return include
 
 
-def parse_table_options(alignment, width, table_width, raw_table_list):
+def parse_width(width, table_width, raw_table_list, number_of_columns):
     """
-    `caption` is assumed to contain markdown,
-        as in standard pandoc YAML metadata.
-    `alignment` string is parsed into pandoc format (AlignDefault, etc.)
     `width` is auto-calculated if not given in YAML
-    It also returns True when table has 0 total width.
+    It also returns isempty=True when table has 0 total width.
     """
-    # preparation: get no of columns of the table
-    number_of_columns = len(raw_table_list[0])
+    # calculate width
+    isempty = False
+    if width is None:
+        width_abs = [max(
+            [max(
+                [len(line) for line in row[i].split("\n")]
+            ) for row in raw_table_list]
+        ) for i in range(number_of_columns)]
+        width_tot = sum(width_abs)
+        try:
+            width = [
+                width_abs[i] / width_tot * table_width
+                for i in range(number_of_columns)
+            ]
+        except ZeroDivisionError:
+            panflute.debug("pantable: table has zero total width")
+            isempty = True
+    return (width, isempty)
+    
+
+def parse_alignment(alignment, raw_table_list, number_of_columns):
+    """
+    `alignment` string is parsed into pandoc format (AlignDefault, etc.)
+    """
     # parse alignment
     if alignment is not None:
         alignment = str(alignment)
@@ -150,24 +169,7 @@ def parse_table_options(alignment, width, table_width, raw_table_list):
             parsed_alignment += ["AlignDefault" for __ in range(
                 number_of_columns - len(parsed_alignment))]
         alignment = parsed_alignment
-    # calculate width
-    isempty = False
-    if width is None:
-        width_abs = [max(
-            [max(
-                [len(line) for line in row[i].split("\n")]
-            ) for row in raw_table_list]
-        ) for i in range(number_of_columns)]
-        width_tot = sum(width_abs)
-        try:
-            width = [
-                width_abs[i] / width_tot * table_width
-                for i in range(number_of_columns)
-            ]
-        except ZeroDivisionError:
-            panflute.debug("pantable: table has zero total width")
-            isempty = True
-    return (alignment, width, isempty)
+    return alignment
 
 
 def read_data(include, data):
@@ -222,7 +224,7 @@ def convert2table(options, data, **__):
     provided to panflute.yaml_filter to parse its content as pandoc table.
     """
     # Initialize the `options` output from `panflute.yaml_filter`
-    # get caption: parsed in panflute AST if non-empty
+    # get caption: parsed as markdown into panflute AST if non-empty.
     caption = panflute.convert_text(str(options['caption']))[0].content if 'caption' in options else None
     alignment = options.get('alignment', None)
     width =get_width(options)
@@ -242,8 +244,11 @@ def convert2table(options, data, **__):
     regularize_table_list(raw_table_list)
     # parse list to panflute table
     table_body = parse_table_list(markdown, raw_table_list)
+    # preparation: get no of columns of the table
+    number_of_columns = len(raw_table_list[0])
     # parse table options
-    alignment, width, isempty = parse_table_options(alignment, width, table_width, raw_table_list)
+    alignment = parse_alignment(alignment, raw_table_list, number_of_columns)
+    width, isempty = parse_width(width, table_width, raw_table_list, number_of_columns)
     # check empty table
     if isempty:
         panflute.debug("pantable: table is empty")
