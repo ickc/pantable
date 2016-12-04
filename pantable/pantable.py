@@ -72,24 +72,17 @@ def init_table_options(options):
     """
     Initialize the `options` output from `panflute.yaml_filter`.
     """
-    if 'caption' not in options:
-        options['caption'] = None
-    if 'alignment' not in options:
-        options['alignment'] = None
-    if 'width' not in options:
-        options['width'] = None
-    if 'table-width' not in options:
-        options['table-width'] = 1.0
-    if 'header' not in options:
-        options['header'] = True
-    if 'markdown' not in options:
-        options['markdown'] = False
-    if 'include' not in options:
-        options['include'] = None
-    return
+    caption = options.get('caption', None)
+    alignment = options.get('alignment', None)
+    width = options.get('width', None)
+    table_width = options.get('table-width', 1.0)
+    header = options.get('header', True)
+    markdown = options.get('markdown', False)
+    include = options.get('include', None)
+    return (caption, alignment, width, table_width, header, markdown, include)
 
 
-def check_table_options(options):
+def check_table_options(caption, alignment, width, table_width, header, markdown, include):
     """
     Set the values in options to default if they are invalid:
 
@@ -100,32 +93,32 @@ def check_table_options(options):
     -   `markdown` set to `True` if invalid
     """
     try:
-        if options['width'] is not None:
-            options['width'] = [(float(x) if x >= 0 else None)
-                                for x in options['width']]
-            if None in options['width']:
-                options['width'] = None
+        if width is not None:
+            width = [(float(x) if x >= 0 else None)
+                                for x in width]
+            if None in width:
+                width = None
                 panflute.debug("pantable: invalid width")
     except (ValueError, TypeError):
-        options['width'] = None
+        width = None
         panflute.debug("pantable: invalid width")
     try:
-        if options['table-width'] <= 0:
-            options['table-width'] = 1.0
+        if table_width <= 0:
+            table_width = 1.0
             panflute.debug("pantable: invalid table-width")
     except (ValueError, TypeError):
-        options['table-width'] = 1.0
+        table_width = 1.0
         panflute.debug("pantable: invalid table-width")
-    options['header'] = to_bool(options['header'])
-    options['markdown'] = to_bool(options['markdown'])
-    if options['include'] is not None:
-        if not os.path.isfile(str(options['include'])):
-            options['include'] = None
+    header = to_bool(header)
+    markdown = to_bool(markdown)
+    if include is not None:
+        if not os.path.isfile(str(include)):
+            include = None
             panflute.debug("pantable: include path is invalid")
-    return
+    return (caption, alignment, width, table_width, header, markdown, include)
 
 
-def parse_table_options(options, raw_table_list):
+def parse_table_options(caption, alignment, width, table_width, header, markdown, include, raw_table_list):
     """
     `caption` is assumed to contain markdown,
         as in standard pandoc YAML metadata.
@@ -134,25 +127,25 @@ def parse_table_options(options, raw_table_list):
     It also returns True when table has 0 total width.
     """
     # parse caption
-    if options['caption'] is not None:
-        options['caption'] = panflute.convert_text(
-            str(options['caption'])
+    if caption is not None:
+        caption = panflute.convert_text(
+            str(caption)
         )[0].content
     # preparation: get no of columns of the table
     number_of_columns = len(raw_table_list[0])
     # parse alignment
-    if options['alignment'] is not None:
-        options['alignment'] = str(options['alignment'])
+    if alignment is not None:
+        alignment = str(alignment)
         # truncate and debug if too long
-        if len(options['alignment']) > number_of_columns:
-            options['alignment'] = options['alignment'][0:number_of_columns]
+        if len(alignment) > number_of_columns:
+            alignment = alignment[0:number_of_columns]
             panflute.debug("pantable: alignment string is too long")
         # parsing
         parsed_alignment = [("AlignLeft" if each_alignment.lower() == "l"
                              else "AlignCenter" if each_alignment.lower() == "c"
                              else "AlignRight" if each_alignment.lower() == "r"
                              else "AlignDefault" if each_alignment.lower() == "d"
-                             else None) for each_alignment in options['alignment']]
+                             else None) for each_alignment in alignment]
         # debug if invalid; set to default
         if None in parsed_alignment:
             parsed_alignment = [(each_alignment if each_alignment is not None else "AlignDefault")
@@ -162,9 +155,10 @@ def parse_table_options(options, raw_table_list):
         if number_of_columns > len(parsed_alignment):
             parsed_alignment += ["AlignDefault" for __ in range(
                 number_of_columns - len(parsed_alignment))]
-        options['alignment'] = parsed_alignment
+        alignment = parsed_alignment
     # calculate width
-    if options['width'] is None:
+    isempty = False
+    if width is None:
         width_abs = [max(
             [max(
                 [len(line) for line in row[i].split("\n")]
@@ -172,14 +166,14 @@ def parse_table_options(options, raw_table_list):
         ) for i in range(number_of_columns)]
         width_tot = sum(width_abs)
         try:
-            options['width'] = [
-                width_abs[i] / width_tot * options['table-width']
+            width = [
+                width_abs[i] / width_tot * table_width
                 for i in range(number_of_columns)
             ]
         except ZeroDivisionError:
             panflute.debug("pantable: table has zero total width")
-            return True
-    return
+            isempty = True
+    return (caption, alignment, width, table_width, header, markdown, include, isempty)
 
 
 def read_data(include, data):
@@ -234,11 +228,11 @@ def convert2table(options, data, **__):
     provided to panflute.yaml_filter to parse its content as pandoc table.
     """
     # initialize table options from YAML metadata
-    init_table_options(options)
+    caption, alignment, width, table_width, header, markdown, include = init_table_options(options)
     # check table options: reset to default if invalid
-    check_table_options(options)
+    caption, alignment, width, table_width, header, markdown, include = check_table_options(caption, alignment, width, table_width, header, markdown, include)
     # parse csv data to list
-    raw_table_list = read_data(options['include'], data)
+    raw_table_list = read_data(include, data)
     # check empty table
     if not raw_table_list:
         panflute.debug("pantable: table is empty")
@@ -246,22 +240,22 @@ def convert2table(options, data, **__):
     # regularize table: all rows should have same length
     regularize_table_list(raw_table_list)
     # parse list to panflute table
-    table_body = parse_table_list(options['markdown'], raw_table_list)
+    table_body = parse_table_list(markdown, raw_table_list)
     # parse table options
-    isempty = parse_table_options(options, raw_table_list)
+    caption, alignment, width, table_width, header, markdown, include, isempty = parse_table_options(caption, alignment, width, table_width, header, markdown, include, raw_table_list)
     # check empty table
     if isempty:
         panflute.debug("pantable: table is empty")
         return []
     # extract header row
     header_row = table_body.pop(0) if (
-        len(table_body) > 1 and options['header']
+        len(table_body) > 1 and header
     ) else None
     return panflute.Table(
         *table_body,
-        caption=options['caption'],
-        alignment=options['alignment'],
-        width=options['width'],
+        caption=caption,
+        alignment=alignment,
+        width=width,
         header=header_row
     )
 
