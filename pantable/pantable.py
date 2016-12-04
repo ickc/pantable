@@ -68,13 +68,6 @@ Should be true/false/yes/no, case-insensitive.""")
 # end helper functions
 
 
-def get_caption(options):
-    """
-    get caption: parsed in panflute AST if non-empty
-    """
-    return panflute.convert_text(str(options['caption']))[0].content if 'caption' in options else None
-
-
 def get_width(options):
     """
     get width: set to `None` when invalid
@@ -93,13 +86,6 @@ def get_width(options):
     return width
 
 
-def get_alignment(options):
-    """
-    get alignment
-    """
-    return options.get('alignment', None)
-
-
 def get_table_width(options):
     """
     `table-width` set to `1.0` if invalid
@@ -115,20 +101,6 @@ def get_table_width(options):
             table_width = 1.0
             panflute.debug("pantable: invalid table-width")
     return table_width
-
-
-def get_header(options):
-    """
-    `header` set to `True` if invalid
-    """
-    return to_bool(options.get('header', True))
-
-
-def get_markdown(options):
-    """
-    `markdown` set to `True` if invalid
-    """
-    return to_bool(options.get('markdown', False))
 
 
 def get_include(options):
@@ -249,15 +221,17 @@ def convert2table(options, data, **__):
     """
     provided to panflute.yaml_filter to parse its content as pandoc table.
     """
-    # Initialize the `options` output from `panflute.yaml_filter`.
-    # Set the values in options to default if they are invalid
-    caption = get_caption(options)
-    alignment = get_alignment(options)
+    # Initialize the `options` output from `panflute.yaml_filter`
+    # get caption: parsed in panflute AST if non-empty
+    caption = panflute.convert_text(str(options['caption']))[0].content if 'caption' in options else None
+    alignment = options.get('alignment', None)
     width =get_width(options)
     table_width = get_table_width(options)
-    header = get_header(options)
-    markdown = get_markdown(options)
+    # `header` set to `True` if invalid
+    header = to_bool(options.get('header', True))
+    markdown = to_bool(options.get('markdown', False))
     include = get_include(options)
+
     # parse csv data to list
     raw_table_list = read_data(include, data)
     # check empty table
