@@ -132,7 +132,7 @@ def parse_table_options(caption, alignment, width, table_width, header, markdown
         alignment = str(alignment)
         # truncate and debug if too long
         if len(alignment) > number_of_columns:
-            alignment = alignment[0:number_of_columns]
+            alignment = alignment[:number_of_columns]
             panflute.debug("pantable: alignment string is too long")
         # parsing
         parsed_alignment = [("AlignLeft" if each_alignment.lower() == "l"
