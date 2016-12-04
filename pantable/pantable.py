@@ -131,14 +131,18 @@ def parse_width(options, raw_table_list, number_of_columns):
                 [len(line) for line in row[i].split("\n")]
             ) for row in raw_table_list]
         ) for i in range(number_of_columns)]
-        width_tot = sum(width_abs)
         try:
+            if sum(width_abs) == 0:
+                raise ValueError
+            # match the way pandoc handle width, see jgm/pandoc commit 0dfceda
+            width_abs = [each_width + 3 for each_width in width_abs]
+            width_tot = sum(width_abs)
             width = [
                 width_abs[i] / width_tot * table_width
                 for i in range(number_of_columns)
             ]
-        except ZeroDivisionError:
-            panflute.debug("pantable: table has zero total width")
+        except ValueError:
+            panflute.debug("pantable: table is empty")
             width = None
     return width
 
