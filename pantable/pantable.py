@@ -235,9 +235,9 @@ def convert2table(options, data, **__):
     """
     # initialize table options from YAML metadata
     init_table_options(options)
-    # check table options
+    # check table options: reset to default if invalid
     check_table_options(options)
-    # parse csv to list
+    # parse csv data to list
     raw_table_list = read_data(options['include'], data)
     # check empty table
     if not raw_table_list:
@@ -253,19 +253,17 @@ def convert2table(options, data, **__):
     if isempty:
         panflute.debug("pantable: table is empty")
         return []
-    # finalize table according to metadata
-    if len(table_body) > 1:
-        header_row = table_body.pop(0) if options['header'] else None
-    else:
-        header_row = None
-    table = panflute.Table(
+    # extract header row
+    header_row = table_body.pop(0) if (
+        len(table_body) > 1 and options['header']
+    ) else None
+    return panflute.Table(
         *table_body,
         caption=options['caption'],
         alignment=options['alignment'],
         width=options['width'],
         header=header_row
     )
-    return table
 
 
 def main(_=None):
