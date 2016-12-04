@@ -65,7 +65,6 @@ def to_bool(to_be_bool, default=True):
             panflute.debug("""pantable: invalid boolean. \
 Should be true/false/yes/no, case-insensitive.""")
     return to_be_bool
-# end helper functions
 
 
 def get_width(options):
@@ -101,6 +100,7 @@ def get_table_width(options):
             table_width = 1.0
             panflute.debug("pantable: invalid table-width")
     return table_width
+# end helper functions
 
 
 def get_include(options):
@@ -110,7 +110,7 @@ def get_include(options):
     if 'include' not in options:
         include = None
     else:
-        include = options.get('include')
+        include = str(options.get('include'))
         if not os.path.isfile(include):
             include = None
             panflute.debug("pantable: invalid path from 'include'")
