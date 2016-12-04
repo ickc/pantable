@@ -23,6 +23,7 @@ Currently only CSV table is supported.
     default: None
 
 When the metadata keys is invalid, the default will be used instead.
+Note that width and table-width accept fractions as well.
 
 e.g.
 
