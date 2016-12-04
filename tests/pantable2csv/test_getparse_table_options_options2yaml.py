@@ -26,7 +26,8 @@ def test_getparse_table_options_options2yaml():
     assert options['markdown'] is True
     # test options2yaml
     options2yaml(options)
-    assert options == {'alignment': 'LRCD', 'caption': '*abcd*', 'header': True, 'markdown': True, 'table-width': 0, 'width': [0, 0, 0, 0]}
+    assert options == {'alignment': 'LRCD', 'caption': '*abcd*',
+                       'header': True, 'markdown': True, 'table-width': 0, 'width': [0, 0, 0, 0]}
     # parse_table_options without caption
     options = get_table_options(*doc.content)
     options['caption'] = ''
