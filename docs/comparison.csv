@@ -3,7 +3,7 @@ caption,caption,caption,title,caption
 aligns,aligns = LRCD,aligns = LRCD,,aligns = LRCD
 width,,"widths = ""0.5 0.2 0.3""",,"width: [0.5, 0.2, 0.3]"
 table-width,,,,table-width: 1.0
-header,header = yes | no,header = yes | no,header: True | False,header: True | False | yes | NO
+header,header = yes | no,header = yes | no,has_header: True | False,header: True | False | yes | NO
 markdown,,inlinemarkdown,,markdown: True | False | yes | NO
 source,source,file,source,include
 others,type = simple | multiline | grid | pipe,,,
