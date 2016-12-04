@@ -48,6 +48,7 @@ import os
 import panflute
 
 
+# begin helper functions
 def to_bool(to_be_bool):
     """
     Do nothing if to_be_bool is boolean,
@@ -64,6 +65,7 @@ def to_bool(to_be_bool):
             panflute.debug("""pantable: invalid boolean. \
 Should be true/false/yes/no, case-insensitive.""")
     return to_be_bool
+# end helper functions
 
 
 def init_table_options(options):
@@ -129,6 +131,7 @@ def parse_table_options(options, raw_table_list):
         as in standard pandoc YAML metadata.
     `alignment` string is parsed into pandoc format (AlignDefault, etc.)
     `width` is auto-calculated if not given in YAML
+    It also returns True when table has 0 total width.
     """
     # parse caption
     if options['caption'] is not None:
@@ -176,7 +179,7 @@ def parse_table_options(options, raw_table_list):
     return
 
 
-def read_csv(include, data):
+def read_data(include, data):
     """
     read csv and return the table in list
     """
@@ -232,7 +235,7 @@ def convert2table(options, data, **__):
     # check table options
     check_table_options(options)
     # parse csv to list
-    raw_table_list = read_csv(options['include'], data)
+    raw_table_list = read_data(options['include'], data)
     # check empty table
     if not raw_table_list:
         panflute.debug("pantable: table is empty")
