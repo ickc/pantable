@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 """
 from .context import read_data
