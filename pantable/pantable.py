@@ -112,7 +112,7 @@ def init_table_options(options):
     return (caption, alignment, width, table_width, header, markdown, include)
 
 
-def parse_table_options(caption, alignment, width, table_width, header, markdown, include, raw_table_list):
+def parse_table_options(caption, alignment, width, table_width, raw_table_list):
     """
     `caption` is assumed to contain markdown,
         as in standard pandoc YAML metadata.
@@ -167,7 +167,7 @@ def parse_table_options(caption, alignment, width, table_width, header, markdown
         except ZeroDivisionError:
             panflute.debug("pantable: table has zero total width")
             isempty = True
-    return (caption, alignment, width, table_width, header, markdown, include, isempty)
+    return (caption, alignment, width, isempty)
 
 
 def read_data(include, data):
@@ -234,7 +234,7 @@ def convert2table(options, data, **__):
     # parse list to panflute table
     table_body = parse_table_list(markdown, raw_table_list)
     # parse table options
-    caption, alignment, width, table_width, header, markdown, include, isempty = parse_table_options(caption, alignment, width, table_width, header, markdown, include, raw_table_list)
+    caption, alignment, width, isempty = parse_table_options(caption, alignment, width, table_width, raw_table_list)
     # check empty table
     if isempty:
         panflute.debug("pantable: table is empty")
