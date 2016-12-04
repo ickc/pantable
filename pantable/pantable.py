@@ -143,22 +143,25 @@ def parse_table_options(options, raw_table_list):
     # parse alignment
     if options['alignment'] is not None:
         options['alignment'] = str(options['alignment'])
-        parsed_alignment = []
-        for i in range(number_of_columns):
-            try:
-                if options['alignment'][i].lower() == "l":
-                    parsed_alignment.append("AlignLeft")
-                elif options['alignment'][i].lower() == "c":
-                    parsed_alignment.append("AlignCenter")
-                elif options['alignment'][i].lower() == "r":
-                    parsed_alignment.append("AlignRight")
-                else:
-                    parsed_alignment.append("AlignDefault")
-            except IndexError:
-                parsed_alignment += ["AlignDefault" for __ in range(
-                    number_of_columns - len(parsed_alignment))]
-                panflute.debug(
-                    "pantable: alignment string is either invalid or too short")
+        # truncate and debug if too long
+        if len(options['alignment']) > number_of_columns:
+            options['alignment'] = options['alignment'][0:number_of_columns]
+            panflute.debug("pantable: alignment string is too long")
+        # parsing
+        parsed_alignment = [("AlignLeft" if each_alignment.lower() == "l"
+                             else "AlignCenter" if each_alignment.lower() == "c"
+                             else "AlignRight" if each_alignment.lower() == "r"
+                             else "AlignDefault" if each_alignment.lower() == "d"
+                             else None) for each_alignment in options['alignment']]
+        # debug if invalid; set to default
+        if None in parsed_alignment:
+            parsed_alignment = [(each_alignment if each_alignment is not None else "AlignDefault")
+                                for each_alignment in parsed_alignment]
+            panflute.debug("pantable: alignment string is invalid")
+        # fill up with default if too short
+        if number_of_columns > len(parsed_alignment):
+            parsed_alignment += ["AlignDefault" for __ in range(
+                number_of_columns - len(parsed_alignment))]
         options['alignment'] = parsed_alignment
     # calculate width
     if options['width'] is None:
