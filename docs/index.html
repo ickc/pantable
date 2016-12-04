@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <meta name="dcterms.date" content="2016-11-30">
   <title>CSV Tables in Markdown — Pandoc Filter for CSV Tables</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -53,7 +52,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 <header>
 <h1 class="title">CSV Tables in Markdown — Pandoc Filter for CSV Tables</h1>
-<p class="date">November 30, 2016</p>
+<p class="date">December  4, 2016</p>
 </header>
 <nav id="TOC">
 <ul>
@@ -91,7 +90,7 @@ First row,defaulted to be header row,can be disabled
 
 - following standard markdown syntax
 - like this&quot;
-2,&quot;Any markdown syntax, e.g.&quot;,$E = mc^2$
+2,&quot;Any markdown syntax, e.g.&quot;,$$E = mc^2$$
 ```</code></pre>
 <p>becomes</p>
 <table style="width:70%;">
@@ -121,7 +120,7 @@ First row,defaulted to be header row,can be disabled
 <tr class="even">
 <td style="text-align: right;"><p>2</p></td>
 <td style="text-align: center;"><p>Any markdown syntax, e.g.</p></td>
-<td><p><span class="math inline"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span></p></td>
+<td><p><br /><span class="math display"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span><br /></p></td>
 </tr>
 </tbody>
 </table>

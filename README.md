@@ -45,7 +45,7 @@ Also see the README in [GitHub Pages](https://ickc.github.io/pantable/). There�
 
     - following standard markdown syntax
     - like this"
-    2,"Any markdown syntax, e.g.",$E = mc^2$
+    2,"Any markdown syntax, e.g.",$$E = mc^2$$
     ```
 
 becomes
@@ -77,7 +77,7 @@ becomes
 <tr class="even">
 <td align="right"><p>2</p></td>
 <td align="center"><p>Any markdown syntax, e.g.</p></td>
-<td><p><span class="math inline"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span></p></td>
+<td><p><br /><span class="math display"><em>E</em> = <em>m</em><em>c</em><sup>2</sup></span><br /></p></td>
 </tr>
 </tbody>
 </table>

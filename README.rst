@@ -4,7 +4,7 @@
 CSV Tables in Markdown — Pandoc Filter for CSV Tables
 =====================================================
 
-:Date:   November 30, 2016
+:Date:   December  4, 2016
 
 .. role:: math(raw)
    :format: html latex
@@ -65,7 +65,7 @@ output <https://ickc.github.io/pantable/README.pdf>`__ too.
 
     - following standard markdown syntax
     - like this"
-    2,"Any markdown syntax, e.g.",$E = mc^2$
+    2,"Any markdown syntax, e.g.",$$E = mc^2$$
     ```
 
 becomes
@@ -81,7 +81,7 @@ becomes
 |        |                     |    markdown syntax       |
 |        |                     | -  like this             |
 +--------+---------------------+--------------------------+
-| 2      | Any markdown        | :math:`E = mc^2`         |
+| 2      | Any markdown        | .. math:: E = mc^2       |
 |        | syntax, e.g.        |                          |
 +--------+---------------------+--------------------------+
 
