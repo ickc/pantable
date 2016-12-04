@@ -49,7 +49,7 @@ import panflute
 
 
 # begin helper functions
-def to_bool(to_be_bool, default = True):
+def to_bool(to_be_bool, default=True):
     """
     Do nothing if to_be_bool is boolean,
     return `False` if it is "false" or "no" (case-insensitive),
