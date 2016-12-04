@@ -16,6 +16,6 @@ def test_parse_width():
     ]
     options['width'] = None
     options['table-width'] = 1.2
-    assert parse_width(options, raw_table_list, 4) == [22 / 32 * 1.2,
-                                                       3 / 32 * 1.2, 6 / 32 * 1.2, 1 / 32 * 1.2]
+    assert parse_width(options, raw_table_list, 4) == [25 / 44 * 1.2,
+                                                       6 / 44 * 1.2, 9 / 44 * 1.2, 4 / 44 * 1.2]
     return
