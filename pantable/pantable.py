@@ -70,9 +70,7 @@ Should be true/false/yes/no, case-insensitive.""")
 
 def get_caption(options):
     """
-    get caption:
-    
-    parsed in panflute AST if not empty, else None
+    get caption: parsed in panflute AST if non-empty
     """
     caption = options.get('caption', None)
     # parse caption
@@ -105,13 +103,12 @@ def get_alignment(options):
     """
     get alignment
     """
-    alignment = options.get('alignment', None)
-    return alignment
+    return options.get('alignment', None)
 
 
 def get_table_width(options):
     """
-    `table-width` set to `1.0` if invalid or not positive
+    `table-width` set to `1.0` if invalid
     """
     table_width = options.get('table-width', 1.0)
     try:
@@ -128,18 +125,14 @@ def get_header(options):
     """
     `header` set to `True` if invalid
     """
-    header = options.get('header', True)
-    header = to_bool(header)
-    return header
+    return to_bool(options.get('header', True))
 
 
 def get_markdown(options):
     """
     `markdown` set to `True` if invalid
     """
-    markdown = options.get('markdown', False)
-    markdown = to_bool(markdown)
-    return markdown
+    return to_bool(options.get('markdown', False))
 
 
 def get_include(options):
@@ -148,7 +141,7 @@ def get_include(options):
     """
     include = options.get('include', None)
     if include is not None:
-        if not os.path.isfile(str(include)):
+        if not os.path.isfile(include):
             include = None
             panflute.debug("pantable: include path is invalid")
     return include
