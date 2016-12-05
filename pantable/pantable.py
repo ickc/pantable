@@ -72,24 +72,26 @@ Should be true/false/yes/no, case-insensitive. Default is used.""")
 
 def get_width(options, number_of_columns):
     """
-    get width: set to `None` when invalid
+    get width: set to `None` when
+
+    1. not given
+    2. not a list
+    3. length not equal to the number of columns
+    4. negative entries
     """
     if 'width' not in options:
         width = None
     else:
         width = options['width']
         try:
+            if len(width) != number_of_columns:
+                raise ValueError
             width = [float(Fraction(x)) for x in options['width']]
             if not all(i >= 0 for i in width):
                 raise ValueError
         except (ValueError, TypeError):
             width = None
             panflute.debug("pantable: invalid width")
-    # check width too short or too long
-    if width is not None and len(width) != number_of_columns:
-        width = None
-        panflute.debug("pantable: width is either too short or too long, \
-auto-width will be used instead.")
     return width
 
 
