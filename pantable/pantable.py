@@ -58,9 +58,9 @@ def to_bool(to_be_bool, default=True):
     otherwise return default.
     """
     if not isinstance(to_be_bool, bool):
-        if str(to_be_bool).lower() in ("false", "no"):
+        if to_be_bool.lower() in ("false", "no"):
             to_be_bool = False
-        elif str(to_be_bool).lower() in ("true", "yes"):
+        elif to_be_bool.lower() in ("true", "yes"):
             to_be_bool = True
         else:
             to_be_bool = default
@@ -248,7 +248,7 @@ def convert2table(options, data, **__):
     # auto-width when width is not specified
     if width is None:
         width = auto_width(get_table_width(
-        options), number_of_columns, raw_table_list)
+            options), number_of_columns, raw_table_list)
     # check empty table
     if width is None:
         panflute.debug("pantable: table is empty")
