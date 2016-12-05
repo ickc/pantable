@@ -149,11 +149,10 @@ def parse_width(options, raw_table_list, number_of_columns):
     return width
 
 
-def parse_alignment(options, number_of_columns):
+def parse_alignment(alignment, number_of_columns):
     """
     `alignment` string is parsed into pandoc format (AlignDefault, etc.)
     """
-    alignment = options.get('alignment', None)
     # parse alignment
     if alignment is not None:
         alignment = str(alignment)
@@ -251,7 +250,7 @@ def convert2table(options, data, **__):
         panflute.debug("pantable: table is empty")
         return []
     # parse alignment
-    alignment = parse_alignment(options, number_of_columns)
+    alignment = parse_alignment(options.get('alignment', None), number_of_columns)
     header = to_bool(options.get('header', True), True)
     markdown = to_bool(options.get('markdown', False), False)
 

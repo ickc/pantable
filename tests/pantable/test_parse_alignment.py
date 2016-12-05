@@ -7,24 +7,21 @@ def test_parse_alignment():
     # init
     options = {}
     # check alignment
-    options['alignment'] = 'LRC'
-    assert parse_alignment(options, 4) == [
+    assert parse_alignment('LRC', 4) == [
         'AlignLeft',
         'AlignRight',
         'AlignCenter',
         'AlignDefault'
     ]
     # check alignment too long
-    options['alignment'] = 'LRCDLRCDLRCDLRCDLRCDLRCD'
-    assert parse_alignment(options, 4) == [
+    assert parse_alignment('LRCDLRCDLRCDLRCDLRCDLRCD', 4) == [
         'AlignLeft',
         'AlignRight',
         'AlignCenter',
         'AlignDefault'
     ]
     # check invalid
-    options['alignment'] = 'abcd'
-    assert parse_alignment(options, 4) == [
+    assert parse_alignment('abcd', 4) == [
         'AlignDefault',
         'AlignDefault',
         'AlignCenter',
