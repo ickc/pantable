@@ -22,8 +22,8 @@ def test_get_width():
     assert get_width(options, 2) == [0.5, 0.1]
     # width too short
     options['width'] = [0.1, 0.2, 0.3]
-    assert get_width(options, 4) == None
+    assert get_width(options, 4) is None
     # width too long
     options['width'] = [0.1, 0.2, 0.3, 0.4, 0.5]
-    assert get_width(options, 4) == None
+    assert get_width(options, 4) is None
     return
