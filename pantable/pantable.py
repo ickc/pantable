@@ -205,15 +205,15 @@ def parse_table_list(markdown, raw_table_list):
     read table in list and return panflute table format
     """
     if markdown:
-        table_body = [panflute.TableRow(
+        table_body = [panflute.TableRow(*[
             panflute.TableCell(*panflute.convert_text(x))
             for x in row
-        ) for row in raw_table_list]
+        ]) for row in raw_table_list]
     else:
-        table_body = [panflute.TableRow(
+        table_body = [panflute.TableRow(*[
             panflute.TableCell(panflute.Plain(panflute.Str(x)))
             for x in row
-        ) for row in raw_table_list]
+        ]) for row in raw_table_list]
     return table_body
 
 
