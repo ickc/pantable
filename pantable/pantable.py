@@ -57,12 +57,14 @@ def to_bool(to_be_bool, default=True):
     otherwise return default.
     """
     if not isinstance(to_be_bool, bool):
-        str_bool = str(to_be_bool)
-        if str_bool.lower() in ("false", "no"):
-            to_be_bool = False
-        elif str_bool.lower() in ("true", "yes"):
-            to_be_bool = True
-        else:
+        try:
+            if to_be_bool.lower() in ("false", "no"):
+                to_be_bool = False
+            elif to_be_bool.lower() in ("true", "yes"):
+                to_be_bool = True
+            else:
+                raise ValueError
+        except (ValueError, TypeError, AttributeError):
             to_be_bool = default
             panflute.debug("""pantable: invalid boolean. \
 Should be true/false/yes/no, case-insensitive. Default is used.""")
@@ -83,6 +85,7 @@ def get_width(options, number_of_columns):
     else:
         width = options['width']
         try:
+            width = options['width']
             if len(width) != number_of_columns:
                 raise ValueError
             width = [float(Fraction(x)) for x in options['width']]
@@ -125,10 +128,10 @@ def auto_width(table_width, number_of_columns, raw_table_list):
         ) for row in raw_table_list]
     ) for i in range(number_of_columns)]
     try:
-        # when all are 3 means all are empty, see comment above
-        if all(i == 3 for i in width_abs):
-            raise ValueError
         width_tot = sum(width_abs)
+        # when all are 3 means all are empty, see comment above
+        if width_tot == 3 * number_of_columns:
+            raise ValueError
         width = [
             width_abs[i] / width_tot * table_width
             for i in range(number_of_columns)
@@ -147,7 +150,10 @@ def parse_alignment(alignment_string, number_of_columns):
     alignment_string = str(alignment_string)
     number_of_alignments = len(alignment_string)
     # truncate and debug if too long
-    if number_of_alignments > number_of_columns:
+    try:
+        if number_of_alignments > number_of_columns:
+            raise ValueError
+    except ValueError:
         alignment_string = alignment_string[:number_of_columns]
         panflute.debug("pantable: alignment string is too long")
     # parsing
@@ -157,10 +163,14 @@ def parse_alignment(alignment_string, number_of_columns):
                   else "AlignDefault" if i.lower() == "d"
                   else None) for i in alignment_string]
     # debug if invalid; set to default
-    if None in alignment:
+    try:
+        if None in alignment:
+            raise ValueError
+    except ValueError:
         alignment = [(i if i is not None else "AlignDefault")
                      for i in alignment]
-        panflute.debug("pantable: alignment string is invalid")
+        panflute.debug(
+            "pantable: alignment: invalid character found, default is used instead.")
     # fill up with default if too short
     if number_of_columns > number_of_alignments:
         alignment += ["AlignDefault" for __ in range(
@@ -225,7 +235,10 @@ def convert2table(options, data, **__):
     raw_table_list = read_data(options.get('include', None), data)
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
-    if not raw_table_list or raw_table_list is None:
+    try:
+        if not raw_table_list or raw_table_list is None:
+            raise ValueError
+    except ValueError:
         panflute.debug("pantable: table is empty or include is invalid")
         return raw_table_list
     # regularize table: all rows should have same length
@@ -242,7 +255,10 @@ def convert2table(options, data, **__):
             options), number_of_columns, raw_table_list)
     # delete element if table is empty (by returning [])
     # width remains None only when table is empty
-    if width is None:
+    try:
+        if width is None:
+            raise ValueError
+    except ValueError:
         panflute.debug("pantable: table is empty")
         return []
     # parse alignment
