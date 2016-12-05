@@ -254,6 +254,7 @@ def convert2table(options, data, **__):
             raise ValueError
     except ValueError:
         panflute.debug("pantable: table is empty or include is invalid")
+        # [] means delete the current element; None means kept as is
         return raw_table_list
     # regularize table: all rows should have same length
     table_list, number_of_columns = regularize_table_list(raw_table_list)
