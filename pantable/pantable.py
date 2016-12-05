@@ -115,19 +115,19 @@ def get_table_width(options):
 def auto_width(table_width, number_of_columns, raw_table_list):
     """
     `width` is auto-calculated if not given in YAML
-    It also returns isempty=True when table has 0 total width.
+    It also returns None when table is empty.
     """
     # calculate width
-    width_abs = [max(
+    # The +3 match the way pandoc handle width, see jgm/pandoc commit 0dfceda
+    width_abs = [3 + max(
         [max(
             [len(line) for line in row[i].split("\n")]
         ) for row in raw_table_list]
     ) for i in range(number_of_columns)]
     try:
-        if sum(width_abs) == 0:
+        # when all are 3 means all are empty, see comment above
+        if all(i == 3 for i in width_abs):
             raise ValueError
-        # match the way pandoc handle width, see jgm/pandoc commit 0dfceda
-        width_abs = [each_width + 3 for each_width in width_abs]
         width_tot = sum(width_abs)
         width = [
             width_abs[i] / width_tot * table_width
