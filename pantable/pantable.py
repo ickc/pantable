@@ -231,17 +231,14 @@ def parse_table_list(markdown, table_list):
     """
     read table in list and return panflute table format
     """
+    # make functions local
+    to_table_row = panflute.TableRow
     if markdown:
-        table_body = [panflute.TableRow(*[
-            panflute.TableCell(*panflute.convert_text(x))
-            for x in row
-        ]) for row in table_list]
+        to_table_cell = lambda x: panflute.TableCell(*panflute.convert_text(x))
     else:
-        table_body = [panflute.TableRow(*[
-            panflute.TableCell(panflute.Plain(panflute.Str(x)))
-            for x in row
-        ]) for row in table_list]
-    return table_body
+        to_table_cell = lambda x: panflute.TableCell(
+            panflute.Plain(panflute.Str(x)))
+    return [to_table_row(*[to_table_cell(x) for x in row]) for row in table_list]
 
 
 def convert2table(options, data, **__):
