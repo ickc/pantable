@@ -204,19 +204,16 @@ def parse_table_list(markdown, raw_table_list):
     """
     read table in list and return panflute table format
     """
-    table_body = []
-    for row in raw_table_list:
-        if markdown:
-            cells = [
-                panflute.TableCell(*panflute.convert_text(x))
-                for x in row
-            ]
-        else:
-            cells = [
-                panflute.TableCell(panflute.Plain(panflute.Str(x)))
-                for x in row
-            ]
-        table_body.append(panflute.TableRow(*cells))
+    if markdown:
+        table_body = [panflute.TableRow(
+            panflute.TableCell(*panflute.convert_text(x))
+            for x in row
+        ) for row in raw_table_list]
+    else:
+        table_body = [panflute.TableRow(
+            panflute.TableCell(panflute.Plain(panflute.Str(x)))
+            for x in row
+        ) for row in raw_table_list]
     return table_body
 
 
