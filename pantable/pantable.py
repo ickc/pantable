@@ -241,13 +241,15 @@ def convert2table(options, data, **__):
 
     # Initialize the `options` output from `panflute.yaml_filter`
     # parse width
-    width = parse_width(get_width(options), get_table_width(options), raw_table_list, number_of_columns)
+    width = parse_width(get_width(options), get_table_width(
+        options), raw_table_list, number_of_columns)
     # check empty table
     if width is None:
         panflute.debug("pantable: table is empty")
         return []
     # parse alignment
-    alignment = parse_alignment(options.get('alignment', None), number_of_columns)
+    alignment = parse_alignment(options.get(
+        'alignment', None), number_of_columns)
     header = to_bool(options.get('header', True), True)
     markdown = to_bool(options.get('markdown', False), False)
 
