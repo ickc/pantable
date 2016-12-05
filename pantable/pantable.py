@@ -217,11 +217,9 @@ def regularize_table_list(raw_table_list):
     length_of_rows = [len(row) for row in raw_table_list]
     number_of_columns = max(length_of_rows)
     try:
-        if all(i == number_of_columns for i in length_of_rows):
-            table_list = raw_table_list
-        else:
-            raise ValueError
-    except ValueError:
+        assert all(i == number_of_columns for i in length_of_rows)
+        table_list = raw_table_list
+    except AssertionError:
         table_list = [
             row + ['' for __ in range(number_of_columns - len(row))] for row in raw_table_list]
         panflute.debug(
