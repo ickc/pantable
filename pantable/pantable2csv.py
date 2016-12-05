@@ -79,10 +79,11 @@ def table2csv(elem, doc):
         if elem.caption:
             options['caption'] = ast2markdown(panflute.Para(*elem.caption))
         # options: alignment
-        parsed_alignment = [("L" if i == "AlignLeft"
-                             else "C" if i == "AlignCenter"
-                             else "R" if i == "AlignRight"
-                             else "D") for i in elem.alignment]
+        align_dict = {"AlignLeft": 'L',
+                      "AlignCenter": 'C',
+                      "AlignRight": 'R',
+                      "AlignDefault": 'D'}
+        parsed_alignment = [align_dict[i] for i in elem.alignment]
         options['alignment'] = "".join(parsed_alignment)
         # options: width
         options['width'] = elem.width
