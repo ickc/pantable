@@ -193,7 +193,8 @@ def parse_alignment(alignment_string, number_of_columns):
 
 def read_data(include, data):
     """
-    read csv and return the table in list
+    read csv and return the table in list.
+    Return None when the include path is invalid.
     """
     if include is None:
         with io.StringIO(data) as file:
