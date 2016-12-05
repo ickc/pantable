@@ -152,7 +152,8 @@ def parse_alignment(alignment_string, number_of_columns):
     - if invalid characters are given
     - if too short
     """
-    # alignment string can be None or empty; return None: set to default by panflute
+    # alignment string can be None or empty; return None: set to default by
+    # panflute
     if not alignment_string:
         return None
     # prepare alignment_string
@@ -183,7 +184,7 @@ def parse_alignment(alignment_string, number_of_columns):
         alignment = [(i if i is not None else "AlignDefault")
                      for i in alignment]
         panflute.debug(
-        "pantable: alignment: invalid character found, default is used instead.")
+            "pantable: alignment: invalid character found, default is used instead.")
     # fill up with default if too short
     if number_of_columns > number_of_alignments:
         alignment += ["AlignDefault" for __ in range(
