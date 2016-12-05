@@ -115,7 +115,7 @@ def get_table_width(options):
 # end helper functions
 
 
-def auto_width(table_width, number_of_columns, raw_table_list):
+def auto_width(table_width, number_of_columns, table_list):
     """
     `width` is auto-calculated if not given in YAML
     It also returns None when table is empty.
@@ -125,7 +125,7 @@ def auto_width(table_width, number_of_columns, raw_table_list):
     width_abs = [3 + max(
         [max(
             [len(line) for line in row[i].split("\n")]
-        ) for row in raw_table_list]
+        ) for row in table_list]
     ) for i in range(number_of_columns)]
     try:
         width_tot = sum(width_abs)
@@ -200,17 +200,22 @@ def regularize_table_list(raw_table_list):
     """
     When the length of rows are uneven, make it as long as the longest row.
     """
-    max_number_of_columns = max(
-        [len(row) for row in raw_table_list]
-    )
-    for row in raw_table_list:
-        missing_number_of_columns = max_number_of_columns - len(row)
-        if missing_number_of_columns > 0:
-            row += ['' for __ in range(missing_number_of_columns)]
-    return
+    length_of_rows = [len(row) for row in raw_table_list]
+    number_of_columns = max(length_of_rows)
+    try:
+        if all(i == number_of_columns for i in length_of_rows):
+            table_list = raw_table_list
+        else:
+            raise ValueError
+    except ValueError:
+        table_list = [
+            row + ['' for __ in range(number_of_columns - len(row))] for row in raw_table_list]
+        panflute.debug(
+            "pantable: table rows are of irregular length. Empty cells will be appended.")
+    return (table_list, number_of_columns)
 
 
-def parse_table_list(markdown, raw_table_list):
+def parse_table_list(markdown, table_list):
     """
     read table in list and return panflute table format
     """
@@ -218,12 +223,12 @@ def parse_table_list(markdown, raw_table_list):
         table_body = [panflute.TableRow(*[
             panflute.TableCell(*panflute.convert_text(x))
             for x in row
-        ]) for row in raw_table_list]
+        ]) for row in table_list]
     else:
         table_body = [panflute.TableRow(*[
             panflute.TableCell(panflute.Plain(panflute.Str(x)))
             for x in row
-        ]) for row in raw_table_list]
+        ]) for row in table_list]
     return table_body
 
 
@@ -242,9 +247,7 @@ def convert2table(options, data, **__):
         panflute.debug("pantable: table is empty or include is invalid")
         return raw_table_list
     # regularize table: all rows should have same length
-    regularize_table_list(raw_table_list)
-    # preparation: get no of columns of the table
-    number_of_columns = len(raw_table_list[0])
+    table_list, number_of_columns = regularize_table_list(raw_table_list)
 
     # Initialize the `options` output from `panflute.yaml_filter`
     # parse width
@@ -252,7 +255,7 @@ def convert2table(options, data, **__):
     # auto-width when width is not specified
     if width is None:
         width = auto_width(get_table_width(
-            options), number_of_columns, raw_table_list)
+            options), number_of_columns, table_list)
     # delete element if table is empty (by returning [])
     # width remains None only when table is empty
     try:
@@ -271,7 +274,7 @@ def convert2table(options, data, **__):
     caption = panflute.convert_text(str(options['caption']))[
         0].content if 'caption' in options else None
     # parse list to panflute table
-    table_body = parse_table_list(markdown, raw_table_list)
+    table_body = parse_table_list(markdown, table_list)
     # extract header row
     header_row = table_body.pop(0) if (
         len(table_body) > 1 and header
