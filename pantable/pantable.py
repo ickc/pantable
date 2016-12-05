@@ -44,7 +44,7 @@ First row,defaulted to be header row,can be disabled
 """
 
 import csv
-from fractions import Fraction
+import fractions
 import io
 import panflute
 
@@ -85,7 +85,8 @@ def get_width(options, number_of_columns):
         width = options['width']
         if len(width) != number_of_columns:
             raise ValueError
-        width = [float(Fraction(x)) for x in options['width']]
+        custom_float = lambda x: float(fractions.Fraction(x))
+        width = [custom_float(x) for x in options['width']]
         if not all(i >= 0 for i in width):
             raise ValueError
     except KeyError:
@@ -101,7 +102,7 @@ def get_table_width(options):
     `table-width` set to `1.0` if invalid
     """
     try:
-        table_width = float(Fraction(options.get('table-width')))
+        table_width = float(fractions.Fraction((options.get('table-width'))))
         if table_width <= 0:
             raise ValueError
     except KeyError:
