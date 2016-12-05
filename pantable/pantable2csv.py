@@ -51,9 +51,9 @@ First row,defaulted to be header row,can be disabled
 ~~~
 """
 
-import panflute
-import io
 import csv
+import io
+import panflute
 import yaml
 
 
