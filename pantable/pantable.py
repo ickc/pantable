@@ -226,7 +226,8 @@ def convert2table(options, data, **__):
     """
     # prepare table in list from data/include
     raw_table_list = read_data(options.get('include', None), data)
-    # check empty table
+    # delete element if table is empty (by returning [])
+    # element unchanged if include is invalid (by returning None)
     if not raw_table_list or raw_table_list is None:
         panflute.debug("pantable: table is empty or include is invalid")
         return raw_table_list
@@ -242,7 +243,8 @@ def convert2table(options, data, **__):
     if width is None:
         width = auto_width(get_table_width(
             options), number_of_columns, raw_table_list)
-    # check empty table
+    # delete element if table is empty (by returning [])
+    # width remains None only when table is empty
     if width is None:
         panflute.debug("pantable: table is empty")
         return []
