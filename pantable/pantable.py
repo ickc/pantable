@@ -69,7 +69,7 @@ Should be true/false/yes/no, case-insensitive.""")
     return to_be_bool
 
 
-def get_width(options):
+def get_width(options, number_of_columns):
     """
     get width: set to `None` when invalid
     """
@@ -84,6 +84,11 @@ def get_width(options):
         except (ValueError, TypeError):
             width = None
             panflute.debug("pantable: invalid width")
+    # check width too short or too long
+    if width is not None and len(width) != number_of_columns:
+        width = None
+        panflute.debug("pantable: width is either too short or too long, \
+auto-width will be used instead.")
     return width
 
 
@@ -119,31 +124,30 @@ def get_include(options):
     return include
 
 
-def parse_width(width, table_width, number_of_columns, raw_table_list):
+def parse_width(table_width, number_of_columns, raw_table_list):
     """
     `width` is auto-calculated if not given in YAML
     It also returns isempty=True when table has 0 total width.
     """
     # calculate width
-    if width is None:
-        width_abs = [max(
-            [max(
-                [len(line) for line in row[i].split("\n")]
-            ) for row in raw_table_list]
-        ) for i in range(number_of_columns)]
-        try:
-            if sum(width_abs) == 0:
-                raise ValueError
-            # match the way pandoc handle width, see jgm/pandoc commit 0dfceda
-            width_abs = [each_width + 3 for each_width in width_abs]
-            width_tot = sum(width_abs)
-            width = [
-                width_abs[i] / width_tot * table_width
-                for i in range(number_of_columns)
-            ]
-        except ValueError:
-            panflute.debug("pantable: table is empty")
-            width = None
+    width_abs = [max(
+        [max(
+            [len(line) for line in row[i].split("\n")]
+        ) for row in raw_table_list]
+    ) for i in range(number_of_columns)]
+    try:
+        if sum(width_abs) == 0:
+            raise ValueError
+        # match the way pandoc handle width, see jgm/pandoc commit 0dfceda
+        width_abs = [each_width + 3 for each_width in width_abs]
+        width_tot = sum(width_abs)
+        width = [
+            width_abs[i] / width_tot * table_width
+            for i in range(number_of_columns)
+        ]
+    except ValueError:
+        panflute.debug("pantable: table is empty")
+        width = None
     return width
 
 
@@ -240,7 +244,10 @@ def convert2table(options, data, **__):
 
     # Initialize the `options` output from `panflute.yaml_filter`
     # parse width
-    width = parse_width(get_width(options), get_table_width(
+    width = get_width(options, number_of_columns)
+    # auto-width
+    if width is None:
+        width = parse_width(get_table_width(
         options), number_of_columns, raw_table_list)
     # check empty table
     if width is None:
