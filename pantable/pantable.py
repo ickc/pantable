@@ -119,13 +119,11 @@ def get_include(options):
     return include
 
 
-def parse_width(options, raw_table_list, number_of_columns):
+def parse_width(width, table_width, raw_table_list, number_of_columns):
     """
     `width` is auto-calculated if not given in YAML
     It also returns isempty=True when table has 0 total width.
     """
-    width = get_width(options)
-    table_width = get_table_width(options)
     # calculate width
     if width is None:
         width_abs = [max(
@@ -243,8 +241,7 @@ def convert2table(options, data, **__):
 
     # Initialize the `options` output from `panflute.yaml_filter`
     # parse width
-    width = parse_width(
-        options, raw_table_list, number_of_columns)
+    width = parse_width(get_width(options), get_table_width(options), raw_table_list, number_of_columns)
     # check empty table
     if width is None:
         panflute.debug("pantable: table is empty")
