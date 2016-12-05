@@ -147,33 +147,32 @@ def parse_width(width, table_width, number_of_columns, raw_table_list):
     return width
 
 
-def parse_alignment(alignment, number_of_columns):
+def parse_alignment(alignment_string, number_of_columns):
     """
     `alignment` string is parsed into pandoc format (AlignDefault, etc.)
     """
-    # parse alignment
-    if alignment is not None:
-        alignment = str(alignment)
-        # truncate and debug if too long
-        if len(alignment) > number_of_columns:
-            alignment = alignment[:number_of_columns]
-            panflute.debug("pantable: alignment string is too long")
-        # parsing
-        parsed_alignment = [("AlignLeft" if each_alignment.lower() == "l"
-                             else "AlignCenter" if each_alignment.lower() == "c"
-                             else "AlignRight" if each_alignment.lower() == "r"
-                             else "AlignDefault" if each_alignment.lower() == "d"
-                             else None) for each_alignment in alignment]
-        # debug if invalid; set to default
-        if None in parsed_alignment:
-            parsed_alignment = [(each_alignment if each_alignment is not None else "AlignDefault")
-                                for each_alignment in parsed_alignment]
-            panflute.debug("pantable: alignment string is invalid")
-        # fill up with default if too short
-        if number_of_columns > len(parsed_alignment):
-            parsed_alignment += ["AlignDefault" for __ in range(
-                number_of_columns - len(parsed_alignment))]
-        alignment = parsed_alignment
+    # initialize
+    alignment_string = str(alignment_string)
+    number_of_alignments = len(alignment_string)
+    # truncate and debug if too long
+    if number_of_alignments > number_of_columns:
+        alignment_string = alignment_string[:number_of_columns]
+        panflute.debug("pantable: alignment string is too long")
+    # parsing
+    alignment = [("AlignLeft" if i.lower() == "l"
+                  else "AlignCenter" if i.lower() == "c"
+                  else "AlignRight" if i.lower() == "r"
+                  else "AlignDefault" if i.lower() == "d"
+                  else None) for i in alignment_string]
+    # debug if invalid; set to default
+    if None in alignment:
+        alignment = [(i if i is not None else "AlignDefault")
+                     for i in alignment]
+        panflute.debug("pantable: alignment string is invalid")
+    # fill up with default if too short
+    if number_of_columns > number_of_alignments:
+        alignment += ["AlignDefault" for __ in range(
+            number_of_columns - len(alignment))]
     return alignment
 
 
