@@ -58,9 +58,10 @@ def to_bool(to_be_bool, default=True):
     """
     if not isinstance(to_be_bool, bool):
         try:
-            if to_be_bool.lower() in ("false", "no"):
+            lowered_bool = to_be_bool.lower()
+            if lowered_bool in ("false", "no"):
                 to_be_bool = False
-            elif to_be_bool.lower() in ("true", "yes"):
+            elif lowered_bool in ("true", "yes"):
                 to_be_bool = True
             else:
                 raise ValueError
