@@ -184,13 +184,12 @@ def read_data(include, data):
         with io.StringIO(data) as file:
             raw_table_list = list(csv.reader(file))
     else:
-        path2file = str(include)
         try:
-            with open(path2file) as file:
+            with open(str(include)) as file:
                 raw_table_list = list(csv.reader(file))
         except FileNotFoundError:
             raw_table_list = None
-            panflute.debug("pantable: file not found from the path", path2file)
+            panflute.debug('{} {}'.format("pantable: file not found from the path", include))
     return raw_table_list
 
 
