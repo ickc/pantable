@@ -57,6 +57,17 @@ import panflute
 import yaml
 
 
+def ast2markdown(ast):
+    """
+    A shorthand to convert panflute AST to Markdown
+    """
+    return panflute.convert_text(
+        ast,
+        input_format='panflute',
+        output_format='markdown'
+    )
+
+
 def table2csv(elem, doc):
     """
     find Table element and return a csv table in code-block with class "table"
@@ -66,11 +77,7 @@ def table2csv(elem, doc):
         options = {}
         # options: caption: panflute ast to markdown
         if elem.caption:
-            options['caption'] = panflute.convert_text(
-                panflute.Para(*elem.caption),
-                input_format='panflute',
-                output_format='markdown'
-            )
+            options['caption'] = ast2markdown(panflute.Para(*elem.caption))
         # options: alignment
         parsed_alignment = [("L" if i == "AlignLeft"
                              else "C" if i == "AlignCenter"
@@ -94,19 +101,17 @@ def table2csv(elem, doc):
         if options['header']:
             table_body.insert(0, elem.header)
         # table in list
-        table_list = [
-            [panflute.convert_text(
-                cell.content,
-                input_format='panflute',
-                output_format='markdown'
-            ) for cell in row.content]
-            for row in table_body]
+        table_list = [[ast2markdown(cell.content)
+                       for cell in row.content]
+                      for row in table_body]
         # table in CSV
         with io.StringIO() as file:
             writer = csv.writer(file)
             writer.writerows(table_list)
             csv_table = file.getvalue()
-        return panflute.CodeBlock("---\n" + yaml_metadata + "---\n" + csv_table, classes=["table"])
+        code_block = "{delimiter}{yaml}{delimiter}{csv}".format(
+            yaml=yaml_metadata, csv=csv_table, delimiter='---\n')
+        return panflute.CodeBlock(code_block, classes=["table"])
     return None
 
 
