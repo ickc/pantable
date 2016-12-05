@@ -100,6 +100,8 @@ init:
 
 pytest: $(testNative) tests/tables.pkl tests/test_idempotent.native
 	python3 -m pytest -vv --cov=pantable tests
+pytestLite:
+	python3 -m pytest -vv --cov=pantable tests
 %.pkl: %.md
 	pandoc -F tests/to_pkl.py $< > /dev/null
 tests/reference_idempotent.native: tests/test_pantable.md
