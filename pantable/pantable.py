@@ -172,19 +172,16 @@ def parse_alignment(alignment_string, number_of_columns):
         panflute.debug(
             "pantable: alignment string is too long, truncated instead.")
     # parsing alignment
-    alignment = [("AlignLeft" if i.lower() == "l"
-                  else "AlignCenter" if i.lower() == "c"
-                  else "AlignRight" if i.lower() == "r"
-                  else "AlignDefault" if i.lower() == "d"
-                  else None) for i in alignment_string]
-    # debug if invalid; set to default
+    align_dict = {'l': "AlignLeft",
+                  'c': "AlignCenter",
+                  'r': "AlignRight",
+                  'd': "AlignDefault"}
     try:
-        assert None not in alignment
-    except AssertionError:
-        alignment = [(i if i is not None else "AlignDefault")
-                     for i in alignment]
+        alignment = [align_dict[i.lower()] for i in alignment_string]
+    except KeyError:
         panflute.debug(
             "pantable: alignment: invalid character found, default is used instead.")
+        return None
     # fill up with default if too short
     if number_of_columns > number_of_alignments:
         alignment += ["AlignDefault" for __ in range(

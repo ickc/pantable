@@ -114,7 +114,7 @@
     [[Plain [Strong [Str "cures"],Space,Str "scurvy"]]
     ,[Plain [Code ("",[],[]) "tasty"]]]]]]
 ,Header 1 ("include-external-csv",[],[]) [Str "Include",Space,Str "External",Space,Str "CSV"]
-,Table [Emph [Str "Great"],Space,Str "Title"] [AlignDefault,AlignLeft,AlignDefault,AlignDefault] [0.19736842105263158,0.15789473684210525,0.19736842105263158,0.4473684210526316]
+,Table [Emph [Str "Great"],Space,Str "Title"] [AlignDefault,AlignDefault,AlignDefault,AlignDefault] [0.19736842105263158,0.15789473684210525,0.19736842105263158,0.4473684210526316]
  [[Para [Strong [Emph [Str "Fruit"]]]]
  ,[Para [Strikeout [Str "Price"]]]
  ,[Para [Emph [Str "Number"]]]
