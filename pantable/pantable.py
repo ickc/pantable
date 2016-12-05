@@ -46,7 +46,6 @@ First row,defaulted to be header row,can be disabled
 import csv
 from fractions import Fraction
 import io
-import os
 import panflute
 
 
@@ -113,20 +112,6 @@ def get_table_width(options):
 # end helper functions
 
 
-def get_include(options):
-    """
-    include set to None if invalid
-    """
-    if 'include' not in options:
-        include = None
-    else:
-        include = str(options.get('include'))
-        if not os.path.isfile(include):
-            include = None
-            panflute.debug("pantable: invalid path from 'include'")
-    return include
-
-
 def auto_width(table_width, number_of_columns, raw_table_list):
     """
     `width` is auto-calculated if not given in YAML
@@ -187,12 +172,17 @@ def read_data(include, data):
     """
     read csv and return the table in list
     """
-    if include is not None:
-        with open(include) as file:
-            raw_table_list = list(csv.reader(file))
-    else:
+    if include is None:
         with io.StringIO(data) as file:
             raw_table_list = list(csv.reader(file))
+    else:
+        path2file = str(include)
+        try:
+            with open(path2file) as file:
+                raw_table_list = list(csv.reader(file))
+        except FileNotFoundError:
+            raw_table_list = None
+            panflute.debug("pantable: file not found from the path", path2file)
     return raw_table_list
 
 
@@ -235,11 +225,11 @@ def convert2table(options, data, **__):
     provided to panflute.yaml_filter to parse its content as pandoc table.
     """
     # prepare table in list from data/include
-    raw_table_list = read_data(get_include(options), data)
+    raw_table_list = read_data(options.get('include', None), data)
     # check empty table
-    if not raw_table_list:
-        panflute.debug("pantable: table is empty")
-        return []
+    if not raw_table_list or raw_table_list is None:
+        panflute.debug("pantable: table is empty or include is invalid")
+        return raw_table_list
     # regularize table: all rows should have same length
     regularize_table_list(raw_table_list)
     # preparation: get no of columns of the table
