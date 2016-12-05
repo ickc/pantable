@@ -103,7 +103,8 @@ def get_table_width(options):
     `table-width` set to `1.0` if invalid
     """
     try:
-        table_width = float(fractions.Fraction((options.get('table-width', 1.0))))
+        table_width = float(fractions.Fraction(
+            (options.get('table-width', 1.0))))
         assert table_width > 0
     except (ValueError, AssertionError, TypeError):
         table_width = 1.0
