@@ -27,4 +27,6 @@ def test_parse_alignment():
         'AlignCenter',
         'AlignDefault'
     ]
+    # check wrong type
+    assert parse_alignment(1, 1) is None
     return
