@@ -143,19 +143,34 @@ def auto_width(table_width, number_of_columns, table_list):
 
 def parse_alignment(alignment_string, number_of_columns):
     """
-    `alignment` string is parsed into pandoc format (AlignDefault, etc.)
+    `alignment` string is parsed into pandoc format (AlignDefault, etc.).
+    Cases are checked:
+
+    - if not given, return None (let panflute handle it)
+    - if wrong type
+    - if too long
+    - if invalid characters are given
+    - if too short
     """
-    # initialize
-    alignment_string = str(alignment_string)
-    number_of_alignments = len(alignment_string)
-    # truncate and debug if too long
+    # alignment string can be None or empty; return None: set to default by panflute
+    if not alignment_string:
+        return None
+    # prepare alignment_string
     try:
-        if number_of_alignments > number_of_columns:
-            raise ValueError
-    except ValueError:
+        # test valid type
+        alignment_string = str(alignment_string)
+        number_of_alignments = len(alignment_string)
+        # truncate and debug if too long
+        assert number_of_alignments < number_of_columns
+    except TypeError:
+        panflute.debug("pantable: alignment string is invalid")
+        # return None: set to default by panflute
+        return None
+    except AssertionError:
         alignment_string = alignment_string[:number_of_columns]
-        panflute.debug("pantable: alignment string is too long")
-    # parsing
+        panflute.debug(
+            "pantable: alignment string is too long, truncated instead.")
+    # parsing alignment
     alignment = [("AlignLeft" if i.lower() == "l"
                   else "AlignCenter" if i.lower() == "c"
                   else "AlignRight" if i.lower() == "r"
@@ -163,17 +178,16 @@ def parse_alignment(alignment_string, number_of_columns):
                   else None) for i in alignment_string]
     # debug if invalid; set to default
     try:
-        if None in alignment:
-            raise ValueError
-    except ValueError:
+        assert None not in alignment
+    except AssertionError:
         alignment = [(i if i is not None else "AlignDefault")
                      for i in alignment]
         panflute.debug(
-            "pantable: alignment: invalid character found, default is used instead.")
+        "pantable: alignment: invalid character found, default is used instead.")
     # fill up with default if too short
     if number_of_columns > number_of_alignments:
         alignment += ["AlignDefault" for __ in range(
-            number_of_columns - len(alignment))]
+            number_of_columns - number_of_alignments)]
     return alignment
 
 
@@ -190,7 +204,8 @@ def read_data(include, data):
                 raw_table_list = list(csv.reader(file))
         except FileNotFoundError:
             raw_table_list = None
-            panflute.debug('{} {}'.format("pantable: file not found from the path", include))
+            panflute.debug('{} {}'.format(
+                "pantable: file not found from the path", include))
     return raw_table_list
 
 
