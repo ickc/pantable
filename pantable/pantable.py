@@ -123,9 +123,9 @@ def auto_width(table_width, number_of_columns, table_list):
     # The +3 match the way pandoc handle width, see jgm/pandoc commit 0dfceda
     width_abs = [3 + max(
         [max(
-            [len(line) for line in row[i].split("\n")]
+            [len(line) for line in row[column_index].split("\n")]
         ) for row in table_list]
-    ) for i in range(number_of_columns)]
+    ) for column_index in range(number_of_columns)]
     try:
         width_tot = sum(width_abs)
         # when all are 3 means all are empty, see comment above
