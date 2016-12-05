@@ -208,7 +208,7 @@ def regularize_table_list(raw_table_list):
         table_list = [
             row + ['' for __ in range(number_of_columns - len(row))] for row in raw_table_list]
         panflute.debug(
-            "pantable: table rows are of irregular length. Empty cells will be appended.")
+            "pantable: table rows are of irregular length. Empty cells appended.")
     return (table_list, number_of_columns)
 
 
