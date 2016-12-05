@@ -81,20 +81,18 @@ def get_width(options, number_of_columns):
     3. length not equal to the number of columns
     4. negative entries
     """
-    if 'width' not in options:
-        width = None
-    else:
+    try:
         width = options['width']
-        try:
-            width = options['width']
-            if len(width) != number_of_columns:
-                raise ValueError
-            width = [float(Fraction(x)) for x in options['width']]
-            if not all(i >= 0 for i in width):
-                raise ValueError
-        except (ValueError, TypeError):
-            width = None
-            panflute.debug("pantable: invalid width")
+        if len(width) != number_of_columns:
+            raise ValueError
+        width = [float(Fraction(x)) for x in options['width']]
+        if not all(i >= 0 for i in width):
+            raise ValueError
+    except KeyError:
+        width = None
+    except (ValueError, TypeError):
+        width = None
+        panflute.debug("pantable: invalid width")
     return width
 
 
@@ -102,16 +100,15 @@ def get_table_width(options):
     """
     `table-width` set to `1.0` if invalid
     """
-    if 'table-width' not in options:
+    try:
+        table_width = float(Fraction(options.get('table-width')))
+        if table_width <= 0:
+            raise ValueError
+    except KeyError:
         table_width = 1.0
-    else:
-        try:
-            table_width = float(Fraction(options.get('table-width')))
-            if table_width <= 0:
-                raise ValueError
-        except (ValueError, TypeError):
-            table_width = 1.0
-            panflute.debug("pantable: invalid table-width")
+    except (ValueError, TypeError):
+        table_width = 1.0
+        panflute.debug("pantable: invalid table-width")
     return table_width
 # end helper functions
 
