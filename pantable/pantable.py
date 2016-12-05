@@ -157,7 +157,8 @@ def parse_alignment(alignment_string, number_of_columns):
     # prepare alignment_string
     try:
         # test valid type
-        alignment_string = str(alignment_string)
+        if not isinstance(alignment_string, str):
+            raise TypeError
         number_of_alignments = len(alignment_string)
         # truncate and debug if too long
         assert number_of_alignments < number_of_columns
