@@ -132,8 +132,8 @@ def auto_width(table_width, number_of_columns, table_list):
         if width_tot == 3 * number_of_columns:
             raise ValueError
         width = [
-            width_abs[i] / width_tot * table_width
-            for i in range(number_of_columns)
+            each_width / width_tot * table_width
+            for each_width in width_abs
         ]
     except ValueError:
         panflute.debug("pantable: table is empty")
