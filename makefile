@@ -111,7 +111,7 @@ tests/test_idempotent.native: tests/reference_idempotent.native
 
 # check python styles
 pep8:
-	pep8 . --ignore=E402,E501
+	pep8 . --ignore=E402,E501,E731
 pep8Strict:
 	pep8 .
 pyflakes:
