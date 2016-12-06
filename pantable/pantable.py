@@ -249,9 +249,8 @@ def convert2table(options, data, **__):
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
     try:
-        if not raw_table_list or raw_table_list is None:
-            raise ValueError
-    except ValueError:
+        assert raw_table_list and raw_table_list is not None
+    except AssertionError:
         panflute.debug("pantable: table is empty or include is invalid")
         # [] means delete the current element; None means kept as is
         return raw_table_list
@@ -268,9 +267,8 @@ def convert2table(options, data, **__):
     # delete element if table is empty (by returning [])
     # width remains None only when table is empty
     try:
-        if width is None:
-            raise ValueError
-    except ValueError:
+        assert width is not None
+    except AssertionError:
         panflute.debug("pantable: table is empty")
         return []
     # parse alignment
