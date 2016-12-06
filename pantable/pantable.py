@@ -56,20 +56,19 @@ def to_bool(to_be_bool, default=True):
     return `False` if it is "false" or "no" (case-insensitive),
     otherwise return default.
     """
-    if not isinstance(to_be_bool, bool):
+    if isinstance(to_be_bool, bool):
+        # nothing need to do if already boolean
+        return to_be_bool
+    else:
+        bool_dict = {"false": False, "true": True,
+                     "no": False, "yes": True}
         try:
-            lowered_bool = to_be_bool.lower()
-            if lowered_bool in ("false", "no"):
-                to_be_bool = False
-            elif lowered_bool in ("true", "yes"):
-                to_be_bool = True
-            else:
-                raise ValueError
-        except (ValueError, TypeError, AttributeError):
-            to_be_bool = default
+            booled = bool_dict[to_be_bool.lower()]
+        except (KeyError, AttributeError):
+            booled = default
             panflute.debug("""pantable: invalid boolean. \
 Should be true/false/yes/no, case-insensitive. Default is used.""")
-    return to_be_bool
+    return booled
 
 
 def get_width(options, number_of_columns):
