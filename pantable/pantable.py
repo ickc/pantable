@@ -84,15 +84,13 @@ def get_width(options, number_of_columns):
     try:
         # if width not exists, exits immediately through except
         width = options['width']
-        if len(width) != number_of_columns:
-            raise ValueError
+        assert len(width) == number_of_columns
         custom_float = lambda x: float(fractions.Fraction(x))
         width = [custom_float(x) for x in options['width']]
-        if not all(i >= 0 for i in width):
-            raise ValueError
+        assert all(i >= 0 for i in width)
     except KeyError:
         width = None
-    except (ValueError, TypeError):
+    except (AssertionError, ValueError, TypeError):
         width = None
         panflute.debug("pantable: invalid width")
     return width
@@ -128,15 +126,14 @@ def auto_width(table_width, number_of_columns, table_list):
     try:
         width_tot = sum(width_abs)
         # when all are 3 means all are empty, see comment above
-        if width_tot == 3 * number_of_columns:
-            raise ValueError
+        assert width_tot != 3 * number_of_columns
         width = [
             each_width / width_tot * table_width
             for each_width in width_abs
         ]
-    except ValueError:
-        panflute.debug("pantable: table is empty")
+    except AssertionError:
         width = None
+        panflute.debug("pantable: table is empty")
     return width
 
 
@@ -155,6 +152,7 @@ def parse_alignment(alignment_string, number_of_columns):
     # panflute
     if not alignment_string:
         return None
+
     # prepare alignment_string
     try:
         # test valid type
@@ -162,7 +160,7 @@ def parse_alignment(alignment_string, number_of_columns):
             raise TypeError
         number_of_alignments = len(alignment_string)
         # truncate and debug if too long
-        assert number_of_alignments < number_of_columns
+        assert number_of_alignments <= number_of_columns
     except TypeError:
         panflute.debug("pantable: alignment string is invalid")
         # return None: set to default by panflute
@@ -171,6 +169,7 @@ def parse_alignment(alignment_string, number_of_columns):
         alignment_string = alignment_string[:number_of_columns]
         panflute.debug(
             "pantable: alignment string is too long, truncated instead.")
+
     # parsing alignment
     align_dict = {'l': "AlignLeft",
                   'c': "AlignCenter",
@@ -182,10 +181,12 @@ def parse_alignment(alignment_string, number_of_columns):
         panflute.debug(
             "pantable: alignment: invalid character found, default is used instead.")
         return None
+
     # fill up with default if too short
     if number_of_columns > number_of_alignments:
         alignment += ["AlignDefault" for __ in range(
             number_of_columns - number_of_alignments)]
+
     return alignment
 
 
