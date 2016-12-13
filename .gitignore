@@ -1,6 +1,7 @@
 # macOS files
 .DS_Store
 
+tests/reference_idempotent.native
 tests/*.native
 tests/*.pdf
 
