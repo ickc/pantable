@@ -111,6 +111,18 @@ include: tests/csv_tables.csv
 ...
 ```
 
+# Include External CSV (invalid path)
+
+``` {.table}
+---
+caption: "*Great* Title"
+header: True
+markdown: True
+alignment: AlignLeft, AlignRight, AlignCenter, AlignDefault
+include: xyz/csv_tables.csv
+...
+```
+
 # Empty CSV
 
 ``` {.table}

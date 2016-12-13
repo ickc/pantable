@@ -133,6 +133,8 @@
    ,BulletList
     [[Plain [Strong [Str "cures"],Space,Str "scurvy"]]
     ,[Plain [Code ("",[],[]) "tasty"]]]]]]
+,Header 1 ("include-external-csv-invalid-path",[],[]) [Str "Include",Space,Str "External",Space,Str "CSV",Space,Str "(invalid",Space,Str "path)"]
+,CodeBlock ("",["table"],[]) "---\ncaption: \"*Great* Title\"\nheader: True\nmarkdown: True\nalignment: AlignLeft, AlignRight, AlignCenter, AlignDefault\ninclude: xyz/csv_tables.csv\n..."
 ,Header 1 ("empty-csv",[],[]) [Str "Empty",Space,Str "CSV"]
 ,Header 1 ("testing-0-table-width",[],[]) [Str "Testing",Space,Str "0",Space,Str "Table",Space,Str "Width"]
 ,Header 1 ("irregular-csv",[],[]) [Str "Irregular",Space,Str "CSV"]
