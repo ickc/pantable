@@ -203,8 +203,7 @@ def read_data(include, data):
                 raw_table_list = list(csv.reader(file))
         except FileNotFoundError:
             raw_table_list = None
-            panflute.debug('{} {}'.format(
-                "pantable: file not found from the path", include))
+            panflute.debug("pantable: file not found from the path", include)
     return raw_table_list
 
 
