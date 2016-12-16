@@ -4,30 +4,30 @@ cache:
   - pip
 # build matrix: different python and pandoc versions
 python:
-  # - "3.3"
-  # - "3.4"
+  - "3.3"
+  - "3.4"
   - "3.5"
   # - "3.5-dev" # 3.5 development branch
   # - "3.6-dev" # 3.6 development branch
   # - "nightly" # currently points to 3.7-dev
-  # - "pypy3"
+  - "pypy3"
 env:
-  - pandocVersion=1.13.2
-  - pandocVersion=1.14
-  - pandocVersion=1.14.0.1
-  - pandocVersion=1.14.1
-  - pandocVersion=1.15
-  - pandocVersion=1.15.0.5
-  - pandocVersion=1.15.0.6
-  - pandocVersion=1.15.1
-  - pandocVersion=1.15.2
-  - pandocVersion=1.16
-  - pandocVersion=1.16.0.1
-  - pandocVersion=1.16.0.2
-  - pandocVersion=1.17
-  - pandocVersion=1.17.0.1
-  - pandocVersion=1.17.0.2
-  - pandocVersion=1.17.1
+  # - pandocVersion=1.13.2
+  # - pandocVersion=1.14
+  # - pandocVersion=1.14.0.1
+  # - pandocVersion=1.14.1
+  # - pandocVersion=1.15
+  # - pandocVersion=1.15.0.5
+  # - pandocVersion=1.15.0.6
+  # - pandocVersion=1.15.1
+  # - pandocVersion=1.15.2
+  # - pandocVersion=1.16
+  # - pandocVersion=1.16.0.1
+  # - pandocVersion=1.16.0.2
+  # - pandocVersion=1.17
+  # - pandocVersion=1.17.0.1
+  # - pandocVersion=1.17.0.2
+  # - pandocVersion=1.17.1
   - pandocVersion=1.17.2
   - pandocVersion=1.18
   - pandocVersion=latest
@@ -37,15 +37,15 @@ matrix:
     - python: "3.6-dev"
     - python: "nightly"
     - python: "pypy3"
-    - env: pandocVersion=1.13.2
-    - env: pandocVersion=1.14
-    - env: pandocVersion=1.14.0.1
-    - env: pandocVersion=1.14.1
-    - env: pandocVersion=1.15
-    - env: pandocVersion=1.15.0.5
-    - env: pandocVersion=1.15.0.6
-    - env: pandocVersion=1.15.1
-    - env: pandocVersion=1.15.2
+    # - env: pandocVersion=1.13.2
+    # - env: pandocVersion=1.14
+    # - env: pandocVersion=1.14.0.1
+    # - env: pandocVersion=1.14.1
+    # - env: pandocVersion=1.15
+    # - env: pandocVersion=1.15.0.5
+    # - env: pandocVersion=1.15.0.6
+    # - env: pandocVersion=1.15.1
+    # - env: pandocVersion=1.15.2
   fast_finish: true
 before_install:
   - |
@@ -66,7 +66,7 @@ install:
 script:
   - make -j4 test
 after_success:
-  - if [[ "$pandocVersion" == "1.18-1" ]] && [[ "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then coveralls; else printf "skip coveralls"; fi;
+  - if [[ "$pandocVersion" == "latest" ]] && [[ "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then coveralls; else printf "skip coveralls"; fi;
 deploy:
   provider: pypi
   user: ickc
