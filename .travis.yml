@@ -4,52 +4,62 @@ cache:
   - pip
 # build matrix: different python and pandoc versions
 python:
-  - "3.3"
-  - "3.4"
+  # - "3.3"
+  # - "3.4"
   - "3.5"
   # - "3.5-dev" # 3.5 development branch
   # - "3.6-dev" # 3.6 development branch
   # - "nightly" # currently points to 3.7-dev
   # - "pypy3"
 env:
-  # - pandocVersion=1.13.2-1
-  # - pandocVersion=1.14-1
-  # - pandocVersion=1.14.0.1-1
-  # - pandocVersion=1.14.1-1
-  # - pandocVersion=1.15-1
-  # - pandocVersion=1.15.0.5-1
-  # - pandocVersion=1.15.0.6-1
-  # - pandocVersion=1.15.1-1
-  # - pandocVersion=1.15.2-1
-  # - pandocVersion=1.16-3
-  # - pandocVersion=1.16.0.1-1
-  # - pandocVersion=1.16.0.2-1
-  # - pandocVersion=1.17-1
-  # - pandocVersion=1.17.0.1-1
-  # - pandocVersion=1.17.0.2-1
-  # - pandocVersion=1.17.1-2
-  - pandocVersion=1.17.2-1
-  - pandocVersion=1.18-1
-  - pandocVersion=1.19.1-1
+  - pandocVersion=1.13.2
+  - pandocVersion=1.14
+  - pandocVersion=1.14.0.1
+  - pandocVersion=1.14.1
+  - pandocVersion=1.15
+  - pandocVersion=1.15.0.5
+  - pandocVersion=1.15.0.6
+  - pandocVersion=1.15.1
+  - pandocVersion=1.15.2
+  - pandocVersion=1.16
+  - pandocVersion=1.16.0.1
+  - pandocVersion=1.16.0.2
+  - pandocVersion=1.17
+  - pandocVersion=1.17.0.1
+  - pandocVersion=1.17.0.2
+  - pandocVersion=1.17.1
+  - pandocVersion=1.17.2
+  - pandocVersion=1.18
+  - pandocVersion=latest
 matrix:
   allow_failures:
     - python: "3.5-dev"
     - python: "3.6-dev"
     - python: "nightly"
     - python: "pypy3"
-    # - env: pandocVersion=1.13.2-1
-    # - env: pandocVersion=1.14-1
-    # - env: pandocVersion=1.14.0.1-1
-    # - env: pandocVersion=1.14.1-1
-    # - env: pandocVersion=1.15-1
-    # - env: pandocVersion=1.15.0.5-1
-    # - env: pandocVersion=1.15.0.6-1
-    # - env: pandocVersion=1.15.1-1
-    # - env: pandocVersion=1.15.2-1
+    - env: pandocVersion=1.13.2
+    - env: pandocVersion=1.14
+    - env: pandocVersion=1.14.0.1
+    - env: pandocVersion=1.14.1
+    - env: pandocVersion=1.15
+    - env: pandocVersion=1.15.0.5
+    - env: pandocVersion=1.15.0.6
+    - env: pandocVersion=1.15.1
+    - env: pandocVersion=1.15.2
   fast_finish: true
+before_install:
+  - |
+    if [[ $pandocVersion == "latest" ]]; then
+      url="https://github.com/jgm/pandoc/releases/latest"
+    else
+      url="https://github.com/jgm/pandoc/releases/tag/$pandocVersion"
+    fi
+    path=$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64.deb')
+    downloadUrl="https://github.com$path"
+    file=${path##*/}
 install:
-  - wget https://github.com/jgm/pandoc/releases/download/${pandocVersion%-*}/pandoc-$pandocVersion-amd64.deb &&
-    sudo dpkg -i pandoc-$pandocVersion-amd64.deb
+  - wget $downloadUrl &&
+    sudo dpkg -i $file
   - pip install -U pip
   - pip install -e .[test]
 # command to run tests
@@ -65,4 +75,4 @@ deploy:
   on:
     tags: true
     python: "3.5"
-    condition: $pandocVersion = 1.18-1
+    condition: $pandocVersion = latest
