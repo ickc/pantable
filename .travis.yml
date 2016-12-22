@@ -60,6 +60,13 @@ before_install:
     path=$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64.deb')
     downloadUrl="https://github.com$path"
     file=${path##*/}
+  # pasteurize except setup.py & pantable/version.py
+  - |
+    mv setup.py setup.py.temp
+    mv pantable/version.py pantable/version.py.temp
+    pasteurize -wnj 4 .
+    mv setup.py.temp setup.py
+    mv pantable/version.py.temp pantable/version.py
 install:
   - wget $downloadUrl &&
     sudo dpkg -i $file
