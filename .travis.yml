@@ -71,8 +71,6 @@ install:
   - wget $downloadUrl &&
     sudo dpkg -i $file
   - pip install -U pip
-  - pip install -U future # temporary fix on panflute 1.8.1
-  - pip install git+git://github.com/ickc/panflute.git@assert-str-type-pasteurize
   - pip install -e .[test]
 # command to run tests
 script:
