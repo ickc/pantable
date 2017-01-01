@@ -4,13 +4,16 @@ cache:
   - pip
 # build matrix: different python and pandoc versions
 python:
+  - "2.7"
   - "3.3"
   - "3.4"
   - "3.5"
   # - "3.5-dev" # 3.5 development branch
   # - "3.6-dev" # 3.6 development branch
   # - "nightly" # currently points to 3.7-dev
-  - "pypy3"
+  # pypy (version info from [Changelogs — PyPy documentation](http://doc.pypy.org/en/latest/index-of-whatsnew.html))
+  - "pypy"  # PyPy2.7 5.3.1 (CPython 2.7 compatible)
+  - "pypy3" # PyPy3 2.4.0 (CPython 3.2 compatible)
 env:
   # - pandocVersion=1.13.2
   # - pandocVersion=1.14
@@ -57,6 +60,13 @@ before_install:
     path=$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64.deb')
     downloadUrl="https://github.com$path"
     file=${path##*/}
+  # pasteurize except setup.py & pantable/version.py
+  - |
+    mv setup.py setup.py.temp
+    mv pantable/version.py pantable/version.py.temp
+    pasteurize -wnj 4 .
+    mv setup.py.temp setup.py
+    mv pantable/version.py.temp pantable/version.py
 install:
   - wget $downloadUrl &&
     sudo dpkg -i $file
