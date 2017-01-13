@@ -23,6 +23,3 @@ htmlcov/
 
 # rst2html
 README.html
-
-# generated pickle
-*.pkl

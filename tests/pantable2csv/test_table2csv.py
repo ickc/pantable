@@ -8,10 +8,14 @@ import pickle
 
 def test_table2csv():
     # get_table_body
-    with open('tests/grid_tables.pkl', 'rb') as file:
-        doc = pickle.load(file)
-    elem = doc.content[0]
-    code_block = table2csv(elem, {})
+    markdown = """| 1 | 2 | 3 | 4 |
+|:--|--:|:-:|---|
+| 1 | 2 | 3 | 4 |
+
+: *abcd*
+"""
+    Panflute = convert_text(markdown)
+    code_block = table2csv(*Panflute, {})
     assert str(code_block) == '''CodeBlock(---
 alignment: LRCD
 caption: '*abcd*'
