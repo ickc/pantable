@@ -48,6 +48,9 @@ import fractions
 import io
 import panflute
 
+import sys
+py2 = sys.version_info[0] == 2
+
 
 # begin helper functions
 def to_bool(to_be_bool, default=True):
@@ -195,8 +198,13 @@ def read_data(include, data):
     Return None when the include path is invalid.
     """
     if include is None:
-        with io.StringIO(data) as file:
-            raw_table_list = list(csv.reader(file))
+        if not py2:
+            with io.StringIO(data) as file:
+                raw_table_list = list(csv.reader(file))
+        else:
+            data = data.encode('utf-8')
+            with io.BytesIO(data) as file:
+                raw_table_list = list(csv.reader(file))
     else:
         try:
             with open(str(include)) as file:
