@@ -98,6 +98,9 @@ init:
 	pip install -r requirements.txt
 	pip install -r tests/requirements.txt
 
+dev:
+	pip install -e .[test]
+
 pytest: $(testNative) tests/test_idempotent.native
 	python3 -m pytest -vv --cov=pantable tests
 pytest2: $(testNative) tests/test_idempotent.native
