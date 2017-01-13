@@ -68,7 +68,7 @@ def ast2markdown(ast):
     )
 
 
-def table2csv(elem, doc):
+def table2csv(elem, **__):
     """
     find Table element and return a csv table in code-block with class "table"
     """
