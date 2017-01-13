@@ -100,7 +100,7 @@ init:
 
 pytest: $(testNative) tests/test_idempotent.native
 	python3 -m pytest -vv --cov=pantable tests
-pytest2: $(testNative) tests/tables.pkl tests/test_idempotent.native
+pytest2: $(testNative) tests/test_idempotent.native
 	python2 -m pytest -vv --cov=pantable tests
 pytestLite:
 	python3 -m pytest -vv --cov=pantable tests
