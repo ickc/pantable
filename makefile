@@ -98,8 +98,13 @@ init:
 	pip install -r requirements.txt
 	pip install -r tests/requirements.txt
 
+dev:
+	pip install -e .[test]
+
 pytest: $(testNative) tests/test_idempotent.native
 	python3 -m pytest -vv --cov=pantable tests
+pytest2: $(testNative) tests/test_idempotent.native
+	python2 -m pytest -vv --cov=pantable tests
 pytestLite:
 	python3 -m pytest -vv --cov=pantable tests
 tests/reference_idempotent.native: tests/test_pantable.md
@@ -124,6 +129,10 @@ autopep8:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose
 autopep8Aggressive:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose --aggressive --aggressive
+
+# pasteurize
+past:
+	pasteurize -wnj 4 .
 
 # cleanup markdown
 cleanup: style normalize

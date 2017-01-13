@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 r"""
 Panflute filter to convert any native pandoc tables into the CSV table format used by pantable:
@@ -56,6 +56,9 @@ import io
 import panflute
 import yaml
 
+import sys
+py2 = sys.version_info[0] == 2
+
 
 def ast2markdown(ast):
     """
@@ -68,7 +71,7 @@ def ast2markdown(ast):
     )
 
 
-def table2csv(elem, doc):
+def table2csv(elem, **__):
     """
     find Table element and return a csv table in code-block with class "table"
     """
@@ -106,7 +109,11 @@ def table2csv(elem, doc):
                        for cell in row.content]
                       for row in table_body]
         # table in CSV
-        with io.StringIO() as file:
+        if not py2:
+            my_io = io.StringIO
+        else:
+            my_io = io.BytesIO
+        with my_io() as file:
             writer = csv.writer(file)
             writer.writerows(table_list)
             csv_table = file.getvalue()
