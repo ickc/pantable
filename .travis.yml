@@ -60,6 +60,12 @@ before_install:
     path=$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64.deb')
     downloadUrl="https://github.com$path"
     file=${path##*/}
+install:
+  - wget $downloadUrl &&
+    sudo dpkg -i $file
+  - pip install -U pip
+  - pip install -e .[test]
+before_script:
   # pasteurize except setup.py & pantable/version.py
   - |
     mv setup.py setup.py.temp
@@ -67,11 +73,6 @@ before_install:
     pasteurize -wnj 4 .
     mv setup.py.temp setup.py
     mv pantable/version.py.temp pantable/version.py
-install:
-  - wget $downloadUrl &&
-    sudo dpkg -i $file
-  - pip install -U pip
-  - pip install -e .[test]
 # command to run tests
 script:
   - make -j4 test
