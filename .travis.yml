@@ -89,6 +89,7 @@ before_deploy:
     pasteurize -wnj 4 .
     mv setup.py.temp setup.py
     mv pantable/version.py.temp pantable/version.py
+  - pip2 install wheel
   - python2 setup.py bdist_wheel
 deploy:
   provider: pypi
