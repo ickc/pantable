@@ -98,7 +98,10 @@ def table2csv(elem, **__):
         options['markdown'] = True
 
         # option in YAML
-        yaml_metadata = yaml.dump(options)
+        if not py2:
+            yaml_metadata = yaml.dump(options)
+        else:
+            yaml_metadata = yaml.safe_dump(options)
 
         # table in panflute AST
         table_body = elem.content
