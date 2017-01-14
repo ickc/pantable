@@ -48,7 +48,6 @@ import panflute
 
 import sys
 py2 = sys.version_info[0] == 2
-my_str = str if not py2 else basestring
 
 # begin helper functions
 
@@ -158,7 +157,8 @@ def parse_alignment(alignment_string, number_of_columns):
     # prepare alignment_string
     try:
         # test valid type
-        if not isinstance(alignment_string, my_str):
+        str_universal = basestring if py2 else str
+        if not isinstance(alignment_string, str_universal):
             raise TypeError
         number_of_alignments = len(alignment_string)
         # truncate and debug if too long
@@ -198,13 +198,11 @@ def read_data(include, data):
     Return None when the include path is invalid.
     """
     if include is None:
-        if not py2:
-            with io.StringIO(data) as file:
-                raw_table_list = list(csv.reader(file))
-        else:
+        if py2:
             data = data.encode('utf-8')
-            with io.BytesIO(data) as file:
-                raw_table_list = list(csv.reader(file))
+        io_universal = io.BytesIO if py2 else io.StringIO
+        with io_universal(data) as file:
+            raw_table_list = list(csv.reader(file))
     else:
         try:
             with open(str(include)) as file:
