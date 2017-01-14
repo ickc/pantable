@@ -50,7 +50,8 @@ import panflute
 
 import sys
 py2 = sys.version_info[0] == 2
-
+if py2:
+    str = basestring
 
 # begin helper functions
 def to_bool(to_be_bool, default=True):

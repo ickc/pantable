@@ -58,6 +58,10 @@ import yaml
 
 import sys
 py2 = sys.version_info[0] == 2
+if not py2:
+    my_io = io.StringIO
+else:
+    my_io = io.BytesIO
 
 
 def ast2markdown(ast):
@@ -98,10 +102,7 @@ def table2csv(elem, **__):
         options['markdown'] = True
 
         # option in YAML
-        if not py2:
-            yaml_metadata = yaml.dump(options)
-        else:
-            yaml_metadata = yaml.safe_dump(options)
+        yaml_metadata = yaml.safe_dump(options)
 
         # table in panflute AST
         table_body = elem.content
@@ -112,10 +113,6 @@ def table2csv(elem, **__):
                        for cell in row.content]
                       for row in table_body]
         # table in CSV
-        if not py2:
-            my_io = io.StringIO
-        else:
-            my_io = io.BytesIO
         with my_io() as file:
             writer = csv.writer(file)
             writer.writerows(table_list)
