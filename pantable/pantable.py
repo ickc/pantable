@@ -50,8 +50,7 @@ import panflute
 
 import sys
 py2 = sys.version_info[0] == 2
-if py2:
-    str = basestring
+my_str = str if not py2 else basestring
 
 # begin helper functions
 def to_bool(to_be_bool, default=True):
@@ -159,7 +158,7 @@ def parse_alignment(alignment_string, number_of_columns):
     # prepare alignment_string
     try:
         # test valid type
-        if not isinstance(alignment_string, str):
+        if not isinstance(alignment_string, my_str):
             raise TypeError
         number_of_alignments = len(alignment_string)
         # truncate and debug if too long
