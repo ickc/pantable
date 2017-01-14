@@ -50,6 +50,8 @@ docs: $(docsAll)
 readme: docs
 test: pytest pep8 pylint
 	coverage html
+test2: pytest2 pep8
+	coverage html
 
 clean:
 	rm -f .coverage $(testAll) README.html
