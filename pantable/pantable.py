@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 r"""
 Panflute filter to parse table in fenced YAML code blocks.
 Currently only CSV table is supported.

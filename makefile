@@ -13,8 +13,8 @@ HTMLVersion := html5
 ## ePub
 ePubVersion := epub
 
-pantable := pantable/pantable.py
-pantable2csv := pantable/pantable2csv.py
+pantable := pantable
+pantable2csv := pantable2csv
 
 CSSURL:=https://ickc.github.io/markdown-latex-css
 
