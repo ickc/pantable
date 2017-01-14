@@ -8,9 +8,9 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
-  # - "3.5-dev" # 3.5 development branch
-  # - "3.6-dev" # 3.6 development branch
-  # - "nightly" # currently points to 3.7-dev
+  - "3.5-dev" # 3.5 development branch
+  - "3.6-dev" # 3.6 development branch
+  - "nightly" # currently points to 3.7-dev
   # pypy (version info from [Changelogs — PyPy documentation](http://doc.pypy.org/en/latest/index-of-whatsnew.html))
   - "pypy"  # PyPy2.7 5.3.1 (CPython 2.7 compatible)
   - "pypy3" # PyPy3 2.4.0 (CPython 3.2 compatible)
@@ -39,7 +39,7 @@ matrix:
     - python: "3.5-dev"
     - python: "3.6-dev"
     - python: "nightly"
-    - python: "pypy3"
+    # - python: "pypy3"
     # - env: pandocVersion=1.13.2
     # - env: pandocVersion=1.14
     # - env: pandocVersion=1.14.0.1
