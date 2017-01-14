@@ -56,10 +56,6 @@ import yaml
 
 import sys
 py2 = sys.version_info[0] == 2
-if not py2:
-    my_io = io.StringIO
-else:
-    my_io = io.BytesIO
 
 
 def ast2markdown(ast):
@@ -111,7 +107,8 @@ def table2csv(elem, *__):
                        for cell in row.content]
                       for row in table_body]
         # table in CSV
-        with my_io() as file:
+        io_universal = io.BytesIO if py2 else io.StringIO
+        with io_universal() as file:
             writer = csv.writer(file)
             writer.writerows(table_list)
             csv_table = file.getvalue()
