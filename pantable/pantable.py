@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 r"""
 Panflute filter to parse table in fenced YAML code blocks.
 Currently only CSV table is supported.
@@ -48,8 +46,12 @@ import fractions
 import io
 import panflute
 
+import sys
+py2 = sys.version_info[0] == 2
 
 # begin helper functions
+
+
 def to_bool(to_be_bool, default=True):
     """
     Do nothing if to_be_bool is boolean,
@@ -155,7 +157,8 @@ def parse_alignment(alignment_string, number_of_columns):
     # prepare alignment_string
     try:
         # test valid type
-        if not isinstance(alignment_string, str):
+        str_universal = basestring if py2 else str
+        if not isinstance(alignment_string, str_universal):
             raise TypeError
         number_of_alignments = len(alignment_string)
         # truncate and debug if too long
@@ -195,13 +198,16 @@ def read_data(include, data):
     Return None when the include path is invalid.
     """
     if include is None:
-        with io.StringIO(data) as file:
+        if py2:
+            data = data.encode('utf-8')
+        io_universal = io.BytesIO if py2 else io.StringIO
+        with io_universal(data) as file:
             raw_table_list = list(csv.reader(file))
     else:
         try:
             with open(str(include)) as file:
                 raw_table_list = list(csv.reader(file))
-        except FileNotFoundError:
+        except IOError:  # FileNotFoundError is not in Python2
             raw_table_list = None
             panflute.debug("pantable: file not found from the path", include)
     return raw_table_list

@@ -1,6 +1,8 @@
 SHELL := /usr/bin/env bash
 
 # configure engine
+python := python
+pip := pip
 ## LaTeX engine
 ### LaTeX workflow: pdf; xelatex; lualatex
 latexmkEngine := pdf
@@ -11,7 +13,8 @@ HTMLVersion := html5
 ## ePub
 ePubVersion := epub
 
-filter := pantable/pantable.py
+pantable := pantable
+pantable2csv := pantable2csv
 
 CSSURL:=https://ickc.github.io/markdown-latex-css
 
@@ -23,7 +26,7 @@ pandocArgMD := -f markdown+abbreviations+autolink_bare_uris+markdown_attribute+m
 ## TeX/PDF
 ### LaTeX workflow
 latexmkArg := -$(latexmkEngine)
-pandocArgFragment := $(pandocArgCommon) --filter=$(filter)
+pandocArgFragment := $(pandocArgCommon) --filter=$(pantable)
 ### pandoc workflow
 pandocArgStandalone := $(pandocArgFragment) --toc-depth=1 -s -N
 ## HTML/ePub
@@ -48,7 +51,9 @@ docsAll := $(docsPdf) docs/index.html README.md README.rst README.html # $(docsH
 all: $(testAll) $(docsAll)
 docs: $(docsAll)
 readme: docs
-test: pytest pep8 pylint
+test: pytest pep8
+	coverage html
+testFull: pytest pep8 pylint
 	coverage html
 
 clean:
@@ -62,11 +67,11 @@ Clean:
 
 # Making dependancies #################################################################################################################################################################################
 
-%.native: %.md $(filter)
-	pandoc -t native -F $(filter) -o $@ $<
-%.pdf: %.md $(filter)
+%.native: %.md $(pantable)
+	pandoc -t native -F $(pantable) -o $@ $<
+%.pdf: %.md $(pantable)
 	pandoc $(pandocArgStandalone) -o $@ $<
-%.html: %.md $(filter)
+%.html: %.md $(pantable)
 	pandoc $(pandocArgHTML) $< -o $@
 
 # readme
@@ -89,25 +94,26 @@ README.html: README.rst
 # Deploy to PyPI
 ## by Travis, properly git tagged
 pypi:
-	git tag -a v$$(python setup.py --version) -m 'Deploy to PyPI' && git push origin v$$(python setup.py --version)
+	git tag -a v$$($(python) setup.py --version) -m 'Deploy to PyPI' && git push origin v$$($(python) setup.py --version)
 ## Manually
 pypiManual:
-	python setup.py register -r pypitest && python setup.py sdist upload -r pypitest && python setup.py register -r pypi && python setup.py sdist upload -r pypi
+	$(python) setup.py register -r pypitest && $(python) setup.py sdist upload -r pypitest && $(python) setup.py register -r pypi && $(python) setup.py sdist upload -r pypi
 
 init:
-	pip install -r requirements.txt
-	pip install -r tests/requirements.txt
+	$(pip) install -r requirements.txt
+	$(pip) install -r tests/requirements.txt
 
-pytest: $(testNative) tests/tables.pkl tests/test_idempotent.native
-	python3 -m pytest -vv --cov=pantable tests
+dev:
+	$(pip) install -e .[test]
+
+pytest: $(testNative) tests/test_idempotent.native
+	$(python) -m pytest -vv --cov=pantable tests
 pytestLite:
-	python3 -m pytest -vv --cov=pantable tests
-%.pkl: %.md
-	pandoc -F tests/to_pkl.py $< > /dev/null
+	$(python) -m pytest -vv --cov=pantable tests
 tests/reference_idempotent.native: tests/test_pantable.md
-	pandoc --normalize -t native -F pantable/pantable.py -F pantable/pantable2csv.py -F pantable/pantable.py -F pantable/pantable2csv.py -o $@ $<
+	pandoc --normalize -t native -F $(pantable) -F $(pantable2csv) -F $(pantable) -F $(pantable2csv) -o $@ $<
 tests/test_idempotent.native: tests/reference_idempotent.native
-	pandoc --normalize -f native -t native -F pantable/pantable.py -F pantable/pantable2csv.py -o $@ $<
+	pandoc --normalize -f native -t native -F $(pantable) -F $(pantable2csv) -o $@ $<
 
 # check python styles
 pep8:
@@ -119,13 +125,17 @@ pyflakes:
 flake8:
 	flake8 .
 pylint:
-	pylint pantable/pantable.py
+	pylint pantable
 
 # cleanup python
 autopep8:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose
 autopep8Aggressive:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose --aggressive --aggressive
+
+# pasteurize
+past:
+	pasteurize -wnj 4 .
 
 # cleanup markdown
 cleanup: style normalize

@@ -3,4 +3,6 @@ pep8
 pylint
 pytest
 pytest-cov
+coverage
 coveralls
+future
