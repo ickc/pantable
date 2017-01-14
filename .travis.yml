@@ -68,16 +68,28 @@ install:
 before_script:
   # pasteurize except setup.py & pantable/version.py
   - |
-    mv setup.py setup.py.temp
-    mv pantable/version.py pantable/version.py.temp
-    pasteurize -wnj 4 .
-    mv setup.py.temp setup.py
-    mv pantable/version.py.temp pantable/version.py
+    if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]] || [[ "$TRAVIS_PYTHON_VERSION" == "pypy" ]]; then
+      mv setup.py setup.py.temp
+      mv pantable/version.py pantable/version.py.temp
+      pasteurize -wnj 4 .
+      mv setup.py.temp setup.py
+      mv pantable/version.py.temp pantable/version.py
+    fi
 # command to run tests
 script:
   - make -j4 test
 after_success:
   - if [[ "$pandocVersion" == "latest" ]] && [[ "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then coveralls; else printf "skip coveralls"; fi;
+before_deploy:
+  - python3 setup.py bdist_wheel
+  # pasteurize except setup.py & pantable/version.py
+  - |
+    mv setup.py setup.py.temp
+    mv pantable/version.py pantable/version.py.temp
+    pasteurize -wnj 4 .
+    mv setup.py.temp setup.py
+    mv pantable/version.py.temp pantable/version.py
+  - python2 setup.py bdist_wheel
 deploy:
   provider: pypi
   user: ickc
