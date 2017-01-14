@@ -4,13 +4,16 @@ cache:
   - pip
 # build matrix: different python and pandoc versions
 python:
+  - "2.7"
   - "3.3"
   - "3.4"
   - "3.5"
-  # - "3.5-dev" # 3.5 development branch
-  # - "3.6-dev" # 3.6 development branch
-  # - "nightly" # currently points to 3.7-dev
-  - "pypy3"
+  - "3.5-dev" # 3.5 development branch
+  - "3.6-dev" # 3.6 development branch
+  - "nightly" # currently points to 3.7-dev
+  # pypy (version info from [Changelogs — PyPy documentation](http://doc.pypy.org/en/latest/index-of-whatsnew.html))
+  - "pypy"  # PyPy2.7 5.3.1 (CPython 2.7 compatible)
+  - "pypy3" # PyPy3 2.4.0 (CPython 3.2 compatible)
 env:
   # - pandocVersion=1.13.2
   # - pandocVersion=1.14
@@ -36,7 +39,7 @@ matrix:
     - python: "3.5-dev"
     - python: "3.6-dev"
     - python: "nightly"
-    - python: "pypy3"
+    # - python: "pypy3"
     # - env: pandocVersion=1.13.2
     # - env: pandocVersion=1.14
     # - env: pandocVersion=1.14.0.1
@@ -62,6 +65,14 @@ install:
     sudo dpkg -i $file
   - pip install -U pip
   - pip install -e .[test]
+before_script:
+  # pasteurize except setup.py & pantable/version.py
+  - |
+    mv setup.py setup.py.temp
+    mv pantable/version.py pantable/version.py.temp
+    pasteurize -wnj 4 .
+    mv setup.py.temp setup.py
+    mv pantable/version.py.temp pantable/version.py
 # command to run tests
 script:
   - make -j4 test
@@ -71,6 +82,7 @@ deploy:
   provider: pypi
   user: ickc
   password: $pypi_password
+  distributions: "sdist bdist_wheel"
   skip_cleanup: true
   on:
     tags: true
