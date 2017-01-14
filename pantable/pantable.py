@@ -53,6 +53,8 @@ py2 = sys.version_info[0] == 2
 my_str = str if not py2 else basestring
 
 # begin helper functions
+
+
 def to_bool(to_be_bool, default=True):
     """
     Do nothing if to_be_bool is boolean,
