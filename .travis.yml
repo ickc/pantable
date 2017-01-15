@@ -84,6 +84,8 @@ script:
 after_success:
   - if [[ "$pandocVersion" == "latest" ]] && [[ "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then coveralls; else printf "skip coveralls"; fi
 before_deploy:
+  # build unpasteurized python3 wheel
+  - python3 setup.py bdist_wheel
   # pasteurize except setup.py & pantable/version.py
   - |
     mv setup.py setup.py.temp
@@ -94,13 +96,12 @@ before_deploy:
   # prepare wheel for py2
   - pip2 install wheel
   - python2 setup.py bdist_wheel
-  # revert to unpasteurized version, for python3 dist below
-  - git reset --hard
 deploy:
   provider: pypi
   user: ickc
   password: $pypi_password
-  distributions: "sdist bdist_wheel"
+  # do not add bdist_wheel here, since it is done above
+  distributions: "sdist"
   skip_cleanup: true
   on:
     tags: true
