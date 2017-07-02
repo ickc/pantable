@@ -52,27 +52,6 @@ py2 = sys.version_info[0] == 2
 # begin helper functions
 
 
-def to_bool(to_be_bool, default=True):
-    """
-    Do nothing if to_be_bool is boolean,
-    return `False` if it is "false" or "no" (case-insensitive),
-    otherwise return default.
-    """
-    if isinstance(to_be_bool, bool):
-        # nothing need to do if already boolean
-        return to_be_bool
-    else:
-        bool_dict = {"false": False, "true": True,
-                     "no": False, "yes": True}
-        try:
-            booled = bool_dict[to_be_bool.lower()]
-        except (KeyError, AttributeError):
-            booled = default
-            panflute.debug("""pantable: invalid boolean. \
-Should be true/false/yes/no, case-insensitive. Default is used.""")
-    return booled
-
-
 def get_width(options, number_of_columns):
     """
     get width: set to `None` when
@@ -278,8 +257,8 @@ def convert2table(options, data, **__):
     # parse alignment
     alignment = parse_alignment(options.get(
         'alignment', None), number_of_columns)
-    header = to_bool(options.get('header', True), True)
-    markdown = to_bool(options.get('markdown', False), False)
+    header = options.get('header', True)
+    markdown = options.get('markdown', False)
 
     # get caption: parsed as markdown into panflute AST if non-empty.
     caption = panflute.convert_text(str(options['caption']))[
