@@ -41,7 +41,7 @@ First row,defaulted to be header row,can be disabled
 ```
 """
 
-import csv
+import unicodecsv as csv
 import fractions
 import io
 import panflute
