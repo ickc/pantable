@@ -41,13 +41,17 @@ First row,defaulted to be header row,can be disabled
 ```
 """
 
-import csv
 import fractions
 import io
 import panflute
 
 import sys
 py2 = sys.version_info[0] == 2
+
+if py2:
+    from backports import csv
+else:
+    import csv
 
 # begin helper functions
 
@@ -177,14 +181,11 @@ def read_data(include, data):
     Return None when the include path is invalid.
     """
     if include is None:
-        if py2:
-            data = data.encode('utf-8')
-        io_universal = io.BytesIO if py2 else io.StringIO
-        with io_universal(data) as file:
+        with io.StringIO(data) as file:
             raw_table_list = list(csv.reader(file))
     else:
         try:
-            with open(str(include)) as file:
+            with io.open(include) as file:
                 raw_table_list = list(csv.reader(file))
         except IOError:  # FileNotFoundError is not in Python2
             raw_table_list = None
