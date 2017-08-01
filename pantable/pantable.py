@@ -278,7 +278,7 @@ def convert2table(options, data, **__):
     )
 
 
-def main(_=None):
+def main(doc=None):
     """
     Fenced code block with class table will be parsed using
     panflute.yaml_filter with the fuction convert2table above.
@@ -287,7 +287,8 @@ def main(_=None):
         panflute.yaml_filter,
         tag='table',
         function=convert2table,
-        strict_yaml=True
+        strict_yaml=True,
+        doc=doc
     )
 
 if __name__ == '__main__':
