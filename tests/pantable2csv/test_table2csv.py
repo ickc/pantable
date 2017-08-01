@@ -14,7 +14,7 @@ def test_table2csv():
 : *abcd*
 """
     Panflute = convert_text(markdown)
-    code_block_converted = table2csv(*Panflute)
+    code_block_converted = table2csv(*Panflute, doc=None)
     code_block_referenced = CodeBlock('''---
 alignment: LRCD
 caption: '*abcd*'
