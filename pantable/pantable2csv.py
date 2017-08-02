@@ -69,7 +69,7 @@ def ast2markdown(ast):
     )
 
 
-def table2csv(elem, *__):
+def table2csv(elem, doc):
     """
     find Table element and return a csv table in code-block with class "table"
     """
@@ -118,7 +118,7 @@ def table2csv(elem, *__):
     return None
 
 
-def main(_=None):
+def main(doc=None):
     """
     Any native pandoc tables will be converted into the CSV table format used by pantable:
 
@@ -126,7 +126,10 @@ def main(_=None):
     - metadata in YAML
     - table in CSV
     """
-    panflute.run_filter(table2csv)
+    return panflute.run_filter(
+        table2csv,
+        doc=doc
+    )
 
 if __name__ == '__main__':
     main()
