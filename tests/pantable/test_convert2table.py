@@ -19,8 +19,6 @@ def test_convert2table():
     table_converted = convert2table({'header': False}, data)
     table_referenced = Table(TableRow(TableCell(Plain(Str(''))), TableCell(Plain(Str('')))), TableRow(TableCell(Plain(Str('1'))), TableCell(Plain(
         Str('2')))), TableRow(TableCell(Plain(Str('3'))), TableCell(Plain(Str('4')))), alignment=[u'AlignDefault', u'AlignDefault'], width=[0.5, 0.5])
-    print ("table_converted ", table_converted)
-    print ("table_referenced", table_referenced)
     assert repr(table_converted) == repr(table_referenced)
     # empty table
     data = u','
