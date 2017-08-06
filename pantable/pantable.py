@@ -41,6 +41,7 @@ First row,defaulted to be header row,can be disabled
 ```
 """
 
+from __future__ import division
 import fractions
 import io
 import panflute

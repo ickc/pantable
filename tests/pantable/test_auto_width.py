@@ -1,5 +1,6 @@
 """
 """
+from __future__ import division
 from .context import auto_width
 
 
