@@ -12,7 +12,7 @@ def test_read_data():
     # valid include
     assert read_data('tests/csv_tables.csv', '') is not None
     # check type
-    data = r"""1,2
+    data = u"""1,2
 3,4
 """
     assert read_data(None, data) == [
@@ -20,7 +20,7 @@ def test_read_data():
         ['3', '4']
     ]
     # check complex cells
-    data = r"""asdfdfdfguhfdhghfdgkla,"334
+    data = u"""asdfdfdfguhfdhghfdgkla,"334
 2",**la**,4
 5,6,7,8"""
     assert read_data(None, data) == [
@@ -42,5 +42,5 @@ def test_read_data():
                                 '5^10^~units~',
                                 'Benefits of eating oranges:\n\n- **cures** scurvy\n- `tasty`']]
     # check empty table
-    assert read_data(None, '') == []
+    assert read_data(None, u'') == []
     return

@@ -17,7 +17,7 @@ def test_parse_table_list():
                       ['$E=mc^2$', '`great`']]
     table_list_converted = parse_table_list(markdown, raw_table_list)
     table_list_referenced = [TableRow(TableCell(Para(Strong(Str('markdown')))), TableCell(Para(Strikeout(Str('like'), Space, Str(
-        'this'))))), TableRow(TableCell(Para(Math('E=mc^2', format='InlineMath'))), TableCell(Para(Code('great'))))]
+        'this'))))), TableRow(TableCell(Para(Math('E=mc^2', format=u'InlineMath'))), TableCell(Para(Code('great'))))]
     assert repr(table_list_converted) == repr(table_list_referenced)
     # test irregular table
     markdown = True

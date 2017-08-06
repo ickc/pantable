@@ -185,7 +185,9 @@ def read_data(include, data):
             raw_table_list = list(csv.reader(file))
     else:
         try:
-            with io.open(include) as file:
+            # Handle bad yaml meta-data input by trying to make a string out of
+            # include, so we can open it as a file or get an IOError.
+            with io.open(str(include)) as file:
                 raw_table_list = list(csv.reader(file))
         except IOError:  # FileNotFoundError is not in Python2
             raw_table_list = None
