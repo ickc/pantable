@@ -41,6 +41,7 @@ First row,defaulted to be header row,can be disabled
 ```
 """
 
+import re
 import csv
 import fractions
 import io
@@ -88,6 +89,35 @@ def get_table_width(options):
         table_width = 1.0
         panflute.debug("pantable: invalid table-width")
     return table_width
+
+def column_filter_cell(cell, column_filter):
+    """Match the cell data to the given column_filter
+
+    Column_filter is a dictionary with the supported keys for filtering.
+    Empty dict always match the cell.
+
+    """
+    if cell is None:
+        # None indicates that the cell index is out of bounds, we need pretend
+        # that we keep it, else the row will be removed because of the out of
+        # bounds index.
+        return True
+    elif not column_filter:
+        # Dict is empty, aka no filter function, thus keep the cell
+        return True
+    elif 'filter' in column_filter:
+        str_universal = basestring if py2 else (str, bytes)
+        if isinstance(column_filter['filter'], str_universal):
+            return cell == column_filter['filter']
+        elif isinstance(column_filter['filter'], list):
+            # Assuming all the list items are of type 'basestring'
+            return any([cell == match for match in column_filter['filter']])
+        else:
+            raise Exception("Unhandled filter type: {}".format(column_filter['filter']))
+    elif 'regex' in column_filter:
+        return re.match(column_filter['regex'], cell) is not None
+
+    return False
 # end helper functions
 
 
@@ -170,8 +200,91 @@ def parse_alignment(alignment_string, number_of_columns):
 
     return alignment
 
+def apply_column_filter(options, raw_table_list):
+    """Apply column_filter to the specified columns, if specified.
 
-def read_data(include, data):
+    If the column_filter is not specified or is an empty list, then the table is
+    not modified.  Else the raw_table_list is filtered based on the values in
+    the column_filter (i.e., column indexes not specified in the filter is removed).
+
+    Each element in the column_filter list must be an integer or a dictionary
+    with at least the key 'col'.
+
+    Specifying an integer in the column_filter list makes sure that column
+    index is kept (first column is index 0 -- python list indexing).
+
+    Specifying a dictionary, gives the optional possibility of specifying the
+    following keys in the dictionary (note: the keys are mutually exclusive and
+    specifying more than one has undefined behaviour).
+
+        - filter: filters out (removes) the row, if the content inside this
+            column doesn't match (exact string matching of the value of this key
+            and the content of the cell).  The value may be a list of strings to
+            be matched.
+
+        - regex: filters out (removes) the row, if the content inside this
+            column doesn't match.  The value of this key is placed directly into
+            `re.match(pattern, string)` as the `pattern` and the cell value as
+            the `string`.  Note: Currently we assume that a small amount of
+            regex's is used, such that we don't have to deal with compiling of
+            regex's, but rely on the built in caching to handle it for us.
+
+
+    Example: This example won't filter out any column, but it demonstrates the
+    three different ways that you may specify a column-filter.  Just try and
+    make changes to either one of them, and see how either columns or rows will
+    be filtered from the resulting table.
+
+        ```{.table}
+        ---
+        caption: "*Bar* table"
+        markdown: yes
+        column-filter:
+            - 0
+            - col: 1
+              regex: ".*B|[\\d]"
+            - col: 2
+              filter: ['C', '3']
+        ---
+        A,B,C
+        1,2,3
+        ```
+
+    """
+
+    column_filter = options.get('column-filter', None)
+    if not column_filter:
+        return raw_table_list
+
+    # Normalise the column_filter into a dictionary, so we can easily lookup
+    # column indexes.  Each column index will have a dictionary as its value.
+    # This is where any filter definitions is stored, if there are any.
+    column_filter_dict = {}
+    for x in column_filter:
+        if isinstance(x, int):
+            column_filter_dict[x] = {}
+        elif isinstance(x, dict):
+            # Verify that we have a 'col' key
+            col = x.get('col', None)
+            assert col is not None, "Dictionary must contain a 'col' key: {}". format(x)
+            # remove the 'col' key and convert it to an int.
+            del x['col']
+            col = int(col)
+            # Add the remaining dict as our column_filter for this column index
+            column_filter_dict[col] = x
+        else:
+            raise Exception("column-filter element is of non supported type: {}".format(x))
+    return  [
+        [cell for idx, cell in enumerate(row) if idx in column_filter_dict.keys()]
+          # Filter out the rows ...
+          for row in raw_table_list if
+            # ... where cells (that have filters) in the row, doesn't satisfy
+            # all the filters.  Use None as cell content if column index is out of bounds
+            all ([column_filter_cell(row[idx] if idx < len(row) else None, f) for idx, f
+                    in column_filter_dict.iteritems()])
+    ]
+
+def read_data(options, include, data):
     """
     read csv and return the table in list.
     Return None when the include path is invalid.
@@ -189,7 +302,8 @@ def read_data(include, data):
         except IOError:  # FileNotFoundError is not in Python2
             raw_table_list = None
             panflute.debug("pantable: file not found from the path", include)
-    return raw_table_list
+
+    return apply_column_filter(options, raw_table_list)
 
 
 def regularize_table_list(raw_table_list):
@@ -228,7 +342,7 @@ def convert2table(options, data, **__):
     provided to panflute.yaml_filter to parse its content as pandoc table.
     """
     # prepare table in list from data/include
-    raw_table_list = read_data(options.get('include', None), data)
+    raw_table_list = read_data(options, options.get('include', None), data)
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
     try:
