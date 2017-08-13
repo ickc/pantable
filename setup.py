@@ -6,6 +6,7 @@ https://github.com/ickc/pantable
 
 # Always prefer setuptools over distutils
 from setuptools import setup, find_packages
+import setuptools
 # Version comparison
 from pkg_resources import parse_version
 # To use a consistent encoding
