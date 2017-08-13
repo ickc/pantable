@@ -185,7 +185,7 @@ def read_data(include, data):
             raw_table_list = list(csv.reader(file))
     else:
         try:
-            with io.open(include) as file:
+            with io.open(str(include)) as file:
                 raw_table_list = list(csv.reader(file))
         except IOError:  # FileNotFoundError is not in Python2
             raw_table_list = None
