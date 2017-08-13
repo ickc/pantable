@@ -49,13 +49,17 @@ First row,defaulted to be header row,can be disabled
 ~~~
 """
 
-import csv
 import io
 import panflute
 import yaml
 
 import sys
 py2 = sys.version_info[0] == 2
+
+if py2:
+    from backports import csv
+else:
+    import csv
 
 
 def ast2markdown(ast):
@@ -107,8 +111,7 @@ def table2csv(elem, doc):
                        for cell in row.content]
                       for row in table_body]
         # table in CSV
-        io_universal = io.BytesIO if py2 else io.StringIO
-        with io_universal() as file:
+        with io.StringIO() as file:
             writer = csv.writer(file)
             writer.writerows(table_list)
             csv_table = file.getvalue()
