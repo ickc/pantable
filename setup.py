@@ -13,10 +13,15 @@ from pkg_resources import parse_version
 from codecs import open
 from os import path
 
-# Set description in install_requires for the reason why we at least need this
-# version of setuptools.
+# Need newer version of setuptools, to support environment markers as
+# per PEP 508. It seems to work from around 20.2.2, but some bug fixes
+# were added up till 20.6.8
+# (https://setuptools.readthedocs.io/en/latest/history.html#v20-6-8).  A
+# lot has been fixed around 36.2.0/1, so if we end up having issues we
+# might need to depend on this instead (Ref:
+# https://github.com/pypa/setuptools/pull/1089)
 assert parse_version(setuptools.__version__) >= parse_version("20.6.8"), \
-    "Setuptools version 20.6.8 or heigher i required.  Updated it using `pip install -U setuptools`."
+    "Setuptools version 20.6.8 or heigher is required.  Updated it using `pip install -U setuptools`."
 
 here = path.abspath(path.dirname(__file__))
 
@@ -100,14 +105,6 @@ setup(
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
         'panflute>=1.8.2',
-        # Need newer version of setuptools, to support environment markers as
-        # per PEP 508. It seems to work from around 20.2.2, but some bug fixes
-        # were added up till 20.6.8
-        # (https://setuptools.readthedocs.io/en/latest/history.html#v20-6-8).  A
-        # lot has been fixed around 36.2.0/1, so if we end up having issues we
-        # might need to depend on this instead (Ref:
-        # https://github.com/pypa/setuptools/pull/1089)
-        'setuptools>=20.6.8',
         'backports.csv ; python_version<"3"'
     ],
 
