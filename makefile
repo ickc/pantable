@@ -16,7 +16,7 @@ ePubVersion := epub
 pantable := pantable
 pantable2csv := pantable2csv
 
-CSSURL:=https://ickc.github.io/markdown-latex-css
+CSSURL:=https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css
 
 # command line arguments
 pandocArgCommon := -f markdown+autolink_bare_uris-fancy_lists --toc --normalize -S -V linkcolorblue -V citecolor=blue -V urlcolor=blue -V toccolor=blue --latex-engine=$(pandocEngine) -M date="`date "+%B %e, %Y"`"
@@ -30,7 +30,7 @@ pandocArgFragment := $(pandocArgCommon) --filter=$(pantable)
 ### pandoc workflow
 pandocArgStandalone := $(pandocArgFragment) --toc-depth=1 -s -N
 ## HTML/ePub
-pandocArgHTML := $(pandocArgFragment) -t $(HTMLVersion) --toc-depth=2 -s -N -c $(CSSURL)/css/common.css -c $(CSSURL)/fonts/fonts.css
+pandocArgHTML := $(pandocArgFragment) -t $(HTMLVersion) --toc-depth=2 -s -N -c $(CSSURL)/css/common.min.css -c $(CSSURL)/fonts/fonts.min.css
 pandocArgePub := $(pandocArgHTML) -t $(ePubVersion) --epub-chapter-level=2
 # GitHub README
 pandocArgReadmeGitHub := $(pandocArgFragment) --toc-depth=2 -s -t markdown_github --reference-location=block
