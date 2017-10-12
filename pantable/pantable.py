@@ -90,34 +90,42 @@ def get_table_width(options):
         panflute.debug("pantable: invalid table-width")
     return table_width
 
-def column_filter_cell(cell, column_filter):
-    """Match the cell data to the given column_filter
 
-    Column_filter is a dictionary with the supported keys for filtering.
-    Empty dict always match the cell.
+def table_filter_cell(cell, table_filter):
+    """Match the cell data to the given table_filter
+
+    table_filter is a dictionary with the supported keys for filtering.  Empty
+    dict always match the cell.  See `apply_table_filter` for more info on the
+    dict structure.
+
+    Args:
+      cell: Str of cell content to be matched against.
+      table_filter: Dict of table_filter rules.
 
     """
     if cell is None:
-        # None indicates that the cell index is out of bounds, we need pretend
-        # that we keep it, else the row will be removed because of the out of
-        # bounds index.
+        # None indicates that the cell index is out of bounds, we need to
+        # pretend that we keep it, else the row will be removed because of the
+        # out of bounds index.
         return True
-    elif not column_filter:
+    elif not table_filter:
         # Dict is empty, aka no filter function, thus keep the cell
         return True
-    elif 'filter' in column_filter:
+    elif 'filter' in table_filter:
         str_universal = basestring if py2 else (str, bytes)
-        if isinstance(column_filter['filter'], str_universal):
-            return cell == column_filter['filter']
-        elif isinstance(column_filter['filter'], list):
+        if isinstance(table_filter['filter'], str_universal):
+            return cell == table_filter['filter']
+        elif isinstance(table_filter['filter'], list):
             # Assuming all the list items are of type 'basestring'
-            return any([cell == match for match in column_filter['filter']])
+            return any([cell == match for match in table_filter['filter']])
         else:
-            raise Exception("Unhandled filter type: {}".format(column_filter['filter']))
-    elif 'regex' in column_filter:
-        return re.match(column_filter['regex'], cell) is not None
+            raise Exception("Unhandled filter type: {}"
+                            .format(table_filter['filter']))
+    elif 'regex' in table_filter:
+        return re.match(table_filter['regex'], cell) is not None
 
-    return False
+    return True
+
 # end helper functions
 
 
@@ -200,22 +208,24 @@ def parse_alignment(alignment_string, number_of_columns):
 
     return alignment
 
-def apply_column_filter(options, raw_table_list):
-    """Apply column_filter to the specified columns, if specified.
 
-    If the column_filter is not specified or is an empty list, then the table is
-    not modified.  Else the raw_table_list is filtered based on the values in
-    the column_filter (i.e., column indexes not specified in the filter is removed).
+def apply_table_filter(options, rows):
+    """Apply the filter to the rows and/or columns if specified in the options.
 
-    Each element in the column_filter list must be an integer or a dictionary
+    If the filter is not specified or is an empty list, then the table is
+    not modified.
+
+    Each element in the filter list must be an integer or a dictionary
     with at least the key 'col'.
 
-    Specifying an integer in the column_filter list makes sure that column
-    index is kept (first column is index 0 -- python list indexing).
+    Specifying an integer in the filter list makes sure that the column
+    index is kept (first column index is 0 -- python list indexing), all other
+    columns are removed.
 
-    Specifying a dictionary, gives the optional possibility of specifying the
-    following keys in the dictionary (note: the keys are mutually exclusive and
-    specifying more than one has undefined behaviour).
+    Specifying a dictionary with at least the 'col' key, gives the optional
+    possibility of specifying the following keys in the dictionary (note: the
+    keys are mutually exclusive and specifying more than one has undefined
+    behaviour).
 
         - filter: filters out (removes) the row, if the content inside this
             column doesn't match (exact string matching of the value of this key
@@ -226,12 +236,12 @@ def apply_column_filter(options, raw_table_list):
             column doesn't match.  The value of this key is placed directly into
             `re.match(pattern, string)` as the `pattern` and the cell value as
             the `string`.  Note: Currently we assume that a small amount of
-            regex's is used, such that we don't have to deal with compiling of
+            regex's is used, such that we don't have to deal with compiling the
             regex's, but rely on the built in caching to handle it for us.
 
 
     Example: This example won't filter out any column, but it demonstrates the
-    three different ways that you may specify a column-filter.  Just try and
+    three different ways that you may specify a table-filter.  Just try and
     make changes to either one of them, and see how either columns or rows will
     be filtered from the resulting table.
 
@@ -239,7 +249,7 @@ def apply_column_filter(options, raw_table_list):
         ---
         caption: "*Bar* table"
         markdown: yes
-        column-filter:
+        table-filter:
             - 0
             - col: 1
               regex: ".*B|[\\d]"
@@ -250,39 +260,66 @@ def apply_column_filter(options, raw_table_list):
         1,2,3
         ```
 
+    Args:
+      options: Dict of the YAML defined in the beginning of the CodeBlock
+      rows: A generator over the rows in the table.
+
     """
+    table_filter = options.get('table-filter', [])
+    if table_filter == []:
+        # Return the rows unchanged.
+        return rows
 
-    column_filter = options.get('column-filter', None)
-    if not column_filter:
-        return raw_table_list
-
-    # Normalise the column_filter into a dictionary, so we can easily lookup
-    # column indexes.  Each column index will have a dictionary as its value.
-    # This is where any filter definitions is stored, if there are any.
-    column_filter_dict = {}
-    for x in column_filter:
-        if isinstance(x, int):
-            column_filter_dict[x] = {}
-        elif isinstance(x, dict):
+    # Normalise the table_filter list into a dictionary, so we can easily lookup
+    # column indexes -- Mainly converting integer filters to dictionaries.  The
+    # value of each index is a dictionary, which is empty if no filter was
+    # specified.
+    table_filter_dict = {}
+    for cell_filter in table_filter:
+        if isinstance(cell_filter, int):
+            table_filter_dict[cell_filter] = {}
+        elif isinstance(cell_filter, dict):
             # Verify that we have a 'col' key
-            col = x.get('col', None)
-            assert col is not None, "Dictionary must contain a 'col' key: {}". format(x)
+            col = cell_filter.get('col', None)
+            assert col is not None, "Dictionary type table filters must contain a 'col' key: {}" \
+                .format(cell_filter)
             # remove the 'col' key and convert it to an int.
-            del x['col']
+            del cell_filter['col']
             col = int(col)
-            # Add the remaining dict as our column_filter for this column index
-            column_filter_dict[col] = x
+            # Add the remaining dict as our filter for this column index
+            table_filter_dict[col] = cell_filter
         else:
-            raise Exception("column-filter element is of non supported type: {}".format(x))
-    return  [
-        [cell for idx, cell in enumerate(row) if idx in column_filter_dict.keys()]
-          # Filter out the rows ...
-          for row in raw_table_list if
-            # ... where cells (that have filters) in the row, doesn't satisfy
-            # all the filters.  Use None as cell content if column index is out of bounds
-            all ([column_filter_cell(row[idx] if idx < len(row) else None, f) for idx, f
-                    in column_filter_dict.iteritems()])
-    ]
+            raise Exception("table-filter element is of non supported type: {}"
+                            .format(cell_filter))
+
+    # Lastly we need to iterate over the rows and only return the rows and
+    # columns that should be kept.
+    table_filter_keys = [k for k, v in table_filter_dict.items()
+                         if 'exclude' not in v or bool(v['exclude']) == False]
+        # We need to handle if the first row is a header.
+    if 'header' in options and options['header']:
+        header_row = rows[0]
+        rows = rows[1:]
+        yield [cell for idx, cell in enumerate(header_row) if idx in table_filter_keys]
+
+    for row in rows:
+        # This dict should be fairly small,m so `.items()` is fine to use in PY2
+        # where it returns a list instead of a generator.
+        #
+        # If not all table_filters match this row, then filter it out by
+        # continuing to the next.
+        try:
+            if not all([table_filter_cell(row[idx], cell_filter) for \
+                        idx, cell_filter in table_filter_dict.items()]):
+                continue
+        except IndexError:
+            raise IndexError("You specified a column index (zero indexed) that "
+                             "was bigger than the number of columns ({}) in the row: '{}'"
+                             .format(len(row), row))
+
+        # Remove the non specified columns, and return the resulting row.
+        yield [cell for idx, cell in enumerate(row) if idx in table_filter_keys]
+
 
 def read_data(options, include, data):
     """
@@ -303,7 +340,7 @@ def read_data(options, include, data):
             raw_table_list = None
             panflute.debug("pantable: file not found from the path", include)
 
-    return apply_column_filter(options, raw_table_list)
+    return list(apply_table_filter(options, raw_table_list))
 
 
 def regularize_table_list(raw_table_list):
