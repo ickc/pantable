@@ -60,6 +60,8 @@ before_install:
     path=$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64\.deb')
     downloadUrl="https://github.com$path"
     file=${path##*/}
+    #
+    SETUPTOOLS_VERSION=`pip show setuptools | grep Version: | cut -d' ' -f2`
 # install dependencies
 install:
   # pandoc
@@ -67,6 +69,10 @@ install:
     sudo dpkg -i $file
   # latest pip dropped support for py3.2, which is the version of python in pypy3
   - if [[ "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then pip install -U pip; fi
+  # setup.py requires a minimum version of setuptools.  The virtual environments
+  # of some of the python versions does not have a suficiently new setuptools
+  # version.
+  - dpkg --compare-versions ${SETUPTOOLS_VERSION} lt 20.6.8 && pip install -U setuptools || echo "Setuptools ${SETUPTOOLS_VERSION} is suficiently new (>=20.6.8)"
   - pip install -e .[test]
 before_script:
   # pasteurize for py2 only, except setup.py & pantable/version.py
