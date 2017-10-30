@@ -86,13 +86,32 @@ def get_table_width(options):
     """
     try:
         table_width = float(fractions.Fraction(
-            (options.get('table-width', 1.0))))
+            (options.get('table-width', default['table-width']))))
         assert table_width > 0
     except (ValueError, AssertionError, TypeError):
         table_width = 1.0
         panflute.debug("pantable: invalid table-width")
     return table_width
 # end helper functions
+
+
+def get_default_options():
+    """
+    parse sys.argv to customize some defaults for metadata keys and return a
+    dict holding default values
+    """
+    default = dict()
+    default['table-width'] = 1.0
+    default['header'] = True
+    default['markdown'] = False
+    for x in sys.argv[1:]:
+        x = x.split('=')
+        if x[0] in 'table-width header markdown':
+            if x[1].lower() in "false, off, no":  # workaround as `if 'false'`
+                default[x[0]] = False             # evaluates to True
+            else:
+                default[x[0]] = x[1]
+    return default
 
 
 def auto_width(table_width, number_of_columns, table_list):
@@ -258,8 +277,8 @@ def convert2table(options, data, **__):
     # parse alignment
     alignment = parse_alignment(options.get(
         'alignment', None), number_of_columns)
-    header = options.get('header', True)
-    markdown = options.get('markdown', False)
+    header = options.get('header', default['header'])
+    markdown = options.get('markdown', default['markdown'])
 
     # get caption: parsed as markdown into panflute AST if non-empty.
     caption = panflute.convert_text(str(options['caption']))[
@@ -279,6 +298,7 @@ def convert2table(options, data, **__):
     )
 
 
+default = get_default_options()
 def main(doc=None):
     """
     Fenced code block with class table will be parsed using
