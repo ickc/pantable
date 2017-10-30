@@ -36,9 +36,10 @@ env:
   - pandocVersion=latest
 matrix:
   allow_failures:
+    - python: "3.3"
     - python: "3.6-dev"
     - python: "nightly"
-    - python: "pypy3"
+    # - python: "pypy3"
     # - env: pandocVersion=1.13.2
     # - env: pandocVersion=1.14
     # - env: pandocVersion=1.14.0.1
