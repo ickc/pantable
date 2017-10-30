@@ -49,7 +49,7 @@ matrix:
     # - env: pandocVersion=1.15.0.6
     # - env: pandocVersion=1.15.1
     # - env: pandocVersion=1.15.2
-    - env: pandocVersion=2.0
+    - env: pandocVersion=latest
   fast_finish: true
 # download pandoc
 before_install:
