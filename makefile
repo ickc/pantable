@@ -19,10 +19,10 @@ pantable2csv := pantable2csv
 CSSURL:=https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css
 
 # command line arguments
-pandocArgCommon := -f markdown+autolink_bare_uris-fancy_lists --toc --normalize -S -V linkcolorblue -V citecolor=blue -V urlcolor=blue -V toccolor=blue --latex-engine=$(pandocEngine) -M date="`date "+%B %e, %Y"`"
+pandocArgCommon := -f markdown+autolink_bare_uris-fancy_lists --toc -V linkcolorblue -V citecolor=blue -V urlcolor=blue -V toccolor=blue --pdf-engine=$(pandocEngine) -M date="`date "+%B %e, %Y"`"
 # Workbooks
 ## MD
-pandocArgMD := -f markdown+abbreviations+autolink_bare_uris+markdown_attribute+mmd_header_identifiers+mmd_link_attributes+mmd_title_block+tex_math_double_backslash-latex_macros-auto_identifiers -t markdown+raw_tex-native_spans-simple_tables-multiline_tables-grid_tables-latex_macros --normalize -s --wrap=none --column=999 --atx-headers --reference-location=block --file-scope
+pandocArgMD := -f markdown+abbreviations+autolink_bare_uris+markdown_attribute+mmd_header_identifiers+mmd_link_attributes+mmd_title_block+tex_math_double_backslash-latex_macros-auto_identifiers -t markdown+raw_tex-native_spans-simple_tables-multiline_tables-grid_tables-latex_macros -s --wrap=none --column=999 --atx-headers --reference-location=block --file-scope
 ## TeX/PDF
 ### LaTeX workflow
 latexmkArg := -$(latexmkEngine)
@@ -111,9 +111,9 @@ pytest: $(testNative) tests/test_idempotent.native
 pytestLite:
 	$(python) -m pytest -vv --cov=pantable tests
 tests/reference_idempotent.native: tests/test_pantable.md
-	pandoc --normalize -t native -F $(pantable) -F $(pantable2csv) -F $(pantable) -F $(pantable2csv) -o $@ $<
+	pandoc -t native -F $(pantable) -F $(pantable2csv) -F $(pantable) -F $(pantable2csv) -o $@ $<
 tests/test_idempotent.native: tests/reference_idempotent.native
-	pandoc --normalize -f native -t native -F $(pantable) -F $(pantable2csv) -o $@ $<
+	pandoc -f native -t native -F $(pantable) -F $(pantable2csv) -o $@ $<
 
 # check python styles
 pep8:
