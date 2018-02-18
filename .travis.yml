@@ -33,6 +33,7 @@ env:
   - pandocVersion=1.17.2
   # - pandocVersion=1.18
   - pandocVersion=1.19.2.1
+  - pandocVersion=2.0.6
   - pandocVersion=latest
 matrix:
   allow_failures:
