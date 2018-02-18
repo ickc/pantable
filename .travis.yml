@@ -62,7 +62,7 @@ before_install:
     path=$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64\.deb')
     downloadUrl="https://github.com$path"
     file=${path##*/}
-    SETUPTOOLS_VERSION=$(pip show setuptools | grep "^Version:" | cut -d' ' -f2)
+    SETUPTOOLS_VERSION=$(easy_install --version | cut -d' ' -f2)
 # install dependencies
 install:
   # pandoc
