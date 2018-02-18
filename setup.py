@@ -114,7 +114,7 @@ setup(
     # $ pip install -e .[dev,test]
     extras_require={
         'dev': ['check-manifest'],
-        'test': ['shutilwhich', 'pep8', 'pylint', 'pytest', 'pytest-cov', 'coverage', 'coveralls', 'future'],
+        'test': ['shutilwhich', 'pep8', 'pytest', 'pytest-cov', 'coverage', 'coveralls', 'future'],
     },
 
     # If there are data files included in your packages that need to be
