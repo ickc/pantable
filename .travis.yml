@@ -53,21 +53,13 @@ matrix:
   fast_finish: true
 # download pandoc
 before_install:
-  - |
-    if [[ $pandocVersion == "latest" ]]; then
-      url="https://github.com/jgm/pandoc/releases/latest"
-    else
-      url="https://github.com/jgm/pandoc/releases/tag/$pandocVersion"
-    fi
-    path=$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64\.deb')
-    downloadUrl="https://github.com$path"
-    file=${path##*/}
-    SETUPTOOLS_VERSION=$(easy_install --version | cut -d' ' -f2)
+  - downloadUrl=$(python -c 'import requests, json, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in json.loads(requests.get(url).text)["assets"] if i["name"][-3:] == "deb"))' $pandocVersion)
+  - SETUPTOOLS_VERSION=$(easy_install --version | cut -d' ' -f2)
 # install dependencies
 install:
   # pandoc
   - wget $downloadUrl &&
-    sudo dpkg -i $file
+    sudo dpkg -i ${downloadUrl##*/}
   # latest pip dropped support for py3.2, which is the version of python in pypy3
   - if [[ "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then pip install -U pip; fi
   # setup.py requires a minimum version of setuptools.  The virtual environments
