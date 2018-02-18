@@ -63,7 +63,7 @@ install:
     dpkg --compare-versions ${SETUPTOOLS_VERSION} lt 20.6.8 && pip install -U setuptools || echo "Setuptools ${SETUPTOOLS_VERSION} is suficiently new (>=20.6.8)"
   - pip install -e .[test]
   # pandoc
-  - downloadUrl=$(python -c 'import requests, json, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in json.loads(requests.get(url).text)["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
+  - downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
     wget $downloadUrl &&
     sudo dpkg -i ${downloadUrl##*/}
 before_script:
