@@ -52,22 +52,20 @@ matrix:
     # - env: pandocVersion=1.15.2
     # - env: pandocVersion=latest
   fast_finish: true
-# download pandoc
-before_install:
-  - downloadUrl=$(python -c 'import requests, json, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in json.loads(requests.get(url).text)["assets"] if i["name"][-3:] == "deb"))' $pandocVersion)
-  - SETUPTOOLS_VERSION=$(easy_install --version | cut -d' ' -f2)
 # install dependencies
 install:
-  # pandoc
-  - wget $downloadUrl &&
-    sudo dpkg -i ${downloadUrl##*/}
   # latest pip dropped support for py3.2, which is the version of python in pypy3
   - if [[ "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then pip install -U pip; fi
   # setup.py requires a minimum version of setuptools.  The virtual environments
   # of some of the python versions does not have a sufficiently new setuptools
   # version.
-  - dpkg --compare-versions ${SETUPTOOLS_VERSION} lt 20.6.8 && pip install -U setuptools || echo "Setuptools ${SETUPTOOLS_VERSION} is suficiently new (>=20.6.8)"
+  - SETUPTOOLS_VERSION=$(easy_install --version | cut -d' ' -f2) &&
+    dpkg --compare-versions ${SETUPTOOLS_VERSION} lt 20.6.8 && pip install -U setuptools || echo "Setuptools ${SETUPTOOLS_VERSION} is suficiently new (>=20.6.8)"
   - pip install -e .[test]
+  # pandoc
+  - downloadUrl=$(python -c 'import requests, json, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in json.loads(requests.get(url).text)["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
+    wget $downloadUrl &&
+    sudo dpkg -i ${downloadUrl##*/}
 before_script:
   # pasteurize for py2 only, except setup.py & pantable/version.py
   - |
