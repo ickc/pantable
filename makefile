@@ -58,7 +58,7 @@ testFull: pytest pep8 pylint
 
 clean:
 	rm -f .coverage $(testAll) README.html
-	rm -rf htmlcov pantable.egg-info
+	rm -rf htmlcov pantable.egg-info .cache .idea
 	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 Clean: clean
 	rm -f $(docsAll)
