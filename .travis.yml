@@ -40,8 +40,13 @@ install:
 before_script:
   # pasteurize for py2 only, except setup.py & pantable/version.py
   - |
-    [[ "$TRAVIS_PYTHON_VERSION" == "2.7" || "$TRAVIS_PYTHON_VERSION" == "pypy" ]] &&
-    find \! \( -path './setup.py' -o -path './pantable/version.py' \) -exec pasteurize -wnj 4 {} +
+    if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" || "$TRAVIS_PYTHON_VERSION" == "pypy" ]]; then
+      mv setup.py setup.py.temp
+      mv pantable/version.py pantable/version.py.temp
+      pasteurize -wnj 4 .
+      mv setup.py.temp setup.py
+      mv pantable/version.py.temp pantable/version.py
+    fi
 # command to run tests
 script:
   - make -j3 test
@@ -52,7 +57,12 @@ before_deploy:
   # build unpasteurized python3 wheel
   - python3 setup.py bdist_wheel
   # pasteurize except setup.py & pantable/version.py
-  - find \! \( -path './setup.py' -o -path './pantable/version.py' \) -exec pasteurize -wnj 4 {} +
+  - |
+    mv setup.py setup.py.temp
+    mv pantable/version.py pantable/version.py.temp
+    pasteurize -wnj 4 .
+    mv setup.py.temp setup.py
+    mv pantable/version.py.temp pantable/version.py
   # prepare wheel for py2
   - pip2 install wheel
   - python2 setup.py bdist_wheel
