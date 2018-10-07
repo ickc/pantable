@@ -95,7 +95,7 @@ def table2csv(elem, doc):
         # options: table-width from width
         options['table-width'] = sum(options['width'])
         # options: header: False if empty header row, else True
-        options['header'] = bool(panflute.stringify(elem.header))
+        options['header'] = bool(panflute.stringify(elem.header)) if elem.header else False
         # options: markdown
         options['markdown'] = True
 
