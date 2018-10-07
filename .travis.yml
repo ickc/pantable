@@ -46,7 +46,8 @@ before_script:
 script:
   - make -j3 test
 after_success:
-  - [[ "$pandocVersion" == "latest" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]] && coveralls
+  - |
+    [[ "$pandocVersion" == "latest" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]] && coveralls
 before_deploy:
   # build unpasteurized python3 wheel
   - python3 setup.py bdist_wheel
