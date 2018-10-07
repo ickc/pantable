@@ -16,13 +16,13 @@ ePubVersion := epub
 pantable := pantable
 pantable2csv := pantable2csv
 
-CSSURL:=https://ickc.github.io/markdown-latex-css
+CSSURL:=https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css
 
 # command line arguments
-pandocArgCommon := -f markdown+autolink_bare_uris-fancy_lists --toc --normalize -S -V linkcolorblue -V citecolor=blue -V urlcolor=blue -V toccolor=blue --latex-engine=$(pandocEngine) -M date="`date "+%B %e, %Y"`"
+pandocArgCommon := -f markdown+autolink_bare_uris-fancy_lists --toc -V linkcolorblue -V citecolor=blue -V urlcolor=blue -V toccolor=blue --pdf-engine=$(pandocEngine) -M date="`date "+%B %e, %Y"`"
 # Workbooks
 ## MD
-pandocArgMD := -f markdown+abbreviations+autolink_bare_uris+markdown_attribute+mmd_header_identifiers+mmd_link_attributes+mmd_title_block+tex_math_double_backslash-latex_macros-auto_identifiers -t markdown+raw_tex-native_spans-simple_tables-multiline_tables-grid_tables-latex_macros --normalize -s --wrap=none --column=999 --atx-headers --reference-location=block --file-scope
+pandocArgMD := -f markdown+abbreviations+autolink_bare_uris+markdown_attribute+mmd_header_identifiers+mmd_link_attributes+mmd_title_block+tex_math_double_backslash-latex_macros-auto_identifiers -t markdown+raw_tex-native_spans-simple_tables-multiline_tables-grid_tables-latex_macros -s --wrap=none --column=999 --atx-headers --reference-location=block --file-scope
 ## TeX/PDF
 ### LaTeX workflow
 latexmkArg := -$(latexmkEngine)
@@ -30,7 +30,7 @@ pandocArgFragment := $(pandocArgCommon) --filter=$(pantable)
 ### pandoc workflow
 pandocArgStandalone := $(pandocArgFragment) --toc-depth=1 -s -N
 ## HTML/ePub
-pandocArgHTML := $(pandocArgFragment) -t $(HTMLVersion) --toc-depth=2 -s -N -c $(CSSURL)/css/common.css -c $(CSSURL)/fonts/fonts.css
+pandocArgHTML := $(pandocArgFragment) -t $(HTMLVersion) --toc-depth=2 -s -N -c $(CSSURL)/css/common.min.css -c $(CSSURL)/fonts/fonts.min.css
 pandocArgePub := $(pandocArgHTML) -t $(ePubVersion) --epub-chapter-level=2
 # GitHub README
 pandocArgReadmeGitHub := $(pandocArgFragment) --toc-depth=2 -s -t markdown_github --reference-location=block
@@ -58,12 +58,10 @@ testFull: pytest pep8 pylint
 
 clean:
 	rm -f .coverage $(testAll) README.html
-	rm -rf htmlcov pantable.egg-info
+	rm -rf htmlcov pantable.egg-info .cache .idea
 	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
-Clean:
-	rm -f .coverage $(testAll) $(docsAll)
-	rm -rf htmlcov pantable.egg-info
-	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
+Clean: clean
+	rm -f $(docsAll)
 
 # Making dependancies #################################################################################################################################################################################
 
@@ -111,9 +109,9 @@ pytest: $(testNative) tests/test_idempotent.native
 pytestLite:
 	$(python) -m pytest -vv --cov=pantable tests
 tests/reference_idempotent.native: tests/test_pantable.md
-	pandoc --normalize -t native -F $(pantable) -F $(pantable2csv) -F $(pantable) -F $(pantable2csv) -o $@ $<
+	pandoc -t native -F $(pantable) -F $(pantable2csv) -F $(pantable) -F $(pantable2csv) -o $@ $<
 tests/test_idempotent.native: tests/reference_idempotent.native
-	pandoc --normalize -f native -t native -F $(pantable) -F $(pantable2csv) -o $@ $<
+	pandoc -f native -t native -F $(pantable) -F $(pantable2csv) -o $@ $<
 
 # check python styles
 pep8:
@@ -153,3 +151,6 @@ normalize:
 ### 2. transform unicode non-breaking space back to `\ `
 style:
 	find . -maxdepth 2 -mindepth 2 -iname "*.md" | xargs -i -n1 -P8 bash -c 'pandoc $(pandocArgMD) -o $$0 $$0 && sed -i -e '"'"'s/ /\\ /g'"'"' $$0' {}
+
+print-%:
+	$(info $* = $($*))

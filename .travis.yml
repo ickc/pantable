@@ -7,9 +7,9 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
-  - "3.5-dev" # 3.5 development branch
-  - "3.6-dev" # 3.6 development branch
-  - "nightly" # currently points to 3.7-dev
+  - "3.6"
+  # - "3.6-dev" # 3.6 development branch
+  # - "nightly" # currently points to 3.7-dev
   # pypy (version info from [Changelogs — PyPy documentation](http://doc.pypy.org/en/latest/index-of-whatsnew.html))
   - "pypy"  # PyPy2.7 5.3.1 (CPython 2.7 compatible)
   - "pypy3" # PyPy3 2.4.0 (CPython 3.2 compatible)
@@ -32,13 +32,15 @@ env:
   # - pandocVersion=1.17.1
   - pandocVersion=1.17.2
   # - pandocVersion=1.18
+  - pandocVersion=1.19.2.1
+  # - pandocVersion=2.0.6
   - pandocVersion=latest
 matrix:
   allow_failures:
-    - python: "3.5-dev"
-    - python: "3.6-dev"
-    - python: "nightly"
-    - python: "pypy3"
+    # - python: "3.3"
+    # - python: "3.6-dev"
+    # - python: "nightly"
+    # - python: "pypy3"
     # - env: pandocVersion=1.13.2
     # - env: pandocVersion=1.14
     # - env: pandocVersion=1.14.0.1
@@ -48,30 +50,26 @@ matrix:
     # - env: pandocVersion=1.15.0.6
     # - env: pandocVersion=1.15.1
     # - env: pandocVersion=1.15.2
+    # - env: pandocVersion=latest
   fast_finish: true
-# download pandoc
-before_install:
-  - |
-    if [[ $pandocVersion == "latest" ]]; then
-      url="https://github.com/jgm/pandoc/releases/latest"
-    else
-      url="https://github.com/jgm/pandoc/releases/tag/$pandocVersion"
-    fi
-    path=$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64\.deb')
-    downloadUrl="https://github.com$path"
-    file=${path##*/}
 # install dependencies
 install:
-  # pandoc
-  - wget $downloadUrl &&
-    sudo dpkg -i $file
   # latest pip dropped support for py3.2, which is the version of python in pypy3
   - if [[ "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then pip install -U pip; fi
+  # setup.py requires a minimum version of setuptools.  The virtual environments
+  # of some of the python versions does not have a sufficiently new setuptools
+  # version.
+  - SETUPTOOLS_VERSION=$(easy_install --version | cut -d' ' -f2) &&
+    dpkg --compare-versions ${SETUPTOOLS_VERSION} lt 20.6.8 && pip install -U setuptools || echo "Setuptools ${SETUPTOOLS_VERSION} is suficiently new (>=20.6.8)"
   - pip install -e .[test]
+  # pandoc
+  - downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
+    wget $downloadUrl &&
+    sudo dpkg -i ${downloadUrl##*/}
 before_script:
   # pasteurize for py2 only, except setup.py & pantable/version.py
   - |
-    if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]] || [[ "$TRAVIS_PYTHON_VERSION" == "pypy" ]]; then
+    if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" || "$TRAVIS_PYTHON_VERSION" == "pypy" ]]; then
       mv setup.py setup.py.temp
       mv pantable/version.py pantable/version.py.temp
       pasteurize -wnj 4 .
@@ -82,7 +80,7 @@ before_script:
 script:
   - make -j4 test
 after_success:
-  - if [[ "$pandocVersion" == "latest" ]] && [[ "$TRAVIS_PYTHON_VERSION" == "3.5" ]]; then coveralls; else printf "skip coveralls"; fi
+  - if [[ "$pandocVersion" == "latest" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then coveralls; else printf "skip coveralls"; fi
 before_deploy:
   # build unpasteurized python3 wheel
   - python3 setup.py bdist_wheel
@@ -105,5 +103,5 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    python: "3.5"
+    python: "3.6"
     condition: $pandocVersion = latest
