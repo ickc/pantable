@@ -1,69 +1,40 @@
-# os: linux and sudo: false is assumed, which means it is using container-based Ubuntu 12.04
+# os: linux and sudo: false is assumed, which means it is using container-based Ubuntu 14.04
 language: python
 cache: pip
 # build matrix: different python and pandoc versions
 python:
   - "2.7"
-  - "3.3"
   - "3.4"
   - "3.5"
   - "3.6"
-  # - "3.6-dev" # 3.6 development branch
-  # - "nightly" # currently points to 3.7-dev
   # pypy (version info from [Changelogs — PyPy documentation](http://doc.pypy.org/en/latest/index-of-whatsnew.html))
-  - "pypy"  # PyPy2.7 5.3.1 (CPython 2.7 compatible)
-  - "pypy3" # PyPy3 2.4.0 (CPython 3.2 compatible)
+  - "pypy"
+  - "pypy3.5"
 env:
-  # - pandocVersion=1.13.2
-  # - pandocVersion=1.14
-  # - pandocVersion=1.14.0.1
-  # - pandocVersion=1.14.1
-  # - pandocVersion=1.15
-  # - pandocVersion=1.15.0.5
-  # - pandocVersion=1.15.0.6
-  # - pandocVersion=1.15.1
-  # - pandocVersion=1.15.2
-  # - pandocVersion=1.16
-  # - pandocVersion=1.16.0.1
-  # - pandocVersion=1.16.0.2
-  # - pandocVersion=1.17
-  # - pandocVersion=1.17.0.1
-  # - pandocVersion=1.17.0.2
-  # - pandocVersion=1.17.1
-  - pandocVersion=1.17.2
-  # - pandocVersion=1.18
   - pandocVersion=1.19.2.1
-  # - pandocVersion=2.0.6
+  - pandocVersion=2.2.3.2
   - pandocVersion=latest
-matrix:
-  allow_failures:
-    # - python: "3.3"
-    # - python: "3.6-dev"
-    # - python: "nightly"
-    # - python: "pypy3"
-    # - env: pandocVersion=1.13.2
-    # - env: pandocVersion=1.14
-    # - env: pandocVersion=1.14.0.1
-    # - env: pandocVersion=1.14.1
-    # - env: pandocVersion=1.15
-    # - env: pandocVersion=1.15.0.5
-    # - env: pandocVersion=1.15.0.6
-    # - env: pandocVersion=1.15.1
-    # - env: pandocVersion=1.15.2
-    # - env: pandocVersion=latest
-  fast_finish: true
+# matrix:
+#   allow_failures:
+#     - python: "3.4"
+#     - env: pandocVersion=1.19.2.1
+#   fast_finish: true
 # install dependencies
 install:
+  - pip install -U pip
   # latest pip dropped support for py3.2, which is the version of python in pypy3
-  - if [[ "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then pip install -U pip; fi
+  # - if [[ "$TRAVIS_PYTHON_VERSION" != "pypy3" ]]; then pip install -U pip; fi
   # setup.py requires a minimum version of setuptools.  The virtual environments
   # of some of the python versions does not have a sufficiently new setuptools
   # version.
-  - SETUPTOOLS_VERSION=$(easy_install --version | cut -d' ' -f2) &&
-    dpkg --compare-versions ${SETUPTOOLS_VERSION} lt 20.6.8 && pip install -U setuptools || echo "Setuptools ${SETUPTOOLS_VERSION} is suficiently new (>=20.6.8)"
+  - |
+    SETUPTOOLS_VERSION=$(easy_install --version | cut -d' ' -f2) &&
+    dpkg --compare-versions ${SETUPTOOLS_VERSION} lt 20.6.8 && pip install -U setuptools ||
+    echo "Setuptools ${SETUPTOOLS_VERSION} is suficiently new (>=20.6.8)"
   - pip install -e .[test]
   # pandoc
-  - downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
+  - |
+    downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
     wget $downloadUrl &&
     sudo dpkg -i ${downloadUrl##*/}
 before_script:
@@ -78,9 +49,10 @@ before_script:
     fi
 # command to run tests
 script:
-  - make -j4 test
+  - make -j3 test
 after_success:
-  - if [[ "$pandocVersion" == "latest" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]]; then coveralls; else printf "skip coveralls"; fi
+  - |
+    [[ "$pandocVersion" == "latest" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]] && coveralls
 before_deploy:
   # build unpasteurized python3 wheel
   - python3 setup.py bdist_wheel
