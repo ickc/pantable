@@ -1,6 +1,6 @@
 """
 """
-#from .context import read_data
+from .context import read_data
 
 
 def test_read_data():
