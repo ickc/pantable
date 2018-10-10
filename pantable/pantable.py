@@ -183,6 +183,20 @@ def read_data(include, data):
     if include is None:
         with io.StringIO(data) as file:
             raw_table_list = list(csv.reader(file))
+    elif str(include).strip().endswith('.xls') or \
+            str(include).strip().endswith('.xlsx'):
+        try:
+            import pandas as pd
+            temp = pd.read_excel(include, index_col=0)
+            raw_table_list = read_data(None, temp.to_csv())
+        except ModuleNotFoundError:
+            raw_table_list = None
+            panflute.debug("pandas needs to be installed. You "
+                           "can find installation instruction at "
+                           "http://pandas.pydata.org/pandas-docs/stable/install.html")
+        except IOError:
+            raw_table_list = None
+            panflute.debug("pantable: file not found from the path", include)
     else:
         try:
             with io.open(str(include)) as file:
