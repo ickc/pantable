@@ -175,7 +175,7 @@ def parse_alignment(alignment_string, number_of_columns):
     return alignment
 
 
-def read_data(include, data):
+def read_data(include, data, encoding=None):
     """
     read csv and return the table in list.
     Return None when the include path is invalid.
@@ -185,7 +185,7 @@ def read_data(include, data):
             raw_table_list = list(csv.reader(file))
     else:
         try:
-            with io.open(str(include)) as file:
+            with io.open(str(include), encoding=encoding) as file:
                 raw_table_list = list(csv.reader(file))
         except IOError:  # FileNotFoundError is not in Python2
             raw_table_list = None
@@ -228,8 +228,10 @@ def convert2table(options, data, **__):
     """
     provided to panflute.yaml_filter to parse its content as pandoc table.
     """
+    # get the encoding from options
+    encoding = options.get('encoding', None)
     # prepare table in list from data/include
-    raw_table_list = read_data(options.get('include', None), data)
+    raw_table_list = read_data(options.get('include', None), data, encoding)
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
     try:
