@@ -4,11 +4,7 @@
 CSV Tables in Markdown — Pandoc Filter for CSV Tables
 =====================================================
 
-:Date:   December  4, 2016
-
-.. role:: math(raw)
-   :format: html latex
-..
+:Date:   May 20, 2019
 
 .. contents::
    :depth: 3
@@ -53,39 +49,41 @@ output <https://ickc.github.io/pantable/README.pdf>`__ too.
 
 ::
 
-    ```table
-    ---
-    caption: '*Awesome* **Markdown** Table'
-    alignment: RC
-    table-width: 2/3
-    markdown: True
-    ---
-    First row,defaulted to be header row,can be disabled
-    1,cell can contain **markdown**,"It can be aribrary block element:
+   ```table
+   ---
+   caption: '*Awesome* **Markdown** Table'
+   alignment: RC
+   table-width: 2/3
+   markdown: True
+   ---
+   First row,defaulted to be header row,can be disabled
+   1,cell can contain **markdown**,"It can be aribrary block element:
 
-    - following standard markdown syntax
-    - like this"
-    2,"Any markdown syntax, e.g.",$$E = mc^2$$
-    ```
+   - following standard markdown syntax
+   - like this"
+   2,"Any markdown syntax, e.g.",$$E = mc^2$$
+   ```
 
 becomes
 
-+--------+--------------------+------------------------+
-| First  | defaulted to be    | can be disabled        |
-| row    | header row         |                        |
-+========+====================+========================+
-| 1      | cell can contain   | It can be aribrary     |
-|        | **markdown**       | block element:         |
-|        |                    |                        |
-|        |                    | -  following standard  |
-|        |                    |    markdown syntax     |
-|        |                    | -  like this           |
-+--------+--------------------+------------------------+
-| 2      | Any markdown       | .. math:: E = mc^2     |
-|        | syntax, e.g.       |                        |
-+--------+--------------------+------------------------+
+.. table:: *Awesome* **Markdown** Table
 
-Table: *Awesome* **Markdown** Table
+   +-----+-----------------+---------------------+
+   | Fir | defaulted to be | can be disabled     |
+   | st  | header row      |                     |
+   | row |                 |                     |
+   +=====+=================+=====================+
+   | 1   | cell can        | It can be aribrary  |
+   |     | contain         | block element:      |
+   |     | **markdown**    |                     |
+   |     |                 | -  following        |
+   |     |                 |    standard         |
+   |     |                 |    markdown syntax  |
+   |     |                 | -  like this        |
+   +-----+-----------------+---------------------+
+   | 2   | Any markdown    | .. math:: E = mc^2  |
+   |     | syntax, e.g.    |                     |
+   +-----+-----------------+---------------------+
 
 (The equation might not work if you view this on PyPI.)
 
@@ -96,13 +94,13 @@ Install:
 
 .. code:: bash
 
-    pip install -U pantable
+   pip install -U pantable
 
 Use:
 
 .. code:: bash
 
-    pandoc -F pantable -o README.html README.md
+   pandoc -F pantable -o README.html README.md
 
 Syntax
 ------
@@ -113,38 +111,57 @@ Optionally, YAML metadata block can be used within the fenced code
 block, following standard pandoc YAML metadata block syntax. 7 metadata
 keys are recognized:
 
--  ``caption``: the caption of the table. If omitted, no caption will be
-   inserted. Default: disabled.
+``caption``
+   the caption of the table. If omitted, no caption will be inserted.
+   Default: disabled.
 
--  ``alignment``: a string of characters among ``L,R,C,D``,
-   case-insensitive, corresponds to Left-aligned, Right-aligned,
-   Center-aligned, Default-aligned respectively. e.g. ``LCRD`` for a
-   table with 4 columns. Default: ``DDD...``
+``alignment``
+   a string of characters among ``L,R,C,D``, case-insensitive,
+   corresponds to Left-aligned, Right-aligned, Center-aligned,
+   Default-aligned respectively. e.g. \ ``LCRD`` for a table with 4
+   columns. Default: ``DDD...``
 
--  ``width``: a list of relative width corresponding to the width of
-   each columns. e.g.
+``width``
+   a list of relative width corresponding to the width of each columns.
+   e.g.
 
    .. code:: yaml
 
-       - width
-           - 0.1
-           - 0.2
-           - 0.3
-           - 0.4
+      - width
+          - 0.1
+          - 0.2
+          - 0.3
+          - 0.4
 
    Default: auto calculated from the length of each line in table cells.
 
--  ``table-width``: the relative width of the table (e.g. relative to
-   ``\linewidth``). default: 1.0
+``table-width``
+   the relative width of the table (e.g. relative to ``\linewidth``).
+   default: 1.0
 
--  ``header``: If it has a header row or not. True/False/yes/NO are
-   accepted, case-insensitive. default: True
+``header``
+   If it has a header row or not. True/False/yes/NO are accepted,
+   case-insensitive. default: True
+``markdown``
+   If CSV table cell contains markdown syntax or not. Same as above.
+   Default: False
+``include``
+   the path to an CSV file, can be relative/absolute. If non-empty,
+   override the CSV in the CodeBlock. default: None
+``pipe_tables``
+   If True, a pipe table will be constructed directly in markdown syntax
+   instead of via AST. ``markdown`` is implied to be True. This trades
+   correctness for speed. It won’t be correct if any of the cell is
+   multiline for example, resulting in an invalid pipe table. However,
+   it is much faster comparing to previous ``markdown: True`` case
+   because previously per cell a subprocess to execute pandoc the parse
+   the markdown to AST is needed.
 
--  ``markdown``: If CSV table cell contains markdown syntax or not. Same
-   as above. Default: False
-
--  ``include``: the path to an CSV file, can be relative/absolute. If
-   non-empty, override the CSV in the CodeBlock. default: None
+``raw_markdown``
+   If True, force output the table as a pipe table (which is
+   tab-delimited.) This is sometimes useful if pandoc is very stubborn
+   to not emit a pipe table even if ``markdown-grid_tables...`` is used.
+   Note that this should only be used if the output format is markdown.
 
 When the metadata keys is invalid, the default will be used instead.
 Note that width and table-width accept fractions as well.
@@ -163,44 +180,44 @@ For example, in the markdown source:
 
 ::
 
-    +--------+---------------------+--------------------------+
-    | First  | defaulted to be     | can be disabled          |
-    | row    | header row          |                          |
-    +========+=====================+==========================+
-    | 1      | cell can contain    | It can be aribrary block |
-    |        | **markdown**        | element:                 |
-    |        |                     |                          |
-    |        |                     | -   following standard   |
-    |        |                     |     markdown syntax      |
-    |        |                     | -   like this            |
-    +--------+---------------------+--------------------------+
-    | 2      | Any markdown        | $$E = mc^2$$             |
-    |        | syntax, e.g.        |                          |
-    +--------+---------------------+--------------------------+
+   +--------+---------------------+--------------------------+
+   | First  | defaulted to be     | can be disabled          |
+   | row    | header row          |                          |
+   +========+=====================+==========================+
+   | 1      | cell can contain    | It can be aribrary block |
+   |        | **markdown**        | element:                 |
+   |        |                     |                          |
+   |        |                     | -   following standard   |
+   |        |                     |     markdown syntax      |
+   |        |                     | -   like this            |
+   +--------+---------------------+--------------------------+
+   | 2      | Any markdown        | $$E = mc^2$$             |
+   |        | syntax, e.g.        |                          |
+   +--------+---------------------+--------------------------+
 
-    : *Awesome* **Markdown** Table
+   : *Awesome* **Markdown** Table
 
 running ``pandoc -F pantable2csv -o output.md input.md``, it becomes
 
 ::
 
-    ``` {.table}
-    ---
-    alignment: DDD
-    caption: '*Awesome* **Markdown** Table'
-    header: true
-    markdown: true
-    table-width: 0.8055555555555556
-    width: [0.125, 0.3055555555555556, 0.375]
-    ---
-    First row,defaulted to be header row,can be disabled
-    1,cell can contain **markdown**,"It can be aribrary block element:
+   ``` {.table}
+   ---
+   alignment: DDD
+   caption: '*Awesome* **Markdown** Table'
+   header: true
+   markdown: true
+   table-width: 0.8055555555555556
+   width: [0.125, 0.3055555555555556, 0.375]
+   ---
+   First row,defaulted to be header row,can be disabled
+   1,cell can contain **markdown**,"It can be aribrary block element:
 
-    -   following standard markdown syntax
-    -   like this
-    "
-    2,"Any markdown syntax, e.g.",$$E = mc^2$$
-    ```
+   -   following standard markdown syntax
+   -   like this
+   "
+   2,"Any markdown syntax, e.g.",$$E = mc^2$$
+   ```
 
 Related Filters
 ===============
@@ -214,47 +231,57 @@ similar functionality. This filter is born after testing with theirs.
    or URL) <https://github.com/mb21/pandoc-placetable>`__
 -  `sergiocorreia/panflute/csv-tables.py <https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py>`__
 
-+--------+--------------------+------------+-------------+--------------------------+
-|        | pandoc-csv2table   | pandoc-pla | panflute ex | pantable                 |
-|        |                    | cetable    | ample       |                          |
-+========+====================+============+=============+==========================+
-| captio | caption            | caption    | title       | caption                  |
-| n      |                    |            |             |                          |
-+--------+--------------------+------------+-------------+--------------------------+
-| aligns | aligns = LRCD      | aligns = L |             | aligns = LRCD            |
-|        |                    | RCD        |             |                          |
-+--------+--------------------+------------+-------------+--------------------------+
-| width  |                    | widths = " |             | width: [0.5, 0.2, 0.3]   |
-|        |                    | 0.5 0.2 0. |             |                          |
-|        |                    | 3"         |             |                          |
-+--------+--------------------+------------+-------------+--------------------------+
-| table- |                    |            |             | table-width: 1.0         |
-| width  |                    |            |             |                          |
-+--------+--------------------+------------+-------------+--------------------------+
-| header | header = yes \| no | header = y | has\_header | header: True \| False \| |
-|        |                    | es \| no   | : True \| F |  yes \| NO               |
-|        |                    |            | alse        |                          |
-+--------+--------------------+------------+-------------+--------------------------+
-| markdo |                    | inlinemark |             | markdown: True \| False  |
-| wn     |                    | down       |             | \| yes \| NO             |
-+--------+--------------------+------------+-------------+--------------------------+
-| source | source             | file       | source      | include                  |
-+--------+--------------------+------------+-------------+--------------------------+
-| others | type = simple \| m |            |             |                          |
-|        | ultiline \| grid \ |            |             |                          |
-|        | | pipe             |            |             |                          |
-+--------+--------------------+------------+-------------+--------------------------+
-|        |                    | delimiter  |             |                          |
-+--------+--------------------+------------+-------------+--------------------------+
-|        |                    | quotechar  |             |                          |
-+--------+--------------------+------------+-------------+--------------------------+
-|        |                    | id (wrappe |             |                          |
-|        |                    | d by div)  |             |                          |
-+--------+--------------------+------------+-------------+--------------------------+
-| Notes  |                    |            |             | width are auto-calculate |
-|        |                    |            |             | d when width is not spec |
-|        |                    |            |             | ified                    |
-+--------+--------------------+------------+-------------+--------------------------+
++-----+-----------------+---------+----------+-----------------------+
+|     | pandoc-csv2tabl | pandoc- | panflute | pantable              |
+|     | e               | placeta |  example |                       |
+|     |                 | ble     |          |                       |
++=====+=================+=========+==========+=======================+
+| cap | caption         | caption | title    | caption               |
+| tio |                 |         |          |                       |
+| n   |                 |         |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+| ali | aligns = LRCD   | aligns  |          | aligns = LRCD         |
+| gns |                 | = LRCD  |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+| wid |                 | widths  |          | width: [0.5, 0.2, 0.3 |
+| th  |                 | = "0.5  |          | ]                     |
+|     |                 | 0.2 0.3 |          |                       |
+|     |                 | "       |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+| tab |                 |         |          | table-width: 1.0      |
+| le- |                 |         |          |                       |
+| wid |                 |         |          |                       |
+| th  |                 |         |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+| hea | header = yes |  | header  | has_head | header: True | False  |
+| der | no              | = yes | | er: True | | yes | NO            |
+|     |                 |  no     |  | False |                       |
++-----+-----------------+---------+----------+-----------------------+
+| mar |                 | inlinem |          | markdown: True | Fals |
+| kdo |                 | arkdown |          | e | yes | NO          |
+| wn  |                 |         |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+| sou | source          | file    | source   | include               |
+| rce |                 |         |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+| oth | type = simple | |         |          |                       |
+| ers |  multiline | gr |         |          |                       |
+|     | id | pipe       |         |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+|     |                 | delimit |          |                       |
+|     |                 | er      |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+|     |                 | quotech |          |                       |
+|     |                 | ar      |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+|     |                 | id (wra |          |                       |
+|     |                 | pped by |          |                       |
+|     |                 |  div)   |          |                       |
++-----+-----------------+---------+----------+-----------------------+
+| Not |                 |         |          | width are auto-calcul |
+| es  |                 |         |          | ated when width is no |
+|     |                 |         |          | t specified           |
++-----+-----------------+---------+----------+-----------------------+
 
 .. [1]
    In pandoc 1.19, grid-tables is improved to support all features
