@@ -44,14 +44,7 @@ First row,defaulted to be header row,can be disabled
 import fractions
 import io
 import panflute
-
-import sys
-py2 = sys.version_info[0] == 2
-
-if py2:
-    from backports import csv
-else:
-    import csv
+import csv
 
 # begin helper functions
 
@@ -140,8 +133,7 @@ def parse_alignment(alignment_string, number_of_columns):
     # prepare alignment_string
     try:
         # test valid type
-        str_universal = basestring if py2 else str
-        if not isinstance(alignment_string, str_universal):
+        if not isinstance(alignment_string, str):
             raise TypeError
         number_of_alignments = len(alignment_string)
         # truncate and debug if too long
