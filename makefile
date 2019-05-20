@@ -43,7 +43,7 @@ pypi:
 	git tag -a v$$($(python) setup.py --version) -m 'Deploy to PyPI' && git push origin v$$($(python) setup.py --version)
 ## Manually
 pypiManual:
-	$(python) setup.py register -r pypitest && $(python) setup.py sdist upload -r pypitest && $(python) setup.py register -r pypi && $(python) setup.py sdist upload -r pypi
+	$(python) setup.py sdist bdist_wheel && twine upload dist/*
 
 pytest: $(testNative) tests/test_idempotent.native
 	$(python) -m pytest -vv --cov=pantable tests
