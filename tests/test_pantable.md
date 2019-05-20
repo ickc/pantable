@@ -184,3 +184,11 @@ alignment: lrcd
 1,2,3,4
 4,5,6,7
 ```
+
+# Encoding
+
+``` {.table}
+---
+include: tests/csv_table_gbk.csv
+include-encoding: gbk
+```
