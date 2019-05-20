@@ -99,7 +99,6 @@ pypiManual:
 
 init:
 	$(pip) install -r requirements.txt
-	$(pip) install -r tests/requirements.txt
 
 dev:
 	$(pip) install -e .[test]
@@ -115,9 +114,9 @@ tests/test_idempotent.native: tests/reference_idempotent.native
 
 # check python styles
 pep8:
-	pep8 . --ignore=E402,E501,E731
+	pycodestyle . --ignore=E402,E501,E731
 pep8Strict:
-	pep8 .
+	pycodestyle .
 pyflakes:
 	pyflakes .
 flake8:
@@ -130,10 +129,6 @@ autopep8:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose
 autopep8Aggressive:
 	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose --aggressive --aggressive
-
-# pasteurize
-past:
-	pasteurize -wnj 4 .
 
 # cleanup markdown
 cleanup: style normalize
