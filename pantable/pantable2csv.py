@@ -51,10 +51,11 @@ First row,defaulted to be header row,can be disabled
 ~~~
 """
 
+import csv
 import io
+
 import panflute
 import yaml
-import csv
 
 
 def ast2markdown(ast):
@@ -128,6 +129,7 @@ def main(doc=None):
         table2csv,
         doc=doc
     )
+
 
 if __name__ == '__main__':
     main()

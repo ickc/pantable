@@ -1,8 +1,9 @@
 """
 test panflute ast to markdown conversion
 """
-from .context import table2csv
 from panflute import *
+
+from .context import table2csv
 
 
 def test_table2csv():

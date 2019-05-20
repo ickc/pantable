@@ -43,10 +43,11 @@ First row,defaulted to be header row,can be disabled
 ```
 """
 
+import csv
 import fractions
 import io
+
 import panflute
-import csv
 
 # begin helper functions
 
@@ -285,6 +286,7 @@ def main(doc=None):
         strict_yaml=True,
         doc=doc
     )
+
 
 if __name__ == '__main__':
     main()

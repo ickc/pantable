@@ -1,8 +1,9 @@
 """
 
 """
-from .context import parse_table_list
 from panflute import *
+
+from .context import parse_table_list
 
 
 def test_parse_table_list():
