@@ -9,7 +9,6 @@ python:
   - "3.7"
   - "3.8-dev"
   # pypy (version info from [Changelogs — PyPy documentation](http://doc.pypy.org/en/latest/index-of-whatsnew.html))
-  - "pypy"
   - "pypy3.5"
 env:
   # last 1.x verison
