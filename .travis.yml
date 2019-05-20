@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 cache: pip
 # build matrix: different python and pandoc versions
