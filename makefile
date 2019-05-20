@@ -27,7 +27,7 @@ testFull: pytest pep8 pylint
 
 clean:
 	rm -f .coverage $(testAll)
-	rm -rf htmlcov pantable.egg-info .cache .idea
+	rm -rf htmlcov pantable.egg-info .cache .idea dist
 	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
 
 # Making dependancies #################################################################################################################################################################################
