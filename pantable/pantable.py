@@ -199,10 +199,65 @@ def get_caption(options):
     return panflute.convert_text(str(options['caption']))[0].content if 'caption' in options else None
 
 
-def convert2table(options, data, **args):
-    """provided to panflute.yaml_filter to parse its content as pandoc table.
+def csv_to_pipe_tables(table_list, caption, alignment):
+    align_dict = {
+        "AlignLeft": ':---',
+        "AlignCenter": ':---:',
+        "AlignRight": '---:',
+        "AlignDefault": '---'
+    }
 
-    `args` is ignored.
+    table_list.insert(1, [align_dict[key] for key in alignment])
+    pipe_table_list = ['|\t{}\t|'.format('\t|\t'.join(map(str, row))) for row in table_list]
+    if caption:
+        pipe_table_list.append('')
+        pipe_table_list.append(': {}'.format(caption))
+    return '\n'.join(pipe_table_list)
+
+
+def csv2pipe(options, data):
+    """Construct pipe table directly.
+    """
+    # prepare table in list from data/include
+    table_list = read_data(
+        options.get('include', None),
+        data
+    )
+    # delete element if table is empty (by returning [])
+    # element unchanged if include is invalid (by returning None)
+    if table_list is None:
+        panflute.debug("pantable: include path not found. Codeblock shown as is.")
+        # None means kept as is
+        return
+    elif table_list == []:
+        panflute.debug("pantable: table is empty. Deleted.")
+        # [] means delete the current element
+        return []
+
+    # regularize table: all rows should have same length
+    n_col = regularize_table_list(table_list)
+
+    # parse alignment
+    alignment = parse_alignment(options.get('alignment', None), n_col)
+    del n_col
+    # get caption
+    caption = options.get('caption', None)
+
+    text = csv_to_pipe_tables(table_list, caption, alignment)
+
+    raw_markdown = options.get('raw_markdown', False)
+    if raw_markdown:
+        # TODO: change this to 'markdown' once the PR accepted:
+        # for now since pandoc treat all raw html as markdown it
+        # will still works
+        # https://github.com/sergiocorreia/panflute/pull/103
+        return panflute.RawBlock(text, format='html')
+    else:
+        return panflute.convert_text(text)
+
+
+def csv2table(options, data):
+    """provided to panflute.yaml_filter to parse its content as pandoc table.
     """
     # prepare table in list from data/include
     table_list = read_data(
@@ -255,6 +310,14 @@ def convert2table(options, data, **args):
         width=width,
         header=header_row
     )
+
+
+def convert2table(options, data, **args):
+    use_pipe_tables = options.get('pipe_tables', False)
+    if use_pipe_tables:
+        return csv2pipe(options, data)
+    else:
+        return csv2table(options, data)
 
 
 def main(doc=None):

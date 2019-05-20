@@ -82,16 +82,22 @@ Fenced code blocks is used, with a class `table`. See [Example].
 
 Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML metadata block syntax. 7 metadata keys are recognized:
 
--   `caption`: the caption of the table. If omitted, no caption will be inserted.
+`caption`
+
+: the caption of the table. If omitted, no caption will be inserted.
     Default: disabled.
 
--   `alignment`: a string of characters among `L,R,C,D`, case-insensitive,
+`alignment`
+
+: a string of characters among `L,R,C,D`, case-insensitive,
         corresponds to Left-aligned, Right-aligned,
         Center-aligned, Default-aligned respectively.
     e.g. `LCRD` for a table with 4 columns.
     Default: `DDD...`
 
--   `width`: a list of relative width corresponding to the width of each columns.
+`width`
+
+: a list of relative width corresponding to the width of each columns.
     e.g.
 
     ```yaml
@@ -104,20 +110,33 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
 
     Default: auto calculated from the length of each line in table cells.
 
--   `table-width`: the relative width of the table (e.g. relative to `\linewidth`).
+`table-width`
+
+: the relative width of the table (e.g. relative to `\linewidth`).
     default: 1.0
 
--   `header`: If it has a header row or not.
+`header`
+: If it has a header row or not.
     True/False/yes/NO are accepted, case-insensitive.
     default: True
 
--   `markdown`: If CSV table cell contains markdown syntax or not.
+`markdown`
+: If CSV table cell contains markdown syntax or not.
      Same as above.
      Default: False
 
--   `include`: the path to an CSV file, can be relative/absolute.
+`include`
+: the path to an CSV file, can be relative/absolute.
     If non-empty, override the CSV in the CodeBlock.
     default: None
+
+`pipe_tables`
+
+: If True, a pipe table will be constructed directly in markdown syntax instead of via AST. `markdown` is implied to be True. This trades correctness for speed. It won't be correct if any of the cell is multiline for example, resulting in an invalid pipe table. However, it is much faster comparing to previous `markdown: True` case because previously per cell a subprocess to execute pandoc the parse the markdown to AST is needed.
+
+`raw_markdown`
+
+: If True, force output the table as a pipe table (which is tab-delimited.) This is sometimes useful if pandoc is very stubborn to not emit a pipe table even if `markdown-grid_tables...` is used. Note that this should only be used if the output format is markdown.
 
 When the metadata keys is invalid, the default will be used instead.
 Note that width and table-width accept fractions as well.

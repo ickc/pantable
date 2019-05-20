@@ -161,3 +161,26 @@ caption: *unquoted*
 ``` {.table}
 1,2
 ```
+
+# Pipe Table
+
+``` {.table}
+---
+caption: Some *caption*.
+pipe_tables: True
+alignment: lrcd
+...
+1,2,3,4
+4,5,6,7
+```
+
+``` {.table}
+---
+caption: Some *caption*.
+pipe_tables: True
+raw_markdown: True
+alignment: lrcd
+...
+1,2,3,4
+4,5,6,7
+```
