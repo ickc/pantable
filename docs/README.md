@@ -133,6 +133,16 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
 `include-encoding`
 : if specified, the file from `include` will be decoded according to this encoding, else assumed to be UTF-8.
 
+`csv-kwargs`
+: If specified, should be a dictionary passed to `csv.reader` as options. e.g.
+    ```yaml
+    ---
+    csv-kwargs:
+      dialect: unix
+      key: value...
+    ...
+    ```
+
 `pipe_tables`
 
 : If True, a pipe table will be constructed directly in markdown syntax instead of via AST. `markdown` is implied to be True. This trades correctness for speed. It won't be correct if any of the cell is multiline for example, resulting in an invalid pipe table. However, it is much faster comparing to previous `markdown: True` case because previously per cell a subprocess to execute pandoc the parse the markdown to AST is needed.

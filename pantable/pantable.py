@@ -134,7 +134,7 @@ def parse_alignment(alignment_string, n_col):
     return alignment
 
 
-def read_data(include, data, encoding=None):
+def read_data(include, data, encoding=None, csv_kwargs={}):
     """Parse CSV table.
 
     `include`: path to CSV file or None. This is prioritized first.
@@ -145,7 +145,7 @@ def read_data(include, data, encoding=None):
     """
     try:
         with (io.StringIO(data) if include is None else io.open(str(include), encoding=encoding)) as f:
-            raw_table_list = list(csv.reader(f))
+            raw_table_list = list(csv.reader(f, **csv_kwargs))
     except FileNotFoundError:
         panflute.debug("pantable: file not found from the path {}. Leaving as is.".format(include))
         return
@@ -223,6 +223,7 @@ def csv2pipe(options, data):
         options.get('include', None),
         data,
         encoding=options.get('include-encoding', None),
+        csv_kwargs=options.get('csv-kwargs', dict()),
     )
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
@@ -265,6 +266,7 @@ def csv2table(options, data):
         options.get('include', None),
         data,
         encoding=options.get('include-encoding', None),
+        csv_kwargs=options.get('csv-kwargs', dict()),
     )
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
