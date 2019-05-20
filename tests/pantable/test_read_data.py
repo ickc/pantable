@@ -43,4 +43,11 @@ def test_read_data():
                                 'Benefits of eating oranges:\n\n- **cures** scurvy\n- `tasty`']]
     # check empty table
     assert read_data(None, '') == []
+
+    # check encoding
+    assert read_data('tests/csv_table_gbk.csv',
+                     data, encoding='gbk') == [
+                                    ['一', '二', '三'],
+                                    ['a', 'b', 'c'],
+                                    ['1', '2', '3']]
     return
