@@ -193,6 +193,17 @@ First row,defaulted to be header row,can be disabled
 <dt><code>include</code></dt>
 <dd>the path to an CSV file, can be relative/absolute. If non-empty, override the CSV in the CodeBlock. default: None
 </dd>
+<dt><code>include-encoding</code></dt>
+<dd>if specified, the file from <code>include</code> will be decoded according to this encoding, else assumed to be UTF-8.
+</dd>
+<dt><code>csv-kwargs</code></dt>
+<dd><p>If specified, should be a dictionary passed to <code>csv.reader</code> as options. e.g.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode yaml"><code class="sourceCode yaml"><a class="sourceLine" id="cb5-1" title="1"><span class="ot">---</span></a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="fu">csv-kwargs:</span></a>
+<a class="sourceLine" id="cb5-3" title="3">  <span class="fu">dialect:</span><span class="at"> unix</span></a>
+<a class="sourceLine" id="cb5-4" title="4">  <span class="fu">key:</span><span class="at"> value...</span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="co">...</span></a></code></pre></div>
+</dd>
 <dt><code>pipe_tables</code></dt>
 <dd><p>If True, a pipe table will be constructed directly in markdown syntax instead of via AST. <code>markdown</code> is implied to be True. This trades correctness for speed. It won’t be correct if any of the cell is multiline for example, resulting in an invalid pipe table. However, it is much faster comparing to previous <code>markdown: True</code> case because previously per cell a subprocess to execute pandoc the parse the markdown to AST is needed.</p>
 </dd>

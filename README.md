@@ -174,6 +174,22 @@ Default: False
 the path to an CSV file, can be relative/absolute. If non-empty,
 override the CSV in the CodeBlock. default: None
 
+`include-encoding`  
+if specified, the file from `include` will be decoded according to this
+encoding, else assumed to be UTF-8.
+
+`csv-kwargs`  
+If specified, should be a dictionary passed to `csv.reader` as options.
+e.g.
+
+``` yaml
+---
+csv-kwargs:
+  dialect: unix
+  key: value...
+...
+```
+
 `pipe_tables`  
 If True, a pipe table will be constructed directly in markdown syntax
 instead of via AST. `markdown` is implied to be True. This trades
