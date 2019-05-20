@@ -25,12 +25,6 @@ Updated it using `pip install -U setuptools`.
     )
     raise ValueError
 
-here = path.abspath(path.dirname(__file__))
-
-# Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
-
 # Import version number
 version = {}
 with open("pantable/version.py") as f:
@@ -46,7 +40,7 @@ setup(
     version=version,
 
     description='CSV Tables in Markdown: Pandoc Filter for CSV Tables',
-    long_description=long_description,
+    long_description='See doc in https://github.com/ickc/pantable.',
 
     # The project's main homepage.
     url='https://github.com/ickc/pantable',
