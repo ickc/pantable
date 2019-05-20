@@ -57,6 +57,8 @@ setup(
     # Choose your license
     license='GPLv3',
 
+    python_requires='>=3.3',
+
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         # How mature is this project? Common values are
