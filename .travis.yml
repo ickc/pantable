@@ -8,6 +8,7 @@ python:
   - "3.6"
   - "3.7"
   - "3.8-dev"
+  - "nightly"
   # pypy (version info from [Changelogs — PyPy documentation](http://doc.pypy.org/en/latest/index-of-whatsnew.html))
   - "pypy3.5"
 env:
