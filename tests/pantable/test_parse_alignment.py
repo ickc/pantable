@@ -21,7 +21,7 @@ def test_parse_alignment():
         'AlignDefault'
     ]
     # check invalid
-    assert parse_alignment('abcd', 4) is None
+    assert parse_alignment('abcd', 4) == ['AlignDefault', 'AlignDefault', 'AlignCenter', 'AlignDefault']
     # check wrong type
     assert parse_alignment(1, 1) is None
     return
