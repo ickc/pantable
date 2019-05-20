@@ -52,14 +52,7 @@ First row,defaulted to be header row,can be disabled
 import io
 import panflute
 import yaml
-
-import sys
-py2 = sys.version_info[0] == 2
-
-if py2:
-    from backports import csv
-else:
-    import csv
+import csv
 
 
 def ast2markdown(ast):
