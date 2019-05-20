@@ -1,24 +1,26 @@
-# os: linux and sudo: false is assumed, which means it is using container-based Ubuntu 14.04
 language: python
 cache: pip
 # build matrix: different python and pandoc versions
 python:
-  - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
+  - "3.7"
+  - "3.8-dev"
   # pypy (version info from [Changelogs — PyPy documentation](http://doc.pypy.org/en/latest/index-of-whatsnew.html))
   - "pypy"
   - "pypy3.5"
 env:
+  # last 1.x verison
   - pandocVersion=1.19.2.1
-  - pandocVersion=2.2.3.2
+  # latest version as of writing
+  - pandocVersion=2.7.2
   - pandocVersion=latest
-# matrix:
-#   allow_failures:
-#     - python: "3.4"
+matrix:
+  allow_failures:
+    - python: "3.8-dev"
 #     - env: pandocVersion=1.19.2.1
-#   fast_finish: true
+  fast_finish: true
 # install dependencies
 install:
   - pip install -U pip
@@ -37,43 +39,19 @@ install:
     downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + (v if v == "latest" else ("tags/" + v)); print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
     wget $downloadUrl &&
     sudo dpkg -i ${downloadUrl##*/}
-before_script:
-  # pasteurize for py2 only, except setup.py & pantable/version.py
-  - |
-    if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" || "$TRAVIS_PYTHON_VERSION" == "pypy" ]]; then
-      mv setup.py setup.py.temp
-      mv pantable/version.py pantable/version.py.temp
-      pasteurize -wnj 4 .
-      mv setup.py.temp setup.py
-      mv pantable/version.py.temp pantable/version.py
-    fi
 # command to run tests
 script:
   - make -j3 test
 after_success:
   - |
-    [[ "$pandocVersion" == "latest" && "$TRAVIS_PYTHON_VERSION" == "3.6" ]] && coveralls
-before_deploy:
-  # build unpasteurized python3 wheel
-  - python3 setup.py bdist_wheel
-  # pasteurize except setup.py & pantable/version.py
-  - |
-    mv setup.py setup.py.temp
-    mv pantable/version.py pantable/version.py.temp
-    pasteurize -wnj 4 .
-    mv setup.py.temp setup.py
-    mv pantable/version.py.temp pantable/version.py
-  # prepare wheel for py2
-  - pip2 install wheel
-  - python2 setup.py bdist_wheel
+    [[ "$pandocVersion" == "latest" && "$TRAVIS_PYTHON_VERSION" == "3.7" ]] && coveralls
 deploy:
   provider: pypi
   user: ickc
   password: $pypi_password
-  # do not add bdist_wheel here, since it is done above
-  distributions: "sdist"
+  distributions: "sdist bdist_wheel"
   skip_cleanup: true
   on:
     tags: true
-    python: "3.6"
+    python: "3.7"
     condition: $pandocVersion = latest
