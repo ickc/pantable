@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 r"""
 Panflute filter to convert any native pandoc tables into the CSV table format used by pantable:
 
