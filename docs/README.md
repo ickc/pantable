@@ -182,7 +182,7 @@ The followings are pandoc filters written in Haskell that provide similar functi
 ```table
 ---
 Caption: Comparison
-include: docs/comparison.csv
+include: comparison.csv
 ...
 ```
 
