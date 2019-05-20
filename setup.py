@@ -4,14 +4,15 @@ See:
 https://github.com/ickc/pantable
 """
 
-# Always prefer setuptools over distutils
-from setuptools import setup, find_packages
-import setuptools
-from pkg_resources import parse_version
+import sys
 # To use a consistent encoding
 from codecs import open
 from os import path
-import sys
+
+import setuptools
+from pkg_resources import parse_version
+# Always prefer setuptools over distutils
+from setuptools import find_packages, setup
 
 # see https://python3statement.org/practicalities/
 req_ver = '24.2.0'

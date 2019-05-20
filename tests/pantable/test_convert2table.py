@@ -1,8 +1,9 @@
 """
 `header` and `markdown` is checked by `test_to_bool` instead
 """
-from .context import convert2table
 from panflute import *
+
+from .context import convert2table
 
 
 def test_convert2table():
