@@ -23,3 +23,5 @@ htmlcov/
 
 # rst2html
 README.html
+
+.mypy_cache/
