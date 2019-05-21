@@ -168,7 +168,7 @@ def regularize_table_list(raw_table_list):
     for i, (n, row) in enumerate(zip(length_of_rows, raw_table_list)):
         if n != n_col:
             row += [''] * (n_col - n)
-            panflute.debug("pantable: the {}-th row is shorter than the longest row. Empty cells appended.")
+            panflute.debug("pantable: the {}-th row is shorter than the longest row. Empty cells appended.".format(i))
     return n_col
 
 
