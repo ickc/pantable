@@ -4,11 +4,6 @@ from .context import read_data
 
 
 def test_read_data():
-    # check include
-    # invalid include: file doesn't exist
-    assert read_data('abc.xyz', '') is None
-    # invalid include: wrong type
-    assert read_data(True, '') is None
     # valid include
     assert read_data('tests/csv_tables.csv', '') is not None
     # check type
@@ -41,8 +36,6 @@ def test_read_data():
                                 '$2.10',
                                 '5^10^~units~',
                                 'Benefits of eating oranges:\n\n- **cures** scurvy\n- `tasty`']]
-    # check empty table
-    assert read_data(None, '') == []
 
     # check encoding
     assert read_data('tests/csv_table_gbk.csv',

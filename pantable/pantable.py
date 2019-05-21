@@ -9,6 +9,10 @@ import io
 import panflute
 
 
+class EmptyTableError(Exception):
+    pass
+
+
 def get_width(options, n_col):
     """parse `options['width']` if it is list of non-negative numbers
     else return None.
@@ -74,8 +78,7 @@ def auto_width(table_width, n_col, table_list):
     width_tot = sum(max_col_width)
 
     if width_tot == 0:
-        panflute.debug("pantable: table is empty.")
-        return
+        raise EmptyTableError
 
     # The +3 match the way pandoc handle width, see jgm/pandoc commit 0dfceda
     scale = table_width / (width_tot + 3 * n_col)
@@ -143,14 +146,13 @@ def read_data(include, data, encoding=None, csv_kwargs={}):
 
     Return None when the include path is invalid.
     """
-    try:
-        with (io.StringIO(data) if include is None else io.open(str(include), encoding=encoding)) as f:
-            raw_table_list = list(csv.reader(f, **csv_kwargs))
-    except FileNotFoundError:
-        panflute.debug("pantable: file not found from the path {}. Leaving as is.".format(include))
-        return
+    with (io.StringIO(data) if include is None else io.open(str(include), encoding=encoding)) as f:
+        table_list = list(csv.reader(f, **csv_kwargs))
 
-    return raw_table_list
+    if not table_list:
+        raise EmptyTableError
+
+    return table_list
 
 
 def regularize_table_list(raw_table_list):
@@ -225,16 +227,6 @@ def csv2pipe(options, data):
         encoding=options.get('include-encoding', None),
         csv_kwargs=options.get('csv-kwargs', dict()),
     )
-    # delete element if table is empty (by returning [])
-    # element unchanged if include is invalid (by returning None)
-    if table_list is None:
-        panflute.debug("pantable: include path not found. Codeblock shown as is.")
-        # None means kept as is
-        return
-    elif table_list == []:
-        panflute.debug("pantable: table is empty. Deleted.")
-        # [] means delete the current element
-        return []
 
     # regularize table: all rows should have same length
     n_col = regularize_table_list(table_list)
@@ -268,27 +260,12 @@ def csv2table(options, data):
         encoding=options.get('include-encoding', None),
         csv_kwargs=options.get('csv-kwargs', dict()),
     )
-    # delete element if table is empty (by returning [])
-    # element unchanged if include is invalid (by returning None)
-    if table_list is None:
-        panflute.debug("pantable: include path not found. Codeblock shown as is.")
-        # None means kept as is
-        return
-    elif table_list == []:
-        panflute.debug("pantable: table is empty. Deleted.")
-        # [] means delete the current element
-        return []
 
     # regularize table: all rows should have same length
     n_col = regularize_table_list(table_list)
 
     # Initialize the `options` output from `panflute.yaml_filter`
     width = get_width_wrap(options, n_col, table_list)
-    # delete element if table is empty (by returning [])
-    # width remains None only when table is empty
-    if width is None:
-        # debug info shown in auto_width
-        return []
 
     # parse list to panflute table
     table_body = parse_table_list(
@@ -318,10 +295,22 @@ def csv2table(options, data):
 
 def convert2table(options, data, **args):
     use_pipe_tables = options.get('pipe_tables', False)
-    if use_pipe_tables:
-        return csv2pipe(options, data)
-    else:
-        return csv2table(options, data)
+
+    try:
+        if use_pipe_tables:
+            return csv2pipe(options, data)
+        else:
+            return csv2table(options, data)
+
+    # delete element if table is empty (by returning [])
+    # element unchanged if include is invalid (by returning None)
+    except FileNotFoundError:
+        panflute.debug("pantable: include path not found. Codeblock shown as is.")
+        return
+    except EmptyTableError:
+        panflute.debug("pantable: table is empty. Deleted.")
+        # [] means delete the current element
+        return []
 
 
 def main(doc=None):
