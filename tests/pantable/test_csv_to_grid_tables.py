@@ -1,8 +1,6 @@
 """
 """
 from .context import csv_to_grid_tables
-import io
-import csv
 
 
 def test_csv_to_grid_tables():
