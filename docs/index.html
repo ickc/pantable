@@ -205,7 +205,12 @@ First row,defaulted to be header row,can be disabled
 <a class="sourceLine" id="cb5-5" title="5"><span class="co">...</span></a></code></pre></div>
 </dd>
 <dt><code>pipe_tables</code></dt>
-<dd><p>If True, a pipe table will be constructed directly in markdown syntax instead of via AST. <code>markdown</code> is implied to be True. This trades correctness for speed. It won’t be correct if any of the cell is multiline for example, resulting in an invalid pipe table. However, it is much faster comparing to previous <code>markdown: True</code> case because previously per cell a subprocess to execute pandoc the parse the markdown to AST is needed.</p>
+<dd><p>If True, a pipe table will be constructed directly in markdown syntax instead of via AST. <code>markdown</code> is implied to be True. <code>header</code> will be overridden as true because <code>pipe_tables</code> must has header in pandoc.</p>
+<p>This trades correctness for speed. It won’t be correct if any of the cell is multiline for example, resulting in an invalid pipe table. However, it is much faster comparing to previous <code>markdown: True</code> case because previously per cell a subprocess to execute pandoc the parse the markdown to AST is needed.</p>
+</dd>
+<dt><code>grid_tables</code></dt>
+<dd><p>If True, a grid table will be constructed directly in markdown syntax instead of via AST. <code>markdown</code> is implied to be True. <code>header</code> can be used together with this.</p>
+<p>This trades correctness for speed. This should be more robust than <code>pipe_tables</code> since the <code>grid_tables</code> syntax supports everything the pandoc AST supports. This however depends on an external dependency. Install it by either <code>pip install terminaltables</code> or <code>conda install terminaltables</code>.</p>
 </dd>
 <dt><code>raw_markdown</code></dt>
 <dd><p>If True, force output the table as a pipe table (which is tab-delimited.) This is sometimes useful if pandoc is very stubborn to not emit a pipe table even if <code>markdown-grid_tables...</code> is used. Note that this should only be used if the output format is markdown.</p>

@@ -192,12 +192,25 @@ csv-kwargs:
 
 `pipe_tables`  
 If True, a pipe table will be constructed directly in markdown syntax
-instead of via AST. `markdown` is implied to be True. This trades
-correctness for speed. It won’t be correct if any of the cell is
-multiline for example, resulting in an invalid pipe table. However, it
-is much faster comparing to previous `markdown: True` case because
-previously per cell a subprocess to execute pandoc the parse the
+instead of via AST. `markdown` is implied to be True. `header` will be
+overridden as true because `pipe_tables` must has header in pandoc.
+
+This trades correctness for speed. It won’t be correct if any of the
+cell is multiline for example, resulting in an invalid pipe table.
+However, it is much faster comparing to previous `markdown: True` case
+because previously per cell a subprocess to execute pandoc the parse the
 markdown to AST is needed.
+
+`grid_tables`  
+If True, a grid table will be constructed directly in markdown syntax
+instead of via AST. `markdown` is implied to be True. `header` can be
+used together with this.
+
+This trades correctness for speed. This should be more robust than
+`pipe_tables` since the `grid_tables` syntax supports everything the
+pandoc AST supports. This however depends on an external dependency.
+Install it by either `pip install terminaltables` or
+`conda install terminaltables`.
 
 `raw_markdown`  
 If True, force output the table as a pipe table (which is
