@@ -201,6 +201,73 @@ def get_caption(options):
     return panflute.convert_text(str(options['caption']))[0].content if 'caption' in options else None
 
 
+def modified_align_border(text, alignment, header):
+    '''Modify the alignment border row to include pandoc
+    alignment syntax
+    '''
+    align_dict = {
+        'AlignLeft': [0],
+        'AlignCenter': [0, -1],
+        'AlignRight': [-1],
+        'AlignDefault': []
+    }
+
+    def modify_border(header_border, alignment):
+        header_border = list(header_border)
+        idxs = align_dict[alignment]
+        for idx in idxs:
+            header_border[idx] = ':'
+        return ''.join(header_border)
+
+    text_list = text.split('\n')
+
+    # walk to the header border
+    if header:
+        found = False
+        for i, line in enumerate(text_list):
+            if set(line) == {'+', '='}:
+                found = True
+                break
+        if not found:
+            panflute.debug('pantable: cannot add alignment to grid table.')
+    else:
+        i = 0
+
+    # modify the line corresponding to the alignment border row
+    header_border = text_list[i]
+
+    header_border_list = header_border.split('+')[1:-1]
+
+    header_border_list = [
+        modify_border(header_border_i, alignment_i)
+        for header_border_i, alignment_i in zip(header_border_list, alignment)
+    ]
+
+    text_list[i] = '+{}+'.format('+'.join(header_border_list))
+
+    return '\n'.join(text_list)
+
+
+def csv_to_grid_tables(table_list, caption, alignment, header):
+    try:
+        import terminaltables
+    except ImportError:
+        panflute.debug('pantable: terminaltables not found. Please install by `pip install terminaltables`.')
+        raise
+
+    table = terminaltables.AsciiTable(table_list)
+    table.inner_row_border = True
+    if header:
+        table.CHAR_H_INNER_HORIZONTAL = '='
+    text = table.table
+
+    if alignment:
+        text = modified_align_border(text, alignment, header)
+    if caption:
+        text += '\n\n: {}'.format(caption)
+    return text
+
+
 def csv_to_pipe_tables(table_list, caption, alignment):
     align_dict = {
         "AlignLeft": ':---',
@@ -217,8 +284,8 @@ def csv_to_pipe_tables(table_list, caption, alignment):
     return '\n'.join(pipe_table_list)
 
 
-def csv2pipe(options, data):
-    """Construct pipe table directly.
+def csv2table_markdown(options, data, use_grid_tables):
+    """Construct pipe/grid table directly.
     """
     # prepare table in list from data/include
     table_list = read_data(
@@ -237,7 +304,12 @@ def csv2pipe(options, data):
     # get caption
     caption = options.get('caption', None)
 
-    text = csv_to_pipe_tables(table_list, caption, alignment)
+    text = csv_to_grid_tables(
+        table_list, caption, alignment,
+        (len(table_list) > 1 and options.get('header', True))
+    ) if use_grid_tables else csv_to_pipe_tables(
+        table_list, caption, alignment
+    )
 
     raw_markdown = options.get('raw_markdown', False)
     if raw_markdown:
@@ -250,7 +322,7 @@ def csv2pipe(options, data):
         return panflute.convert_text(text)
 
 
-def csv2table(options, data):
+def csv2table_ast(options, data):
     """provided to panflute.yaml_filter to parse its content as pandoc table.
     """
     # prepare table in list from data/include
@@ -295,12 +367,14 @@ def csv2table(options, data):
 
 def convert2table(options, data, **args):
     use_pipe_tables = options.get('pipe_tables', False)
+    use_grid_tables = options.get('grid_tables', False)
 
     try:
-        if use_pipe_tables:
-            return csv2pipe(options, data)
+        if use_pipe_tables or use_grid_tables:
+            # if both are specified, use grid_tables
+            return csv2table_markdown(options, data, use_grid_tables)
         else:
-            return csv2table(options, data)
+            return csv2table_ast(options, data)
 
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
@@ -311,6 +385,8 @@ def convert2table(options, data, **args):
         panflute.debug("pantable: table is empty. Deleted.")
         # [] means delete the current element
         return []
+    except ImportError:
+        return
 
 
 def main(doc=None):

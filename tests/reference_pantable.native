@@ -170,6 +170,8 @@
   ,[Plain [Str "6"]]
   ,[Plain [Str "7"]]]]
 ,RawBlock (Format "html") "|\t1\t|\t2\t|\t3\t|\t4\t|\n|\t:---\t|\t---:\t|\t:---:\t|\t---\t|\n|\t4\t|\t5\t|\t6\t|\t7\t|\n\n: Some *caption*."
+,Header 1 ("grid-table",[],[]) [Str "Grid",Space,Str "Table"]
+,RawBlock (Format "html") "+:--+--:+:-:+---+\n| 1 | 2 | 3 | 4 |\n+---+---+---+---+\n| 4 | 5 | 6 | 7 |\n+---+---+---+---+\n\n: Some *caption*."
 ,Header 1 ("encoding",[],[]) [Str "Encoding"]
 ,Table [] [AlignDefault,AlignDefault,AlignDefault] [0.3333333333333333,0.3333333333333333,0.3333333333333333]
  [[Plain [Str "\19968"]]
