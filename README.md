@@ -312,7 +312,7 @@ similar functionality. This filter is born after testing with theirs.
 <td>aligns = LRCD</td>
 <td>aligns = LRCD</td>
 <td></td>
-<td>aligns = LRCD</td>
+<td>alignment = LRCD</td>
 </tr>
 <tr class="odd">
 <td>width</td>
