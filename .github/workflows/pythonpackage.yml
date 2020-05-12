@@ -16,6 +16,8 @@ jobs:
     strategy:
       matrix:
         python-version: [3.5, 3.6, 3.7, 3.8, pypy3]
+        # last 1.x verison
+        pandoc-version: [1.19.2.1, 2.9.2.1, latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -28,8 +30,7 @@ jobs:
         pip install -U pip
         pip install wheel
         pip install -e .[test]
-        export pandocVersion=latest # TODO
-        downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + ("" if v == "latest" else "tags/") + v; print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
+        downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + ("" if v == "latest" else "tags/") + v; print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' ${{ matrix.pandoc-version }}) &&
         wget $downloadUrl &&
         sudo dpkg -i ${downloadUrl##*/}
     - name: Tests
@@ -37,10 +38,10 @@ jobs:
         make -j3 test
     # c.f. https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
     - name: Build a binary wheel and a source tarball
-      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.8 }}
+      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.8 && matrix.pandoc-version == latest }}
       run: python setup.py sdist bdist_wheel
     - name: Publish distribution 📦 to PyPI
-      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.8 }}
+      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.8 && matrix.pandoc-version == latest }}
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.pypi_password }}
