@@ -38,7 +38,7 @@ clean:
 # maintenance #########################################################################################################################################################################################
 
 # Deploy to PyPI
-## by Travis, properly git tagged
+## by CI, properly git tagged
 pypi:
 	git tag -a v$$($(python) setup.py --version) -m 'Deploy to PyPI' && git push origin v$$($(python) setup.py --version)
 ## Manually
