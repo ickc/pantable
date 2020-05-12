@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/ickc/pantable.svg?branch=master)](https://travis-ci.org/ickc/pantable)
+![Python package](https://github.com/ickc/pantable/workflows/Python%20package/badge.svg)
 [![GitHub Releases](https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release)](https://github.com/ickc/pantable/releases)
 [![PyPI version](https://img.shields.io/pypi/v/pantable.svg)](https://pypi.python.org/pypi/pantable/)
 [![Development Status](https://img.shields.io/pypi/status/pantable.svg)](https://pypi.python.org/pypi/pantable/)
