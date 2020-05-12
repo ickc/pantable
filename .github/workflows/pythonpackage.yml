@@ -26,6 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -U pip
+        pip install wheel
         pip install -e .[test]
         export pandocVersion=latest # TODO
         downloadUrl=$(python -c '
