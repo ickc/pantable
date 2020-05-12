@@ -1,2 +1,2 @@
 panflute
-yaml
+pyyaml
