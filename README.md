@@ -9,6 +9,8 @@
 
 [![Build
 Status](https://travis-ci.org/ickc/pantable.svg?branch=master)](https://travis-ci.org/ickc/pantable)
+![Python
+package](https://github.com/ickc/pantable/workflows/Python%20package/badge.svg)
 [![GitHub
 Releases](https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release)](https://github.com/ickc/pantable/releases)
 [![PyPI
@@ -282,107 +284,17 @@ similar functionality. This filter is born after testing with theirs.
     file or URL)](https://github.com/mb21/pandoc-placetable)
 -   [sergiocorreia/panflute/csv-tables.py](https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py)
 
-<table>
-<colgroup>
-<col style="width: 8%" />
-<col style="width: 25%" />
-<col style="width: 15%" />
-<col style="width: 16%" />
-<col style="width: 34%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th></th>
-<th>pandoc-csv2table</th>
-<th>pandoc-placetable</th>
-<th>panflute example</th>
-<th>pantable</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>caption</td>
-<td>caption</td>
-<td>caption</td>
-<td>title</td>
-<td>caption</td>
-</tr>
-<tr class="even">
-<td>aligns</td>
-<td>aligns = LRCD</td>
-<td>aligns = LRCD</td>
-<td></td>
-<td>alignment = LRCD</td>
-</tr>
-<tr class="odd">
-<td>width</td>
-<td></td>
-<td>widths = "0.5 0.2 0.3"</td>
-<td></td>
-<td>width: [0.5, 0.2, 0.3]</td>
-</tr>
-<tr class="even">
-<td>table-width</td>
-<td></td>
-<td></td>
-<td></td>
-<td>table-width: 1.0</td>
-</tr>
-<tr class="odd">
-<td>header</td>
-<td>header = yes | no</td>
-<td>header = yes | no</td>
-<td>has_header: True | False</td>
-<td>header: True | False | yes | NO</td>
-</tr>
-<tr class="even">
-<td>markdown</td>
-<td></td>
-<td>inlinemarkdown</td>
-<td></td>
-<td>markdown: True | False | yes | NO</td>
-</tr>
-<tr class="odd">
-<td>source</td>
-<td>source</td>
-<td>file</td>
-<td>source</td>
-<td>include</td>
-</tr>
-<tr class="even">
-<td>others</td>
-<td>type = simple | multiline | grid | pipe</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td>delimiter</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td></td>
-<td></td>
-<td>quotechar</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td></td>
-<td></td>
-<td>id (wrapped by div)</td>
-<td></td>
-<td></td>
-</tr>
-<tr class="even">
-<td>Notes</td>
-<td></td>
-<td></td>
-<td></td>
-<td>width are auto-calculated when width is not specified</td>
-</tr>
-</tbody>
-</table>
+|             | pandoc-csv2table                           | pandoc-placetable      | panflute example           | pantable                                              |
+|-------------|--------------------------------------------|------------------------|----------------------------|-------------------------------------------------------|
+| caption     | caption                                    | caption                | title                      | caption                                               |
+| aligns      | aligns = LRCD                              | aligns = LRCD          |                            | aligns = LRCD                                         |
+| width       |                                            | widths = "0.5 0.2 0.3" |                            | width: \[0.5, 0.2, 0.3\]                              |
+| table-width |                                            |                        |                            | table-width: 1.0                                      |
+| header      | header = yes \| no                         | header = yes \| no     | has\_header: True \| False | header: True \| False \| yes \| NO                    |
+| markdown    |                                            | inlinemarkdown         |                            | markdown: True \| False \| yes \| NO                  |
+| source      | source                                     | file                   | source                     | include                                               |
+| others      | type = simple \| multiline \| grid \| pipe |                        |                            |                                                       |
+|             |                                            | delimiter              |                            |                                                       |
+|             |                                            | quotechar              |                            |                                                       |
+|             |                                            | id (wrapped by div)    |                            |                                                       |
+| Notes       |                                            |                        |                            | width are auto-calculated when width is not specified |

@@ -4,14 +4,14 @@
 CSV Tables in Markdown — Pandoc Filter for CSV Tables
 =====================================================
 
-:Date:   May 20, 2019
+:Date:   May 12, 2020
 
 .. contents::
    :depth: 3
 ..
 
-|Build Status| |GitHub Releases| |PyPI version| |Development Status|
-|Python version| |License| |Coveralls|
+|Build Status| |Python package| |GitHub Releases| |PyPI version|
+|Development Status| |Python version| |License| |Coveralls|
 
 The pantable package comes with 2 pandoc filters, ``pantable.py`` and
 ``pantable2csv.py``. ``pantable`` is the main filter, introducing a
@@ -69,8 +69,8 @@ becomes
 .. table:: *Awesome* **Markdown** Table
 
    +-----+-----------------+---------------------+
-   | Fir | defaulted to be | can be disabled     |
-   | st  | header row      |                     |
+   | Fi  | defaulted to be | can be disabled     |
+   | rst | header row      |                     |
    | row |                 |                     |
    +=====+=================+=====================+
    | 1   | cell can        | It can be aribrary  |
@@ -118,7 +118,7 @@ keys are recognized:
 ``alignment``
    a string of characters among ``L,R,C,D``, case-insensitive,
    corresponds to Left-aligned, Right-aligned, Center-aligned,
-   Default-aligned respectively. e.g. \ ``LCRD`` for a table with 4
+   Default-aligned respectively. e.g. ``LCRD`` for a table with 4
    columns. Default: ``DDD...``
 
 ``width``
@@ -261,55 +261,55 @@ similar functionality. This filter is born after testing with theirs.
 -  `sergiocorreia/panflute/csv-tables.py <https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py>`__
 
 +-----+-----------------+---------+----------+-----------------------+
-|     | pandoc-csv2tabl | pandoc- | panflute | pantable              |
-|     | e               | placeta |  example |                       |
-|     |                 | ble     |          |                       |
+|     | p               | pan     | panflute | pantable              |
+|     | andoc-csv2table | doc-pla |  example |                       |
+|     |                 | cetable |          |                       |
 +=====+=================+=========+==========+=======================+
-| cap | caption         | caption | title    | caption               |
-| tio |                 |         |          |                       |
-| n   |                 |         |          |                       |
+| c   | caption         | caption | title    | caption               |
+| apt |                 |         |          |                       |
+| ion |                 |         |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
 | ali | aligns = LRCD   | aligns  |          | aligns = LRCD         |
-| gns |                 | = LRCD  |          |                       |
+| gns |                 |  = LRCD |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
-| wid |                 | widths  |          | width: [0.5, 0.2, 0.3 |
-| th  |                 | = "0.5  |          | ]                     |
-|     |                 | 0.2 0.3 |          |                       |
-|     |                 | "       |          |                       |
+| wi  |                 | w       |          | w                     |
+| dth |                 | idths = |          | idth: [0.5, 0.2, 0.3] |
+|     |                 |  "0.5 0 |          |                       |
+|     |                 | .2 0.3" |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
-| tab |                 |         |          | table-width: 1.0      |
-| le- |                 |         |          |                       |
-| wid |                 |         |          |                       |
-| th  |                 |         |          |                       |
+| ta  |                 |         |          | table-width: 1.0      |
+| ble |                 |         |          |                       |
+| -wi |                 |         |          |                       |
+| dth |                 |         |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
-| hea | header = yes |  | header  | has_head | header: True | False  |
-| der | no              | = yes | | er: True | | yes | NO            |
-|     |                 |  no     |  | False |                       |
+| hea | he              | hea     | has_head | header: Tr            |
+| der | ader = yes | no | der = y | er: True | ue | False | yes | NO |
+|     |                 | es | no |  | False |                       |
 +-----+-----------------+---------+----------+-----------------------+
-| mar |                 | inlinem |          | markdown: True | Fals |
-| kdo |                 | arkdown |          | e | yes | NO          |
-| wn  |                 |         |          |                       |
+| ma  |                 | inlinem |          | markdown: Tr          |
+| rkd |                 | arkdown |          | ue | False | yes | NO |
+| own |                 |         |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
 | sou | source          | file    | source   | include               |
 | rce |                 |         |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
-| oth | type = simple | |         |          |                       |
-| ers |  multiline | gr |         |          |                       |
-|     | id | pipe       |         |          |                       |
+| oth | type = si       |         |          |                       |
+| ers | mple | multilin |         |          |                       |
+|     | e | grid | pipe |         |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
-|     |                 | delimit |          |                       |
-|     |                 | er      |          |                       |
+|     |                 | de      |          |                       |
+|     |                 | limiter |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
-|     |                 | quotech |          |                       |
-|     |                 | ar      |          |                       |
+|     |                 | qu      |          |                       |
+|     |                 | otechar |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
-|     |                 | id (wra |          |                       |
-|     |                 | pped by |          |                       |
-|     |                 |  div)   |          |                       |
+|     |                 | id (w   |          |                       |
+|     |                 | rapped  |          |                       |
+|     |                 | by div) |          |                       |
 +-----+-----------------+---------+----------+-----------------------+
-| Not |                 |         |          | width are auto-calcul |
-| es  |                 |         |          | ated when width is no |
-|     |                 |         |          | t specified           |
+| No  |                 |         |          | width are a           |
+| tes |                 |         |          | uto-calculated when w |
+|     |                 |         |          | idth is not specified |
 +-----+-----------------+---------+----------+-----------------------+
 
 .. [1]
@@ -318,6 +318,7 @@ similar functionality. This filter is born after testing with theirs.
 
 .. |Build Status| image:: https://travis-ci.org/ickc/pantable.svg?branch=master
    :target: https://travis-ci.org/ickc/pantable
+.. |Python package| image:: https://github.com/ickc/pantable/workflows/Python%20package/badge.svg
 .. |GitHub Releases| image:: https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release
    :target: https://github.com/ickc/pantable/releases
 .. |PyPI version| image:: https://img.shields.io/pypi/v/pantable.svg
