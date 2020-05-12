@@ -29,12 +29,7 @@ jobs:
         pip install wheel
         pip install -e .[test]
         export pandocVersion=latest # TODO
-        downloadUrl=$(python -c '
-import requests, sys
-v = sys.argv[1]
-url = "https://api.github.com/repos/jgm/pandoc/releases/" + ("" if v == "latest" else "tags/") + v
-print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))
-' $pandocVersion) &&
+        downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + ("" if v == "latest" else "tags/") + v; print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' $pandocVersion) &&
         wget $downloadUrl &&
         sudo dpkg -i ${downloadUrl##*/}
     - name: Tests
