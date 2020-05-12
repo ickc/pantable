@@ -10,8 +10,12 @@ CSV Tables in Markdown — Pandoc Filter for CSV Tables
    :depth: 3
 ..
 
-|Build Status| |Python package| |GitHub Releases| |PyPI version|
-|Development Status| |Python version| |License| |Coveralls|
+.. raw:: html
+
+   <!-- [![Build Status](https://travis-ci.org/ickc/pantable.svg?branch=master)](https://travis-ci.org/ickc/pantable) -->
+
+|Python package| |GitHub Releases| |PyPI version| |Development Status|
+|Python version| |Downloads| |License|
 
 The pantable package comes with 2 pandoc filters, ``pantable.py`` and
 ``pantable2csv.py``. ``pantable`` is the main filter, introducing a
@@ -316,8 +320,6 @@ similar functionality. This filter is born after testing with theirs.
    In pandoc 1.19, grid-tables is improved to support all features
    available to the AST too.
 
-.. |Build Status| image:: https://travis-ci.org/ickc/pantable.svg?branch=master
-   :target: https://travis-ci.org/ickc/pantable
 .. |Python package| image:: https://github.com/ickc/pantable/workflows/Python%20package/badge.svg
 .. |GitHub Releases| image:: https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release
    :target: https://github.com/ickc/pantable/releases
@@ -327,6 +329,6 @@ similar functionality. This filter is born after testing with theirs.
    :target: https://pypi.python.org/pypi/pantable/
 .. |Python version| image:: https://img.shields.io/pypi/pyversions/pantable.svg
    :target: https://pypi.python.org/pypi/pantable/
+.. |Downloads| image:: https://img.shields.io/pypi/dm/pantable.svg
+   :target: https://pypi.python.org/pypi/pantable/
 .. |License| image:: https://img.shields.io/pypi/l/pantable.svg
-.. |Coveralls| image:: https://img.shields.io/coveralls/ickc/pantable.svg
-   :target: https://coveralls.io/github/ickc/pantable
