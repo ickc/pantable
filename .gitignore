@@ -26,3 +26,4 @@ README.html
 
 .mypy_cache/
 build/
+.vscode/
