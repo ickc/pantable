@@ -5,3 +5,4 @@ pytest-cov
 coverage
 coveralls
 future
+terminaltables
