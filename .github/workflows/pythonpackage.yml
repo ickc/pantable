@@ -3,11 +3,7 @@
 
 name: Python package
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
 
 jobs:
   build-n-publish:
@@ -30,12 +26,12 @@ jobs:
         pip install -U pip
         pip install wheel
         pip install -e .[test]
-        downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + ("" if v == "latest" else "tags/") + v; print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' ${{ matrix.pandoc-version }}) &&
-        wget $downloadUrl &&
+        # pandoc
+        downloadUrl=$(python -c 'import requests, sys; v = sys.argv[1]; url = "https://api.github.com/repos/jgm/pandoc/releases/" + ("" if v == "latest" else "tags/") + v; print(next(i["browser_download_url"] for i in requests.get(url).json()["assets"] if i["name"][-3:] == "deb"))' ${{ matrix.pandoc-version }})
+        wget $downloadUrl
         sudo dpkg -i ${downloadUrl##*/}
     - name: Tests
-      run: |
-        make -j3 test
+      run: make -j3 test
     # c.f. https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
     - name: Build a binary wheel and a source tarball
       if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.8 && matrix.pandoc-version == 'latest' }}
