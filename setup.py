@@ -5,31 +5,24 @@ https://github.com/ickc/pantable
 """
 
 import sys
-# To use a consistent encoding
-from codecs import open
-from os import path
 
 import setuptools
 from pkg_resources import parse_version
 # Always prefer setuptools over distutils
 from setuptools import find_packages, setup
 
+from pantable.version import __version__
+
 # see https://python3statement.org/practicalities/
 req_ver = '24.2.0'
 if parse_version(setuptools.__version__) < parse_version(req_ver):
     print(
-        """Setuptools version {} or heigher is required.
+        """Setuptools version {} or higher is required.
 Updated it using `pip install -U setuptools`.
 """.format(req_ver),
         file=sys.stderr
     )
     raise ValueError
-
-# Import version number
-version = {}
-with open("pantable/version.py") as f:
-    exec(f.read(), version)
-version = version['__version__']
 
 setup(
     name='pantable',
@@ -37,7 +30,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version=version,
+    version=__version__,
 
     description='CSV Tables in Markdown: Pandoc Filter for CSV Tables',
     long_description='See doc in https://github.com/ickc/pantable.',
