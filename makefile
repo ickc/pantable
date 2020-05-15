@@ -34,7 +34,7 @@ clean:
 
 %.native: %.md
 	# pandoc -t native -F $(pantable) -o $@ $<
-	pandoc -t native $< | coverage run -a --branch --parallel-mode $(pantable) > $@
+	pandoc -t native $< | coverage run --branch --parallel-mode $(pantable) > $@
 
 # maintenance #########################################################################################################################################################################################
 
@@ -53,13 +53,13 @@ pytestLite:
 tests/reference_idempotent.native: tests/test_pantable.md
 	# pandoc -t native -F $(pantable) -F $(pantable2csv) -F $(pantable) -F $(pantable2csv) -o $@ $<
 	pandoc -t native $< \
-		| coverage run -a --branch --parallel-mode $(pantable) | coverage run -a --branch --parallel-mode $(pantable2csv) \
-		| coverage run -a --branch --parallel-mode $(pantable) | coverage run -a --branch --parallel-mode $(pantable2csv) \
+		| coverage run --branch --parallel-mode $(pantable) | coverage run --branch --parallel-mode $(pantable2csv) \
+		| coverage run --branch --parallel-mode $(pantable) | coverage run --branch --parallel-mode $(pantable2csv) \
 		> $@
 tests/test_idempotent.native: tests/reference_idempotent.native
 	# pandoc -f native -t native -F $(pantable) -F $(pantable2csv) -o $@ $<
 	pandoc -f native $< \
-		| coverage run -a --branch --parallel-mode $(pantable) | coverage run -a --branch --parallel-mode $(pantable2csv) \
+		| coverage run --branch --parallel-mode $(pantable) | coverage run --branch --parallel-mode $(pantable2csv) \
 		> $@
 
 # check python styles
