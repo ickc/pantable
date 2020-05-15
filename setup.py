@@ -5,8 +5,6 @@ https://github.com/ickc/pantable
 """
 
 import sys
-
-import setuptools
 from pkg_resources import parse_version
 # Always prefer setuptools over distutils
 from setuptools import find_packages, setup
@@ -14,15 +12,22 @@ from setuptools import find_packages, setup
 from pantable.version import __version__
 
 # see https://python3statement.org/practicalities/
-req_ver = '24.2.0'
-if parse_version(setuptools.__version__) < parse_version(req_ver):
-    print(
-        """Setuptools version {} or higher is required.
-Updated it using `pip install -U setuptools`.
-""".format(req_ver),
-        file=sys.stderr
-    )
-    raise ValueError
+if sys.version_info < (3, 6):
+
+    error = """
+    pantable v0.13+ supports Python 3.6 and above.
+
+    See pantable documentation for more information:
+
+    https://github.com/ickc/pantable
+
+    Python {py} detected.
+
+    Try upgrading pip and retry.
+    """.format(py='.'.join([str(v) for v in sys.version_info[:3]]))
+
+    print(error, file=sys.stderr)
+    sys.exit(1)
 
 setup(
     name='pantable',
@@ -45,7 +50,7 @@ setup(
     # Choose your license
     license='GPLv3',
 
-    python_requires='>=3.3',
+    python_requires='>=3.6',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -77,7 +82,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='pandoc pandocfilters panflute markdown latex html csv',
+    keywords='pandoc pandocfilters panflute markdown latex html csv table',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
