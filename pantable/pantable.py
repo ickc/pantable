@@ -313,11 +313,7 @@ def csv2table_markdown(options, data, use_grid_tables):
 
     raw_markdown = options.get('raw_markdown', False)
     if raw_markdown:
-        # TODO: change this to 'markdown' once the PR accepted:
-        # for now since pandoc treat all raw html as markdown it
-        # will still works
-        # https://github.com/sergiocorreia/panflute/pull/103
-        return panflute.RawBlock(text, format='html')
+        return panflute.RawBlock(text, format='markdown')
     else:
         return panflute.convert_text(text)
 
