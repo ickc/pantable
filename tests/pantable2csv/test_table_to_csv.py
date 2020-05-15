@@ -1,12 +1,12 @@
 """
 test panflute ast to markdown conversion
 """
-from panflute import *
+from panflute import CodeBlock, convert_text
 
-from .context import table2csv
+from .context import table_to_csv
 
 
-def test_table2csv():
+def test_table_to_csv():
     # get_table_body
     markdown = """| 1 | 2 | 3 | 4 |
 |:--|--:|:-:|---|
@@ -15,7 +15,7 @@ def test_table2csv():
 : *abcd*
 """
     Panflute = convert_text(markdown)
-    code_block_converted = table2csv(*Panflute, doc=None)
+    code_block_converted = table_to_csv(*Panflute, doc=None)
     code_block_referenced = CodeBlock('''---
 alignment: LRCD
 caption: '*abcd*'

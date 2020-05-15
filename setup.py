@@ -5,6 +5,7 @@ https://github.com/ickc/pantable
 """
 
 import sys
+
 from pkg_resources import parse_version
 # Always prefer setuptools over distutils
 from setuptools import find_packages, setup

@@ -1,16 +1,16 @@
 """
 """
-from .context import read_data
+from .context import read_csv
 
 
-def test_read_data():
+def test_read_csv():
     # valid include
-    assert read_data('tests/csv_tables.csv', '') is not None
+    assert read_csv('tests/csv_tables.csv', '') is not None
     # check type
     data = r"""1,2
 3,4
 """
-    assert read_data(None, data) == [
+    assert read_csv(None, data) == [
         ['1', '2'],
         ['3', '4']
     ]
@@ -18,12 +18,12 @@ def test_read_data():
     data = r"""asdfdfdfguhfdhghfdgkla,"334
 2",**la**,4
 5,6,7,8"""
-    assert read_data(None, data) == [
+    assert read_csv(None, data) == [
         ['asdfdfdfguhfdhghfdgkla', '334\n2', '**la**', '4'],
         ['5', '6', '7', '8']
     ]
     # check include
-    assert read_data('tests/csv_tables.csv',
+    assert read_csv('tests/csv_tables.csv',
                      data) == [['**_Fruit_**',
                                 '~~Price~~',
                                 '_Number_',
@@ -38,7 +38,7 @@ def test_read_data():
                                 'Benefits of eating oranges:\n\n- **cures** scurvy\n- `tasty`']]
 
     # check encoding
-    assert read_data('tests/csv_table_gbk.csv',
+    assert read_csv('tests/csv_table_gbk.csv',
                      data, encoding='gbk') == [
         ['一', '二', '三'],
         ['a', 'b', 'c'],

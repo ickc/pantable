@@ -1,5 +1,6 @@
 import panflute
-from ..pantable2csv import table2csv
+
+from ..table_to_csv import table_to_csv
 
 
 def main(doc=None):
@@ -11,7 +12,7 @@ def main(doc=None):
     - table in CSV
     """
     return panflute.run_filter(
-        table2csv,
+        table_to_csv,
         doc=doc
     )
 
