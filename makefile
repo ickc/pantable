@@ -58,7 +58,7 @@ tests/reference_idempotent.native: tests/test_pantable.md
 		pandoc -f json -t native > $@
 tests/test_idempotent.native: tests/reference_idempotent.native
 	# pandoc -f native -t native -F $(pantable) -F $(pantable2csv) -o $@ $<
-	pandoc -f native $< |\
+	pandoc -f native -t json $< |\
 		coverage run --append --branch $(pantable) | coverage run --append --branch $(pantable2csv) |\
 		pandoc -f json -t native > $@
 
