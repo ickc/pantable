@@ -125,8 +125,8 @@ setup(
     # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
-            'pantable = pantable.pantable:main',
-            'pantable2csv = pantable.pantable2csv:main'
+            'pantable = pantable.cli.pantable:main',
+            'pantable2csv = pantable.cli.pantable2csv:main'
         ],
     },
 )

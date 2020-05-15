@@ -4,9 +4,6 @@ SHELL = /usr/bin/env bash
 python = python
 pip = pip
 
-pantable = 'pantable/pantable.py'
-pantable2csv = 'pantable/pantable2csv.py'
-
 test = $(wildcard tests/*.md)
 testNative = $(patsubst %.md,%.native,$(test))
 testAll = $(testNative)
@@ -34,8 +31,7 @@ clean:
 # Making dependancies #################################################################################################################################################################################
 
 %.native: %.md
-	# pandoc -t native -F $(pantable) -o $@ $<
-	pandoc -t json $< | coverage run --append --branch $(pantable) | pandoc -f json -t native -o $@
+	pandoc -t json $< | coverage run --append --branch -m pantable.cli.pantable | pandoc -f json -t native -o $@
 
 # maintenance #########################################################################################################################################################################################
 
@@ -52,15 +48,13 @@ pytest: $(testNative) tests/test_idempotent.native
 pytestLite:
 	$(python) -m pytest -vv --cov=pantable --cov-branch --cov-append tests
 tests/reference_idempotent.native: tests/test_pantable.md
-	# pandoc -t native -F $(pantable) -F $(pantable2csv) -F $(pantable) -F $(pantable2csv) -o $@ $<
 	pandoc -t json $< |\
-		coverage run --append --branch $(pantable) | coverage run --append --branch $(pantable2csv) |\
-		coverage run --append --branch $(pantable) | coverage run --append --branch $(pantable2csv) |\
+		coverage run --append --branch -m pantable.cli.pantable | coverage run --append --branch -m pantable.cli.pantable2csv |\
+		coverage run --append --branch -m pantable.cli.pantable | coverage run --append --branch -m pantable.cli.pantable2csv |\
 		pandoc -f json -t native > $@
 tests/test_idempotent.native: tests/reference_idempotent.native
-	# pandoc -f native -t native -F $(pantable) -F $(pantable2csv) -o $@ $<
 	pandoc -f native -t json $< |\
-		coverage run --append --branch $(pantable) | coverage run --append --branch $(pantable2csv) |\
+		coverage run --append --branch -m pantable.cli.pantable | coverage run --append --branch -m pantable.cli.pantable2csv |\
 		pandoc -f json -t native > $@
 
 # check python styles
