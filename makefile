@@ -26,9 +26,10 @@ testFull: pytest pep8 pylint
 	coverage html
 
 clean:
-	rm -f .coverage $(testAll)
+	rm -f .coverage $(testAll) tests/reference_idempotent.native
 	rm -rf htmlcov pantable.egg-info .cache .idea dist
 	find . -type f \( -name "*.py[co]" -o -name ".coverage.*" \) -delete -or -type d -name "__pycache__" -delete
+	find tests -name '*.pdf' -delete
 
 # Making dependancies #################################################################################################################################################################################
 
