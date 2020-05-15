@@ -111,8 +111,9 @@ def table2csv(elem, doc):
             writer = csv.writer(file)
             writer.writerows(table_list)
             csv_table = file.getvalue()
-        code_block = "{delimiter}{yaml}{delimiter}{csv}".format(
-            yaml=yaml_metadata, csv=csv_table, delimiter='---\n')
+        code_block = f"""---
+{yaml_metadata}---
+{csv_table}"""
         return panflute.CodeBlock(code_block, classes=["table"])
     return None
 

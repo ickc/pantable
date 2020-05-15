@@ -107,7 +107,7 @@ def parse_alignment(alignment_string, n_col):
         '''parsing alignment'''
         key_lower = key.lower()
         if key_lower not in align_dict:
-            panflute.debug("pantable: alignment: invalid character {} found, replaced by the default 'd'.".format(key))
+            panflute.debug(f"pantable: alignment: invalid character {key} found, replaced by the default 'd'.")
             key_lower = 'd'
         return align_dict[key_lower]
 
@@ -168,7 +168,7 @@ def regularize_table_list(raw_table_list):
     for i, (n, row) in enumerate(zip(length_of_rows, raw_table_list)):
         if n != n_col:
             row += [''] * (n_col - n)
-            panflute.debug("pantable: the {}-th row is shorter than the longest row. Empty cells appended.".format(i))
+            panflute.debug(f"pantable: the {i}-th row is shorter than the longest row. Empty cells appended.")
     return n_col
 
 
@@ -243,7 +243,7 @@ def modified_align_border(text, alignment, header):
         for header_border_i, alignment_i in zip(header_border_list, alignment)
     ]
 
-    text_list[i] = '+{}+'.format('+'.join(header_border_list))
+    text_list[i] = f"+{'+'.join(header_border_list)}+"
 
     return '\n'.join(text_list)
 
@@ -264,7 +264,7 @@ def csv_to_grid_tables(table_list, caption, alignment, header):
     if alignment:
         text = modified_align_border(text, alignment, header)
     if caption:
-        text += '\n\n: {}'.format(caption)
+        text += f'\n\n: {caption}'
     return text
 
 
@@ -280,7 +280,7 @@ def csv_to_pipe_tables(table_list, caption, alignment):
     pipe_table_list = ['|\t{}\t|'.format('\t|\t'.join(map(str, row))) for row in table_list]
     if caption:
         pipe_table_list.append('')
-        pipe_table_list.append(': {}'.format(caption))
+        pipe_table_list.append(f': {caption}')
     return '\n'.join(pipe_table_list)
 
 
