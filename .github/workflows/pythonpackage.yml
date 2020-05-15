@@ -14,15 +14,16 @@ jobs:
         python-version: [3.6, 3.7, 3.8, pypy3]
         pandoc-version:
           - 2.0.6
-          - 2.1.3
-          - 2.2.3.2
-          - 2.3.1
-          - 2.4
-          - 2.5
-          - 2.6
+          # - 2.1.3
+          # - 2.2.3.2
+          # - 2.3.1
+          # - 2.4
+          # - 2.5
+          # - 2.6
+          # panflute only support at or above this
           - 2.7.3
-          - 2.8.1
-          - 2.9.2.1
+          # - 2.8.1
+          # - 2.9.2.1
           - latest
 
     steps:
