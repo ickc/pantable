@@ -3,6 +3,7 @@
 
 tests/reference_idempotent.native
 tests/*.native
+!tests/reference_pantable.native
 tests/*.pdf
 
 # python auxiliary 
