@@ -25,5 +25,6 @@ htmlcov/
 README.html
 
 .mypy_cache/
+.pytest_cache/
 build/
 .vscode/
