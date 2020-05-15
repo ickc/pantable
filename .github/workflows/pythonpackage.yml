@@ -42,7 +42,7 @@ jobs:
         wget $downloadUrl
         sudo dpkg -i ${downloadUrl##*/}
     - name: Tests
-      run: make -j3 test
+      run: make clean && make test
     # c.f. https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
     - name: Build a binary wheel and a source tarball
       if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.8 && matrix.pandoc-version == 'latest' }}

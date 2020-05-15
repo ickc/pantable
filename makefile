@@ -28,13 +28,13 @@ testFull: pytest pep8 pylint
 clean:
 	rm -f .coverage $(testAll)
 	rm -rf htmlcov pantable.egg-info .cache .idea dist
-	find . -type f -name "*.py[co]" -delete -or -type d -name "__pycache__" -delete
+	find . -type f \( -name "*.py[co]" -o -name ".coverage.*" \) -delete -or -type d -name "__pycache__" -delete
 
 # Making dependancies #################################################################################################################################################################################
 
 %.native: %.md
 	# pandoc -t native -F $(pantable) -o $@ $<
-	pandoc -t native $< | coverage run --branch --parallel-mode $(pantable) > $@
+	pandoc -t json $< | coverage run --append --branch $(pantable) | pandoc -f json -t native -o $@
 
 # maintenance #########################################################################################################################################################################################
 
@@ -47,20 +47,20 @@ pypiManual:
 	$(python) setup.py sdist bdist_wheel && twine upload dist/*
 
 pytest: $(testNative) tests/test_idempotent.native
-	$(python) -m pytest -vv --cov=pantable tests
+	$(python) -m pytest -vv --cov=pantable --cov-branch tests
 pytestLite:
-	$(python) -m pytest -vv --cov=pantable tests
+	$(python) -m pytest -vv --cov=pantable --cov-branch --cov-append tests
 tests/reference_idempotent.native: tests/test_pantable.md
 	# pandoc -t native -F $(pantable) -F $(pantable2csv) -F $(pantable) -F $(pantable2csv) -o $@ $<
-	pandoc -t native $< \
-		| coverage run --branch --parallel-mode $(pantable) | coverage run --branch --parallel-mode $(pantable2csv) \
-		| coverage run --branch --parallel-mode $(pantable) | coverage run --branch --parallel-mode $(pantable2csv) \
-		> $@
+	pandoc -t json $< |\
+		coverage run --append --branch $(pantable) | coverage run --append --branch $(pantable2csv) |\
+		coverage run --append --branch $(pantable) | coverage run --append --branch $(pantable2csv) |\
+		pandoc -f json -t native > $@
 tests/test_idempotent.native: tests/reference_idempotent.native
 	# pandoc -f native -t native -F $(pantable) -F $(pantable2csv) -o $@ $<
-	pandoc -f native $< \
-		| coverage run --branch --parallel-mode $(pantable) | coverage run --branch --parallel-mode $(pantable2csv) \
-		> $@
+	pandoc -f json $< |\
+		coverage run --append --branch $(pantable) | coverage run --append --branch $(pantable2csv) |\
+		pandoc -f json -t native > $@
 
 # check python styles
 pep8:
