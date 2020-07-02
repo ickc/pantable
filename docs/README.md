@@ -6,6 +6,8 @@ geometry:	inner=1in, outer=1in, top=1in, bottom=1.25in
 title:	CSV Tables in Markdown --- Pandoc Filter for CSV Tables
 ...
 
+**Warning: panflute and pantable only support pandoc < 2.10 and is so far incompatible with pandoc 2.10+. This is because there's a new AST change related to table spans. See https://github.com/jgm/pandoc/issues/1024, https://github.com/sergiocorreia/panflute/issues/142. Until that is resolved, please stick with 2.9.2.1 or below when used together with pantable.**
+
 The pantable package comes with 2 pandoc filters, `pantable.py` and `pantable2csv.py`. `pantable` is the main filter, introducing a syntax to include CSV table in markdown source. `pantable2csv` complements `pantable`, is the inverse of `pantable`, which convert native pandoc tables into the CSV table format defined by `pantable`.
 
 Some example uses are:
