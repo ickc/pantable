@@ -24,6 +24,14 @@ version](https://img.shields.io/pypi/pyversions/pantable.svg)](https://pypi.pyth
 <!-- [![Coveralls](https://img.shields.io/coveralls/ickc/pantable.svg)](https://coveralls.io/github/ickc/pantable) -->
 <!-- [![Scrutinizer](https://img.shields.io/scrutinizer/g/ickc/pantable.svg)](https://scrutinizer-ci.com/g/ickc/pantable/) -->
 
+**Warning: panflute and pantable only support pandoc \< 2.10 and is so
+far incompatible with pandoc 2.10+. This is because there’s a new AST
+change related to table spans. See
+<a href="https://github.com/jgm/pandoc/issues/1024" class="uri">https://github.com/jgm/pandoc/issues/1024</a>,
+<a href="https://github.com/sergiocorreia/panflute/issues/142" class="uri">https://github.com/sergiocorreia/panflute/issues/142</a>.
+Until that is resolved, please stick with 2.9.2.1 or below when used
+together with pantable.**
+
 The pantable package comes with 2 pandoc filters, `pantable.py` and
 `pantable2csv.py`. `pantable` is the main filter, introducing a syntax
 to include CSV table in markdown source. `pantable2csv` complements
