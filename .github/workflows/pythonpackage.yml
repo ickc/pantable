@@ -47,7 +47,7 @@ jobs:
         pip install wheel
         pip install -e .[test]
         # pandoc
-        [[ ${{ matrix.pandoc-version }} == "latest" ]] && url="https://github.com/jgm/pandoc/releases/latest" || url="https://github.com/jgm/pandoc/releases/tag/$pandocVersion"
+        [[ ${{ matrix.pandoc-version }} == "latest" ]] && url="https://github.com/jgm/pandoc/releases/latest" || url="https://github.com/jgm/pandoc/releases/tag/${{ matrix.pandoc-version }}"
         downloadUrl="https://github.com$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64\.deb')"
         wget "$downloadUrl"
         sudo dpkg -i "${downloadUrl##*/}"
