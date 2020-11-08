@@ -33,7 +33,7 @@ jobs:
           # - 2.10.1
           # 2.11 has minor breaking change, fixing some quirks in 2.10
           # - 2.11.1
-          - latest
+          # - latest
 
     steps:
     - uses: actions/checkout@v2
