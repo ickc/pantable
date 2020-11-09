@@ -41,11 +41,13 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Install dependencies—pip
       run: |
         pip install --upgrade setuptools pip
         pip install wheel
         pip install -e .[test]
+    - name: Install dependencies—pandoc
+      run: |
         # pandoc
         [[ ${{ matrix.pandoc-version }} == "latest" ]] && url="https://github.com/jgm/pandoc/releases/latest" || url="https://github.com/jgm/pandoc/releases/tag/${{ matrix.pandoc-version }}"
         downloadUrl="https://github.com$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64\.deb')"
@@ -55,10 +57,10 @@ jobs:
       run: make clean && make test
     # c.f. https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
     - name: Build a binary wheel and a source tarball
-      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.8 && matrix.pandoc-version == 'latest' }}
+      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.9 && matrix.pandoc-version == '2.9.2.1' }}
       run: python setup.py sdist bdist_wheel
     - name: Publish distribution 📦 to PyPI
-      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.8 && matrix.pandoc-version == 'latest' }}
+      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.9 && matrix.pandoc-version == '2.9.2.1' }}
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.pypi_password }}
