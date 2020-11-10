@@ -117,3 +117,6 @@ README.html: README.rst
 
 gh-pages-init:
 	git add gh-pages && git commit -m "initial gh-pages subtree commit"
+
+gh-pages-push:
+	git subtree push --prefix gh-pages origin gh-pages
