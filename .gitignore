@@ -31,3 +31,5 @@ README.html
 .pytest_cache/
 build/
 .vscode/
+
+gh-pages/
