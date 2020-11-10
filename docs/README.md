@@ -6,9 +6,9 @@ geometry:	inner=1in, outer=1in, top=1in, bottom=1.25in
 title:	CSV Tables in Markdown --- Pandoc Filter for CSV Tables
 ...
 
-**Warning: panflute and pantable only support pandoc < 2.10 and is so far incompatible with pandoc 2.10+. This is because there's a new AST change related to table spans. See https://github.com/jgm/pandoc/issues/1024, https://github.com/sergiocorreia/panflute/issues/142. Until that is resolved, please stick with 2.9.2.1 or below when used together with pantable.**
+**Warning: Currently pantable only support pandoc < 2.10. This is because there's a new AST change related to table spans. See more in https://github.com/ickc/pantable/issues/51. Until that is resolved, please stick with 2.9.2.1 or below.**
 
-The pantable package comes with 2 pandoc filters, `pantable.py` and `pantable2csv.py`. `pantable` is the main filter, introducing a syntax to include CSV table in markdown source. `pantable2csv` complements `pantable`, is the inverse of `pantable`, which convert native pandoc tables into the CSV table format defined by `pantable`.
+The pantable package comes with 2 pandoc filters, `pantable` and `pantable2csv`. `pantable` is the main filter, introducing a syntax to include CSV table in markdown source. `pantable2csv` complements `pantable`, is the inverse of `pantable`, which convert native pandoc tables into the CSV table format defined by `pantable`.
 
 Some example uses are:
 
@@ -19,6 +19,30 @@ Some example uses are:
 3. You want lower-level control on the table and column widths.
 
 4. You want to use all table features supported by the pandoc's internal AST table format, which is not possible in markdown for pandoc \<= 1.18.^[In pandoc 1.19, grid-tables is improved to support all features available to the AST too.]
+
+# Installation
+
+```bash
+pip install -U pantable
+```
+
+## Supported versions
+
+pantable v0.12 drop Python 2 support. You need to install `pantable<0.12` if you need to run it on Python 2.
+
+To enforce using Python 3, depending on your system, you may need to specify `python3` and `pip3` explicitly.
+
+pandoc versioning semantics is [MAJOR.MAJOR.MINOR.PATCH](https://pvp.haskell.org) and pantable/panflute's is MAJOR.MINOR.PATCH. Below we shows matching versions of pandoc that pantable and panflute supports, in descending order. Only major version is shown as long as the minor versions doesn't matter.
+
+<!-- For pandoc API verion, check https://hackage.haskell.org/package/pandoc for pandoc-types, which is the same thing. -->
+
+| pantable | panflute version  | supported pandoc versions | supported pandoc API versions |
+| --- | ---   | ---   |  ---  |
+| TBA | 2.0 | 2.11.0.4—2.11.x  | 1.22    |
+| - | not supported | 2.10  | 1.21  |
+| 0.12 | 1.12 | 2.7-2.9 | 1.17.5–1.20  |
+
+Note: pandoc 2.10 is short lived and 2.11 has minor API changes comparing to that, mainly for fixing its shortcomings. Please avoid using pandoc 2.10.
 
 # `pantable`
 
@@ -64,15 +88,7 @@ First row,defaulted to be header row,can be disabled
 
 (The equation might not work if you view this on PyPI.)
 
-## Install and Use
-
-Install:
-
-```bash
-pip install -U pantable
-```
-
-Use:
+## Usage
 
 ```bash
 pandoc -F pantable -o README.html README.md
@@ -227,4 +243,3 @@ Caption: Comparison
 include: docs/comparison.csv
 ...
 ```
-
