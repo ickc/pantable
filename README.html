@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSV Tables in Markdown — Pandoc Filter for CSV Tables &#8212; pantable  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pantable package" href="pantable.html" />
+    <link rel="prev" title="Welcome to pantable’s documentation!" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          pantable</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">CSV Tables in Markdown — Pandoc Filter for CSV Tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pantable.html">pantable package</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">CSV Tables in Markdown — Pandoc Filter for CSV Tables</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#supported-versions">Supported versions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pantable"><code class="docutils literal notranslate"><span class="pre">pantable</span></code></a><ul>
+<li><a class="reference internal" href="#example">Example</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#syntax">Syntax</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pantable2csv"><code class="docutils literal notranslate"><span class="pre">pantable2csv</span></code></a></li>
+<li><a class="reference internal" href="#related-filters">Related Filters</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="index.html" title="Previous Chapter: Welcome to pantable’s documentation!"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Welcome to pa...</span>
+    </a>
+  </li>
+  <li>
+    <a href="pantable.html" title="Next Chapter: pantable package"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">pantable package &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/README.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <div class="section" id="csv-tables-in-markdown-pandoc-filter-for-csv-tables">
+<h1><a class="toc-backref" href="#id4">CSV Tables in Markdown — Pandoc Filter for CSV Tables</a><a class="headerlink" href="#csv-tables-in-markdown-pandoc-filter-for-csv-tables" title="Permalink to this headline">¶</a></h1>
+<dl class="field-list simple">
+<dt class="field-odd">Date</dt>
+<dd class="field-odd"><p>November 9, 2020</p>
+</dd>
+</dl>
+<div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#csv-tables-in-markdown-pandoc-filter-for-csv-tables" id="id4">CSV Tables in Markdown — Pandoc Filter for CSV Tables</a></p>
+<ul>
+<li><p><a class="reference internal" href="#installation" id="id5">Installation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#supported-versions" id="id6">Supported versions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pantable" id="id7"><code class="docutils literal notranslate"><span class="pre">pantable</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#example" id="id8">Example</a></p></li>
+<li><p><a class="reference internal" href="#usage" id="id9">Usage</a></p></li>
+<li><p><a class="reference internal" href="#syntax" id="id10">Syntax</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pantable2csv" id="id11"><code class="docutils literal notranslate"><span class="pre">pantable2csv</span></code></a></p></li>
+<li><p><a class="reference internal" href="#related-filters" id="id12">Related Filters</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<p><img alt="Python package" src="https://github.com/ickc/pantable/workflows/Python%20package/badge.svg" /> <a class="reference external" href="https://github.com/ickc/pantable/releases"><img alt="GitHub Releases" src="https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release" /></a> <a class="reference external" href="https://pypi.python.org/pypi/pantable/"><img alt="PyPI version" src="https://img.shields.io/pypi/v/pantable.svg" /></a> <a class="reference external" href="https://pypi.python.org/pypi/pantable/"><img alt="Development Status" src="https://img.shields.io/pypi/status/pantable.svg" /></a>
+<a class="reference external" href="https://pypi.python.org/pypi/pantable/"><img alt="Python version" src="https://img.shields.io/pypi/pyversions/pantable.svg" /></a> <a class="reference external" href="https://pypi.python.org/pypi/pantable/"><img alt="Downloads" src="https://img.shields.io/pypi/dm/pantable.svg" /></a> <img alt="License" src="https://img.shields.io/pypi/l/pantable.svg" /></p>
+<p><strong>Warning: Currently pantable only support pandoc &lt; 2.10. This is
+because there’s a new AST change related to table spans. See more
+in</strong><a class="reference external" href="https://github.com/ickc/pantable/issues/51">https://github.com/ickc/pantable/issues/51</a><strong>. Until that is
+resolved, please stick with 2.9.2.1 or below.</strong></p>
+<p>The pantable package comes with 2 pandoc filters, <code class="docutils literal notranslate"><span class="pre">pantable</span></code> and
+<code class="docutils literal notranslate"><span class="pre">pantable2csv</span></code>. <code class="docutils literal notranslate"><span class="pre">pantable</span></code> is the main filter, introducing a syntax
+to include CSV table in markdown source. <code class="docutils literal notranslate"><span class="pre">pantable2csv</span></code> complements
+<code class="docutils literal notranslate"><span class="pre">pantable</span></code>, is the inverse of <code class="docutils literal notranslate"><span class="pre">pantable</span></code>, which convert native
+pandoc tables into the CSV table format defined by <code class="docutils literal notranslate"><span class="pre">pantable</span></code>.</p>
+<p>Some example uses are:</p>
+<ol class="arabic simple">
+<li><p>You already have tables in CSV format.</p></li>
+<li><p>You feel that directly editing markdown table is troublesome. You
+want a spreadsheet interface to edit, but want to convert it to
+native pandoc table for higher readability. And this process might go
+back and forth.</p></li>
+<li><p>You want lower-level control on the table and column widths.</p></li>
+<li><p>You want to use all table features supported by the pandoc’s internal
+AST table format, which is not possible in markdown for pandoc &lt;=
+1.18. <a class="footnote-reference brackets" href="#id2" id="id1">1</a></p></li>
+</ol>
+<div class="section" id="installation">
+<h2><a class="toc-backref" href="#id5">Installation</a><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -U pantable
+</pre></div>
+</div>
+<div class="section" id="supported-versions">
+<h3><a class="toc-backref" href="#id6">Supported versions</a><a class="headerlink" href="#supported-versions" title="Permalink to this headline">¶</a></h3>
+<p>pantable v0.12 drop Python 2 support. You need to install
+<code class="docutils literal notranslate"><span class="pre">pantable&lt;0.12</span></code> if you need to run it on Python 2.</p>
+<p>To enforce using Python 3, depending on your system, you may need to
+specify <code class="docutils literal notranslate"><span class="pre">python3</span></code> and <code class="docutils literal notranslate"><span class="pre">pip3</span></code> explicitly.</p>
+<p>pandoc versioning semantics is
+<a class="reference external" href="https://pvp.haskell.org">MAJOR.MAJOR.MINOR.PATCH</a> and
+pantable/panflute’s is MAJOR.MINOR.PATCH. Below we shows matching
+versions of pandoc that pantable and panflute supports, in descending
+order. Only major version is shown as long as the minor versions doesn’t
+matter.</p>
+<!-- For pandoc API verion, check https://hackage.haskell.org/package/pandoc for pandoc-types, which is the same thing. --><table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>pantable</p></th>
+<th class="head"><p>panflute
+version</p></th>
+<th class="head"><p>supported
+pandoc versions</p></th>
+<th class="head"><p>supported
+pandoc API
+versions</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>TBA</p></td>
+<td><p>2.0</p></td>
+<td><p>2.11.0.4—2.11.x</p></td>
+<td><p>1.22</p></td>
+</tr>
+<tr class="row-odd"><td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>not supported</p></td>
+<td><p>2.10</p></td>
+<td><p>1.21</p></td>
+</tr>
+<tr class="row-even"><td><p>0.12</p></td>
+<td><p>1.12</p></td>
+<td><p>2.7-2.9</p></td>
+<td><p>1.17.5–1.20</p></td>
+</tr>
+</tbody>
+</table>
+<p>Note: pandoc 2.10 is short lived and 2.11 has minor API changes
+comparing to that, mainly for fixing its shortcomings. Please avoid
+using pandoc 2.10.</p>
+<p>To use pantable with pandoc &lt; 2.10, install pantable 0.12 explicitly by
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pantable~=0.12.4</span></code>.</p>
+</div>
+</div>
+<div class="section" id="pantable">
+<h2><a class="toc-backref" href="#id7"><code class="docutils literal notranslate"><span class="pre">pantable</span></code></a><a class="headerlink" href="#pantable" title="Permalink to this headline">¶</a></h2>
+<p>This allows CSV tables, optionally containing markdown syntax (disabled
+by default), to be put in markdown as a fenced code blocks.</p>
+<div class="section" id="example">
+<h3><a class="toc-backref" href="#id8">Example</a><a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Also see the README in <a class="reference external" href="https://ickc.github.io/pantable/">GitHub
+Pages</a>. There’s a <a class="reference external" href="https://ickc.github.io/pantable/README.pdf">LaTeX
+output</a> too.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```table
+---
+caption: &#39;*Awesome* **Markdown** Table&#39;
+alignment: RC
+table-width: 2/3
+markdown: True
+---
+First row,defaulted to be header row,can be disabled
+1,cell can contain **markdown**,&quot;It can be aribrary block element:
+
+- following standard markdown syntax
+- like this&quot;
+2,&quot;Any markdown syntax, e.g.&quot;,$$E = mc^2$$
+```
+</pre></div>
+</div>
+<p>becomes</p>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text"><em>Awesome</em> <strong>Markdown</strong> Table</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 40%" />
+<col style="width: 49%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Fi
+rst
+row</p></th>
+<th class="head"><p>defaulted to be
+header row</p></th>
+<th class="head"><p>can be disabled</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>cell can
+contain
+<strong>markdown</strong></p></td>
+<td><p>It can be aribrary
+block element:</p>
+<ul class="simple">
+<li><p>following
+standard
+markdown syntax</p></li>
+<li><p>like this</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Any markdown
+syntax, e.g.</p></td>
+<td><div class="math notranslate nohighlight">
+\[E = mc^2\]</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>(The equation might not work if you view this on PyPI.)</p>
+</div>
+<div class="section" id="usage">
+<h3><a class="toc-backref" href="#id9">Usage</a><a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pandoc -F pantable -o README.html README.md
+</pre></div>
+</div>
+</div>
+<div class="section" id="syntax">
+<h3><a class="toc-backref" href="#id10">Syntax</a><a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h3>
+<p>Fenced code blocks is used, with a class <code class="docutils literal notranslate"><span class="pre">table</span></code>. See [Example].</p>
+<p>Optionally, YAML metadata block can be used within the fenced code
+block, following standard pandoc YAML metadata block syntax. 7 metadata
+keys are recognized:</p>
+<dl>
+<dt><code class="docutils literal notranslate"><span class="pre">caption</span></code></dt><dd><p>the caption of the table. If omitted, no caption will be inserted.
+Default: disabled.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">alignment</span></code></dt><dd><p>a string of characters among <code class="docutils literal notranslate"><span class="pre">L,R,C,D</span></code>, case-insensitive,
+corresponds to Left-aligned, Right-aligned, Center-aligned,
+Default-aligned respectively. e.g. <code class="docutils literal notranslate"><span class="pre">LCRD</span></code> for a table with 4
+columns. Default: <code class="docutils literal notranslate"><span class="pre">DDD...</span></code></p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">width</span></code></dt><dd><p>a list of relative width corresponding to the width of each columns.
+e.g.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">width</span>
+    <span class="l l-Scalar l-Scalar-Plain">- 0.1</span>
+    <span class="l l-Scalar l-Scalar-Plain">- 0.2</span>
+    <span class="l l-Scalar l-Scalar-Plain">- 0.3</span>
+    <span class="l l-Scalar l-Scalar-Plain">- 0.4</span>
+</pre></div>
+</div>
+<p>Default: auto calculated from the length of each line in table cells.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">table-width</span></code></dt><dd><p>the relative width of the table (e.g. relative to <code class="docutils literal notranslate"><span class="pre">\linewidth</span></code>).
+default: 1.0</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">header</span></code></dt><dd><p>If it has a header row or not. True/False/yes/NO are accepted,
+case-insensitive. default: True</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">markdown</span></code></dt><dd><p>If CSV table cell contains markdown syntax or not. Same as above.
+Default: False</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">include</span></code></dt><dd><p>the path to an CSV file, can be relative/absolute. If non-empty,
+override the CSV in the CodeBlock. default: None</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">include-encoding</span></code></dt><dd><p>if specified, the file from <code class="docutils literal notranslate"><span class="pre">include</span></code> will be decoded according to
+this encoding, else assumed to be UTF-8.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">csv-kwargs</span></code></dt><dd><p>If specified, should be a dictionary passed to <code class="docutils literal notranslate"><span class="pre">csv.reader</span></code> as
+options. e.g.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">csv-kwargs</span><span class="p">:</span>
+  <span class="nt">dialect</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">unix</span>
+  <span class="nt">key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">value...</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">pipe_tables</span></code></dt><dd><p>If True, a pipe table will be constructed directly in markdown syntax
+instead of via AST. <code class="docutils literal notranslate"><span class="pre">markdown</span></code> is implied to be True. <code class="docutils literal notranslate"><span class="pre">header</span></code>
+will be overridden as true because <code class="docutils literal notranslate"><span class="pre">pipe_tables</span></code> must has header in
+pandoc.</p>
+<p>This trades correctness for speed. It won’t be correct if any of the
+cell is multiline for example, resulting in an invalid pipe table.
+However, it is much faster comparing to previous <code class="docutils literal notranslate"><span class="pre">markdown:</span> <span class="pre">True</span></code>
+case because previously per cell a subprocess to execute pandoc the
+parse the markdown to AST is needed.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">grid_tables</span></code></dt><dd><p>If True, a grid table will be constructed directly in markdown syntax
+instead of via AST. <code class="docutils literal notranslate"><span class="pre">markdown</span></code> is implied to be True. <code class="docutils literal notranslate"><span class="pre">header</span></code>
+can be used together with this.</p>
+<p>This trades correctness for speed. This should be more robust than
+<code class="docutils literal notranslate"><span class="pre">pipe_tables</span></code> since the <code class="docutils literal notranslate"><span class="pre">grid_tables</span></code> syntax supports everything
+the pandoc AST supports. This however depends on an external
+dependency. Install it by either <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">terminaltables</span></code> or
+<code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">terminaltables</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">raw_markdown</span></code></dt><dd><p>If True, force output the table as a pipe table (which is
+tab-delimited.) This is sometimes useful if pandoc is very stubborn
+to not emit a pipe table even if <code class="docutils literal notranslate"><span class="pre">markdown-grid_tables...</span></code> is used.
+Note that this should only be used if the output format is markdown.</p>
+</dd>
+</dl>
+<p>When the metadata keys is invalid, the default will be used instead.
+Note that width and table-width accept fractions as well.</p>
+</div>
+</div>
+<div class="section" id="pantable2csv">
+<h2><a class="toc-backref" href="#id11"><code class="docutils literal notranslate"><span class="pre">pantable2csv</span></code></a><a class="headerlink" href="#pantable2csv" title="Permalink to this headline">¶</a></h2>
+<p>This one is the inverse of <code class="docutils literal notranslate"><span class="pre">pantable</span></code>, a panflute filter to convert
+any native pandoc tables into the CSV table format used by pantable.</p>
+<p>Effectively, <code class="docutils literal notranslate"><span class="pre">pantable</span></code> forms a “CSV Reader”, and <code class="docutils literal notranslate"><span class="pre">pantable2csv</span></code>
+forms a “CSV Writer”. It allows you to convert back and forth between
+these 2 formats.</p>
+<p>For example, in the markdown source:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>+--------+---------------------+--------------------------+
+| First  | defaulted to be     | can be disabled          |
+| row    | header row          |                          |
++========+=====================+==========================+
+| 1      | cell can contain    | It can be aribrary block |
+|        | **markdown**        | element:                 |
+|        |                     |                          |
+|        |                     | -   following standard   |
+|        |                     |     markdown syntax      |
+|        |                     | -   like this            |
++--------+---------------------+--------------------------+
+| 2      | Any markdown        | $$E = mc^2$$             |
+|        | syntax, e.g.        |                          |
++--------+---------------------+--------------------------+
+
+: *Awesome* **Markdown** Table
+</pre></div>
+</div>
+<p>running <code class="docutils literal notranslate"><span class="pre">pandoc</span> <span class="pre">-F</span> <span class="pre">pantable2csv</span> <span class="pre">-o</span> <span class="pre">output.md</span> <span class="pre">input.md</span></code>, it becomes</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>``` {.table}
+---
+alignment: DDD
+caption: &#39;*Awesome* **Markdown** Table&#39;
+header: true
+markdown: true
+table-width: 0.8055555555555556
+width: [0.125, 0.3055555555555556, 0.375]
+---
+First row,defaulted to be header row,can be disabled
+1,cell can contain **markdown**,&quot;It can be aribrary block element:
+
+-   following standard markdown syntax
+-   like this
+&quot;
+2,&quot;Any markdown syntax, e.g.&quot;,$$E = mc^2$$
+```
+</pre></div>
+</div>
+</div>
+<div class="section" id="related-filters">
+<h2><a class="toc-backref" href="#id12">Related Filters</a><a class="headerlink" href="#related-filters" title="Permalink to this headline">¶</a></h2>
+<p>The followings are pandoc filters written in Haskell that provide
+similar functionality. This filter is born after testing with theirs.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/baig/pandoc-csv2table">baig/pandoc-csv2table: A Pandoc filter that renders CSV as Pandoc
+Markdown Tables.</a></p></li>
+<li><p><a class="reference external" href="https://github.com/mb21/pandoc-placetable">mb21/pandoc-placetable: Pandoc filter to include CSV data (from file
+or URL)</a></p></li>
+<li><p><a class="reference external" href="https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py">sergiocorreia/panflute/csv-tables.py</a></p></li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 27%" />
+<col style="width: 14%" />
+<col style="width: 16%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p>p
+andoc-csv2table</p></th>
+<th class="head"><p>pan
+doc-pla
+cetable</p></th>
+<th class="head"><dl class="simple">
+<dt>panflute</dt><dd><p>example</p>
+</dd>
+</dl>
+</th>
+<th class="head"><p>pantable</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>c
+apt
+ion</p></td>
+<td><p>caption</p></td>
+<td><p>caption</p></td>
+<td><p>title</p></td>
+<td><p>caption</p></td>
+</tr>
+<tr class="row-odd"><td><p>ali
+gns</p></td>
+<td><p>aligns = LRCD</p></td>
+<td><dl class="simple">
+<dt>aligns</dt><dd><p>= LRCD</p>
+</dd>
+</dl>
+</td>
+<td></td>
+<td><p>aligns = LRCD</p></td>
+</tr>
+<tr class="row-even"><td><p>wi
+dth</p></td>
+<td></td>
+<td><p>w
+idths =</p>
+<blockquote>
+<div><p>“0.5 0</p>
+</div></blockquote>
+<p>.2 0.3”</p>
+</td>
+<td></td>
+<td><p>w
+idth: [0.5, 0.2, 0.3]</p></td>
+</tr>
+<tr class="row-odd"><td><p>ta
+ble
+-wi
+dth</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>table-width: 1.0</p></td>
+</tr>
+<tr class="row-even"><td><p>hea
+der</p></td>
+<td><p>he
+ader = yes | no</p></td>
+<td><p>hea
+der = y
+es | no</p></td>
+<td><p>has_head
+er: True</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">False</div>
+</div>
+</div></blockquote>
+</td>
+<td><p>header: Tr
+ue | False | yes | NO</p></td>
+</tr>
+<tr class="row-odd"><td><p>ma
+rkd
+own</p></td>
+<td></td>
+<td><p>inlinem
+arkdown</p></td>
+<td></td>
+<td><p>markdown: Tr
+ue | False | yes | NO</p></td>
+</tr>
+<tr class="row-even"><td><p>sou
+rce</p></td>
+<td><p>source</p></td>
+<td><p>file</p></td>
+<td><p>source</p></td>
+<td><p>include</p></td>
+</tr>
+<tr class="row-odd"><td><p>oth
+ers</p></td>
+<td><p>type = si
+mple | multilin
+e | grid | pipe</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td><p>de
+limiter</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td></td>
+<td><p>qu
+otechar</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td></td>
+<td></td>
+<td><p>id (w
+rapped
+by div)</p></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>No
+tes</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>width are a
+uto-calculated when w
+idth is not specified</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>In pandoc 1.19, grid-tables is improved to support all features
+available to the AST too.</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2020, Kolen Cheung.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

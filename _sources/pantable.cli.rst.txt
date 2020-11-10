@@ -1,0 +1,19 @@
+pantable.cli package
+====================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 10
+
+   pantable.cli.pantable
+   pantable.cli.pantable2csv
+
+Module contents
+---------------
+
+.. automodule:: pantable.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,33 @@
+pantable package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 10
+
+   pantable.cli
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 10
+
+   pantable.codeblock_to_table
+   pantable.const
+   pantable.csv_to_table_ast
+   pantable.csv_to_table_markdown
+   pantable.read_csv
+   pantable.table_to_csv
+   pantable.util
+   pantable.version
+
+Module contents
+---------------
+
+.. automodule:: pantable
+   :members:
+   :undoc-members:
+   :show-inheritance:

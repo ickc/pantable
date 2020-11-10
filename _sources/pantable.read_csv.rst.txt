@@ -1,0 +1,7 @@
+pantable.read\_csv module
+=========================
+
+.. automodule:: pantable.read_csv
+   :members:
+   :undoc-members:
+   :show-inheritance:

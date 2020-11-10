@@ -1,0 +1,7 @@
+pantable.cli.pantable module
+============================
+
+.. automodule:: pantable.cli.pantable
+   :members:
+   :undoc-members:
+   :show-inheritance:

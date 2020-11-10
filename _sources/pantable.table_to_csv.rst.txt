@@ -1,0 +1,7 @@
+pantable.table\_to\_csv module
+==============================
+
+.. automodule:: pantable.table_to_csv
+   :members:
+   :undoc-members:
+   :show-inheritance:
