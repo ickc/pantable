@@ -44,6 +44,8 @@ pandoc versioning semantics is [MAJOR.MAJOR.MINOR.PATCH](https://pvp.haskell.org
 
 Note: pandoc 2.10 is short lived and 2.11 has minor API changes comparing to that, mainly for fixing its shortcomings. Please avoid using pandoc 2.10.
 
+To use pantable with pandoc < 2.10, install pantable 0.12 explicitly by `pip install pantable~=0.12.4`.
+
 # `pantable`
 
 This allows CSV tables, optionally containing markdown syntax (disabled by default), to be put in markdown as a fenced code blocks.
