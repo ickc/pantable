@@ -33,3 +33,15 @@ build/
 .vscode/
 
 gh-pages/
+
+docs/*
+!docs/badges.markdown
+!docs/comparison.csv
+!docs/example.csv
+!docs/README.md
+# Sphinx
+!docs/conf.py
+!docs/index.rst
+!docs/make.bat
+!docs/Makefile
+!docs/requirements.txt
