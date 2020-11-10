@@ -45,8 +45,8 @@ jobs:
       run: |
         pip install --upgrade setuptools pip
         pip install wheel
-        # install panflute 1.12 if pandoc<2.10
-        [[ 2.10 == $(echo -e "${{ matrix.pandoc-version }}\n2.10" | sort -V | head -n1) ]] || pip install panflute==1.12
+        # install panflute 1.12 if pandoc<2.10 else master (panflute>=2 when released)
+        [[ 2.10 == $(echo -e "${{ matrix.pandoc-version }}\n2.10" | sort -V | head -n1) ]] && pip install git+https://github.com/sergiocorreia/panflute.git@master || pip install panflute==1.12
         pip install -e .[test]
     - name: Install dependencies—pandoc
       run: |
