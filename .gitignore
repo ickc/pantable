@@ -24,6 +24,7 @@ htmlcov/
 .idea/
 
 # rst2html
+README.rst
 README.html
 
 .mypy_cache/
