@@ -23,7 +23,7 @@ pandocArgHTML = $(pandocArgFragment) -t $(HTMLVersion) --toc-depth=2 -s -N -c $(
 pandocArgReadmeGitHub = $(pandocArgFragment) --toc-depth=2 -s -t markdown_github --reference-location=block
 pandocArgReadmePypi = $(pandocArgFragment) -s -t rst --reference-location=block -f markdown+autolink_bare_uris-fancy_lists-implicit_header_references
 
-docsAll = docs/README.pdf README.md docs/README.rst README.html
+docsAll = docs/README.pdf README.md docs/README.rst
 
 # Main Targets #################################################################
 
@@ -37,10 +37,12 @@ testFull: pytest pep8 pylint
 	coverage html
 
 clean:
-	rm -f .coverage $(testAll) tests/reference_idempotent.native $(docsAll)
-	rm -rf htmlcov pantable.egg-info .cache .idea dist
+	rm -f .coverage $(testAll) tests/reference_idempotent.native $(docsAll) docs/pantable*.rst docs/modules.rst docs/setup.rst
+	rm -rf htmlcov pantable.egg-info .cache .idea dist docs/_build docs/_static docs/_templates
 	find . -type f \( -name "*.py[co]" -o -name ".coverage.*" \) -delete -or -type d -name "__pycache__" -delete
 	find tests -name '*.pdf' -delete
+	cd docs && make clean
+	find gh-pages -maxdepth 1 -mindepth 1 \! -name .git -exec rm -rf {} +
 
 # Making dependancies ##########################################################
 
