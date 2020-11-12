@@ -42,7 +42,7 @@ clean:
 	find . -type f \( -name "*.py[co]" -o -name ".coverage.*" \) -delete -or -type d -name "__pycache__" -delete
 	find tests -name '*.pdf' -delete
 	cd docs && make clean
-	[[ -d gh-pages ]] && find gh-pages -maxdepth 1 -mindepth 1 \! -name .git -exec rm -rf {} +
+	[[ -d gh-pages ]] && find gh-pages -maxdepth 1 -mindepth 1 \! -name .git -exec rm -rf {} + || true
 
 # Making dependancies ##########################################################
 
