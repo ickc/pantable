@@ -27,6 +27,8 @@ because there’s a new AST change related to table spans. See more in
 <a href="https://github.com/ickc/pantable/issues/51" class="uri">https://github.com/ickc/pantable/issues/51</a>.
 Until that is resolved, please stick with 2.9.2.1 or below.**
 
+**Warning: after studying the new AST, the decision is to completely rewrite pantable. I'd advice against PR for now, as the current code base is going to be obsolete soon.**
+
 The pantable package comes with 2 pandoc filters, `pantable` and
 `pantable2csv`. `pantable` is the main filter, introducing a syntax to
 include CSV table in markdown source. `pantable2csv` complements
