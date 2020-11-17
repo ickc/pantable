@@ -3,9 +3,8 @@ import panflute
 from ..table_to_csv import table_to_csv
 
 
-def main(doc=None):
-    """
-    Any native pandoc tables will be converted into the CSV table format used by pantable:
+def main(doc: panflute.Doc = None):
+    """Covert all tables to CSV table format defined in pantable
 
     - in code-block with class table
     - metadata in YAML

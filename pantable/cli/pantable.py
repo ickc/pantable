@@ -3,10 +3,12 @@ import panflute
 from ..codeblock_to_table import codeblock_to_table
 
 
-def main(doc=None):
-    """
+def main(doc: panflute.Doc = None):
+    """a pandoc filter converting csv table in code block
+
     Fenced code block with class table will be parsed using
-    panflute.yaml_filter with the fuction codeblock_to_table above.
+    panflute.yaml_filter with the fuction
+    :func:`pantable.codeblock_to_table.codeblock_to_table`
     """
     return panflute.run_filter(
         panflute.yaml_filter,

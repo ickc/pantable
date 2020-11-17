@@ -5,7 +5,7 @@ from .csv_to_table_markdown import csv_to_table_markdown
 from .util import EmptyTableError
 
 
-def codeblock_to_table(options, data, **args):
+def codeblock_to_table(options: dict, data: str, **args):
     use_pipe_tables = options.get('pipe_tables', False)
     use_grid_tables = options.get('grid_tables', False)
 
