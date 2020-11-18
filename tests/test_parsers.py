@@ -20,6 +20,7 @@ def test_from_panflute_ast():
             table = temp[0]
             pan_table = PanTable.from_panflute_ast(table)
             table_idem = pan_table.to_panflute_ast()
+            # check for idempotence
             native_orig = convert_text(table, input_format='panflute', output_format='native')
             native_idem = convert_text(table_idem, input_format='panflute', output_format='native')
             if native_orig == native_idem:
