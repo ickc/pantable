@@ -254,10 +254,6 @@ class PanTable(FakeRepr, AlignText):
             'cells': self.cells,
         }
 
-    # def split_rows_by_type(self):
-        # applying np.split(array_of_all_rows, idxs_split) would break it back into list of head, bodies, foot
-        # idxs_split = np.cumsum(self.ms)[:-1]
-
     @property
     def n_bodies(self) -> int:
         return self.ns_head.size
@@ -281,6 +277,7 @@ class PanTable(FakeRepr, AlignText):
     @ms.setter
     def ms(self, ms):
         del self.idxs_ms
+        del self.idxs_split
         del self.is_heads
         del self.is_foots
         del self.is_body_heads
@@ -322,6 +319,19 @@ class PanTable(FakeRepr, AlignText):
         idxs_body[self.is_foots] = -1
         return idxs_body
 
+    @cached_property
+    def idxs_split(self) -> np.ndarray[np.int64]:
+        '''applying np.split(array_of_all_rows, idxs_split) would break it back into list of head, bodies, foot
+        '''
+        return np.cumsum(self.ms)[:-1]
+
+    def iter_row_blocks(self, array: np.ndarray) -> List[np.ndarray]:
+        '''break array into list of head, bodies, foot
+
+        assume array is iterables of rows
+        '''
+        return np.split(array, self.idxs_split)
+
     def iterrows(self):
         idxs_ms = self.idxs_ms
         is_heads = self.is_heads
@@ -353,6 +363,21 @@ class PanTable(FakeRepr, AlignText):
                 'cells': self.cells[i]
             })
         return res
+
+    @staticmethod
+    def iter_tablerow(
+        icas_row: np.ndarray[Ica],
+        pf_cells: np.ndarray[TableCell],
+    ) -> List[TableRow]:
+        return [
+            TableRow(
+                *[i for i in pf_row_array if i is not None],
+                identifier=ica.identifier,
+                classes=ica.classes,
+                attributes=ica.attributes
+            )
+            for ica, pf_row_array in zip(icas_row, pf_cells)
+        ]
 
     @property
     def cells_cannonical(self) -> np.ndarray[PanCellPlain]:
@@ -457,84 +482,59 @@ class PanTable(FakeRepr, AlignText):
 
         colspec = self.spec.to_panflute_ast()
 
-        pf_cells = pancell_to_panflute_tablecell(
+        icas_row_by_blocks = self.iter_row_blocks(self.icas_row)
+        pf_cells_by_blocks = self.iter_row_blocks(pancell_to_panflute_tablecell(
             self.icas,
             self.aligns_text,
             self.cells_cannonical,
-        )
+        ))
 
-        # temporarily holding the contents before constructing Table
-        temp = {
-            'head': {
-                'content': [],
-            },
-            'body': [],
-            'foot': {
-                'content': [],
-            }
-        }
-        for _ in range(self.n_bodies):
-            temp['body'].append({
-                'head': [],
-                'content': [],
-            })
-
-        for row_dict, pf_row_array in zip(self.iterrows(), pf_cells):
-            ica = row_dict['ica_row']
-            row = TableRow(*[i for i in pf_row_array if i is not None], identifier=ica.identifier, classes=ica.classes, attributes=ica.attributes)
-
-            is_head = row_dict['is_head']
-            is_foot = row_dict['is_foot']
-            if is_head or is_foot:
-                key = 'head' if is_head else 'foot'
-                dict_cur = temp[key]
-                # do it once as each iterrow repeated this info
-                if 'ica' not in dict_cur:
-                    dict_cur['ica'] = row_dict['ica_row_block']
-                dict_cur['content'].append(row)
-            # body
-            else:
-                dict_cur = temp['body'][row_dict['idx_body']]
-                if 'ica' not in dict_cur:
-                    dict_cur['ica'] = row_dict['ica_row_block']
-                if 'n_head' not in dict_cur:
-                    dict_cur['n_head'] = row_dict['n_head']
-                key = 'head' if row_dict['is_body_head'] else 'content'
-                dict_cur[key].append(row)
-
-        head_foot = dict()
-        for key in ('head', 'foot'):
-            case = temp[key]
-            content = case['content']
-            TableBlock = TableHead if key == 'head' else TableFoot
-            if content:
-                ica = case['ica']
-                head_foot[key] = TableBlock(*content, identifier=ica.identifier, classes=ica.classes, attributes=ica.attributes)
-            else:
-                head_foot[key] = TableBlock()
-
+        # head
+        ica_block = self.icas_row_block[0]
+        icas_row_block = icas_row_by_blocks[0]
+        pf_cells_block = pf_cells_by_blocks[0]
+        content = self.iter_tablerow(icas_row_block, pf_cells_block)
+        head = TableHead(*content, identifier=ica_block.identifier, classes=ica_block.classes, attributes=ica_block.attributes)
+        # bodies
         bodies = []
-        for body in temp['body']:
-            ica = body['ica']
+        for i in range(self.n_bodies):
+            row_head_columns = int(self.ns_head[i])
+            # offset 1 as 1st is head
+            ica_block = self.icas_row_block[1 + i]
+            temp = []
+            for j in range(2):
+                # offset 1 as 1st is head
+                # 2 * i as 2 elements per body
+                # 1st is body-head, 2nd is body-body
+                idx_body = 1 + 2 * i + j
+                icas_row_block = icas_row_by_blocks[idx_body]
+                pf_cells_block = pf_cells_by_blocks[idx_body]
+                temp.append(self.iter_tablerow(icas_row_block, pf_cells_block))
             bodies.append(TableBody(
-                *body['content'],
-                head=body['head'],
-                row_head_columns=int(body['n_head']),
-                identifier=ica.identifier,
-                classes=ica.classes,
-                attributes=ica.attributes,
+                *temp[1],
+                head=temp[0],
+                row_head_columns=row_head_columns,
+                identifier=ica_block.identifier,
+                classes=ica_block.classes,
+                attributes=ica_block.attributes,
             ))
-        table = Table(
+        # foot
+        ica_block = self.icas_row_block[-1]
+        icas_row_block = icas_row_by_blocks[-1]
+        pf_cells_block = pf_cells_by_blocks[-1]
+        content = self.iter_tablerow(icas_row_block, pf_cells_block)
+        foot = TableFoot(*content, identifier=ica_block.identifier, classes=ica_block.classes, attributes=ica_block.attributes)
+
+        return Table(
             *bodies,
-            head=head_foot['head'],
-            foot=head_foot['foot'],
+            head=head,
+            foot=foot,
             caption=caption,
             colspec=colspec,
             identifier=self.ica_table.identifier,
             classes=self.ica_table.classes,
             attributes=self.ica_table.attributes,
         )
-        return table
 
     def to_ascii_table(self, width: int = 15, cannonical=True) -> str:
         '''print the table as ascii table
