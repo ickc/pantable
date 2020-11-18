@@ -1,12 +1,21 @@
 from __future__ import annotations
 
+import sys
 from typing import Union, List, Tuple, Optional
 from itertools import chain
 from pprint import pformat
 
+if (sys.version_info.major, sys.version_info.minor) < (3, 8):
+    try:
+        from backports.cached_property import cached_property
+    except ImportError:
+        raise ImportError('Using Python 3.6 or 3.7? Please run "pip install backports.cached_property".')
+else:
+    from functools import cached_property
+
 import numpy as np
 
-from panflute.table_elements import Table, TableCell
+from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
 from panflute.containers import ListContainer
 from panflute.tools import stringify
 
@@ -57,7 +66,18 @@ class FakeRepr():
         raise NotImplementedError
 
 
-class Spec(FakeRepr):
+class AlignText():
+    '''a mixin for getting aligns_text from aligns
+    '''
+
+    aligns: np.ndarray[np.int8]
+
+    @property
+    def aligns_text(self) -> np.ndarray[np.str_]:
+        return ALIGN[self.aligns]
+
+
+class Spec(FakeRepr, AlignText):
     '''a class of spec of PanTable
     '''
 
@@ -79,10 +99,6 @@ class Spec(FakeRepr):
     def size(self) -> int:
         return self.aligns.size
 
-    @property
-    def aligns_text(self) -> np.ndarray[np.str_]:
-        return ALIGN[self.aligns]
-
     @classmethod
     def from_panflute_ast(cls, table: Table) -> Spec:
         spec = table.colspec
@@ -103,6 +119,12 @@ class Spec(FakeRepr):
             col_widths,
         )
 
+    def to_panflute_ast(self) -> List[Tuple]:
+        return [
+            (align, COLWIDTHDEFAULT if np.isnan(width) else width)
+            for align, width in zip(self.aligns_text, self.col_widths)
+        ]
+
 
 class PanCellPlain():
     '''a class of simple cell within PanTable
@@ -118,6 +140,9 @@ class PanCellPlain():
 
     def __repr__(self) -> str:
         return repr(self.content)
+
+    def is_at(self, loc) -> bool:
+        return True
 
 
 class PanCellBlock(PanCellPlain):
@@ -136,7 +161,7 @@ class PanCellBlock(PanCellPlain):
     def __repr__(self) -> str:
         return f'PanCellBlock({repr(self.content)}, {repr(self.shape)}, {repr(self.idxs)})'
 
-    def put_array(self, array, overwrite=False):
+    def put(self, array, overwrite=False):
         '''put itself inside giving array
         '''
         x, y = self.shape
@@ -148,8 +173,41 @@ class PanCellBlock(PanCellPlain):
                 else:
                     raise ValueError(f"At location {self.idxs} there's not enough empty cells for a block of size {self.shape} in the given array {array}")
 
+    def is_at(self, loc: Tuple[int, int]) -> bool:
+        return loc == self.idxs
 
-class PanTable(FakeRepr):
+
+def pancell_to_panflute_tablecell(
+    icas: np.ndarray[Ica],
+    aligns_text: np.ndarray,
+    cells: np.ndarray[PanCellPlain],
+) -> np.ndarray[TableCell]:
+    icas_flat = icas.ravel()
+    aligns_flat = aligns_text.ravel()
+    cells_flat = cells.ravel()
+
+    res = np.empty_like(cells)
+    res_flat = res.ravel()
+    for i in range(res_flat.size):
+        cell = cells_flat[i]
+        if cell is None:
+            res_flat[i] = None
+        else:
+            rowspan, colspan = cell.shape
+            ica = icas_flat[i]
+            res_flat[i] = TableCell(
+                *cell.content,
+                alignment=aligns_flat[i],
+                rowspan=rowspan,
+                colspan=colspan,
+                identifier=ica.identifier,
+                classes=ica.classes,
+                attributes=ica.attributes,
+            )
+    return res
+
+
+class PanTable(FakeRepr, AlignText):
     '''a representation of panflute Table
     '''
 
@@ -160,20 +218,20 @@ class PanTable(FakeRepr):
         spec: Spec,
         shape: List[int],
         ms: np.ndarray[np.int64], ns_head: np.ndarray[np.int64],
-        icas_body: np.ndarray[Ica],
+        icas_row_block: np.ndarray[Ica],
         icas_row: np.ndarray[Ica],
         icas: np.ndarray[Ica],
         aligns: np.ndarray[np.int8],
-        cells: np.ndarray[ListContainer],
+        cells: np.ndarray[PanCellPlain],
     ):
         self.ica_table = ica_table
         self.short_caption = short_caption
         self.caption = caption
         self.spec = spec
         self.shape = shape
-        self.ms = ms
+        self._ms = ms
         self.ns_head = ns_head
-        self.icas_body = icas_body
+        self.icas_row_block = icas_row_block
         self.icas_row = icas_row
         self.icas = icas
         self.aligns = aligns
@@ -189,16 +247,127 @@ class PanTable(FakeRepr):
             'shape': self.shape,
             'ms': self.ms,
             'ns_head': self.ns_head,
-            'icas_body': self.icas_body,
+            'icas_row_block': self.icas_row_block,
             'icas_row': self.icas_row,
             'icas': self.icas,
             'aligns': self.aligns_text,
             'cells': self.cells,
         }
 
+    # def split_rows_by_type(self):
+        # applying np.split(array_of_all_rows, idxs_split) would break it back into list of head, bodies, foot
+        # idxs_split = np.cumsum(self.ms)[:-1]
+
     @property
-    def aligns_text(self) -> np.ndarray[np.str_]:
-        return ALIGN[self.aligns]
+    def n_bodies(self) -> int:
+        return self.ns_head.size
+
+    @property
+    def ica_head(self) -> Ica:
+        return self.icas_row_block[0]
+
+    @property
+    def icas_body(self) -> np.ndarray[Ica]:
+        return self.icas_row_block[1:-1]
+
+    @property
+    def ica_foot(self) -> Ica:
+        return self.icas_row_block[-1]
+
+    @property
+    def ms(self) -> np.ndarray[np.int64]:
+        return self._ms
+
+    @ms.setter
+    def ms(self, ms):
+        del self.idxs_ms
+        del self.is_heads
+        del self.is_foots
+        del self.is_body_heads
+        del self.is_body_bodies
+        del self.idxs_body
+        self._ms = ms
+        self.shape[0] = ms.sum()
+
+    @cached_property
+    def idxs_ms(self) -> np.ndarray[np.int64]:
+        '''reverse lookup the index of rows in blocks of ms
+        '''
+        return np.digitize(np.arange(self.shape[0]), np.cumsum(self.ms))
+
+    @cached_property
+    def is_heads(self) -> np.ndarray[np.bool_]:
+        return self.idxs_ms == 0
+
+    @cached_property
+    def is_foots(self) -> np.ndarray[np.bool_]:
+        return self.idxs_ms == (self.ms.size - 1)
+
+    @cached_property
+    def is_body_heads(self) -> np.ndarray[np.bool_]:
+        maybe_body_heads = self.idxs_ms % 2 == 1
+        return (~self.is_foots) & maybe_body_heads
+
+    @cached_property
+    def is_body_bodies(self) -> np.ndarray[np.bool_]:
+        return ~(self.is_heads | self.is_foots | self.is_body_heads)
+
+    @cached_property
+    def idxs_body(self) -> np.ndarray[np.int64]:
+        '''calculate the i-th body that each row belongs to
+
+        negative values means the row is not in a body
+        '''
+        idxs_body = (self.idxs_ms - 1) // 2
+        idxs_body[self.is_foots] = -1
+        return idxs_body
+
+    def iterrows(self):
+        idxs_ms = self.idxs_ms
+        is_heads = self.is_heads
+        is_foots = self.is_foots
+        is_body_heads = self.is_body_heads
+        is_body_bodies = self.is_body_bodies
+        idxs_body = self.idxs_body
+
+        res = []
+        for i in range(self.shape[0]):
+            idx_block = idxs_ms[i]
+            is_head = is_heads[i]
+            is_body_head = is_body_heads[i]
+            is_body_body = is_body_bodies[i]
+            is_foot = is_foots[i]
+            idx_body = idxs_body[i]
+            idx_body = None if idx_body < 0 else idx_body
+            res.append({
+                'is_head': is_head,
+                'is_body_head': is_body_head,
+                'is_body_body': is_body_body,
+                'is_foot': is_foot,
+                'idx_body': idx_body,
+                'n_head': None if idx_body is None else self.ns_head[idx_body],
+                'ica_row_block': self.icas_row_block[idx_block],
+                'ica_row': self.icas_row[i],
+                'icas': self.icas[i],
+                'aligns': self.aligns[i],
+                'cells': self.cells[i]
+            })
+        return res
+
+    @property
+    def cells_cannonical(self) -> np.ndarray[PanCellPlain]:
+        '''return a cell array where spanned cells appeared in cannonical location only
+
+        top-left corner of the grid is the cannonical location of a spanned cell
+        '''
+        cells = self.cells
+        res = np.empty_like(cells)
+        m, n = cells.shape
+        for i in range(m):
+            for j in range(n):
+                cell = cells[i, j]
+                res[i, j] = cell if cell.is_at((i, j)) else None
+        return res
 
     @classmethod
     def from_panflute_ast(cls, table: Table) -> PanTable:
@@ -215,15 +384,17 @@ class PanTable(FakeRepr):
         n = spec.size
 
         head = table.head
-        bodies = table.content
         foot = table.foot
 
+        bodies = table.content
         n_bodies = len(bodies)
         ns_head = np.empty(n_bodies, dtype=np.int64)
-        icas_body = np.empty(n_bodies, dtype='O')
+        icas_row_block = np.empty(n_bodies + 2, dtype='O')
+        icas_row_block[0] = Ica(head.identifier, head.classes, head.attributes)
         for i, body in enumerate(bodies):
             ns_head[i] = body.row_head_columns
-            icas_body[i] = Ica(body.identifier, body.classes, body.attributes)
+            icas_row_block[i + 1] = Ica(body.identifier, body.classes, body.attributes)
+        icas_row_block[i + 2] = Ica(foot.identifier, foot.classes, foot.attributes)
 
         # there are 1 head,
         # then n bodies, for each body one head and one content,
@@ -235,8 +406,6 @@ class PanTable(FakeRepr):
             ms[2 * i + 2] = len(body.content)
         ms[-1] = len(foot.content)
 
-        # TODO: put this in a method. applying np.split(array_of_all_rows, idxs_split) would break it back into list of head, bodies, foot
-        # idxs_split = np.cumsum(ms)[:-1]
         m = ms.sum()
 
         shape = [m, n]
@@ -259,11 +428,10 @@ class PanTable(FakeRepr):
                 rowspan: int = cell.rowspan
                 colspan: int = cell.colspan
                 if rowspan == 1 and colspan == 1:
-                    pan_cell = PanCellPlain(cell.content)
                     cells[i, j] = PanCellPlain(cell.content)
                 else:
                     pan_cell = PanCellBlock(cell.content, (rowspan, colspan), (i, j))
-                    pan_cell.put_array(cells)
+                    pan_cell.put(cells)
 
                 icas[i, j] = Ica(cell.identifier, cell.classes, cell.attributes)
                 aligns[i, j] = ALIGN_TO_IDX[cell.alignment[5]]
@@ -274,14 +442,101 @@ class PanTable(FakeRepr):
             spec,
             shape,
             ms, ns_head,
-            icas_body,
+            icas_row_block,
             icas_row,
             icas,
             aligns,
             cells,
         )
 
-    def to_ascii_table(self, width: int = 15) -> str:
+    def to_panflute_ast(self) -> Table:
+        caption = Caption(
+            *self.caption,
+            short_caption=self.short_caption,
+        )
+
+        colspec = self.spec.to_panflute_ast()
+
+        pf_cells = pancell_to_panflute_tablecell(
+            self.icas,
+            self.aligns_text,
+            self.cells_cannonical,
+        )
+
+        # temporarily holding the contents before constructing Table
+        temp = {
+            'head': {
+                'content': [],
+            },
+            'body': [],
+            'foot': {
+                'content': [],
+            }
+        }
+        for _ in range(self.n_bodies):
+            temp['body'].append({
+                'head': [],
+                'content': [],
+            })
+
+        for row_dict, pf_row_array in zip(self.iterrows(), pf_cells):
+            ica = row_dict['ica_row']
+            row = TableRow(*[i for i in pf_row_array if i is not None], identifier=ica.identifier, classes=ica.classes, attributes=ica.attributes)
+
+            is_head = row_dict['is_head']
+            is_foot = row_dict['is_foot']
+            if is_head or is_foot:
+                key = 'head' if is_head else 'foot'
+                dict_cur = temp[key]
+                # do it once as each iterrow repeated this info
+                if 'ica' not in dict_cur:
+                    dict_cur['ica'] = row_dict['ica_row_block']
+                dict_cur['content'].append(row)
+            # body
+            else:
+                dict_cur = temp['body'][row_dict['idx_body']]
+                if 'ica' not in dict_cur:
+                    dict_cur['ica'] = row_dict['ica_row_block']
+                if 'n_head' not in dict_cur:
+                    dict_cur['n_head'] = row_dict['n_head']
+                key = 'head' if row_dict['is_body_head'] else 'content'
+                dict_cur[key].append(row)
+
+        head_foot = dict()
+        for key in ('head', 'foot'):
+            case = temp[key]
+            content = case['content']
+            TableBlock = TableHead if key == 'head' else TableFoot
+            if content:
+                ica = case['ica']
+                head_foot[key] = TableBlock(*content, identifier=ica.identifier, classes=ica.classes, attributes=ica.attributes)
+            else:
+                head_foot[key] = TableBlock()
+
+        bodies = []
+        for body in temp['body']:
+            ica = body['ica']
+            bodies.append(TableBody(
+                *body['content'],
+                head=body['head'],
+                row_head_columns=int(body['n_head']),
+                identifier=ica.identifier,
+                classes=ica.classes,
+                attributes=ica.attributes,
+            ))
+        table = Table(
+            *bodies,
+            head=head_foot['head'],
+            foot=head_foot['foot'],
+            caption=caption,
+            colspec=colspec,
+            identifier=self.ica_table.identifier,
+            classes=self.ica_table.classes,
+            attributes=self.ica_table.attributes,
+        )
+        return table
+
+    def to_ascii_table(self, width: int = 15, cannonical=True) -> str:
         '''print the table as ascii table
 
         :param int width: width per column
@@ -292,11 +547,11 @@ class PanTable(FakeRepr):
 
         return AsciiTable([
             [
-                '\n'.join(wrap(
+                '' if cell is None else '\n'.join(wrap(
                     stringify(TableCell(*cell.content)),
                     width,
                 ))
-            for cell in row
+                for cell in row
             ]
-            for row in self.cells
+            for row in (self.cells_cannonical if cannonical else self.cells)
         ]).table
