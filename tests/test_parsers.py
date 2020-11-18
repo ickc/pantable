@@ -12,7 +12,7 @@ def test_from_panflute_ast():
     paths = (Path(__file__).parent / 'native').glob('*.native')
     for path in paths:
         try:
-            with open (path, 'r') as f:
+            with open(path, 'r') as f:
                 temp = convert_text(f.read(), input_format='native')
             # input files should only have 1 single outter block
             assert len(temp) == 1
