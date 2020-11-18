@@ -214,10 +214,9 @@ class PanTable(FakeRepr, AlignText):
     def __init__(
         self,
         ica_table: Ica,
-        short_caption: Union[ListContainer, None], caption: ListContainer,
+        short_caption: Optional[ListContainer], caption: ListContainer,
         spec: Spec,
-        shape: List[int],
-        ms: np.ndarray[np.int64], ns_head: np.ndarray[np.int64],
+        ms: np.ndarray[np.int64], n: int, ns_head: np.ndarray[np.int64],
         icas_row_block: np.ndarray[Ica],
         icas_row: np.ndarray[Ica],
         icas: np.ndarray[Ica],
@@ -228,8 +227,8 @@ class PanTable(FakeRepr, AlignText):
         self.short_caption = short_caption
         self.caption = caption
         self.spec = spec
-        self.shape = shape
         self._ms = ms
+        self.n = n
         self.ns_head = ns_head
         self.icas_row_block = icas_row_block
         self.icas_row = icas_row
@@ -253,6 +252,10 @@ class PanTable(FakeRepr, AlignText):
             'aligns': self.aligns_text,
             'cells': self.cells,
         }
+
+    @property
+    def shape(self) -> Tuple[int, int]:
+        return (self._ms.sum(), self.n)
 
     @property
     def n_bodies(self) -> int:
@@ -284,7 +287,6 @@ class PanTable(FakeRepr, AlignText):
         del self.is_body_bodies
         del self.idxs_body
         self._ms = ms
-        self.shape[0] = ms.sum()
 
     @cached_property
     def idxs_ms(self) -> np.ndarray[np.int64]:
@@ -433,7 +435,7 @@ class PanTable(FakeRepr, AlignText):
 
         m = ms.sum()
 
-        shape = [m, n]
+        shape = (m, n)
         icas_row = np.empty(m, dtype='O')
         icas = np.empty(shape, dtype='O')
         aligns = np.zeros(shape, dtype=np.int8)
@@ -465,8 +467,7 @@ class PanTable(FakeRepr, AlignText):
             ica_table,
             short_caption, caption,
             spec,
-            shape,
-            ms, ns_head,
+            ms, n, ns_head,
             icas_row_block,
             icas_row,
             icas,
