@@ -98,7 +98,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['panflute>=1.8.2,<2', 'pyyaml'],
+    install_requires=['panflute>=2', 'pyyaml'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
