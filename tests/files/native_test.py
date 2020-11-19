@@ -1,20 +1,17 @@
 from pathlib import Path
 import sys
 import inspect
+from typing import Tuple
 
 from panflute import convert_text
 
 from pantable.ast import PanTable
 
 
-def routine():
+def read(path: Path) -> Tuple[str, str]:
     '''test parsing native table into Pantable
     '''
-    # c.f. https://stackoverflow.com/a/5067654
-    name = inspect.stack()[1][3].split('_')[1]
-
-    path = Path(__file__).parent / 'native' / f'{name}.native'
-    print(f'Testing case {name} in {path}...', file=sys.stderr)
+    print(f'Testing case {path}...', file=sys.stderr)
     with open(path, 'r') as f:
         native = f.read()
     doc = convert_text(native, input_format='native')
@@ -26,7 +23,15 @@ def routine():
     # check for idempotence
     native_orig = convert_text(table, input_format='panflute', output_format='native')
     native_idem = convert_text(table_idem, input_format='panflute', output_format='native')
-    assert native_orig == native_idem
+    return native_orig, native_idem
+
+
+def routine():
+    # c.f. https://stackoverflow.com/a/5067654
+    name = inspect.stack()[1][3].split('_')[1]
+    path = Path(__file__).parent / 'native' / f'{name}.native'
+    res = read(path)
+    assert res[0] == res[1]
 
 # test_NAME will test against the file NAME.native
 
