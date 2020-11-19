@@ -7,6 +7,17 @@ from panflute import convert_text
 
 from pantable.ast import PanTable
 
+EXT = 'native'
+DIR = Path(__file__).parent / EXT
+
+
+def gen_funcs():
+    paths = list(Path(DIR).glob(f'*.{EXT}'))
+    paths.sort()
+    for path in paths:
+        print(f'''def test_{path.stem}():
+    routine()''', end='\n\n\n')
+
 
 def read(path: Path) -> Tuple[str, str]:
     '''test parsing native table into Pantable
@@ -28,12 +39,13 @@ def read(path: Path) -> Tuple[str, str]:
 
 def routine():
     # c.f. https://stackoverflow.com/a/5067654
-    name = inspect.stack()[1][3].split('_')[1]
-    path = Path(__file__).parent / 'native' / f'{name}.native'
+    name = '_'.join(inspect.stack()[1][3].split('_')[1:])
+    path = DIR / f'{name}.{EXT}'
     res = read(path)
     assert res[0] == res[1]
 
 # test_NAME will test against the file NAME.native
+# use gen_funcs to generate the functions below
 
 def test_nordics():
     routine()
