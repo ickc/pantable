@@ -18,7 +18,7 @@ def gen_funcs():
     paths.sort()
     for path in paths:
         print(f'''def test_{path.stem}():
-        routine()''', end='\n\n\n')
+    routine()''', end='\n\n\n')
 
 
 def read(path: Path, path_ref: Path) -> Tuple[str, str]:
@@ -52,54 +52,60 @@ def routine():
 # use gen_funcs to generate the functions below
 
 def test_comparison():
-        routine()
+    routine()
+
 
 def test_empty_csv():
-        routine()
+    routine()
+
 
 def test_encoding():
-        routine()
+    routine()
+
 
 def test_full_test():
-        routine()
+    routine()
+
 
 def test_grid_table():
-        routine()
+    routine()
+
+
 def test_include_external_csv():
-        routine()
+    routine()
 
 
 def test_include_external_csv_invalid_path():
-        routine()
+    routine()
 
 
 def test_invalid_yaml():
-        routine()
+    routine()
 
 
 def test_irregular_csv():
-        routine()
+    routine()
 
 
 def test_one_row_table():
-        routine()
+    routine()
 
 
 def test_pipe_table_1():
-        routine()
+    routine()
 
 
 def test_pipe_table_2():
-        routine()
+    routine()
 
 
 def test_simple_test():
-        routine()
+    routine()
 
 
 def test_testing_0_table_width():
-        routine()
+    routine()
 
 
 def test_testing_wrong_type():
-        routine()
+    routine()
