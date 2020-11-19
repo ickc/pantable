@@ -14,6 +14,22 @@ def ast_to_markdown(ast):
     )
 
 
+def parse_markdown_codeblock(text: str) -> dict:
+    '''parse markdown CodeBlock just as `panflute.yaml_filter` would
+
+    useful for development to obtain the objects that the filter
+    would see after passed to `panflute.yaml_filter`
+
+    :param str text: must be a single codeblock of class table in markdown
+    '''
+
+    def function(**kwargs):
+        return kwargs
+
+    doc = panflute.convert_text(text, standalone=True)
+    return panflute.yaml_filter(doc.content[0], doc, tag='table', function=function, strict_yaml=True)
+
+
 def table_for_pprint(table: panflute.Table):
     '''represent panflute Table in a dict structure for pprint
 
