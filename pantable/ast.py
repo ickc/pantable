@@ -20,7 +20,7 @@ from panflute.containers import ListContainer
 from panflute.tools import stringify
 
 try:
-    from dataclasses import dataclass
+    from dataclasses import dataclass, field
 except ImportError:
     raise ImportError('Using Python 3.6? Please run "pip install dataclasses".')
 
@@ -46,12 +46,12 @@ COLWIDTHDEFAULT = 'ColWidthDefault'
 @dataclass
 class Ica:
     """a class of identifier, classes, and attributes"""
-    identifier: str
-    classes: list
-    attributes: dict
+    identifier: str = ''
+    classes: list = field(default_factory=list)
+    attributes: dict = field(default_factory=dict)
 
 
-class FakeRepr():
+class FakeRepr:
     '''a mixin for fake repr from to_dict method
     '''
 
@@ -66,7 +66,7 @@ class FakeRepr():
         raise NotImplementedError
 
 
-class AlignText():
+class AlignText:
     '''a mixin for getting aligns_text from aligns
     '''
 
@@ -126,7 +126,7 @@ class Spec(FakeRepr, AlignText):
         ]
 
 
-class PanCellPlain():
+class PanCellPlain:
     '''a class of simple cell within PanTable
     '''
     shape = (1, 1)
@@ -375,7 +375,7 @@ class PanTable(FakeRepr, AlignText):
         icas_row: np.ndarray[Ica],
         pf_cells: np.ndarray[TableCell],
     ) -> List[TableRow]:
-        return [
+        return (
             TableRow(
                 *[i for i in pf_row_array if i is not None],
                 identifier=ica.identifier,
@@ -383,7 +383,7 @@ class PanTable(FakeRepr, AlignText):
                 attributes=ica.attributes
             )
             for ica, pf_row_array in zip(icas_row, pf_cells)
-        ]
+        )
 
     @property
     def cells_cannonical(self) -> np.ndarray[PanCellPlain]:
