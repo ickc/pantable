@@ -370,6 +370,27 @@ class PanTable(FakeRepr, AlignText):
                 res[i, j] = cell if cell.is_at((i, j)) else None
         return res
 
+    def cells_stringified(self, width: int = 15, cannonical=True) -> str:
+        '''return stringified cells
+
+        :param int width: width per column
+        '''
+        from textwrap import wrap
+
+        cells = self.cells
+        res = np.empty_like(cells)
+        m, n = cells.shape
+        for i in range(m):
+            for j in range(n):
+                cell = cells[i, j]
+                if cannonical:
+                    cell = cell if cell.is_at((i, j)) else None
+                res[i, j] = '' if cell is None else '\n'.join(wrap(
+                    stringify(TableCell(*cell.content)),
+                    width,
+                ))
+        return res
+
     @property
     def panflute_tablecells(self) -> np.ndarray[TableCell]:
         cells = self.cells_cannonical
@@ -534,22 +555,15 @@ class PanTable(FakeRepr, AlignText):
             attributes=self.ica_table.attributes,
         )
 
-    def to_ascii_table(self, width: int = 15, cannonical=True) -> str:
+    def to_ascii_table(self, width: int = 15, cannonical=True, tablefmt='grid') -> str:
         '''print the table as ascii table
 
         :param int width: width per column
+        :param str tablefmt: in ('plain', 'simple', 'grid', 'fancy_grid', 'pipe', 'orgtbl', 'rst', 'mediawiki', 'html', 'latex', 'latex_raw', 'latex_booktabs', 'tsv')
         '''
-        from textwrap import wrap
+        from tabulate import tabulate
 
-        from terminaltables import AsciiTable
+        cells_stringified = self.cells_stringified(width=width, cannonical=cannonical)
+        headers = () if self.ms[0] == 0 else "firstrow"
 
-        return AsciiTable([
-            [
-                '' if cell is None else '\n'.join(wrap(
-                    stringify(TableCell(*cell.content)),
-                    width,
-                ))
-                for cell in row
-            ]
-            for row in (self.cells_cannonical if cannonical else self.cells)
-        ]).table
+        return tabulate(cells_stringified, tablefmt=tablefmt, headers=headers)
