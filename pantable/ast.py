@@ -177,36 +177,6 @@ class PanCellBlock(PanCellPlain):
         return loc == self.idxs
 
 
-def pancell_to_panflute_tablecell(
-    icas: np.ndarray[Ica],
-    aligns_text: np.ndarray,
-    cells: np.ndarray[PanCellPlain],
-) -> np.ndarray[TableCell]:
-    icas_flat = icas.ravel()
-    aligns_flat = aligns_text.ravel()
-    cells_flat = cells.ravel()
-
-    res = np.empty_like(cells)
-    res_flat = res.ravel()
-    for i in range(res_flat.size):
-        cell = cells_flat[i]
-        if cell is None:
-            res_flat[i] = None
-        else:
-            rowspan, colspan = cell.shape
-            ica = icas_flat[i]
-            res_flat[i] = TableCell(
-                *cell.content,
-                alignment=aligns_flat[i],
-                rowspan=rowspan,
-                colspan=colspan,
-                identifier=ica.identifier,
-                classes=ica.classes,
-                attributes=ica.attributes,
-            )
-    return res
-
-
 class PanTable(FakeRepr, AlignText):
     '''a representation of panflute Table
     '''
@@ -400,6 +370,33 @@ class PanTable(FakeRepr, AlignText):
                 res[i, j] = cell if cell.is_at((i, j)) else None
         return res
 
+    @property
+    def panflute_tablecells(self) -> np.ndarray[TableCell]:
+        cells = self.cells_cannonical
+        cells_flat = cells.ravel()
+        icas_flat = self.icas.ravel()
+        aligns_flat = self.aligns_text.ravel()
+
+        res = np.empty_like(cells)
+        res_flat = res.ravel()
+        for i in range(res_flat.size):
+            cell = cells_flat[i]
+            if cell is None:
+                res_flat[i] = None
+            else:
+                rowspan, colspan = cell.shape
+                ica = icas_flat[i]
+                res_flat[i] = TableCell(
+                    *cell.content,
+                    alignment=aligns_flat[i],
+                    rowspan=rowspan,
+                    colspan=colspan,
+                    identifier=ica.identifier,
+                    classes=ica.classes,
+                    attributes=ica.attributes,
+                )
+        return res
+
     @classmethod
     def from_panflute_ast(cls, table: Table) -> PanTable:
         ica_table = Ica(
@@ -488,11 +485,7 @@ class PanTable(FakeRepr, AlignText):
         colspec = self.spec.to_panflute_ast()
 
         icas_row_by_blocks = self.iter_rowblocks(self.icas_row)
-        pf_cells_by_blocks = self.iter_rowblocks(pancell_to_panflute_tablecell(
-            self.icas,
-            self.aligns_text,
-            self.cells_cannonical,
-        ))
+        pf_cells_by_blocks = self.iter_rowblocks(self.panflute_tablecells)
 
         # head
         ica_block = self.icas_rowblock[0]
