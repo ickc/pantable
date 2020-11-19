@@ -62,7 +62,7 @@ tests/files/md_reference/%.md: tests/files/md/%.md
 
 md_codeblock_reference: $(MDCODEBLOCKFILESOUTPUT)
 tests/files/md_codeblock_reference/%.md: tests/files/md_codeblock/%.md
-	cd $(<D); pandoc -F pantable -o ../md_codeblock_reference/$*.md $*.md
+	pandoc -F pantable -o $@ $<
 
 # maintenance ##################################################################
 
