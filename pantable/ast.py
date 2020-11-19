@@ -17,7 +17,7 @@ import numpy as np
 
 from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
 from panflute.containers import ListContainer
-from panflute.tools import stringify
+from panflute.tools import stringify, convert_text
 
 try:
     from dataclasses import dataclass, field
@@ -52,7 +52,7 @@ class Ica:
 
 
 class FakeRepr:
-    '''a mixin for fake repr from to_dict method
+    '''mixin for repr that doesn't yield itself after eval, from to_dict method
     '''
 
     def __str__(self) -> str:
@@ -205,6 +205,26 @@ class PanTable(FakeRepr, AlignText):
         self.icas = icas
         self.aligns = aligns
         self.cells = cells
+
+    def __str__(self, width: int = 15, cannonical=True, tablefmt='grid') -> str:
+        '''print the table as ascii table
+
+        :param int width: width per column
+        :param str tablefmt: in ('plain', 'simple', 'grid', 'fancy_grid', 'pipe', 'orgtbl', 'rst', 'mediawiki', 'html', 'latex', 'latex_raw', 'latex_booktabs', 'tsv')
+        '''
+        try:
+            from tabulate import tabulate
+
+            return tabulate(
+                self.cells_stringified(width=width, cannonical=cannonical),
+                tablefmt=tablefmt,
+                headers=() if self.ms[0] == 0 else "firstrow",
+            )
+        except ImportError:
+            return self.__repr__()
+
+    def _repr_html_(self) -> str:
+        return convert_text(self.to_panflute_ast(), input_format='panflute', output_format='html')
 
     def to_dict(self) -> dict:
         '''TODO'''
@@ -554,16 +574,3 @@ class PanTable(FakeRepr, AlignText):
             classes=self.ica_table.classes,
             attributes=self.ica_table.attributes,
         )
-
-    def to_ascii_table(self, width: int = 15, cannonical=True, tablefmt='grid') -> str:
-        '''print the table as ascii table
-
-        :param int width: width per column
-        :param str tablefmt: in ('plain', 'simple', 'grid', 'fancy_grid', 'pipe', 'orgtbl', 'rst', 'mediawiki', 'html', 'latex', 'latex_raw', 'latex_booktabs', 'tsv')
-        '''
-        from tabulate import tabulate
-
-        cells_stringified = self.cells_stringified(width=width, cannonical=cannonical)
-        headers = () if self.ms[0] == 0 else "firstrow"
-
-        return tabulate(cells_stringified, tablefmt=tablefmt, headers=headers)
