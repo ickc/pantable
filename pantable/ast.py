@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Union, List, Tuple, Optional
+from typing import Union, List, Tuple, Optional, Dict
 from itertools import chain
 from pprint import pformat
 
@@ -47,8 +47,8 @@ COLWIDTHDEFAULT = 'ColWidthDefault'
 class Ica:
     """a class of identifier, classes, and attributes"""
     identifier: str = ''
-    classes: list = field(default_factory=list)
-    attributes: dict = field(default_factory=dict)
+    classes: List[str] = field(default_factory=list)
+    attributes: Dict[str, str] = field(default_factory=dict)
 
 
 class FakeRepr:
