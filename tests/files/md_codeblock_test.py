@@ -30,10 +30,14 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
     with open(path_ref, 'r') as f:
         md_reference = f.read()
 
-    kwargs = parse_markdown_codeblock(text)
+    try:
+        kwargs = parse_markdown_codeblock(text)
+        doc = codeblock_to_table(kwargs['options'], kwargs['data'])
+        md_out = convert_text(doc, input_format='panflute', output_format='markdown')
+    except TypeError:
+        print(f'Cannot parse input codeblock, leaving as is.', file=sys.stderr)
+        md_out = text
 
-    doc = codeblock_to_table(**kwargs)
-    md_out = convert_text(doc, input_format='panflute', output_format='markdown')
     return md_reference, md_out
 
 
