@@ -22,7 +22,7 @@ from panflute.tools import stringify, convert_text
 try:
     from dataclasses import dataclass, field
 except ImportError:
-    raise ImportError('Using Python 3.6? Please run "pip install dataclasses".')
+    raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
 
 ALIGN = np.array([
@@ -221,6 +221,7 @@ class PanTable(FakeRepr, AlignText):
                 headers=() if self.ms[0] == 0 else "firstrow",
             )
         except ImportError:
+            print(f'Consider having a better str by `pip install tabulate` or `conda install tabulate`.', file=sys.stderr)
             return self.__repr__()
 
     def _repr_html_(self) -> str:
@@ -329,6 +330,7 @@ class PanTable(FakeRepr, AlignText):
         return np.split(array, self.rowblock_splitting_idxs)
 
     def iterrows(self):
+        '''TODO'''
         rowblock_idxs_row = self.rowblock_idxs_row
         is_heads = self.is_heads
         is_foots = self.is_foots
