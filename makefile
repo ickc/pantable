@@ -26,8 +26,10 @@ pandocArgReadmePypi = $(pandocArgFragment) -s -t rst --reference-location=block 
 docsAll = docs/README.pdf README.md docs/README.rst
 
 # files
-MDFILES = $(wildcard tests/files/md_codeblock/*.md)
-MDFILESOUTPUT = $(patsubst tests/files/md_codeblock/%.md,tests/files/md_codeblock_reference/%.md,$(MDFILES))
+MDFILES = $(wildcard tests/files/md/*.md)
+MDFILESOUTPUT = $(patsubst tests/files/md/%.md,tests/files/md_reference/%.md,$(MDFILES))
+MDCODEBLOCKFILES = $(wildcard tests/files/md_codeblock/*.md)
+MDCODEBLOCKFILESOUTPUT = $(patsubst tests/files/md_codeblock/%.md,tests/files/md_codeblock_reference/%.md,$(MDCODEBLOCKFILES))
 
 # Main Targets #################################################################
 
@@ -54,9 +56,11 @@ clean:
 	pandoc -t json $< | coverage run --append --branch -m pantable.cli.pantable | pandoc -f json -t native -o $@
 
 # files
+md_reference: $(MDFILESOUTPUT)
+tests/files/md_reference/%.md: tests/files/md/%.md
+	pandoc -F pantable2csv -o $@ $<
 
-md_codeblock_reference: $(MDFILESOUTPUT)
-
+md_codeblock_reference: $(MDCODEBLOCKFILESOUTPUT)
 tests/files/md_codeblock_reference/%.md: tests/files/md_codeblock/%.md
 	cd $(<D); pandoc -F pantable -o ../md_codeblock_reference/$*.md $*.md
 
