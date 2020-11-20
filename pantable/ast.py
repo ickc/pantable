@@ -17,6 +17,7 @@ else:
 import numpy as np
 
 from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
+from panflute.elements import CodeBlock, Doc
 from panflute.containers import ListContainer
 from panflute.tools import stringify, convert_text
 
@@ -103,6 +104,44 @@ class PanTableOption:
             if (key_underscored := str(key).replace('-', '_')) in cls.__annotations__
         })
 
+
+class PanTableCodeBlock:
+
+    '''A PanTable representation of CodeBlock
+
+    it handles the transition between panflute CodeBlock and PanTable
+
+    It can convert to and from panflute CodeBlock,
+    and to and from PanTable
+    '''
+
+    def __init__(self, options: dict, data: str, element: CodeBlock, doc: Doc = None):
+        '''
+        these args are those passed from within yaml_filter
+        '''
+        self.options = PanTableOption.from_kwargs(**options)
+        self.data = data
+        self.ica = Ica(
+            identifier=element.identifier,
+            classes=element.classes,
+            attributes=element.attributes,
+        )
+
+    def csv_to_pantable(self):
+        '''parse data as csv and return a PanTable
+        '''
+        return PanTable(
+            self.ica,
+            short_caption, caption,
+            spec,
+            ms, n, ns_head,
+            icas_rowblock,
+            icas_row,
+            icas,
+            aligns,
+            cells,
+        )
+
 # Table
 
 @dataclass
@@ -162,7 +201,7 @@ class Spec(FakeRepr, AlignText):
         return self.aligns.size
 
     @classmethod
-    def from_panflute_ast(cls, table: Table) -> Spec:
+    def from_panflute_ast(cls, table: Table):
         spec = table.colspec
 
         n = len(spec)
@@ -503,7 +542,7 @@ class PanTable(FakeRepr, AlignText):
         return res
 
     @classmethod
-    def from_panflute_ast(cls, table: Table) -> PanTable:
+    def from_panflute_ast(cls, table: Table):
         ica_table = Ica(
             table.identifier,
             table.classes,
