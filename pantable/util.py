@@ -130,3 +130,44 @@ def table_for_pprint(table: panflute.Table):
         'TableBody': [list(row.content) for row in table.content[0].content],
         'TableFoot': [list(row.content) for row in table.foot.content],
     }
+
+
+def get_first_type(cls):
+    '''c.f. https://stackoverflow.com/a/50622643'''
+    import typing
+
+    def _find_type_origin(type_hint):
+        if isinstance(type_hint, typing._SpecialForm):
+            # case of typing.Any, typing.ClassVar, typing.Final, typing.Literal,
+            # typing.NoReturn, typing.Optional, or typing.Union without parameters
+            yield typing.Any
+            return
+
+        actual_type = typing.get_origin(type_hint) or type_hint  # requires Python 3.8
+        if isinstance(actual_type, typing._SpecialForm):
+            # case of typing.Union[…] or typing.ClassVar[…] or …
+            for origins in map(_find_type_origin, typing.get_args(type_hint)):
+                yield from origins
+        else:
+            yield actual_type
+
+    hints = typing.get_type_hints(cls)
+
+    # this one returns all types in a Union
+    # return {
+    #     name: [
+    #         origin
+    #         for origin in _find_type_origin(type_hint)
+    #         if origin is not typing.Any
+    #     ]
+    #     for name, type_hint in hints.items()
+    # }
+    # only need the first one as I'm checking against Optional
+    return {
+        name: next(
+            origin
+            for origin in _find_type_origin(type_hint)
+            if origin is not typing.Any
+        )
+        for name, type_hint in hints.items()
+    }
