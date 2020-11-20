@@ -4,6 +4,7 @@ import sys
 from typing import Union, List, Tuple, Optional, Dict
 from itertools import chain
 from pprint import pformat
+from fractions import Fraction
 
 if (sys.version_info.major, sys.version_info.minor) < (3, 8):
     try:
@@ -20,10 +21,11 @@ from panflute.containers import ListContainer
 from panflute.tools import stringify, convert_text
 
 try:
-    from dataclasses import dataclass, field
+    from dataclasses import dataclass, field, fields
 except ImportError:
     raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
+from .util import get_first_type
 
 ALIGN = np.array([
     "AlignDefault",
@@ -42,6 +44,58 @@ ALIGN_TO_IDX = {
 
 COLWIDTHDEFAULT = 'ColWidthDefault'
 
+# CodeBlock
+
+@dataclass
+class PanTableOption:
+    '''options in CodeBlock table
+
+    remember that the keys in YAML sometimes uses hyphen/underscore
+    and here uses underscore
+    '''
+    caption: Optional[str] = None
+    alignment: Optional[str] = None
+    width: Optional[List[float]] = None
+    table_width: float = 1.
+    header: bool = True
+    markdown: bool = False
+    include: Optional[str] = None
+    include_encoding: Optional[str] = None
+    csv_kwargs: dict = field(default_factory=dict)
+
+    def __post_init__(self):
+        '''fall back to default if invalid type
+
+        Only check for type here. e.g. positivity of width and table_width are not checked at this point.
+        '''
+        types = get_first_type(self.__class__)
+        for field_ in fields(self):
+            key = field_.name
+            value = getattr(self, key)
+            type_ = types[key]
+            # special case: default factory
+            default = dict() if key == 'csv_kwargs' else field_.default
+            # wrong type and not default
+            if not (value == default or isinstance(value, type_)):
+                # special case: Fraction/int
+                try:
+                    if key == 'table_width':
+                        value = float(Fraction(value))
+                        self.table_width = value
+                        continue
+                except (ValueError, TypeError):
+                    pass
+                print(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: {default}", file=sys.stderr)
+                setattr(self, key, default)
+        # check Optional[List[float]]
+        if self.width is not None:
+            try:
+                self.width = [float(Fraction(x)) for x in self.width]
+            except (ValueError, TypeError):
+                print(f'Option width with value {self.width} has invalid type and set to default: None', file=sys.stderr)
+                self.width = None
+
+# Table
 
 @dataclass
 class Ica:
