@@ -95,6 +95,14 @@ class PanTableOption:
                 print(f'Option width with value {self.width} has invalid type and set to default: None', file=sys.stderr)
                 self.width = None
 
+    @classmethod
+    def from_kwargs(cls, **kwargs):
+        return cls(**{
+            key_underscored: value
+            for key, value in kwargs.items()
+            if (key_underscored := str(key).replace('-', '_')) in cls.__annotations__
+        })
+
 # Table
 
 @dataclass
