@@ -1,4 +1,22 @@
+import sys
+from typing import List, Optional
+
 import panflute
+from panflute.tools import convert_text, run_pandoc
+
+
+class PandocVersion:
+
+    def __init__(self):
+        version = run_pandoc(args=['--version'])
+        self.version = version
+        self.short_version = version.split('\n')[0].split(' ')[1]
+
+    def __str__(self):
+        return self.short_version
+
+    def __repr__(self):
+        return self.version
 
 
 class EmptyTableError(Exception):
@@ -12,6 +30,69 @@ def ast_to_markdown(ast):
         input_format='panflute',
         output_format='markdown'
     )
+
+
+def convert_texts(
+    texts: List[str],
+    input_format: str = 'markdown',
+    output_format: str = 'panflute',
+    standalone: bool = False,
+    extra_args: Optional[List[str]] = None,
+):
+    '''run convert_text on list of text'''
+    from functools import partial
+    try:
+        from map_parallel import map_parallel
+
+        _map_parallel = partial(map_parallel, mode='multithreading')
+    except ImportError:
+        print(f'Consider `pip install map_parallel` to speed up `convert_texts`.', file=sys.stderr)
+        _map_parallel = lambda f, arg: list(map(f, arg))
+
+    _convert_text = partial(
+        convert_text,
+        input_format=input_format,
+        output_format=output_format,
+        standalone=standalone,
+        extra_args=extra_args,
+    )
+    return _map_parallel(_convert_text, texts)
+
+
+def convert_texts_fast(
+    texts: List[str],
+    extra_args: Optional[List[str]] = None,
+):
+    '''a faster, specialized convert_texts
+    '''
+    # TODO: generalize these as an option, e.g. add html?
+    input_format: str = 'markdown'
+    output_format: str = 'panflute'
+
+    # put each text in a Div together
+    text = '\n\n'.join(
+        (
+            f'''::: PanTableDiv :::
+{text}
+:::'''
+            for text in texts
+        )
+    )
+    pf = convert_text(text, input_format=input_format, output_format=output_format, extra_args=extra_args)
+    return [list(elem.content) for elem in pf]
+
+
+def eq_panflute_elem(elem1, elem2) -> bool:
+    return repr(elem1) == repr(elem2)
+
+
+def eq_panflute_elems(elems1: list, elems2: list) -> bool:
+    if not len(elems1) == len(elems2):
+        return False
+    for elem1, elem2 in zip(elems1, elems2):
+        if not eq_panflute_elem(elem1, elem2):
+            return False
+    return True
 
 
 def parse_markdown_codeblock(text: str) -> dict:
