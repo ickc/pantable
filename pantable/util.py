@@ -43,14 +43,13 @@ def ast_to_markdown(ast):
 
 
 def convert_texts(
-    texts: List[str],
+    texts: list,
     input_format: str = 'markdown',
     output_format: str = 'panflute',
     standalone: bool = False,
     extra_args: Optional[List[str]] = None,
 ) -> List[list]:
     '''run convert_text on list of text'''
-    from functools import partial
     try:
         from map_parallel import map_parallel
 
@@ -97,6 +96,7 @@ def iter_convert_texts_panflute_to_markdown(
 ) -> Iterator[str]:
     '''a faster, specialized convert_texts
 
+    :param list elems: must be list of ListContainer of Block. This is more restrictive than convert_texts
     :param str seperator: a string for seperator in the temporary markdown output
     '''
     def iter_seperator(elems: List[ListContainer], inserter: Para):
@@ -139,7 +139,7 @@ convert_texts_func = {
 
 
 def convert_texts_fast(
-    texts: List[str],
+    texts: list,
     input_format: str = 'markdown',
     output_format: str = 'panflute',
     extra_args: Optional[List[str]] = None,
