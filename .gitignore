@@ -45,3 +45,5 @@ docs/*
 !docs/make.bat
 !docs/Makefile
 !docs/requirements.txt
+
+.ipynb_checkpoints
