@@ -65,6 +65,7 @@ class PanTableOption:
     table_width: float = 1.
     header: bool = True
     markdown: bool = False
+    fancy_table: bool = False
     include: Optional[str] = None
     include_encoding: Optional[str] = None
     csv_kwargs: dict = field(default_factory=dict)
