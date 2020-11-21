@@ -106,6 +106,26 @@ class PanTableOption:
             if (key_underscored := str(key).replace('-', '_')) in cls.__annotations__
         })
 
+    @property
+    def kwargs(self) -> dict:
+        '''to dict without the defaults
+
+        expect `self.from_kwargs(**self.kwargs) == self`
+        '''
+        return {
+            key.replace('_', '-'): value
+            for field_ in fields(self)
+            # check value == default
+            if (
+                value := getattr(self, (key := field_.name))
+            ) != (
+                dict()
+                # special case: default factory
+                if key == 'csv_kwargs' else
+                field_.default
+            )
+        }
+
 
 class PanTableCodeBlock:
 
