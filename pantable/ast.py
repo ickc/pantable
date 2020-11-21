@@ -57,8 +57,10 @@ class PanTableOption:
     remember that the keys in YAML sometimes uses hyphen/underscore
     and here uses underscore
     '''
+    short_caption: Optional[str] = None
     caption: Optional[str] = None
     alignment: Optional[str] = None
+    alignment_cells: Optional[str] = None
     width: Optional[List[float]] = None
     table_width: float = 1.
     header: bool = True
@@ -344,7 +346,7 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
         ica_table: Ica,
         short_caption, caption,
         spec: Spec,
-        ms: np.ndarray[np.int64], n: int, ns_head: np.ndarray[np.int64],
+        ms: np.ndarray[np.int64], ns_head: np.ndarray[np.int64],
         icas_rowblock: np.ndarray,
         icas_row: np.ndarray,
         icas: np.ndarray,
@@ -356,7 +358,6 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
         self.caption = caption
         self.spec = spec
         self._ms = ms
-        self.n = n
         self.ns_head = ns_head
         self.icas_rowblock = icas_rowblock
         self.icas_row = icas_row
@@ -389,7 +390,6 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
             'short_caption': self.short_caption,
             'caption': self.caption,
             'spec': self.spec.to_dict(),
-            'shape': self.shape,
             'ms': self.ms,
             'ns_head': self.ns_head,
             'icas_rowblock': self.icas_rowblock,
@@ -397,6 +397,8 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
             'icas': self.icas,
             'aligns': self.aligns_text,
             'cells': self.cells,
+            # properties
+            'shape': self.shape,
         }
 
     @abstractmethod
@@ -406,6 +408,10 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
         :param int width: width per column
         '''
         return ''
+
+    @property
+    def n(self) -> int:
+        return self.spec.size
 
     @property
     def shape(self) -> Tuple[int, int]:
@@ -553,7 +559,7 @@ class PanTable(PanTableAbstract):
         ica_table: Ica,
         short_caption: Optional[ListContainer], caption: ListContainer,
         spec: Spec,
-        ms: np.ndarray[np.int64], n: int, ns_head: np.ndarray[np.int64],
+        ms: np.ndarray[np.int64], ns_head: np.ndarray[np.int64],
         icas_rowblock: np.ndarray[Ica],
         icas_row: np.ndarray[Ica],
         icas: np.ndarray[Ica],
@@ -565,7 +571,6 @@ class PanTable(PanTableAbstract):
         self.caption = caption
         self.spec = spec
         self._ms = ms
-        self.n = n
         self.ns_head = ns_head
         self.icas_rowblock = icas_rowblock
         self.icas_row = icas_row
@@ -710,7 +715,7 @@ class PanTable(PanTableAbstract):
             ica_table,
             short_caption, caption,
             spec,
-            ms, n, ns_head,
+            ms, ns_head,
             icas_rowblock,
             icas_row,
             icas,
@@ -789,7 +794,7 @@ class PanTableStr(PanTableAbstract):
         ica_table: Ica,
         short_caption: Optional[str], caption: str,
         spec: Spec,
-        ms: np.ndarray[np.int64], n: int, ns_head: np.ndarray[np.int64],
+        ms: np.ndarray[np.int64], ns_head: np.ndarray[np.int64],
         icas_rowblock: np.ndarray[str],
         icas_row: np.ndarray[str],
         icas: np.ndarray[str],
@@ -801,7 +806,6 @@ class PanTableStr(PanTableAbstract):
         self.caption = caption
         self.spec = spec
         self._ms = ms
-        self.n = n
         self.ns_head = ns_head
         self.icas_rowblock = icas_rowblock
         self.icas_row = icas_row
