@@ -16,6 +16,7 @@ else:
     from functools import cached_property
 
 import numpy as np
+import yaml
 
 from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
 from panflute.elements import CodeBlock, Doc
@@ -27,7 +28,7 @@ try:
 except ImportError:
     raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
-from .util import get_first_type
+from .util import get_first_type, get_yaml_dumper
 
 ALIGN = np.array([
     "AlignDefault",
@@ -127,7 +128,7 @@ class PanTableOption:
         }
 
 
-class PanTableCodeBlock:
+class PanCodeBlock:
 
     '''A PanTable representation of CodeBlock
 
@@ -135,6 +136,11 @@ class PanTableCodeBlock:
 
     It can convert to and from panflute CodeBlock,
     and to and from PanTable
+
+    there's no `from_panflute_ast` method, as we expect the args in the
+    `__init__` to be from `panflute.yaml_filter` directly.
+
+    c.f. `.util.parse_markdown_codeblock` for testing purposes
     '''
 
     def __init__(self, options: dict, data: str, element: CodeBlock, doc: Doc = None):
@@ -148,6 +154,34 @@ class PanTableCodeBlock:
             classes=element.classes,
             attributes=element.attributes,
         )
+
+    def to_panflute_ast(self) -> CodeBlock:
+        '''return a panflute AST representation
+
+        TODO: handle differently if include exists and writable
+        need to be able to configure pantable2csv on write location
+        '''
+        options_dict = self.options.kwargs
+        data = self.data
+        if options_dict:
+            options_yaml = yaml.dump(options_dict, Dumper=get_yaml_dumper(), default_flow_style=False)
+            if data:
+                code_block = f'---\n{options_yaml}...\n{data}'
+            else:
+                code_block = f"---\n{options_yaml}"
+        else:
+            code_block = data
+        classes = self.ica.classes
+        if 'table' not in classes:
+            # don't mutate it
+            classes = classes + ['table']
+        return CodeBlock(
+            code_block,
+            identifier=self.ica.identifier,
+            classes=classes,
+            attributes=self.ica.attributes,
+            )
+
 
     def csv_to_pantable(self):
         '''parse data as csv and return a PanTable
