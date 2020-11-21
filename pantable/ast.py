@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import sys
-from typing import Union, List, Tuple, Optional, Dict
-from itertools import chain
+from typing import Union, List, Tuple, Optional, Dict, Iterator
+from itertools import chain, repeat
 from pprint import pformat
 from fractions import Fraction
 from abc import ABC, abstractmethod
@@ -19,7 +19,8 @@ import numpy as np
 import yaml
 
 from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
-from panflute.elements import CodeBlock, Doc
+from panflute.base import Inline, Block
+from panflute.elements import CodeBlock, Doc, Plain, Span, ListContainer
 from panflute.containers import ListContainer
 from panflute.tools import stringify, convert_text
 
@@ -28,7 +29,7 @@ try:
 except ImportError:
     raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
-from .util import get_first_type, get_yaml_dumper
+from .util import get_first_type, get_yaml_dumper, iter_convert_texts_panflute_to_markdown, iter_convert_texts_markdown_to_panflute
 
 ALIGN = np.array([
     "AlignDefault",
@@ -183,8 +184,7 @@ class PanCodeBlock:
             identifier=self.ica.identifier,
             classes=classes,
             attributes=self.ica.attributes,
-            )
-
+        )
 
     def csv_to_pantable(self):
         '''parse data as csv and return a PanTable
@@ -210,6 +210,17 @@ class Ica:
     identifier: str = ''
     classes: List[str] = field(default_factory=list)
     attributes: Dict[str, str] = field(default_factory=dict)
+
+    def to_panflute_ast(self) -> ListContainer[Plain]:
+        '''to panflute AST element
+
+        we choose a ListContainer-Plain-Span here as it is simplest to capture the Ica
+        '''
+        return ListContainer(Plain(Span(
+            identifier=self.identifier,
+            classes=self.classes,
+            attributes=self.attributes,
+        )))
 
 
 class FakeRepr:
@@ -302,7 +313,7 @@ class PanCell:
     def __repr__(self) -> str:
         return repr(self.content)
 
-    def is_at(self, loc) -> bool:
+    def is_at(self, loc: Tuple[int, int]) -> bool:
         return True
 
 
@@ -408,7 +419,11 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
 
         :param int width: width per column
         '''
-        return ''
+        return np.array([''])
+
+    @property
+    def m(self) -> int:
+        return self._ms.sum()
 
     @property
     def n(self) -> int:
@@ -416,14 +431,24 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
 
     @property
     def shape(self) -> Tuple[int, int]:
-        return (self._ms.sum(), self.n)
+        return (self.m, self.n)
 
     @property
     def m_bodies(self) -> int:
         return self.ns_head.size
 
     @property
+    def m_icas_rowblock(self) -> int:
+        '''
+        only one ica per body
+        '''
+        return self.icas_rowblock.size
+
+    @property
     def m_rowblocks(self) -> int:
+        '''
+        2 rowblocks per body
+        '''
         return self._ms.size
 
     @property
@@ -558,7 +583,7 @@ class PanTable(PanTableAbstract):
     def __init__(
         self,
         ica_table: Ica,
-        short_caption: Optional[ListContainer], caption: ListContainer,
+        short_caption: Optional[Inline], caption: ListContainer[Block],
         spec: Spec,
         ms: np.ndarray[np.int64], ns_head: np.ndarray[np.int64],
         icas_rowblock: np.ndarray[Ica],
@@ -590,7 +615,7 @@ class PanTable(PanTableAbstract):
     def iter_tablerows(
         icas_row: np.ndarray[Ica],
         pf_cells: np.ndarray[TableCell],
-    ) -> List[TableRow]:
+    ) -> Iterator[TableRow]:
         return (
             TableRow(
                 *[i for i in pf_row_array if i is not None],
@@ -784,6 +809,100 @@ class PanTable(PanTableAbstract):
             identifier=self.ica_table.identifier,
             classes=self.ica_table.classes,
             attributes=self.ica_table.attributes,
+        )
+
+    def to_pantablestr(self) -> PanTableStr:
+        '''return a PanTableStr representation of self
+
+        TODO: unify with stringfy and provide to-markdown/stringify
+        '''
+        # * 1st pass: assemble the caches
+        cache_elems: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], ListContainer] = {}
+        # for holding the value as None cases
+        cache_none: List[Union[str, Tuple[str, int, int]]] = []
+        # caption
+        cache_elems['caption'] = self.caption
+        # short_caption
+        short_caption = self.short_caption
+        if short_caption is None:
+            cache_none.append('short_caption')
+        else:
+            # iter_convert_texts_panflute_to_markdown accept ListContainer of Block only
+            cache_elems['short_caption'] = ListContainer(Plain(*short_caption))
+        # cells and icas
+        m = self.m
+        n = self.n
+        cells = self.cells
+        icas = self.icas
+        for i in range(m):
+            for j in range(n):
+                cell = cells[i, j]
+                # don't repeat PanCellBlock
+                if cell.is_at((i, j)):
+                    cache_elems[('cells', i, j)] = cell.content
+                    cache_elems[('icas', i, j)] = icas[i, j].to_panflute_ast()
+                else:
+                    cache_none.append(('cells', i, j))
+                    # don't need this below because checking is_at by cell only
+                    # cache_none.append(('icas', i, j))
+        # icas_row
+        icas_row = self.icas_row
+        for i in range(m):
+            cache_elems[('icas_row', i)] = icas_row[i].to_panflute_ast()
+        # icas_rowblock
+        m_rowblocks = self.m_icas_rowblock
+        icas_rowblock = self.icas_rowblock
+        for i in range(m_rowblocks):
+            cache_elems[('icas_rowblock', i)] = icas_rowblock[i].to_panflute_ast()
+
+        # * batch convert to markdown
+        # the bottle neck is calling pandoc so we batch them and call it once only
+        cache_texts: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], Optional[str]] = {
+            key: value
+            for key, value in chain(
+                zip(
+                    cache_elems.keys(),
+                    iter_convert_texts_panflute_to_markdown(cache_elems.values()),
+                ),
+                zip(cache_none, repeat(None))
+            )
+        }
+
+        # * 2nd pass: get output from cache
+        # cells and icas
+        cells_res = np.empty((m, n), dtype='O')
+        icas_res = np.empty((m, n), dtype='O')
+        for i in range(m):
+            for j in range(n):
+                content = cache_texts[('cells', i, j)]
+                if content is not None:
+                    cell = cells[i, j]
+                    # faster to check type directly as we know what it exactly can be
+                    if type(cell) == PanCellBlock:
+                        cell_res = PanCellBlock(content, cell.shape, cell.idxs)
+                        cell_res.put(cells_res)
+                    else:
+                        cells_res[i, j] = PanCell(content)
+                    icas_res[i, j] = cache_texts[('icas', i, j)]
+        # icas_row
+        icas_row_res = np.empty(m, dtype='O')
+        for i in range(m):
+            icas_row_res[i] = cache_texts[('icas_row', i)]
+        # icas_rowblock
+        icas_rowblock_res = np.empty(m_rowblocks, dtype='O')
+        for i in range(m_rowblocks):
+            icas_rowblock_res[i] = cache_texts[('icas_rowblock', i)]
+
+        return PanTableStr(
+            self.ica_table,
+            cache_texts['short_caption'], cache_texts['caption'],
+            self.spec,
+            self.ms, self.ns_head,
+            icas_rowblock_res,
+            icas_row_res,
+            icas_res,
+            self.aligns,
+            cells_res
         )
 
 
