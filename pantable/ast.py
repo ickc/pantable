@@ -579,7 +579,11 @@ class PanTable(PanTableAbstract):
         self.cells = cells
 
     def _repr_html_(self) -> str:
-        return convert_text(self.to_panflute_ast(), input_format='panflute', output_format='html')
+        try:
+            return convert_text(self.to_panflute_ast(), input_format='panflute', output_format='html')
+        # in case of an invalid panflute AST and still want to show something
+        except Exception:
+            return self.__str__(tablefmt='html')
 
     @staticmethod
     def iter_tablerows(
