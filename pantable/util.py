@@ -68,20 +68,12 @@ def convert_texts(
     return _map_parallel(_convert_text, texts)
 
 
-def iter_convert_texts(
+def iter_convert_texts_markdown_to_panflute(
     texts: List[str],
     extra_args: Optional[List[str]] = None,
 ) -> Iterator[ListContainer]:
     '''a faster, specialized convert_texts
-
-    similar to convert_texts_fast, but return an iterator of ListContainer
-
-    This is mainly used in pantable as we want them in ListContainer already
     '''
-    # TODO: generalize these as an option, e.g. add html?
-    input_format: str = 'markdown'
-    output_format: str = 'panflute'
-
     # put each text in a Div together
     text = '\n\n'.join(
         (
@@ -91,20 +83,26 @@ def iter_convert_texts(
             for text in texts
         )
     )
-    pf = convert_text(text, input_format=input_format, output_format=output_format, extra_args=extra_args)
+    pf = convert_text(text, input_format='markdown', output_format='panflute', extra_args=extra_args)
     return (elem.content for elem in pf)
+
+
+convert_texts_func = {
+    ('markdown', 'panflute'): iter_convert_texts_markdown_to_panflute,
+}
 
 
 def convert_texts_fast(
     texts: List[str],
+    input_format: str = 'markdown',
+    output_format: str = 'panflute',
     extra_args: Optional[List[str]] = None,
 ) -> List[list]:
     '''a faster, specialized convert_texts
 
     should have identical result from convert_texts
-
-    similar to iter_convert_texts but return a list of list
     '''
+    iter_convert_texts = convert_texts_func[(input_format, output_format)]
     return [list(i) for i in iter_convert_texts(texts, extra_args=extra_args)]
 
 
