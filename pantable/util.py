@@ -46,8 +46,10 @@ def convert_texts(
 
         _map_parallel = partial(map_parallel, mode='multithreading')
     except ImportError:
-        print(f'Consider `pip install map_parallel` to speed up `convert_texts`.', file=sys.stderr)
-        _map_parallel = lambda f, arg: list(map(f, arg))
+        print('Consider `pip install map_parallel` to speed up `convert_texts`.', file=sys.stderr)
+
+        def _map_parallel(f, arg):
+            return list(map(f, arg))
 
     _convert_text = partial(
         convert_text,
