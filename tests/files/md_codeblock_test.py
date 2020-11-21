@@ -1,6 +1,5 @@
 from pathlib import Path
 import sys
-import inspect
 from typing import Tuple
 
 from panflute import convert_text
@@ -17,8 +16,9 @@ def gen_funcs():
     paths = list(Path(DIRS[0]).glob(f'*.{EXT}'))
     paths.sort()
     for path in paths:
-        print(f'''def test_{path.stem}():
-    routine()''', end='\n\n\n')
+        name = path.stem
+        print(f'''def test_{name}():
+    routine('{name}')''', end='\n\n\n')
 
 
 def read(path: Path, path_ref: Path) -> Tuple[str, str]:
@@ -41,71 +41,72 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
     return md_reference, md_out
 
 
-def routine():
-    # c.f. https://stackoverflow.com/a/5067654
-    name = '_'.join(inspect.stack()[1][3].split('_')[1:])
+def routine(name):
     paths = [dir_ / f'{name}.{EXT}' for dir_ in DIRS]
     res = read(*paths)
     assert res[0].strip() == res[1].strip()
 
+
 # test_NAME will test against the file NAME.md
 # use gen_funcs to generate the functions below
+# python -c 'from tests.files.md_codeblock_test import gen_funcs as f; f()'
+
 
 def test_comparison():
-    routine()
+    routine('comparison')
 
 
 def test_empty_csv():
-    routine()
+    routine('empty_csv')
 
 
 def test_encoding():
-    routine()
+    routine('encoding')
 
 
 def test_full_test():
-    routine()
+    routine('full_test')
 
 
 def test_grid_table():
-    routine()
+    routine('grid_table')
 
 
 def test_include_external_csv():
-    routine()
+    routine('include_external_csv')
 
 
 def test_include_external_csv_invalid_path():
-    routine()
+    routine('include_external_csv_invalid_path')
 
 
 def test_invalid_yaml():
-    routine()
+    routine('invalid_yaml')
 
 
 def test_irregular_csv():
-    routine()
+    routine('irregular_csv')
 
 
 def test_one_row_table():
-    routine()
+    routine('one_row_table')
 
 
 def test_pipe_table_1():
-    routine()
+    routine('pipe_table_1')
 
 
 def test_pipe_table_2():
-    routine()
+    routine('pipe_table_2')
 
 
 def test_simple_test():
-    routine()
+    routine('simple_test')
 
 
 def test_testing_0_table_width():
-    routine()
+    routine('testing_0_table_width')
 
 
 def test_testing_wrong_type():
-    routine()
+    routine('testing_wrong_type')

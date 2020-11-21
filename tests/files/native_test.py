@@ -1,6 +1,5 @@
 from pathlib import Path
 import sys
-import inspect
 from typing import Tuple
 
 from panflute import convert_text
@@ -15,8 +14,9 @@ def gen_funcs():
     paths = list(Path(DIR).glob(f'*.{EXT}'))
     paths.sort()
     for path in paths:
-        print(f'''def test_{path.stem}():
-    routine()''', end='\n\n\n')
+        name = path.stem
+        print(f'''def test_{name}():
+    routine('{name}')''', end='\n\n\n')
 
 
 def read(path: Path) -> Tuple[str, str]:
@@ -37,23 +37,24 @@ def read(path: Path) -> Tuple[str, str]:
     return native_orig, native_idem
 
 
-def routine():
-    # c.f. https://stackoverflow.com/a/5067654
-    name = '_'.join(inspect.stack()[1][3].split('_')[1:])
+def routine(name):
     path = DIR / f'{name}.{EXT}'
     res = read(path)
     assert res[0] == res[1]
 
+
 # test_NAME will test against the file NAME.native
 # use gen_funcs to generate the functions below
+# python -c 'from tests.files.native_test import gen_funcs as f; f()'
+
 
 def test_nordics():
-    routine()
+    routine('nordics')
 
 
 def test_planets():
-    routine()
+    routine('planets')
 
 
 def test_students():
-    routine()
+    routine('students')

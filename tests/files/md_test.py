@@ -1,10 +1,8 @@
 from pathlib import Path
 import sys
-import inspect
 from typing import Tuple
 
 from panflute import convert_text
-from pantable.util import parse_markdown_codeblock
 # use the function exactly used by the cli
 from pantable.cli.pantable2csv import table_to_csv
 
@@ -17,8 +15,9 @@ def gen_funcs():
     paths = list(Path(DIRS[0]).glob(f'*.{EXT}'))
     paths.sort()
     for path in paths:
-        print(f'''def test_{path.stem}():
-    routine()''', end='\n\n\n')
+        name = path.stem
+        print(f'''def test_{name}():
+    routine('{name}')''', end='\n\n\n')
 
 
 def read(path: Path, path_ref: Path) -> Tuple[str, str]:
@@ -40,15 +39,16 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
     return md_reference, md_out
 
 
-def routine():
-    # c.f. https://stackoverflow.com/a/5067654
-    name = '_'.join(inspect.stack()[1][3].split('_')[1:])
+def routine(name):
     paths = [dir_ / f'{name}.{EXT}' for dir_ in DIRS]
     res = read(*paths)
     assert res[0].strip() == res[1].strip()
 
+
 # test_NAME will test against the file NAME.md
 # use gen_funcs to generate the functions below
+# python -c 'from tests.files.md_test import gen_funcs as f; f()'
+
 
 def test_tables():
-    routine()
+    routine('tables')
