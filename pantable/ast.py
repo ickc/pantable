@@ -5,6 +5,7 @@ from typing import Union, List, Tuple, Optional, Dict
 from itertools import chain
 from pprint import pformat
 from fractions import Fraction
+from abc import ABC, abstractmethod
 
 if (sys.version_info.major, sys.version_info.minor) < (3, 8):
     try:
@@ -46,6 +47,7 @@ ALIGN_TO_IDX = {
 COLWIDTHDEFAULT = 'ColWidthDefault'
 
 # CodeBlock
+
 
 @dataclass
 class PanTableOption:
@@ -143,6 +145,7 @@ class PanTableCodeBlock:
         )
 
 # Table
+
 
 @dataclass
 class Ica:
@@ -278,21 +281,21 @@ class PanCellBlock(PanCellPlain):
         return loc == self.idxs
 
 
-class PanTable(FakeRepr, AlignText):
-    '''a representation of panflute Table
+class PanTableAbstract(ABC, FakeRepr, AlignText):
+    '''an abstract class of PanTables
     '''
 
     def __init__(
         self,
         ica_table: Ica,
-        short_caption: Optional[ListContainer], caption: ListContainer,
+        short_caption: Optional, caption,
         spec: Spec,
         ms: np.ndarray[np.int64], n: int, ns_head: np.ndarray[np.int64],
-        icas_rowblock: np.ndarray[Ica],
-        icas_row: np.ndarray[Ica],
-        icas: np.ndarray[Ica],
-        aligns: np.ndarray[np.int8],
-        cells: np.ndarray[PanCellPlain],
+        icas_rowblock: np.ndarray,
+        icas_row: np.ndarray,
+        icas: np.ndarray,
+        aligns: np.ndarray,
+        cells: np.ndarray,
     ):
         self.ica_table = ica_table
         self.short_caption = short_caption
@@ -322,11 +325,8 @@ class PanTable(FakeRepr, AlignText):
                 headers=() if self.ms[0] == 0 else "firstrow",
             )
         except ImportError:
-            print(f'Consider having a better str by `pip install tabulate` or `conda install tabulate`.', file=sys.stderr)
+            print('Consider having a better str by `pip install tabulate` or `conda install tabulate`.', file=sys.stderr)
             return self.__repr__()
-
-    def _repr_html_(self) -> str:
-        return convert_text(self.to_panflute_ast(), input_format='panflute', output_format='html')
 
     def to_dict(self) -> dict:
         '''TODO'''
@@ -344,6 +344,14 @@ class PanTable(FakeRepr, AlignText):
             'aligns': self.aligns_text,
             'cells': self.cells,
         }
+
+    @abstractmethod
+    def cells_stringified(self, width: int = 15, cannonical=True) -> str:
+        '''return stringified cells
+
+        :param int width: width per column
+        '''
+        return ''
 
     @property
     def shape(self) -> Tuple[int, int]:
@@ -463,21 +471,6 @@ class PanTable(FakeRepr, AlignText):
             })
         return res
 
-    @staticmethod
-    def iter_tablerows(
-        icas_row: np.ndarray[Ica],
-        pf_cells: np.ndarray[TableCell],
-    ) -> List[TableRow]:
-        return (
-            TableRow(
-                *[i for i in pf_row_array if i is not None],
-                identifier=ica.identifier,
-                classes=ica.classes,
-                attributes=ica.attributes
-            )
-            for ica, pf_row_array in zip(icas_row, pf_cells)
-        )
-
     @property
     def cells_cannonical(self) -> np.ndarray[PanCellPlain]:
         '''return a cell array where spanned cells appeared in cannonical location only
@@ -492,6 +485,54 @@ class PanTable(FakeRepr, AlignText):
                 cell = cells[i, j]
                 res[i, j] = cell if cell.is_at((i, j)) else None
         return res
+
+
+class PanTable(PanTableAbstract):
+    '''a representation of panflute Table
+    '''
+
+    def __init__(
+        self,
+        ica_table: Ica,
+        short_caption: Optional[ListContainer], caption: ListContainer,
+        spec: Spec,
+        ms: np.ndarray[np.int64], n: int, ns_head: np.ndarray[np.int64],
+        icas_rowblock: np.ndarray[Ica],
+        icas_row: np.ndarray[Ica],
+        icas: np.ndarray[Ica],
+        aligns: np.ndarray[np.int8],
+        cells: np.ndarray[PanCellPlain],
+    ):
+        self.ica_table = ica_table
+        self.short_caption = short_caption
+        self.caption = caption
+        self.spec = spec
+        self._ms = ms
+        self.n = n
+        self.ns_head = ns_head
+        self.icas_rowblock = icas_rowblock
+        self.icas_row = icas_row
+        self.icas = icas
+        self.aligns = aligns
+        self.cells = cells
+
+    def _repr_html_(self) -> str:
+        return convert_text(self.to_panflute_ast(), input_format='panflute', output_format='html')
+
+    @staticmethod
+    def iter_tablerows(
+        icas_row: np.ndarray[Ica],
+        pf_cells: np.ndarray[TableCell],
+    ) -> List[TableRow]:
+        return (
+            TableRow(
+                *[i for i in pf_row_array if i is not None],
+                identifier=ica.identifier,
+                classes=ica.classes,
+                attributes=ica.attributes
+            )
+            for ica, pf_row_array in zip(icas_row, pf_cells)
+        )
 
     def cells_stringified(self, width: int = 15, cannonical=True) -> str:
         '''return stringified cells
@@ -677,3 +718,57 @@ class PanTable(FakeRepr, AlignText):
             classes=self.ica_table.classes,
             attributes=self.ica_table.attributes,
         )
+
+
+class PanTableStr(PanTableAbstract):
+    '''similar to PanTable, but with panflute ASTs as str
+    '''
+
+    def __init__(
+        self,
+        ica_table: Ica,
+        short_caption: Optional[str], caption: str,
+        spec: Spec,
+        ms: np.ndarray[np.int64], n: int, ns_head: np.ndarray[np.int64],
+        icas_rowblock: np.ndarray[str],
+        icas_row: np.ndarray[str],
+        icas: np.ndarray[str],
+        aligns: np.ndarray[str],
+        cells: np.ndarray[PanCellStr],
+    ):
+        self.ica_table = ica_table
+        self.short_caption = short_caption
+        self.caption = caption
+        self.spec = spec
+        self._ms = ms
+        self.n = n
+        self.ns_head = ns_head
+        self.icas_rowblock = icas_rowblock
+        self.icas_row = icas_row
+        self.icas = icas
+        self.aligns = aligns
+        self.cells = cells
+
+    def _repr_html_(self) -> str:
+        return self.__str__(tablefmt='html')
+
+    def cells_stringified(self, width: int = 15, cannonical=True) -> str:
+        '''return stringified cells
+
+        :param int width: width per column
+        '''
+        from textwrap import wrap
+
+        cells = self.cells
+        res = np.empty_like(cells)
+        m, n = cells.shape
+        for i in range(m):
+            for j in range(n):
+                cell = cells[i, j]
+                if cannonical:
+                    cell = cell if cell.is_at((i, j)) else None
+                res[i, j] = '' if cell is None else '\n'.join(wrap(
+                    cell.content,
+                    width,
+                ))
+        return res
