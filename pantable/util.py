@@ -7,17 +7,23 @@ from panflute.tools import convert_text, run_pandoc
 
 
 class PandocVersion:
+    '''get runtime pandoc verison
+
+    use PandocVersion().version for comparing versions
+    '''
 
     def __init__(self):
-        version = run_pandoc(args=['--version'])
-        self.version = version
-        self.short_version = version.split('\n')[0].split(' ')[1]
+        self._repr = run_pandoc(args=['--version'])
 
     def __str__(self):
-        return self.short_version
+        return self._repr.split('\n')[0].split(' ')[1]
 
     def __repr__(self):
-        return self.version
+        return self._repr
+
+    @property
+    def version(self):
+        return tuple(int(i) for i in str(self).split('.'))
 
 
 class EmptyTableError(Exception):
