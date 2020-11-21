@@ -1,7 +1,7 @@
 import random
 import string
 import sys
-from typing import List, Optional, Iterator
+from typing import List, Optional, Iterable, Iterator
 from functools import partial
 
 from panflute.elements import ListContainer, Para, Str
@@ -43,7 +43,7 @@ def ast_to_markdown(ast):
 
 
 def convert_texts(
-    texts: list,
+    texts: Iterable,
     input_format: str = 'markdown',
     output_format: str = 'panflute',
     standalone: bool = False,
@@ -71,7 +71,7 @@ def convert_texts(
 
 
 def iter_convert_texts_markdown_to_panflute(
-    texts: List[str],
+    texts: Iterable[str],
     extra_args: Optional[List[str]] = None,
 ) -> Iterator[ListContainer]:
     '''a faster, specialized convert_texts
@@ -90,13 +90,14 @@ def iter_convert_texts_markdown_to_panflute(
 
 
 def iter_convert_texts_panflute_to_markdown(
-    elems: List[ListContainer],
+    elems: Iterable[ListContainer],
     extra_args: Optional[List[str]] = None,
     seperator: str = ''.join(random.choices(string.ascii_letters + string.digits, k=256)),
 ) -> Iterator[str]:
     '''a faster, specialized convert_texts
 
-    :param list elems: must be list of ListContainer of Block. This is more restrictive than convert_texts
+    :param list elems: must be list of ListContainer of Block.
+    This is more restrictive than convert_texts which can also accept list of Block
     :param str seperator: a string for seperator in the temporary markdown output
     '''
     def iter_seperator(elems: List[ListContainer], inserter: Para):
@@ -139,7 +140,7 @@ convert_texts_func = {
 
 
 def convert_texts_fast(
-    texts: list,
+    texts: Iterable,
     input_format: str = 'markdown',
     output_format: str = 'panflute',
     extra_args: Optional[List[str]] = None,
