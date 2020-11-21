@@ -1,9 +1,12 @@
+import random
+import string
 import sys
 from typing import List, Optional, Iterator
+from functools import partial
 
-import panflute
-from panflute.elements import ListContainer
-from panflute.tools import convert_text, run_pandoc
+from panflute.elements import ListContainer, Para, Str
+from panflute.table_elements import Table
+from panflute.tools import convert_text, run_pandoc, yaml_filter
 
 
 class PandocVersion:
@@ -32,7 +35,7 @@ class EmptyTableError(Exception):
 
 def ast_to_markdown(ast):
     """convert panflute AST to Markdown"""
-    return panflute.convert_text(
+    return convert_text(
         ast,
         input_format='panflute',
         output_format='markdown'
@@ -87,8 +90,51 @@ def iter_convert_texts_markdown_to_panflute(
     return (elem.content for elem in pf)
 
 
+def iter_convert_texts_panflute_to_markdown(
+    elems: List[ListContainer],
+    extra_args: Optional[List[str]] = None,
+    seperator: str = ''.join(random.choices(string.ascii_letters + string.digits, k=256)),
+) -> Iterator[str]:
+    '''a faster, specialized convert_texts
+
+    :param str seperator: a string for seperator in the temporary markdown output
+    '''
+    def iter_seperator(elems: List[ListContainer], inserter: Para):
+        '''insert between every element in a ListContainer'''
+        for elem in elems:
+            for i in elem:
+                yield i
+            yield inserter
+
+    def iter_split_by_seperator(text: str, seperator: str) -> Iterator[str]:
+        '''split the text into list by the seperator
+        '''
+        temp = []
+        for line in text.split('\n'):
+            if line != seperator:
+                temp.append(line)
+            else:
+                res = '\n'.join(temp).strip()
+                # reset for next yield
+                temp = []
+                yield res
+
+    inserter = Para(Str(seperator))
+
+    elems_inserted = ListContainer(*iter_seperator(elems, inserter))
+    texts_converted = convert_text(elems_inserted, input_format='panflute', output_format='markdown')
+    return iter_split_by_seperator(texts_converted, seperator)
+
+
 convert_texts_func = {
-    ('markdown', 'panflute'): iter_convert_texts_markdown_to_panflute,
+    # this is just to convert returned value from
+    # Iterator[ListContainer] to Iterator[list]
+    # which is what convert_texts does
+    ('markdown', 'panflute'): (
+        lambda *args, **kwargs:
+        map(list, iter_convert_texts_markdown_to_panflute(*args, **kwargs))
+    ),
+    ('panflute', 'markdown'): iter_convert_texts_panflute_to_markdown,
 }
 
 
@@ -102,8 +148,23 @@ def convert_texts_fast(
 
     should have identical result from convert_texts
     '''
-    iter_convert_texts = convert_texts_func[(input_format, output_format)]
-    return [list(i) for i in iter_convert_texts(texts, extra_args=extra_args)]
+    try:
+        return list(
+            convert_texts_func[
+                (input_format, output_format)
+            ](
+                texts,
+                extra_args=extra_args
+            )
+        )
+    except KeyError:
+        print(f'Unsupported input/output format pair: {input_format}, {output_format}. Doing it slowly...', file=sys.stderr)
+        return convert_texts(
+            texts,
+            input_format,
+            output_format,
+            extra_args=extra_args,
+        )
 
 
 def eq_panflute_elem(elem1, elem2) -> bool:
@@ -131,11 +192,11 @@ def parse_markdown_codeblock(text: str) -> dict:
     def function(**kwargs):
         return kwargs
 
-    doc = panflute.convert_text(text, standalone=True)
-    return panflute.yaml_filter(doc.content[0], doc, tag='table', function=function, strict_yaml=True)
+    doc = convert_text(text, standalone=True)
+    return yaml_filter(doc.content[0], doc, tag='table', function=function, strict_yaml=True)
 
 
-def table_for_pprint(table: panflute.Table):
+def table_for_pprint(table: Table):
     '''represent panflute Table in a dict structure for pprint
 
     >>> pprint(table_for_pprint(table), sort_dicts=False, compact=False, width=-1)
