@@ -1,7 +1,8 @@
 import sys
-from typing import List, Optional
+from typing import List, Optional, Iterator
 
 import panflute
+from panflute.elements import ListContainer
 from panflute.tools import convert_text, run_pandoc
 
 
@@ -38,7 +39,7 @@ def convert_texts(
     output_format: str = 'panflute',
     standalone: bool = False,
     extra_args: Optional[List[str]] = None,
-):
+) -> List[list]:
     '''run convert_text on list of text'''
     from functools import partial
     try:
@@ -61,11 +62,15 @@ def convert_texts(
     return _map_parallel(_convert_text, texts)
 
 
-def convert_texts_fast(
+def iter_convert_texts(
     texts: List[str],
     extra_args: Optional[List[str]] = None,
-):
+) -> Iterator[ListContainer]:
     '''a faster, specialized convert_texts
+
+    similar to convert_texts_fast, but return an iterator of ListContainer
+
+    This is mainly used in pantable as we want them in ListContainer already
     '''
     # TODO: generalize these as an option, e.g. add html?
     input_format: str = 'markdown'
@@ -81,7 +86,20 @@ def convert_texts_fast(
         )
     )
     pf = convert_text(text, input_format=input_format, output_format=output_format, extra_args=extra_args)
-    return [list(elem.content) for elem in pf]
+    return (elem.content for elem in pf)
+
+
+def convert_texts_fast(
+    texts: List[str],
+    extra_args: Optional[List[str]] = None,
+) -> List[list]:
+    '''a faster, specialized convert_texts
+
+    should have identical result from convert_texts
+
+    similar to iter_convert_texts but return a list of list
+    '''
+    return [list(i) for i in iter_convert_texts(texts, extra_args=extra_args)]
 
 
 def eq_panflute_elem(elem1, elem2) -> bool:
