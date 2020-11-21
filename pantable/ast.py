@@ -230,13 +230,13 @@ class Spec(FakeRepr, AlignText):
         ]
 
 
-class PanCellPlain:
+class PanCell:
     '''a class of simple cell within PanTable
     '''
     shape = (1, 1)
     idxs: Optional[Tuple[int, int]] = None
 
-    def __init__(self, content: ListContainer):
+    def __init__(self, content: Union[ListContainer, str]):
         self.content = content
 
     def __str__(self) -> str:
@@ -249,12 +249,12 @@ class PanCellPlain:
         return True
 
 
-class PanCellBlock(PanCellPlain):
+class PanCellBlock(PanCell):
     '''a class of Block cell within PanTable
     '''
     def __init__(
         self,
-        content: ListContainer,
+        content: Union[ListContainer, str],
         shape: Tuple[int, int],
         idxs: Tuple[int, int],
     ):
@@ -288,7 +288,7 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
     def __init__(
         self,
         ica_table: Ica,
-        short_caption: Optional, caption,
+        short_caption, caption,
         spec: Spec,
         ms: np.ndarray[np.int64], n: int, ns_head: np.ndarray[np.int64],
         icas_rowblock: np.ndarray,
@@ -346,7 +346,7 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
         }
 
     @abstractmethod
-    def cells_stringified(self, width: int = 15, cannonical=True) -> str:
+    def cells_stringified(self, width: int = 15, cannonical=True) -> np.ndarray[str]:
         '''return stringified cells
 
         :param int width: width per column
@@ -472,7 +472,7 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
         return res
 
     @property
-    def cells_cannonical(self) -> np.ndarray[PanCellPlain]:
+    def cells_cannonical(self) -> np.ndarray[PanCell]:
         '''return a cell array where spanned cells appeared in cannonical location only
 
         top-left corner of the grid is the cannonical location of a spanned cell
@@ -489,6 +489,9 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
 
 class PanTable(PanTableAbstract):
     '''a representation of panflute Table
+
+    All PanCell in cells should have content type as ListContainer
+    although not strictly enforced here
     '''
 
     def __init__(
@@ -501,7 +504,7 @@ class PanTable(PanTableAbstract):
         icas_row: np.ndarray[Ica],
         icas: np.ndarray[Ica],
         aligns: np.ndarray[np.int8],
-        cells: np.ndarray[PanCellPlain],
+        cells: np.ndarray[PanCell],
     ):
         self.ica_table = ica_table
         self.short_caption = short_caption
@@ -534,7 +537,7 @@ class PanTable(PanTableAbstract):
             for ica, pf_row_array in zip(icas_row, pf_cells)
         )
 
-    def cells_stringified(self, width: int = 15, cannonical=True) -> str:
+    def cells_stringified(self, width: int = 15, cannonical=True) -> np.ndarray[str]:
         '''return stringified cells
 
         :param int width: width per column
@@ -641,7 +644,7 @@ class PanTable(PanTableAbstract):
                 rowspan: int = cell.rowspan
                 colspan: int = cell.colspan
                 if rowspan == 1 and colspan == 1:
-                    cells[i, j] = PanCellPlain(cell.content)
+                    cells[i, j] = PanCell(cell.content)
                 else:
                     pan_cell = PanCellBlock(cell.content, (rowspan, colspan), (i, j))
                     pan_cell.put(cells)
@@ -722,6 +725,9 @@ class PanTable(PanTableAbstract):
 
 class PanTableStr(PanTableAbstract):
     '''similar to PanTable, but with panflute ASTs as str
+
+    All PanCell in cells should have content type as str
+    although not strictly enforced here
     '''
 
     def __init__(
@@ -733,8 +739,8 @@ class PanTableStr(PanTableAbstract):
         icas_rowblock: np.ndarray[str],
         icas_row: np.ndarray[str],
         icas: np.ndarray[str],
-        aligns: np.ndarray[str],
-        cells: np.ndarray[PanCellStr],
+        aligns: np.ndarray[np.int8],
+        cells: np.ndarray[PanCell],
     ):
         self.ica_table = ica_table
         self.short_caption = short_caption
@@ -752,7 +758,7 @@ class PanTableStr(PanTableAbstract):
     def _repr_html_(self) -> str:
         return self.__str__(tablefmt='html')
 
-    def cells_stringified(self, width: int = 15, cannonical=True) -> str:
+    def cells_stringified(self, width: int = 15, cannonical=True) -> np.ndarray[str]:
         '''return stringified cells
 
         :param int width: width per column
