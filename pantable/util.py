@@ -191,3 +191,18 @@ def get_first_type(cls):
         )
         for name, type_hint in hints.items()
     }
+
+
+def get_yaml_dumper():
+    try:
+        from yamlloader.ordereddict.dumpers import CSafeDumper as Dumper
+    except ImportError:
+        try:
+            from yamlloader.ordereddict.dumpers import SafeDumper as Dumper
+        except ImportError:
+            print('Try `pip install yamlloader` or `conda install yamlloader -c conda-forge` to preserve yaml dict ordering.', file=sys.stderr)
+            try:
+                from yaml.cyaml import CSafeDumper as Dumper
+            except ImportError:
+                from yaml.dumper import SafeDumper as Dumper
+    return Dumper
