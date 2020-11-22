@@ -1,8 +1,8 @@
-import random
-import string
 import sys
 from typing import List, Optional, Iterable, Iterator
 from functools import partial
+
+import numpy as np
 
 from panflute.elements import ListContainer, Para, Str
 from panflute.table_elements import Table
@@ -92,7 +92,7 @@ def iter_convert_texts_markdown_to_panflute(
 def iter_convert_texts_panflute_to_markdown(
     elems: Iterable[ListContainer],
     extra_args: Optional[List[str]] = None,
-    seperator: str = ''.join(random.choices(string.ascii_letters + string.digits, k=256)),
+    seperator: str = np.random.randint(65, 91, size=256, dtype=np.uint8).view('S256')[0].decode(),
 ) -> Iterator[str]:
     '''a faster, specialized convert_texts
 
