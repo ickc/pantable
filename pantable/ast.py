@@ -300,6 +300,13 @@ class Spec(FakeRepr, AlignText):
 
 class PanCell:
     '''a class of simple cell within PanTable
+
+    We don't have a concept of standalone `PanCell`,
+    they are always assumed to be within a `np.ndarray[PanCell]`.
+
+    e.g. `is_at` is used to determine if PanCellBlock is at the canoncial
+    location, and for `PanCell` it is always at canonical location.
+    You cannot check if the current PanCell is really at a location in the grid.
     '''
     shape = (1, 1)
     idxs: Optional[Tuple[int, int]] = None
@@ -311,10 +318,41 @@ class PanCell:
         return self.__repr__()
 
     def __repr__(self) -> str:
-        return repr(self.content)
+        return f'PanCell({repr(self.content)})'
 
     def is_at(self, loc: Tuple[int, int]) -> bool:
+        '''return True if self is at canonical location'''
         return True
+
+    @staticmethod
+    def put(
+        content: Union[ListContainer, str],
+        shape: Tuple[int, int],
+        idxs: Tuple[int, int],
+        array: np.ndarray[PanCell],
+        overwrite: bool = False,
+    ):
+        '''create a PanCell and put in array
+
+        This is almost a class method but we don't
+        return the created PanCell as it is already
+        in the array, and the created PanCell does
+        not necessary has the type of current class
+        by the dispatch of PanCell/PanCellBock
+        '''
+        x, y = shape
+        idx, idy = idxs
+        if x == 1 and y == 1:
+            cell = PanCell(content)
+            array[idx, idy] = cell
+        else:
+            cell = PanCellBlock(content, shape, idxs)
+            for i in range(idx, idx + x):
+                for j in range(idy, idy + y):
+                    if overwrite or array[i, j] is None:
+                        array[i, j] = cell
+                    else:
+                        raise ValueError(f"At location {idxs} there's not enough empty cells for a block of size {shape} in the given array {array}")
 
 
 class PanCellBlock(PanCell):
@@ -333,19 +371,8 @@ class PanCellBlock(PanCell):
     def __repr__(self) -> str:
         return f'PanCellBlock({repr(self.content)}, {repr(self.shape)}, {repr(self.idxs)})'
 
-    def put(self, array, overwrite=False):
-        '''put itself inside giving array
-        '''
-        x, y = self.shape
-        idx, idy = self.idxs
-        for i in range(idx, idx + x):
-            for j in range(idy, idy + y):
-                if overwrite or array[i, j] is None:
-                    array[i, j] = self
-                else:
-                    raise ValueError(f"At location {self.idxs} there's not enough empty cells for a block of size {self.shape} in the given array {array}")
-
     def is_at(self, loc: Tuple[int, int]) -> bool:
+        '''return True if self is at canonical location'''
         return loc == self.idxs
 
 
@@ -729,15 +756,7 @@ class PanTable(PanTableAbstract):
                 # determine j
                 while cells[i, j] is not None:
                     j += 1
-
-                rowspan: int = cell.rowspan
-                colspan: int = cell.colspan
-                if rowspan == 1 and colspan == 1:
-                    cells[i, j] = PanCell(cell.content)
-                else:
-                    pan_cell = PanCellBlock(cell.content, (rowspan, colspan), (i, j))
-                    pan_cell.put(cells)
-
+                PanCell.put(cell.content, (cell.rowspan, cell.colspan), (i, j), cells)
                 icas[i, j] = Ica(cell.identifier, cell.classes, cell.attributes)
                 aligns[i, j] = ALIGN_TO_IDX[cell.alignment[5]]
 
@@ -877,12 +896,9 @@ class PanTable(PanTableAbstract):
                 content = cache_texts[('cells', i, j)]
                 if content is not None:
                     cell = cells[i, j]
-                    # faster to check type directly as we know what it exactly can be
-                    if type(cell) == PanCellBlock:
-                        cell_res = PanCellBlock(content, cell.shape, cell.idxs)
-                        cell_res.put(cells_res)
-                    else:
-                        cells_res[i, j] = PanCell(content)
+                    # overwrite as cells is already valid so it is impossible to have
+                    # colliding cells to be overwritten
+                    PanCell.put(content, cell.shape, cell.idxs, cells_res, overwrite=True)
                     icas_res[i, j] = cache_texts[('icas', i, j)]
         # icas_row
         icas_row_res = np.empty(m, dtype='O')
