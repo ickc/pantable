@@ -898,7 +898,7 @@ class PanTable(PanTableAbstract):
                     cell = cells[i, j]
                     # overwrite as cells is already valid so it is impossible to have
                     # colliding cells to be overwritten
-                    PanCell.put(content, cell.shape, cell.idxs, cells_res, overwrite=True)
+                    PanCell.put(content, cell.shape, (i, j), cells_res, overwrite=True)
                     icas_res[i, j] = cache_texts[('icas', i, j)]
         # icas_row
         icas_row_res = np.empty(m, dtype='O')
