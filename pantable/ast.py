@@ -1054,7 +1054,6 @@ class PanTableStr(PanTableAbstract):
                 zip(cache_none, repeat(None))
             )
         }
-        # return cache_texts, cache_elems # TODO
 
         # * 2nd pass: get output from cache
         # short_caption
