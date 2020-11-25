@@ -48,6 +48,19 @@ ALIGN_TO_IDX = {
 
 COLWIDTHDEFAULT = 'ColWidthDefault'
 
+
+def single_para_to_plain(elem: ListContainer) -> ListContainer:
+    '''convert single element to Plain
+    
+    if `elem` is a ListContainer of a single element, then convert it to a ListContainer of Plain and return that.
+    Else return `elem`.
+    '''
+    if len(elem) == 1:
+        return ListContainer(Plain(*elem[0].content))
+    else:
+        return elem
+
+
 # CodeBlock
 
 
@@ -221,6 +234,14 @@ class Ica:
             classes=self.classes,
             attributes=self.attributes,
         )))
+
+    @classmethod
+    def from_panflute_ast(cls, elem: ListContainer[Block]):
+        if elem:
+            span = elem[0].content[0]
+            return cls(identifier=span.identifier, classes=span.classes, attributes=span.attributes)
+        else:
+            return cls()
 
 
 class FakeRepr:
@@ -976,3 +997,98 @@ class PanTableStr(PanTableAbstract):
                     width,
                 ))
         return res
+
+    def to_pantable(self) -> PanTable:
+        '''return a PanTable representation of self
+
+        TODO: unify with stringfy and provide to-markdown/stringify
+        '''
+        # * 1st pass: assemble the caches
+        cache_texts: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], str] = {}
+        # for holding the value as None cases
+        cache_none: List[Union[str, Tuple[str, int, int]]] = []
+        # caption
+        cache_texts['caption'] = self.caption
+        # short_caption
+        short_caption = self.short_caption
+        if short_caption is None:
+            cache_none.append('short_caption')
+        else:
+            # TODO
+            cache_texts['short_caption'] = short_caption
+        # cells and icas
+        m = self.m
+        n = self.n
+        cells = self.cells
+        icas = self.icas
+        for i in range(m):
+            for j in range(n):
+                cell = cells[i, j]
+                # don't repeat PanCellBlock
+                if cell.is_at((i, j)):
+                    cache_texts[('cells', i, j)] = cell.content
+                    cache_texts[('icas', i, j)] = icas[i, j]
+                else:
+                    cache_none.append(('cells', i, j))
+                    # don't need this below because checking is_at by cell only
+                    # cache_none.append(('icas', i, j))
+        # icas_row
+        icas_row = self.icas_row
+        for i in range(m):
+            cache_texts[('icas_row', i)] = icas_row[i]
+        # icas_rowblock
+        m_rowblocks = self.m_icas_rowblock
+        icas_rowblock = self.icas_rowblock
+        for i in range(m_rowblocks):
+            cache_texts[('icas_rowblock', i)] = icas_rowblock[i]
+
+        # * batch convert to markdown
+        # the bottle neck is calling pandoc so we batch them and call it once only
+        cache_elems: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], Optional[ListContainer]] = {
+            key: value
+            for key, value in chain(
+                zip(
+                    cache_texts.keys(),
+                    iter_convert_texts_markdown_to_panflute(cache_texts.values()),
+                ),
+                zip(cache_none, repeat(None))
+            )
+        }
+        # return cache_texts, cache_elems # TODO
+
+        # * 2nd pass: get output from cache
+        # short_caption
+        temp = cache_elems['short_caption']
+        short_caption_res = temp[0].content if temp else None
+        # cells and icas
+        cells_res = np.empty((m, n), dtype='O')
+        icas_res = np.empty((m, n), dtype='O')
+        for i in range(m):
+            for j in range(n):
+                content = cache_elems[('cells', i, j)]
+                if content is not None:
+                    cell = cells[i, j]
+                    # overwrite as cells is already valid so it is impossible to have
+                    # colliding cells to be overwritten
+                    PanCell.put(single_para_to_plain(content), cell.shape, (i, j), cells_res, overwrite=True)
+                    icas_res[i, j] = Ica.from_panflute_ast(cache_elems[('icas', i, j)])
+        # icas_row
+        icas_row_res = np.empty(m, dtype='O')
+        for i in range(m):
+            icas_row_res[i] = Ica.from_panflute_ast(cache_elems[('icas_row', i)])
+        # icas_rowblock
+        icas_rowblock_res = np.empty(m_rowblocks, dtype='O')
+        for i in range(m_rowblocks):
+            icas_rowblock_res[i] = Ica.from_panflute_ast(cache_elems[('icas_rowblock', i)])
+
+        return PanTable(
+            self.ica_table,
+            short_caption_res, cache_elems['caption'],
+            self.spec,
+            self.ms, self.ns_head,
+            icas_rowblock_res,
+            icas_row_res,
+            icas_res,
+            self.aligns,
+            cells_res
+        )
