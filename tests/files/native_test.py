@@ -19,7 +19,7 @@ def gen_funcs():
     routine('{name}')''', end='\n\n\n')
 
 
-def read(path: Path) -> Tuple[str, str]:
+def read(path: Path) -> Tuple[str, str, str]:
     '''test parsing native table into Pantable
     '''
     print(f'Testing case {path}...', file=sys.stderr)
@@ -31,16 +31,21 @@ def read(path: Path) -> Tuple[str, str]:
     table = doc[0]
     pan_table = PanTable.from_panflute_ast(table)
     table_idem = pan_table.to_panflute_ast()
+    # PanTableStr
+    pan_table_str = pan_table.to_pantablestr()
+    pan_table_idem = pan_table_str.to_pantable()
+    table_idem2 = pan_table_idem.to_panflute_ast()
     # check for idempotence
     native_orig = convert_text(table, input_format='panflute', output_format='native')
     native_idem = convert_text(table_idem, input_format='panflute', output_format='native')
-    return native_orig, native_idem
+    native_idem2 = convert_text(table_idem2, input_format='panflute', output_format='native')
+    return native_orig, native_idem, native_idem2
 
 
 def routine(name):
     path = DIR / f'{name}.{EXT}'
     res = read(path)
-    assert res[0] == res[1]
+    assert res[0] == res[1] == res[2]
 
 
 # test_NAME will test against the file NAME.native
