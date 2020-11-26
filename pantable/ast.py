@@ -145,17 +145,31 @@ class PanCodeBlock:
     c.f. `.util.parse_markdown_codeblock` for testing purposes
     '''
 
-    def __init__(self, options: Optional[dict] = None, data: str = '', element: Optional[CodeBlock] = None, doc: Optional[Doc] = None):
+    def __init__(
+        self,
+        options: Optional[PanTableOption] = None,
+        data: str = '',
+        ica: Optional[Ica] = None,
+    ):
         '''
         these args are those passed from within yaml_filter
         '''
-        self.options = PanTableOption() if options is None else PanTableOption.from_kwargs(**options)
+        self.options = PanTableOption() if options is None else options
         self.data = data
-        self.ica = Ica() if element is None else Ica(
+        self.ica = Ica() if ica is None else ica
+
+    @classmethod
+    def from_yaml_filter(cls, options: Optional[dict] = None, data: str = '', element: Optional[CodeBlock] = None, doc: Optional[Doc] = None):
+        '''
+        these args are those passed from within yaml_filter
+        '''
+        pan_table_options = PanTableOption() if options is None else PanTableOption.from_kwargs(**options)
+        ica = Ica() if element is None else Ica(
             identifier=element.identifier,
             classes=element.classes,
             attributes=element.attributes,
         )
+        return cls(options=pan_table_options, data=data, ica=ica)
 
     def to_panflute_ast(self) -> CodeBlock:
         '''return a panflute AST representation

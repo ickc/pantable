@@ -24,7 +24,7 @@ def gen_funcs():
 
 def round_trip(text: str) -> str:
     kwargs = parse_markdown_codeblock(text)
-    pan_codeblock = PanCodeBlock(**kwargs)
+    pan_codeblock = PanCodeBlock.from_yaml_filter(**kwargs)
     doc = pan_codeblock.to_panflute_ast()
     return convert_text(doc, input_format='panflute', output_format='markdown')
 
