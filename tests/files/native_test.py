@@ -35,6 +35,10 @@ def read(path: Path) -> Tuple[str, str, str]:
     pan_table_str = pan_table.to_pantablestr()
     pan_table_idem = pan_table_str.to_pantable()
     table_idem2 = pan_table_idem.to_panflute_ast()
+    # PanCodeBlock
+    # TODO: for now just check it can convert
+    pan_code_block = pan_table_str.to_pancodeblock(fancy_table=True)
+    pf_ast = pan_code_block.to_panflute_ast()
     # check for idempotence
     native_orig = convert_text(table, input_format='panflute', output_format='native')
     native_idem = convert_text(table_idem, input_format='panflute', output_format='native')
