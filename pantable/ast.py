@@ -20,7 +20,7 @@ import yaml
 
 from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
 from panflute.base import Inline, Block
-from panflute.elements import CodeBlock, Doc, Plain, Span, ListContainer
+from panflute.elements import CodeBlock, Doc, Plain, Span
 from panflute.containers import ListContainer
 from panflute.tools import stringify, convert_text
 
@@ -31,27 +31,12 @@ except ImportError:
 
 from .util import get_first_type, get_yaml_dumper, iter_convert_texts_panflute_to_markdown, iter_convert_texts_markdown_to_panflute
 
-ALIGN = np.array([
-    "AlignDefault",
-    "AlignLeft",
-    "AlignCenter",
-    "AlignRight",
-])
-
-# inverse of the above, converting the 5-th char to index
-ALIGN_TO_IDX = {
-    'D': 0,
-    'L': 1,
-    'C': 2,
-    'R': 3,
-}
-
 COLWIDTHDEFAULT = 'ColWidthDefault'
 
 
 def single_para_to_plain(elem: ListContainer) -> ListContainer:
     '''convert single element to Plain
-    
+
     if `elem` is a ListContainer of a single element, then convert it to a ListContainer of Plain and return that.
     Else return `elem`.
     '''
@@ -202,11 +187,12 @@ class PanCodeBlock:
     def csv_to_pantable(self):
         '''parse data as csv and return a PanTable
         '''
+        raise NotImplementedError
         return PanTable(
             self.ica,
             short_caption, caption,
             spec,
-            ms, n, ns_head,
+            ms, ns_head,
             icas_rowblock,
             icas_row,
             icas,
@@ -259,24 +245,77 @@ class FakeRepr:
         raise NotImplementedError
 
 
-class AlignText:
-    '''a mixin for getting aligns_text from aligns
+class Align:
+    '''Alignment class
     '''
 
-    aligns: np.ndarray[np.int8]
+    ALIGN = np.array([
+        "AlignDefault",
+        "AlignLeft",
+        "AlignRight",
+        "AlignCenter",
+    ])
+
+    def __init__(self, aligns: np.ndarray[np.int8]):
+        self.aligns = aligns
+
+    @property
+    def aligns_char(self):
+        return self.aligns.view('S1')
+
+    @property
+    def aligns_idx(self) -> np.ndarray[np.int8]:
+        '''
+        this is designed such that aligns_text below works
+
+        the last % 4 is to gunrantee garbage input still falls inside the idx range of ALIGN
+        '''
+        return (self.aligns - 3) % 11 % 6 % 4
 
     @property
     def aligns_text(self) -> np.ndarray[np.str_]:
-        return ALIGN[self.aligns]
+        return self.ALIGN[self.aligns_idx]
+
+    @property
+    def aligns_string(self) -> str:
+        '''the aligns string used in pantable codeblock
+
+        such as LDRC...
+        '''
+        ndim = self.aligns.ndim
+        if ndim == 2:
+            n = self.aligns.shape[1]
+            temp = self.aligns.astype(np.uint32).view(f'U{n}')
+            return '\n'.join(np.ravel(temp))
+        elif ndim == 1:
+            n = self.aligns.size
+            return self.aligns.view(f'S{n}')[0].decode()
+        else:
+            raise TypeError(f'The Align {self.aligns_char} has unexpected no. of dim.: {ndim}')
+
+    @classmethod
+    def from_aligns_char(cls, aligns_char: np.npdarray['S1']):
+        return cls(aligns_char.view(np.int8))
+
+    @classmethod
+    def from_aligns_text(cls, aligns_text: np.ndarray[Optional[str]]):
+        aligns_char = np.empty_like(aligns_text, dtype='S1')
+        # ravel to handle arbitrary dimenions
+        aligns_char_ravel = np.ravel(aligns_char)
+        aligns_text_ravel = np.ravel(aligns_text)
+        for i in range(aligns_text_ravel.size):
+            align_text = aligns_text_ravel[i]
+            aligns_char_ravel[i] = 'D' if align_text is None else align_text[5]
+        return cls.from_aligns_char(aligns_char)
 
 
-class Spec(FakeRepr, AlignText):
+class Spec(FakeRepr):
     '''a class of spec of PanTable
     '''
 
     def __init__(
         self,
-        aligns: np.ndarray[np.int8],
+        aligns: Align,
         col_widths: np.ndarray[np.float64],
     ):
         self.aligns = aligns
@@ -284,26 +323,27 @@ class Spec(FakeRepr, AlignText):
 
     def to_dict(self) -> dict:
         return {
-            'aligns': self.aligns_text,
+            'aligns': self.aligns.aligns_text,
             'col_widths': self.col_widths,
         }
 
     @property
     def size(self) -> int:
-        return self.aligns.size
+        return self.col_widths.size
 
     @classmethod
     def from_panflute_ast(cls, table: Table):
         spec = table.colspec
 
         n = len(spec)
-        aligns = np.empty(n, dtype=np.int8)
         col_widths = np.empty(n, dtype=np.float64)
 
         try:
+            aligns_list = []
             for i, (align, width) in enumerate(spec):
-                aligns[i] = ALIGN_TO_IDX[align[5]]
+                aligns_list.append(align)
                 col_widths[i] = np.nan if width == COLWIDTHDEFAULT else width
+            aligns = Align.from_aligns_text(np.array(aligns_list))
         except ValueError:
             raise TypeError(f'pantable: cannot parse table spec {spec}')
 
@@ -315,7 +355,7 @@ class Spec(FakeRepr, AlignText):
     def to_panflute_ast(self) -> List[Tuple]:
         return [
             (align, COLWIDTHDEFAULT if np.isnan(width) else width)
-            for align, width in zip(self.aligns_text, self.col_widths)
+            for align, width in zip(self.aligns.aligns_text, self.col_widths)
         ]
 
 
@@ -397,7 +437,7 @@ class PanCellBlock(PanCell):
         return loc == self.idxs
 
 
-class PanTableAbstract(ABC, FakeRepr, AlignText):
+class PanTableAbstract(ABC, FakeRepr):
     '''an abstract class of PanTables
     '''
 
@@ -410,7 +450,7 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
         icas_rowblock: np.ndarray,
         icas_row: np.ndarray,
         icas: np.ndarray,
-        aligns: np.ndarray,
+        aligns: Align,
         cells: np.ndarray,
     ):
         self.ica_table = ica_table
@@ -455,7 +495,7 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
             'icas_rowblock': self.icas_rowblock,
             'icas_row': self.icas_row,
             'icas': self.icas,
-            'aligns': self.aligns_text,
+            'aligns': self.aligns.aligns_text,
             'cells': self.cells,
             # properties
             'shape': self.shape,
@@ -600,7 +640,7 @@ class PanTableAbstract(ABC, FakeRepr, AlignText):
                 'ica_row_block': self.icas_rowblock[idx_block],
                 'ica_row': self.icas_row[i],
                 'icas': self.icas[i],
-                'aligns': self.aligns[i],
+                'aligns': self.aligns.aligns_text[i],
                 'cells': self.cells[i]
             })
         return res
@@ -637,7 +677,7 @@ class PanTable(PanTableAbstract):
         icas_rowblock: np.ndarray[Ica],
         icas_row: np.ndarray[Ica],
         icas: np.ndarray[Ica],
-        aligns: np.ndarray[np.int8],
+        aligns: Align,
         cells: np.ndarray[PanCell],
     ):
         self.ica_table = ica_table
@@ -700,7 +740,7 @@ class PanTable(PanTableAbstract):
         cells = self.cells_cannonical
         cells_flat = cells.ravel()
         icas_flat = self.icas.ravel()
-        aligns_flat = self.aligns_text.ravel()
+        aligns_flat = self.aligns.aligns_text.ravel()
 
         res = np.empty_like(cells)
         res_flat = res.ravel()
@@ -764,7 +804,7 @@ class PanTable(PanTableAbstract):
         shape = (m, n)
         icas_row = np.empty(m, dtype='O')
         icas = np.empty(shape, dtype='O')
-        aligns = np.zeros(shape, dtype=np.int8)
+        aligns_text = np.empty(shape, dtype='O')
         cells = np.empty(shape, dtype='O')
         for i, row in enumerate(chain(
             head.content,
@@ -779,8 +819,7 @@ class PanTable(PanTableAbstract):
                     j += 1
                 PanCell.put(cell.content, (cell.rowspan, cell.colspan), (i, j), cells)
                 icas[i, j] = Ica(cell.identifier, cell.classes, cell.attributes)
-                aligns[i, j] = ALIGN_TO_IDX[cell.alignment[5]]
-
+                aligns_text[i, j] = cell.alignment
         return cls(
             ica_table,
             short_caption, caption,
@@ -789,7 +828,7 @@ class PanTable(PanTableAbstract):
             icas_rowblock,
             icas_row,
             icas,
-            aligns,
+            Align.from_aligns_text(aligns_text),
             cells,
         )
 
@@ -959,7 +998,7 @@ class PanTableStr(PanTableAbstract):
         icas_rowblock: np.ndarray[str],
         icas_row: np.ndarray[str],
         icas: np.ndarray[str],
-        aligns: np.ndarray[np.int8],
+        aligns: Align,
         cells: np.ndarray[PanCell],
     ):
         self.ica_table = ica_table
