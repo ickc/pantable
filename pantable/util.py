@@ -218,7 +218,7 @@ def table_for_pprint(table: Table):
     }
 
 
-def get_first_type(cls):
+def get_types(cls):
     '''c.f. https://stackoverflow.com/a/50622643'''
     import typing
 
@@ -240,17 +240,8 @@ def get_first_type(cls):
     hints = typing.get_type_hints(cls)
 
     # this one returns all types in a Union
-    # return {
-    #     name: [
-    #         origin
-    #         for origin in _find_type_origin(type_hint)
-    #         if origin is not typing.Any
-    #     ]
-    #     for name, type_hint in hints.items()
-    # }
-    # only need the first one as I'm checking against Optional
     return {
-        name: next(
+        name: tuple(
             origin
             for origin in _find_type_origin(type_hint)
             if origin is not typing.Any

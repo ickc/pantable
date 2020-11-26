@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import csv
+import io
 import sys
-from typing import Union, List, Tuple, Optional, Dict, Iterator
+from typing import Union, List, Tuple, Optional, Dict, Iterator, Set
 from itertools import chain, repeat
 from pprint import pformat
 from fractions import Fraction
@@ -29,7 +31,7 @@ try:
 except ImportError:
     raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
-from .util import get_first_type, get_yaml_dumper, iter_convert_texts_panflute_to_markdown, iter_convert_texts_markdown_to_panflute
+from .util import get_types, get_yaml_dumper, iter_convert_texts_panflute_to_markdown, iter_convert_texts_markdown_to_panflute
 
 COLWIDTHDEFAULT = 'ColWidthDefault'
 
@@ -56,17 +58,19 @@ class PanTableOption:
     remember that the keys in YAML sometimes uses hyphen/underscore
     and here uses underscore
     '''
-    short_caption: Optional[str] = None
-    caption: Optional[str] = None
-    alignment: Optional[str] = None
-    alignment_cells: Optional[str] = None
-    width: Optional[List[float]] = None
+    short_caption: str = ''
+    caption: str = ''
+    alignment: str = ''
+    alignment_cells: str = ''
+    width: Optional[List[Union[float, str]]] = None
     table_width: float = 1.
     header: bool = True
+    ms: Optional[List[int]] = None
+    ns_head: Optional[List[int]] = None
     markdown: bool = False
     fancy_table: bool = False
-    include: Optional[str] = None
-    include_encoding: Optional[str] = None
+    include: str = ''
+    include_encoding: str = ''
     csv_kwargs: dict = field(default_factory=dict)
 
     def __post_init__(self):
@@ -74,15 +78,15 @@ class PanTableOption:
 
         Only check for type here. e.g. positivity of width and table_width are not checked at this point.
         '''
-        types = get_first_type(self.__class__)
+        types = get_types(self.__class__)
         for field_ in fields(self):
             key = field_.name
             value = getattr(self, key)
-            type_ = types[key]
+            types_ = types[key]
             # special case: default factory
             default = dict() if key == 'csv_kwargs' else field_.default
             # wrong type and not default
-            if not (value == default or isinstance(value, type_)):
+            if not (value == default or isinstance(value, types_)):
                 # special case: Fraction/int
                 try:
                     if key == 'table_width':
@@ -96,10 +100,19 @@ class PanTableOption:
         # check Optional[List[float]]
         if self.width is not None:
             try:
-                self.width = [float(Fraction(x)) for x in self.width]
+                self.width = ['D' if x == 'D' else float(Fraction(x)) for x in self.width]
             except (ValueError, TypeError):
                 print(f'Option width with value {self.width} has invalid type and set to default: None', file=sys.stderr)
                 self.width = None
+        # check Optional[List[int]]
+        for key in ('ms', 'ns_head'):
+            value = getattr(self, key)
+            if value is not None:
+                try:
+                    setattr(self, key, [int(x) for x in value])
+                except (ValueError, TypeError):
+                    print(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: None", file=sys.stderr)
+                    setattr(self, key, None)
 
     @classmethod
     def from_kwargs(cls, **kwargs):
@@ -197,6 +210,34 @@ class PanCodeBlock:
             classes=classes,
             attributes=self.ica.attributes,
         )
+
+    @staticmethod
+    def dump_csv(data, options):
+        with io.StringIO() as file:
+            writer = csv.writer(file)
+            writer.writerows(data)
+            return file.getvalue()
+
+    @classmethod
+    def from_data_format(
+        cls,
+        data: np.ndarray[str],
+        options: Optional[PanTableOption] = None,
+        ica: Optional[Ica] = None,
+        format: str = 'csv',
+    ):
+        dump_func = {
+            'csv': cls.dump_csv,
+        }
+        options = PanTableOption() if options is None else options
+        try:
+            return cls(
+                options=options,
+                data=dump_func[format](data, options),
+                ica=Ica() if ica is None else ica,
+            )
+        except KeyError:
+            raise ValueError(f'Unspported format {format}.')
 
     def csv_to_pantable(self):
         '''parse data as csv and return a PanTable
@@ -581,12 +622,14 @@ class PanTableAbstract(ABC, FakeRepr):
     @ms.setter
     def ms(self, ms):
         del self.rowblock_idxs_row
-        del self.rowblock_splitting_idxs
         del self.is_heads
         del self.is_foots
         del self.is_body_heads
         del self.is_body_bodies
         del self.body_idxs_row
+        del self.icas_rowblock_idxs_row
+        del self.rowblock_splitting_idxs
+        del self.last_row_of_rowblock_idxs
         self._ms = ms
 
     @cached_property
@@ -623,10 +666,21 @@ class PanTableAbstract(ABC, FakeRepr):
         return body_idxs_row
 
     @cached_property
+    def icas_rowblock_idxs_row(self) -> np.ndarray[np.int64]:
+        '''calculate the i-th row-block attrs that each row belongs to'''
+        return (self.rowblock_idxs_row + 1) // 2
+
+    @cached_property
     def rowblock_splitting_idxs(self) -> np.ndarray[np.int64]:
         '''applying np.split(array_of_rows, rowblock_splitting_idxs) would break it back into list of head, bodies, foot
         '''
         return np.cumsum(self._ms)[:-1]
+
+    @cached_property
+    def last_row_of_rowblock_idxs(self) -> Set[np.int64]:
+        '''return a set of the indices of the last row per row-block excluding foot
+        '''
+        return set(np.cumsum(self._ms) - 1)
 
     def iter_rowblocks(self, array: np.ndarray) -> List[np.ndarray]:
         '''break array into list of head, bodies, foot
@@ -1193,4 +1247,105 @@ class PanTableStr(PanTableAbstract):
             icas_row=icas_row_res,
             icas=icas_res,
             aligns=self.aligns,
+        )
+
+    def to_markdown_table(self, fancy_table: bool = False) -> np.ndarray[str]:
+        '''construct a table with both content and ica together
+        '''
+        # prepend a column if fancy-table
+        offset = int(fancy_table)
+        m = self.m
+        n = self.n + offset
+
+        res = np.full((m, n), '', dtype='O')
+        cells = self.cells
+        icas = self.icas
+        # cells, icas
+        for i in range(m):
+            for j in range(n - offset):
+                cell = cells[i, j]
+                if cell.is_at((i, j)):
+                    ica = icas[i, j]
+                    res[i, j + offset] = ' '.join((cell.content, ica)) if ica else cell.content
+        # icas_rowblock, icas_row
+        if fancy_table:
+            icas_rowblock = self.icas_rowblock
+            icas_row = self.icas_row
+
+            icas_rowblock_idxs_row = self.icas_rowblock_idxs_row
+            last_row_of_rowblock_idxs = self.last_row_of_rowblock_idxs
+            is_heads = self.is_heads
+            is_body_heads = self.is_body_heads
+            is_body_bodies = self.is_body_bodies
+            is_foots = self.is_foots
+            for i in range(m):
+                ica_row = icas_row[i]
+                if i in last_row_of_rowblock_idxs:
+                    ica_rowblock = icas_rowblock[icas_rowblock_idxs_row[i]]
+                    temp_list = []
+                    is_body_head = is_body_heads[i]
+                    if not is_body_head:
+                        temp_list.append(ica_rowblock)
+                    if is_body_bodies[i]:
+                        temp_list.append('___')
+                    elif is_body_head:
+                        temp_list.append('---')
+                    elif is_heads[i] or is_foots[i]:
+                        temp_list.append('===')
+                    temp_list.append(ica_row)
+                    res[i, 0] = ' '.join(temp_list)
+                else:
+                    res[i, 0] = ica_row
+        return res
+
+    def to_pancodeblock(
+        self,
+        format: str = 'csv',
+        fancy_table: bool = False,
+        include: str = '',
+        csv_kwargs: Optional[dict] = None,
+    ) -> PanCodeBlock:
+        short_caption = self.short_caption
+        spec = self.spec
+        col_widths = spec.col_widths
+
+        # table_width
+        if col_widths is None:
+            table_width = 1.
+        else:
+            sum_ = col_widths.sum()
+            if np.isnan(sum_) or sum_ <= 0.:
+                table_width = 1.
+            else:
+                table_width = sum_
+
+        # col_width
+        col_widths_list = ['D' if np.isnan(i) else i for i in col_widths]
+
+        # header
+        ms = self._ms
+        # if single row header
+        header = (ms.size == 4 and ms[0] == 1 and ms[1] == 0 and ms[3] == 0)
+
+        options = PanTableOption(
+            short_caption='' if short_caption is None else short_caption,
+            caption=self.caption,
+            alignment=spec.aligns.aligns_string,
+            alignment_cells=self.aligns.aligns_string,
+            width=col_widths_list,
+            table_width=table_width,
+            header=header,
+            ms=ms.tolist(),
+            ns_head=self.ns_head.tolist(),
+            markdown=True,  # TODO: provide this as class attr and unify with stringify?
+            fancy_table=fancy_table,
+            include=include,
+            csv_kwargs=dict() if csv_kwargs is None else csv_kwargs,
+        )
+
+        return PanCodeBlock.from_data_format(
+            self.to_markdown_table(fancy_table=fancy_table),
+            options=options,
+            ica=self.ica_table,
+            format=format,
         )
