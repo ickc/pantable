@@ -238,7 +238,6 @@ class FakeRepr:
         return self.__repr__()
 
     def __repr__(self) -> str:
-        '''TODO'''
         return pformat(self.to_dict(), sort_dicts=False, compact=False, width=-1)
 
     def to_dict(self) -> dict:
@@ -495,7 +494,6 @@ class PanTableAbstract(ABC, FakeRepr):
             return self.__repr__()
 
     def to_dict(self) -> dict:
-        '''TODO'''
         return {
             'cells': self.cells,
             'ica_table': self.ica_table,
@@ -624,7 +622,9 @@ class PanTableAbstract(ABC, FakeRepr):
         return np.split(array, self.rowblock_splitting_idxs)
 
     def iterrows(self):
-        '''TODO'''
+        '''
+        TODO: this is not a good iterrows to work with
+        '''
         rowblock_idxs_row = self.rowblock_idxs_row
         is_heads = self.is_heads
         is_foots = self.is_foots
@@ -1104,7 +1104,6 @@ class PanTableStr(PanTableAbstract):
         if short_caption is None:
             cache_none.append('short_caption')
         else:
-            # TODO
             cache_texts['short_caption'] = short_caption
         # cells and icas
         m = self.m
