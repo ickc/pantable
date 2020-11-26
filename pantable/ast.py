@@ -145,13 +145,13 @@ class PanCodeBlock:
     c.f. `.util.parse_markdown_codeblock` for testing purposes
     '''
 
-    def __init__(self, options: dict, data: str, element: CodeBlock, doc: Doc = None):
+    def __init__(self, options: Optional[dict] = None, data: str = '', element: Optional[CodeBlock] = None, doc: Optional[Doc] = None):
         '''
         these args are those passed from within yaml_filter
         '''
-        self.options = PanTableOption.from_kwargs(**options)
+        self.options = PanTableOption() if options is None else PanTableOption.from_kwargs(**options)
         self.data = data
-        self.ica = Ica(
+        self.ica = Ica() if element is None else Ica(
             identifier=element.identifier,
             classes=element.classes,
             attributes=element.attributes,
@@ -241,7 +241,7 @@ class FakeRepr:
         '''TODO'''
         return pformat(self.to_dict(), sort_dicts=False, compact=False, width=-1)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         raise NotImplementedError
 
 
@@ -308,6 +308,10 @@ class Align:
             aligns_char_ravel[i] = 'D' if align_text is None else align_text[5]
         return cls.from_aligns_char(aligns_char)
 
+    @classmethod
+    def default(cls, shape: Union[Tuple[int], Tuple[int, int]] = (1,)):
+        return cls(np.full(shape, 68, dtype=np.int8))
+
 
 class Spec(FakeRepr):
     '''a class of spec of PanTable
@@ -316,7 +320,7 @@ class Spec(FakeRepr):
     def __init__(
         self,
         aligns: Align,
-        col_widths: np.ndarray[np.float64],
+        col_widths: Optional[np.ndarray[np.float64]] = None,
     ):
         self.aligns = aligns
         self.col_widths = col_widths
@@ -329,7 +333,7 @@ class Spec(FakeRepr):
 
     @property
     def size(self) -> int:
-        return self.col_widths.size
+        return self.aligns.aligns.size
 
     @classmethod
     def from_panflute_ast(cls, table: Table):
@@ -354,6 +358,9 @@ class Spec(FakeRepr):
 
     def to_panflute_ast(self) -> List[Tuple]:
         return [
+            (align, COLWIDTHDEFAULT)
+            for align in self.aligns.aligns_text
+        ] if self.col_widths is None else [
             (align, COLWIDTHDEFAULT if np.isnan(width) else width)
             for align, width in zip(self.aligns.aligns_text, self.col_widths)
         ]
