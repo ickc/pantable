@@ -213,9 +213,12 @@ class PanCodeBlock:
         )
 
     @staticmethod
-    def dump_csv(data, options):
+    def dump_csv(
+        data: np.ndarray[str],
+        options: PanTableOption,
+    ) -> str:
         with io.StringIO() as file:
-            writer = csv.writer(file)
+            writer = csv.writer(file, **options.csv_kwargs)
             writer.writerows(data)
             return file.getvalue()
 
