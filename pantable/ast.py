@@ -1267,7 +1267,18 @@ class PanTableStr(PanTableAbstract):
                 cell = cells[i, j]
                 if cell.is_at((i, j)):
                     ica = icas[i, j]
-                    res[i, j + offset] = ' '.join((cell.content, ica)) if ica else cell.content
+                    cell_res = []
+                    if type(cell) == PanCellBlock:
+                        shape = cell.shape
+                        cell_res.append(f'({shape[0]}, {shape[1]})')
+                    if ica:
+                        # discard first 2 char which is `[]`
+                        cell_res.append(ica[2:])
+                    # if cell_res has content so far that means we have first row for cell attributes
+                    if cell_res:
+                        cell_res.append('\n')
+                    cell_res.append(cell.content)
+                    res[i, j + offset] = ''.join(cell_res)
         # icas_rowblock, icas_row
         if fancy_table:
             icas_rowblock = self.icas_rowblock
@@ -1282,21 +1293,23 @@ class PanTableStr(PanTableAbstract):
             for i in range(m):
                 ica_row = icas_row[i]
                 if i in last_row_of_rowblock_idxs:
-                    ica_rowblock = icas_rowblock[icas_rowblock_idxs_row[i]]
                     temp_list = []
                     is_body_head = is_body_heads[i]
                     if not is_body_head:
-                        temp_list.append(ica_rowblock)
+                        ica_rowblock = icas_rowblock[icas_rowblock_idxs_row[i]]
+                        if ica_rowblock:
+                            temp_list.append(ica_rowblock[2:])
                     if is_body_bodies[i]:
                         temp_list.append('___')
                     elif is_body_head:
                         temp_list.append('---')
                     elif is_heads[i] or is_foots[i]:
                         temp_list.append('===')
-                    temp_list.append(ica_row)
+                    if ica_row:
+                        temp_list.append(ica_row[2:])
                     res[i, 0] = ' '.join(temp_list)
                 else:
-                    res[i, 0] = ica_row
+                    res[i, 0] = ica_row[2:]
         return res
 
     def to_pancodeblock(
