@@ -168,9 +168,9 @@ class PanCodeBlock:
         '''
         these args are those passed from within yaml_filter
         '''
-        self.options = PanTableOption() if options is None else options
+        self.options: PanTableOption = PanTableOption() if options is None else options
         self.data = data
-        self.ica = Ica() if ica is None else ica
+        self.ica: Ica = Ica() if ica is None else ica
 
     @classmethod
     def from_yaml_filter(cls, options: Optional[dict] = None, data: str = '', element: Optional[CodeBlock] = None, doc: Optional[Doc] = None):
@@ -770,17 +770,18 @@ class PanTable(PanTableAbstract):
         shape: Tuple[int, int] = cells.shape
         m, n = shape
 
-        self.ica_table = Ica() if ica_table is None else ica_table
-        self.spec = Spec.default(n) if spec is None else spec
-        self.aligns = Align.default(shape) if aligns is None else aligns
+        self.ica_table: Ica = Ica() if ica_table is None else ica_table
+        self.spec: Spec = Spec.default(n) if spec is None else spec
+        self.aligns: Align = Align.default(shape) if aligns is None else aligns
 
         # default to 1 row of TableHead and the rest is a single body of body
-        self._ms = np.array([1, 0, m - 1, 0], dtype=np.int64) if ms is None else ms
+        self._ms: np.ndarray[np.int64] = np.array([1, 0, m - 1, 0], dtype=np.int64) if ms is None else ms
 
         m_bodies = (self._ms.size - 2) // 2
-        self.ns_head = np.zeros(m_bodies, dtype=np.int64) if ns_head is None else ns_head
+        self.ns_head: np.ndarray[np.int64] = np.zeros(m_bodies, dtype=np.int64) if ns_head is None else ns_head
 
         m_icas_rowblock = m_bodies + 2
+        self.icas_rowblock: np.ndarray[Ica]
         if icas_rowblock is None:
             temp = np.empty(m_icas_rowblock, dtype='O')
             for i in range(m_icas_rowblock):
@@ -789,6 +790,7 @@ class PanTable(PanTableAbstract):
         else:
             self.icas_rowblock = icas_rowblock
 
+        self.icas_row: np.ndarray[Ica]
         if icas_row is None:
             temp = np.empty(m, dtype='O')
             for i in range(m):
@@ -797,6 +799,7 @@ class PanTable(PanTableAbstract):
         else:
             self.icas_row = icas_row
 
+        self.icas: np.ndarray[Ica]
         if icas is None:
             temp = np.empty(shape, dtype='O')
             for i in range(m):
@@ -1121,20 +1124,20 @@ class PanTableStr(PanTableAbstract):
         shape = cells.shape
         m, n = shape
 
-        self.ica_table = Ica() if ica_table is None else ica_table
-        self.spec = Spec.default(n) if spec is None else spec
-        self.aligns = Align.default(shape) if aligns is None else aligns
+        self.ica_table: Ica = Ica() if ica_table is None else ica_table
+        self.spec: Spec = Spec.default(n) if spec is None else spec
+        self.aligns: Align = Align.default(shape) if aligns is None else aligns
 
         # default to 1 row of TableHead and the rest is a single body of body
-        self._ms = np.array([1, 0, m - 1, 0], dtype=np.int64) if ms is None else ms
+        self._ms: np.ndarray[np.int64] = np.array([1, 0, m - 1, 0], dtype=np.int64) if ms is None else ms
 
         m_bodies = (self._ms.size - 2) // 2
-        self.ns_head = np.zeros(m_bodies, dtype=np.int64) if ns_head is None else ns_head
+        self.ns_head: np.ndarray[np.int64] = np.zeros(m_bodies, dtype=np.int64) if ns_head is None else ns_head
 
         m_icas_rowblock = m_bodies + 2
-        self.icas_rowblock = np.full(m_icas_rowblock, '', dtype='O') if icas_rowblock is None else icas_rowblock
-        self.icas_row = np.full(m, '', dtype='O') if icas_row is None else icas_row
-        self.icas = np.full(shape, '', dtype='O') if icas is None else icas
+        self.icas_rowblock: np.ndarray[str] = np.full(m_icas_rowblock, '', dtype='O') if icas_rowblock is None else icas_rowblock
+        self.icas_row: np.ndarray[str] = np.full(m, '', dtype='O') if icas_row is None else icas_row
+        self.icas: np.ndarray[str] = np.full(shape, '', dtype='O') if icas is None else icas
 
     def _repr_html_(self) -> str:
         return self.__str__(tablefmt='html')
