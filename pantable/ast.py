@@ -1261,6 +1261,52 @@ class PanTableStr(PanTableAbstract):
             aligns=self.aligns,
         )
 
+    def to_pantableoption(
+        self,
+        format: str = 'csv',
+        fancy_table: bool = False,
+        include: str = '',
+        csv_kwargs: Optional[dict] = None,
+    ) -> PanTableOption:
+        short_caption = self.short_caption
+        spec = self.spec
+        col_widths = spec.col_widths
+
+        # table_width
+        if col_widths is None:
+            table_width = 1.
+        else:
+            sum_ = col_widths.sum()
+            if np.isnan(sum_) or sum_ <= 0.:
+                table_width = 1.
+            else:
+                table_width = sum_
+
+        # col_width
+        col_widths_list = ['D' if np.isnan(i) else i for i in col_widths]
+
+        # header
+        ms = self._ms
+        # if single row header
+        header = (ms.size == 4 and ms[0] == 1 and ms[1] == 0 and ms[3] == 0)
+
+        return PanTableOption(
+            short_caption='' if short_caption is None else short_caption,
+            caption=self.caption,
+            alignment=spec.aligns.aligns_string,
+            alignment_cells=self.aligns.aligns_string,
+            width=col_widths_list,
+            table_width=table_width,
+            header=header,
+            ms=ms.tolist(),
+            ns_head=self.ns_head.tolist(),
+            markdown=True,  # TODO: provide this as class attr and unify with stringify?
+            fancy_table=fancy_table,
+            include=include,
+            csv_kwargs=dict() if csv_kwargs is None else csv_kwargs,
+            format=format,
+        )
+
     def to_markdown_table(self, fancy_table: bool = False) -> np.ndarray[str]:
         '''construct a table with both content and ica together
         '''
@@ -1330,48 +1376,8 @@ class PanTableStr(PanTableAbstract):
         include: str = '',
         csv_kwargs: Optional[dict] = None,
     ) -> PanCodeBlock:
-        short_caption = self.short_caption
-        spec = self.spec
-        col_widths = spec.col_widths
-
-        # table_width
-        if col_widths is None:
-            table_width = 1.
-        else:
-            sum_ = col_widths.sum()
-            if np.isnan(sum_) or sum_ <= 0.:
-                table_width = 1.
-            else:
-                table_width = sum_
-
-        # col_width
-        col_widths_list = ['D' if np.isnan(i) else i for i in col_widths]
-
-        # header
-        ms = self._ms
-        # if single row header
-        header = (ms.size == 4 and ms[0] == 1 and ms[1] == 0 and ms[3] == 0)
-
-        # TODO: promote this to a PanTableAbstract property?
-        options = PanTableOption(
-            short_caption='' if short_caption is None else short_caption,
-            caption=self.caption,
-            alignment=spec.aligns.aligns_string,
-            alignment_cells=self.aligns.aligns_string,
-            width=col_widths_list,
-            table_width=table_width,
-            header=header,
-            ms=ms.tolist(),
-            ns_head=self.ns_head.tolist(),
-            markdown=True,  # TODO: provide this as class attr and unify with stringify?
-            fancy_table=fancy_table,
-            include=include,
-            csv_kwargs=dict() if csv_kwargs is None else csv_kwargs,
-            format=format,
-        )
-
         return PanCodeBlock.from_data_format(
             self.to_markdown_table(fancy_table=fancy_table),
-            options=options,
+            options=self.to_pantableoption(format=format, fancy_table=fancy_table, include=include, csv_kwargs=csv_kwargs),
             ica=self.ica_table,
         )
