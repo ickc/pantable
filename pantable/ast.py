@@ -78,25 +78,26 @@ class PanTableOption:
 
         Only check for type here. e.g. positivity of width and table_width are not checked at this point.
         '''
-        types = get_types(self.__class__)
+        types_dict = get_types(self.__class__)
         for field_ in fields(self):
             key = field_.name
             value = getattr(self, key)
-            types_ = types[key]
+            types = types_dict[key]
             # special case: default factory
             default = dict() if key == 'csv_kwargs' else field_.default
             # wrong type and not default
-            if not (value == default or isinstance(value, types_)):
+            if not (value == default or isinstance(value, types)):
                 # special case: Fraction/int
                 try:
                     if key == 'table_width':
                         value = float(Fraction(value))
                         self.table_width = value
-                        continue
+                    else:
+                        # cast it into first type
+                        setattr(self, key, types[0](value))
                 except (ValueError, TypeError):
-                    pass
-                print(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: {default}", file=sys.stderr)
-                setattr(self, key, default)
+                    print(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: {default}", file=sys.stderr)
+                    setattr(self, key, default)
         # check Optional[List[float]]
         if self.width is not None:
             try:

@@ -18,7 +18,7 @@ def test_pantableoption_type_2():
 
 
 def test_pantableoption_type_3():
-    assert case_default == PanTableOption(caption=2)
+    assert PanTableOption(caption='2') == PanTableOption(caption=2)
 
 
 def test_pantableoption_type_4():
