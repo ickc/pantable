@@ -243,11 +243,16 @@ class PanCodeBlock:
         except KeyError:
             raise ValueError(f'Unspported format {format}.')
 
-    def csv_to_pantable(self):
-        '''parse data as csv and return a PanTable
+
+
+    def to_pantablestr(self) -> PanTableStr:
+        '''parse data and return a PanTableStr
         '''
         raise NotImplementedError
-        return PanTable(
+        # c.f. to_pancodeblock
+        # TODO: parse PanTableOption to args
+        # TODO: parse data, c.f. to_markdown_table
+        return PanTableStr(
             self.ica,
             short_caption, caption,
             spec,
@@ -258,6 +263,7 @@ class PanCodeBlock:
             aligns,
             cells,
         )
+
 
 # Table
 
@@ -1347,6 +1353,7 @@ class PanTableStr(PanTableAbstract):
         # if single row header
         header = (ms.size == 4 and ms[0] == 1 and ms[1] == 0 and ms[3] == 0)
 
+        # TODO: promote this to a PanTableAbstract property?
         options = PanTableOption(
             short_caption='' if short_caption is None else short_caption,
             caption=self.caption,
