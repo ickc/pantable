@@ -1255,14 +1255,14 @@ class PanTableStr(PanTableAbstract):
         # prepend a column if fancy-table
         offset = int(fancy_table)
         m = self.m
-        n = self.n + offset
+        n = self.n
 
-        res = np.full((m, n), '', dtype='O')
+        res = np.full((m, n + offset), '', dtype='O')
         cells = self.cells
         icas = self.icas
         # cells, icas
         for i in range(m):
-            for j in range(n - offset):
+            for j in range(n):
                 cell = cells[i, j]
                 if cell.is_at((i, j)):
                     ica = icas[i, j]
