@@ -71,6 +71,7 @@ class PanTableOption:
     fancy_table: bool = False
     include: str = ''
     include_encoding: str = ''
+    format: str = 'csv'
     csv_kwargs: dict = field(default_factory=dict)
 
     def __post_init__(self):
@@ -228,7 +229,6 @@ class PanCodeBlock:
         data: np.ndarray[str],
         options: Optional[PanTableOption] = None,
         ica: Optional[Ica] = None,
-        format: str = 'csv',
     ):
         dump_func = {
             'csv': cls.dump_csv,
@@ -237,12 +237,11 @@ class PanCodeBlock:
         try:
             return cls(
                 options=options,
-                data=dump_func[format](data, options),
+                data=dump_func[options.format](data, options),
                 ica=Ica() if ica is None else ica,
             )
         except KeyError:
-            raise ValueError(f'Unspported format {format}.')
-
+            raise ValueError(f'Unspported format {options.format}.')
 
 
     def to_pantablestr(self) -> PanTableStr:
@@ -1368,11 +1367,11 @@ class PanTableStr(PanTableAbstract):
             fancy_table=fancy_table,
             include=include,
             csv_kwargs=dict() if csv_kwargs is None else csv_kwargs,
+            format=format,
         )
 
         return PanCodeBlock.from_data_format(
             self.to_markdown_table(fancy_table=fancy_table),
             options=options,
             ica=self.ica_table,
-            format=format,
         )
