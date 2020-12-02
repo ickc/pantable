@@ -310,7 +310,7 @@ class PanCodeBlock:
         raise NotImplementedError
         # c.f. to_pancodeblock
         # TODO: parse PanTableOption to args
-        # TODO: parse data, c.f. to_markdown_table
+        # TODO: parse data, c.f. to_str_array
         # TODO: add markdown, fancy_table, include, include_encoding, format, csv_kwargs
         # probably "markdown" requires PanTableStr recognize it as an attr
         # e.g. in caption
@@ -1146,10 +1146,8 @@ class PanTable(PanTableAbstract):
             attributes=self.ica_table.attributes,
         )
 
-    def to_pantablestr(self) -> PanTableStr:
-        '''return a PanTableStr representation of self
-
-        TODO: unify with stringfy and provide to-markdown/stringify
+    def to_pantablemarkdown(self) -> PanTableMarkdown:
+        '''return a PanTableMarkdown representation of self
         '''
         # * 1st pass: assemble the caches
         cache_elems: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], ListContainer] = {}
@@ -1225,7 +1223,7 @@ class PanTable(PanTableAbstract):
         for i in range(m_rowblocks):
             icas_rowblock_res[i] = cache_texts[('icas_rowblock', i)]
 
-        return PanTableStr(
+        return PanTableMarkdown(
             cells_res,
             ica_table=self.ica_table,
             short_caption=cache_texts['short_caption'], caption=cache_texts['caption'],
@@ -1236,6 +1234,13 @@ class PanTable(PanTableAbstract):
             icas=icas_res,
             aligns=self.aligns,
         )
+
+    def to_pantablestr(self) -> PanTableStr:
+        '''return a PanTableStr representation of self
+
+        All contents are stringified so it is lossy.
+        '''
+        raise NotImplementedError
 
 
 class PanTableStr(PanTableAbstract):
@@ -1303,10 +1308,77 @@ class PanTableStr(PanTableAbstract):
                 ))
         return res
 
+    def to_pantableoption(
+        self,
+        format: str = 'csv',
+        fancy_table: bool = False,
+        include: str = '',
+        csv_kwargs: Optional[dict] = None,
+    ) -> PanTableOption:
+        short_caption = self.short_caption
+        spec = self.spec
+        col_widths = spec.col_widths
+
+        # table_width
+        sum_ = col_widths.sum()
+        if np.isnan(sum_) or sum_ <= 0.:
+            table_width = 1.
+        else:
+            table_width = sum_
+
+        # col_width
+        col_widths_list = ['D' if np.isnan(i) else i for i in col_widths]
+
+        # header
+        ms = self._ms
+        # if single row header
+        header = (ms.size == 4 and ms[0] == 1 and ms[1] == 0 and ms[3] == 0)
+
+        return PanTableOption(
+            short_caption='' if short_caption is None else short_caption,
+            caption=self.caption,
+            alignment=spec.aligns.aligns_string,
+            alignment_cells=self.aligns.aligns_string,
+            width=col_widths_list,
+            table_width=table_width,
+            header=header,
+            ms=ms.tolist(),
+            ns_head=self.ns_head.tolist(),
+            markdown=True,  # TODO: provide this as class attr and unify with stringify?
+            fancy_table=fancy_table,
+            include=include,
+            csv_kwargs=dict() if csv_kwargs is None else csv_kwargs,
+            format=format,
+        )
+
+    def to_pancodeblock(
+        self,
+        format: str = 'csv',
+        fancy_table: bool = False,
+        include: str = '',
+        csv_kwargs: Optional[dict] = None,
+    ) -> PanCodeBlock:
+        return PanCodeBlock.from_data_format(
+            self.to_str_array(fancy_table=fancy_table),
+            options=self.to_pantableoption(format=format, fancy_table=fancy_table, include=include, csv_kwargs=csv_kwargs),
+            ica=self.ica_table,
+        )
+
     def to_pantable(self) -> PanTable:
         '''return a PanTable representation of self
+        '''
+        raise NotImplementedError
 
-        TODO: unify with stringfy and provide to-markdown/stringify
+    def to_str_array(self) -> np.ndarray[str]:
+        raise NotImplementedError
+
+
+class PanTableMarkdown(PanTableStr):
+    '''similar to PanTableStr, but with all str assumed to be in markdown
+    '''
+
+    def to_pantable(self) -> PanTable:
+        '''return a PanTable representation of self
         '''
         # * 1st pass: assemble the caches
         cache_texts: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], str] = {}
@@ -1396,50 +1468,7 @@ class PanTableStr(PanTableAbstract):
             aligns=self.aligns,
         )
 
-    def to_pantableoption(
-        self,
-        format: str = 'csv',
-        fancy_table: bool = False,
-        include: str = '',
-        csv_kwargs: Optional[dict] = None,
-    ) -> PanTableOption:
-        short_caption = self.short_caption
-        spec = self.spec
-        col_widths = spec.col_widths
-
-        # table_width
-        sum_ = col_widths.sum()
-        if np.isnan(sum_) or sum_ <= 0.:
-            table_width = 1.
-        else:
-            table_width = sum_
-
-        # col_width
-        col_widths_list = ['D' if np.isnan(i) else i for i in col_widths]
-
-        # header
-        ms = self._ms
-        # if single row header
-        header = (ms.size == 4 and ms[0] == 1 and ms[1] == 0 and ms[3] == 0)
-
-        return PanTableOption(
-            short_caption='' if short_caption is None else short_caption,
-            caption=self.caption,
-            alignment=spec.aligns.aligns_string,
-            alignment_cells=self.aligns.aligns_string,
-            width=col_widths_list,
-            table_width=table_width,
-            header=header,
-            ms=ms.tolist(),
-            ns_head=self.ns_head.tolist(),
-            markdown=True,  # TODO: provide this as class attr and unify with stringify?
-            fancy_table=fancy_table,
-            include=include,
-            csv_kwargs=dict() if csv_kwargs is None else csv_kwargs,
-            format=format,
-        )
-
-    def to_markdown_table(self, fancy_table: bool = False) -> np.ndarray[str]:
+    def to_str_array(self, fancy_table: bool = False) -> np.ndarray[str]:
         '''construct a table with both content and ica together
         '''
         # prepend a column if fancy-table
@@ -1500,16 +1529,3 @@ class PanTableStr(PanTableAbstract):
                 else:
                     res[i, 0] = ica_row[2:]
         return res
-
-    def to_pancodeblock(
-        self,
-        format: str = 'csv',
-        fancy_table: bool = False,
-        include: str = '',
-        csv_kwargs: Optional[dict] = None,
-    ) -> PanCodeBlock:
-        return PanCodeBlock.from_data_format(
-            self.to_markdown_table(fancy_table=fancy_table),
-            options=self.to_pantableoption(format=format, fancy_table=fancy_table, include=include, csv_kwargs=csv_kwargs),
-            ica=self.ica_table,
-        )

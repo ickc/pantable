@@ -32,12 +32,12 @@ def read(path: Path) -> Tuple[str, str, str]:
     pan_table = PanTable.from_panflute_ast(table)
     table_idem = pan_table.to_panflute_ast()
     # PanTableStr
-    pan_table_str = pan_table.to_pantablestr()
-    pan_table_idem = pan_table_str.to_pantable()
+    pan_table_markdown = pan_table.to_pantablemarkdown()
+    pan_table_idem = pan_table_markdown.to_pantable()
     table_idem2 = pan_table_idem.to_panflute_ast()
     # PanCodeBlock
     # TODO: for now just check it can convert
-    pan_code_block = pan_table_str.to_pancodeblock(fancy_table=True)
+    pan_code_block = pan_table_markdown.to_pancodeblock(fancy_table=True)
     pf_ast = pan_code_block.to_panflute_ast()
     # check for idempotence
     native_orig = convert_text(table, input_format='panflute', output_format='native')
