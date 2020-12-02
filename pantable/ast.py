@@ -34,7 +34,7 @@ from panflute.containers import ListContainer
 from panflute.tools import stringify, convert_text
 
 from .util import get_types, get_yaml_dumper, iter_convert_texts_panflute_to_markdown, iter_convert_texts_markdown_to_panflute
-from .io import load_csv, dump_csv
+from .io import load_csv, dump_csv_io
 
 COLWIDTHDEFAULT = 'ColWidthDefault'
 
@@ -230,7 +230,7 @@ class PanCodeBlock:
         ica: Optional[Ica] = None,
     ) -> PanCodeBlock:
         dump_func = {
-            'csv': dump_csv,
+            'csv': dump_csv_io,
         }
         options = PanTableOption() if options is None else options
         try:
