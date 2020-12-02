@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 def load_csv(
     data: str,
     options: PanTableOption,
-    encoding: Optional[str] = None,
 ) -> List[List[str]]:
     '''loading CSV table
 
@@ -28,7 +27,7 @@ def load_csv(
     '''
     include = options.include
     with (
-        open(include, encoding=encoding, newline='')
+        open(include, encoding=options.include_encoding, newline='')
     ) if include else (
         io.StringIO(data, newline='')
     ) as f:
@@ -45,13 +44,12 @@ def load_csv(
 def load_csv_array(
     data: str,
     options: PanTableOption,
-    encoding: Optional[str] = None,
 ) -> np.ndarray[str]:
     '''loading CSV table in `numpy.ndarray`
 
     Note that this can emit EmptyTableError, FileNotFoundError
     '''
-    table_list = load_csv(data, options, encoding=encoding)
+    table_list = load_csv(data, options)
     m = len(table_list)
     n = max(len(row) for row in table_list)
     res = np.full((m, n), '', dtype='O')
@@ -83,13 +81,13 @@ def dump_csv_io(
     '''
     _include = options.include
 
-    text = dump_csv_str(data, options)
+    text = dump_csv(data, options)
 
     if _include:
         try:
             include = Path(_include)
             include.parent.mkdir(parents=True, exist_ok=True)
-            with open(include, 'x', newline='') as f:
+            with open(include, 'x', encoding=options.include_encoding, newline='') as f:
                 f.write(text)
             return None
         except (PermissionError, FileExistsError):
