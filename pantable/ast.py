@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import re
 import sys
-from typing import TYPE_CHECKING, Union, List, Optional
+from typing import TYPE_CHECKING, Union, List, Optional, Type
 from itertools import chain, repeat
 from pprint import pformat
 from fractions import Fraction
@@ -34,7 +35,7 @@ from panflute.containers import ListContainer
 from panflute.tools import stringify, convert_text
 
 from .util import get_types, get_yaml_dumper, iter_convert_texts_panflute_to_markdown, iter_convert_texts_markdown_to_panflute
-from .io import load_csv, dump_csv_io
+from .io import load_csv_array, dump_csv_io
 
 COLWIDTHDEFAULT = 'ColWidthDefault'
 
@@ -296,19 +297,125 @@ class PanCodeBlock:
                 ns_head = None
         return short_caption, caption, spec, aligns, ms, ns_head
 
+    @staticmethod
+    def parse_data_str(str_array) -> np.ndarray[PanCell]:
+        raise NotImplementedError
+        return cells
+
+    @staticmethod
+    def parse_data_markdown(
+        str_array,
+        fancy_table: bool = False,
+        ms: Optional[np.ndarray[np.int64]] = None,
+        ica_cell_pat = re.compile(r'^(\([0-9, ]+\))?(\{.*\})?$'),
+    ) -> Tuple[
+        np.ndarray[np.int64],
+        np.ndarray[str],
+        np.ndarray[str],
+        np.ndarray[str],
+        np.ndarray[PanCell],
+    ]:
+        '''parse markdown in string array
+
+        c.f. PanTableMarkdown.to_str_array
+        '''
+        m, n = str_array.shape
+        offset = int(fancy_table)
+        n -= offset
+        shape = (m, n)
+        # icas_rowblock
+        icas_row = np.full(m, '', dtype='O')
+        icas = np.empty(shape, dtype='O')
+        cells = np.empty(shape, dtype='O')
+        for i in range(m):
+            for j in range(n):
+                # protect already written PanCellBlock
+                if cells[i, j] is None:
+                    string = str_array[i, j + offset]
+                    has_ica = False
+                    idx_newline = string.find('\n')
+                    # if newline
+                    if idx_newline != -1:
+                        ica_maybe = string[:idx_newline]
+                        found = ica_cell_pat.findall(ica_maybe)
+                        if found:
+                            has_ica = True
+                            ica_temp = found[0][1]
+                            ica = f'[]{ica_temp}' if ica_temp else ''
+                            shape_temp = found[0][0]
+                            shape = tuple(int(i.strip()) for i in shape_temp[1:-1].split(',')) if shape_temp else (1, 1)
+                            if len(shape) != 2:
+                                print(f'Invalid cell shape {shape}, ignoring...', file=sys.stderr)
+                                has_ica = False
+                            # TODO: get smarter to enlarge the box? Quite complicated here...
+                            if (shape[0] + i > m) or (shape[1] + j > n):
+                                print(f'The following cell overflow the table, ignoring the attributes: {string}', file=sys.stderr)
+                                has_ica = False
+                    if has_ica:
+                        content = string[(idx_newline + 1):]
+                    else:
+                        ica = ''
+                        shape = (1, 1)
+                        content = string
+                    icas[i, j] = ica
+                    # since we already checked the cell is None, overwrite can default to True
+                    PanCell.put(content, shape, (i, j), cells, overwrite=True)
+
+        # TODO: fancy_table: ms, icas_rowblock, icas_row
+        # if fancy_table:
+        # else:
+        m_icas_rowblock = ms.size // 2 + 1
+        icas_rowblock = np.full(m_icas_rowblock, '', dtype='O')
+
+        return ms, icas_rowblock, icas_row, icas, cells
+
     def to_pantablestr(self) -> PanTableStr:
         '''parse data and return a PanTableStr
+
+        Exceptions might be raised here
+
+        c.f. to_pancodeblock
         '''
+        load_func = {
+            'csv': load_csv_array,
+        }
+        options = self.options
+        # c.f. PanTable(Str|Markdown).to_str_array
+        try:
+            str_array = load_func[options.format](self.data, options)
+        except KeyError as e:
+            print(f'Unknown format {options.format}.', file=sys.stderr)
+            raise e
+
+        m, n = str_array.shape
+        offset = int(options.fancy_table)
+        n -= offset
+        shape = (m, n)
+
+        short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(shape)
+
+        cls: Type[PanTableStr]
+        ms: Optional[np.ndarray[np.int64]]
+        icas_rowblock: Optional[np.ndarray[str]]
+        icas_row: Optional[np.ndarray[str]]
+        icas: Optional[np.ndarray[str]]
+        if options.markdown:
+            cls = PanTableMarkdown
+            ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(str_array, fancy_table=options.fancy_table, ms=_ms)
+        else:
+            cls = PanTableStr
+            ms = None
+            icas_rowblock = None
+            icas_row = None
+            icas = None
+            cells = self.parse_data_str(str_array)
+        # ignoring ms from options if it is in fancy_table
+        if ms is None:
+            ms = _ms
+
         # TODO: implement table_width and auto_width
-        raise NotImplementedError
-        # c.f. to_pancodeblock
-        # TODO: parse PanTableOption to args
-        # TODO: parse data, c.f. to_str_array
-        # TODO: add markdown, fancy_table, include, include_encoding, format, csv_kwargs
-        # probably "markdown" requires PanTableStr recognize it as an attr
-        # e.g. in caption
-        short_caption, caption, spec, aligns, ms, ns_head = self.parse_options(shape)
-        return PanTableStr(
+        return cls(
+            cells,
             self.ica,
             short_caption, caption,
             spec,
@@ -317,7 +424,6 @@ class PanCodeBlock:
             icas_row,
             icas,
             aligns,
-            cells,
         )
 
 
