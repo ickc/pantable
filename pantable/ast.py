@@ -117,7 +117,7 @@ class PanTableOption:
                     setattr(self, key, None)
 
     @classmethod
-    def from_kwargs(cls, **kwargs):
+    def from_kwargs(cls, **kwargs) -> PanTableOption:
         return cls(**{
             key_underscored: value
             for key, value in kwargs.items()
@@ -174,7 +174,13 @@ class PanCodeBlock:
         self.ica: Ica = Ica() if ica is None else ica
 
     @classmethod
-    def from_yaml_filter(cls, options: Optional[dict] = None, data: str = '', element: Optional[CodeBlock] = None, doc: Optional[Doc] = None):
+    def from_yaml_filter(
+        cls,
+        options: Optional[dict] = None,
+        data: str = '',
+        element: Optional[CodeBlock] = None,
+        doc: Optional[Doc] = None
+    ) -> PanCodeBlock:
         '''
         these args are those passed from within yaml_filter
         '''
@@ -229,7 +235,7 @@ class PanCodeBlock:
         data: np.ndarray[str],
         options: Optional[PanTableOption] = None,
         ica: Optional[Ica] = None,
-    ):
+    ) -> PanCodeBlock:
         dump_func = {
             'csv': cls.dump_csv,
         }
@@ -243,7 +249,17 @@ class PanCodeBlock:
         except KeyError:
             raise ValueError(f'Unspported format {options.format}.')
 
-    def parse_options(self, shape: Tuple[int, int]):
+    def parse_options(
+        self,
+        shape: Tuple[int, int],
+    ) -> Tuple[
+        str,
+        str,
+        Spec,
+        Align,
+        np.ndarray[np.int64],
+        Optional[np.ndarray[np.int64]],
+    ]:
         '''parsing PanTableOption to whatever PanTableStr.__init__ needed
 
         This is the point where correctness is checked most aggressively.
@@ -298,6 +314,7 @@ class PanCodeBlock:
         # TODO: add markdown, fancy_table, include, include_encoding, format, csv_kwargs
         # probably "markdown" requires PanTableStr recognize it as an attr
         # e.g. in caption
+        short_caption, caption, spec, aligns, ms, ns_head = self.parse_options(shape)
         return PanTableStr(
             self.ica,
             short_caption, caption,
@@ -333,7 +350,7 @@ class Ica:
         )))
 
     @classmethod
-    def from_panflute_ast(cls, elem: ListContainer[Block]):
+    def from_panflute_ast(cls, elem: ListContainer[Block]) -> Ica:
         if elem:
             span = elem[0].content[0]
             return cls(identifier=span.identifier, classes=span.classes, attributes=span.attributes)
@@ -410,11 +427,11 @@ class Align:
             raise TypeError(f'The Align {self.aligns_char} has unexpected no. of dim.: {ndim}')
 
     @classmethod
-    def from_aligns_char(cls, aligns_char: np.ndarray['S1']):
+    def from_aligns_char(cls, aligns_char: np.ndarray['S1']) -> Align:
         return cls(aligns_char.view(np.int8))
 
     @classmethod
-    def from_aligns_text(cls, aligns_text: np.ndarray[Optional[str]]):
+    def from_aligns_text(cls, aligns_text: np.ndarray[Optional[str]]) -> Align:
         aligns_char = np.empty_like(aligns_text, dtype='S1')
         # ravel to handle arbitrary dimenions
         aligns_char_ravel = np.ravel(aligns_char)
@@ -425,7 +442,7 @@ class Align:
         return cls.from_aligns_char(aligns_char)
 
     @classmethod
-    def from_aligns_string_1d(cls, alignment: str, size: int):
+    def from_aligns_string_1d(cls, alignment: str, size: int) -> Align:
         '''from alignment in PanTableOption
 
         e.g.
@@ -446,7 +463,7 @@ class Align:
         return aligns
 
     @classmethod
-    def from_aligns_string_2d(cls, alignment_cells: str, shape: Tuple[int, int]):
+    def from_aligns_string_2d(cls, alignment_cells: str, shape: Tuple[int, int]) -> Align:
         '''from alignment_cells in PanTableOption
         '''
         m, n = shape
@@ -460,7 +477,7 @@ class Align:
         return res
 
     @classmethod
-    def default(cls, shape: Union[Tuple[int], Tuple[int, int]] = (1,)):
+    def default(cls, shape: Union[Tuple[int], Tuple[int, int]] = (1,)) -> Align:
         return cls(np.full(shape, 68, dtype=np.int8))
 
 
@@ -493,7 +510,7 @@ class Spec:
         return self.aligns.aligns.size
 
     @classmethod
-    def from_panflute_ast(cls, table: Table):
+    def from_panflute_ast(cls, table: Table) -> Spec:
         spec = table.colspec
 
         n = len(spec)
@@ -518,7 +535,7 @@ class Spec:
         cls,
         options: PanTableOption,
         size: int,
-    ):
+    ) -> Spec:
         alignment: str = options.alignment
         width: Optional[List[Union[float, str]]] = options.width
 
@@ -547,7 +564,7 @@ class Spec:
         ]
 
     @classmethod
-    def default(cls, n_col: int = 1):
+    def default(cls, n_col: int = 1) -> Spec:
         return cls(Align.default((n_col,)))
 
 
@@ -1002,7 +1019,7 @@ class PanTable(PanTableAbstract):
         return res
 
     @classmethod
-    def from_panflute_ast(cls, table: Table):
+    def from_panflute_ast(cls, table: Table) -> PanTable:
         ica_table = Ica(
             table.identifier,
             table.classes,
