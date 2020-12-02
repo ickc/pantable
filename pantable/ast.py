@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-import csv
-import io
 import sys
-from typing import Union, List, Tuple, Optional, Dict, Iterator, Set
+from typing import TYPE_CHECKING, Union, List, Optional
 from itertools import chain, repeat
 from pprint import pformat
 from fractions import Fraction
@@ -16,22 +14,27 @@ if (sys.version_info.major, sys.version_info.minor) < (3, 8):
         raise ImportError('Using Python 3.6 or 3.7? Please run "pip install backports.cached_property".')
 else:
     from functools import cached_property
-
-import numpy as np
-import yaml
-
-from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
-from panflute.base import Inline, Block
-from panflute.elements import CodeBlock, Doc, Plain, Span
-from panflute.containers import ListContainer
-from panflute.tools import stringify, convert_text
-
 try:
     from dataclasses import dataclass, field, fields
 except ImportError:
     raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
+if TYPE_CHECKING:
+    from typing import Tuple, Dict, Iterator, Set
+
+    from panflute.base import Inline, Block
+    from panflute.elements import Doc
+
+import numpy as np
+import yaml
+
+from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
+from panflute.elements import CodeBlock, Plain, Span
+from panflute.containers import ListContainer
+from panflute.tools import stringify, convert_text
+
 from .util import get_types, get_yaml_dumper, iter_convert_texts_panflute_to_markdown, iter_convert_texts_markdown_to_panflute
+from .io import load_csv, dump_csv
 
 COLWIDTHDEFAULT = 'ColWidthDefault'
 
@@ -219,16 +222,6 @@ class PanCodeBlock:
             attributes=self.ica.attributes,
         )
 
-    @staticmethod
-    def dump_csv(
-        data: np.ndarray[str],
-        options: PanTableOption,
-    ) -> str:
-        with io.StringIO() as file:
-            writer = csv.writer(file, **options.csv_kwargs)
-            writer.writerows(data)
-            return file.getvalue()
-
     @classmethod
     def from_data_format(
         cls,
@@ -237,7 +230,7 @@ class PanCodeBlock:
         ica: Optional[Ica] = None,
     ) -> PanCodeBlock:
         dump_func = {
-            'csv': cls.dump_csv,
+            'csv': dump_csv,
         }
         options = PanTableOption() if options is None else options
         try:
