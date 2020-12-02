@@ -243,14 +243,61 @@ class PanCodeBlock:
         except KeyError:
             raise ValueError(f'Unspported format {options.format}.')
 
+    def parse_options(self, shape: Tuple[int, int]):
+        '''parsing PanTableOption to whatever PanTableStr.__init__ needed
+
+        This is the point where correctness is checked most aggressively.
+        Here we assumed the types are already correct, so we are checking
+        things beyond types such as Optional, shape, positivity, etc.
+        '''
+        m, n = shape
+        options = self.options
+
+        short_caption = options.short_caption
+        caption = options.caption
+
+        # alignment, width
+        spec = Spec.from_pantableoption(options, shape[1])
+        # alignment_cells
+        aligns = Align.from_aligns_string_2d(options.alignment_cells, shape)
+
+        # ms
+        _ms = options.ms
+        ms: Optional[np.ndarray[np.int64]] = None if _ms is None else np.array(_ms, dtype=np.int64)
+        if ms is not None:
+            if np.any(ms < 0):
+                print(f'Negative no. of rows detected in ms: {_ms}, set to default.', file=sys.stderr)
+                ms = None
+            elif ms.sum() != m:
+                print(f'The total no. of rows in all row-blocks (sum of {ms}) is not equal to the total no. of rows ({m}), set to default.', file=sys.stderr)
+                ms = None
+        # header
+        header = options.header
+        if ms is None:
+            ms = np.array([1, 0, m - 1, 0]) if header else np.array([0, 0, m, 0])
+        elif not header:
+            print('Ignoring "header: False" as ms is specified.', file=sys.stderr)
+
+        # ns_head
+        _ns_head = options.ns_head
+        ns_head = None if _ns_head is None else np.array(_ns_head, dtype=np.int64)
+        if ns_head is not None:
+            if np.any((ns_head < 0) | (ns_head > n)):
+                print(f'ns_head {_ns_head} overflow the table, set to default.', file=sys.stderr)
+                ns_head = None
+        return short_caption, caption, spec, aligns, ms, ns_head
 
     def to_pantablestr(self) -> PanTableStr:
         '''parse data and return a PanTableStr
         '''
+        # TODO: implement table_width and auto_width
         raise NotImplementedError
         # c.f. to_pancodeblock
         # TODO: parse PanTableOption to args
         # TODO: parse data, c.f. to_markdown_table
+        # TODO: add markdown, fancy_table, include, include_encoding, format, csv_kwargs
+        # probably "markdown" requires PanTableStr recognize it as an attr
+        # e.g. in caption
         return PanTableStr(
             self.ica,
             short_caption, caption,
@@ -322,6 +369,12 @@ class Align:
     def __init__(self, aligns: np.ndarray[np.int8]):
         self.aligns = aligns
 
+    def __repr__(self):
+        return f'Align.from_aligns_text({self.aligns_text})'
+
+    def __str__(self):
+        return self.__repr__()
+
     @property
     def aligns_char(self):
         return self.aligns.view('S1')
@@ -372,11 +425,46 @@ class Align:
         return cls.from_aligns_char(aligns_char)
 
     @classmethod
+    def from_aligns_string_1d(cls, alignment: str, size: int):
+        '''from alignment in PanTableOption
+
+        e.g.
+        >>> Align.from_aligns_string_1d('LDRC', 4)
+        '''
+        alignment_norm = alignment.strip().upper()
+        try:
+            aligns_char = np.fromiter(alignment_norm, dtype='S1')
+            aligns_char_size = aligns_char.size
+            if aligns_char_size >= size:
+                aligns = Align.from_aligns_char(aligns_char[:size])
+            elif aligns_char_size < size:
+                aligns = Align.default(shape=(size,))
+                aligns.aligns[:aligns_char_size] = Align.from_aligns_char(aligns_char).aligns
+        except UnicodeEncodeError:
+            print(f'Non-ASCII character detected in {alignment}, ignoring and set to default.', file=sys.stderr)
+            aligns = Align.default(shape=(size,))
+        return aligns
+
+    @classmethod
+    def from_aligns_string_2d(cls, alignment_cells: str, shape: Tuple[int, int]):
+        '''from alignment_cells in PanTableOption
+        '''
+        m, n = shape
+        res = cls.default(shape)
+        aligns = res.aligns
+        for i, row in enumerate(alignment_cells.strip().split('\n')):
+            # in case where no. of rows is more than needed
+            if i >= m:
+                break
+            aligns[i] = Align.from_aligns_string_1d(row, n).aligns
+        return res
+
+    @classmethod
     def default(cls, shape: Union[Tuple[int], Tuple[int, int]] = (1,)):
         return cls(np.full(shape, 68, dtype=np.int8))
 
 
-class Spec(FakeRepr):
+class Spec:
     '''a class of spec of PanTable
     '''
 
@@ -386,13 +474,19 @@ class Spec(FakeRepr):
         col_widths: Optional[np.ndarray[np.float64]] = None,
     ):
         self.aligns = aligns
-        self.col_widths = col_widths
+        self.col_widths: np.ndarray[np.float64] = np.full_like(aligns.aligns, np.nan, dtype=np.float64) if col_widths is None else col_widths
 
     def to_dict(self) -> dict:
         return {
             'aligns': self.aligns.aligns_text,
             'col_widths': self.col_widths,
         }
+
+    def __repr__(self):
+        return f'Spec({self.aligns.__repr__()}, {self.col_widths})'
+
+    def __str__(self):
+        return self.__repr__()
 
     @property
     def size(self) -> int:
@@ -419,11 +513,35 @@ class Spec(FakeRepr):
             col_widths,
         )
 
+    @classmethod
+    def from_pantableoption(
+        cls,
+        options: PanTableOption,
+        size: int,
+    ):
+        alignment: str = options.alignment
+        width: Optional[List[Union[float, str]]] = options.width
+
+        if width is None:
+            col_widths = None
+        else:
+            col_widths = np.full(size, np.nan, dtype=np.float64)
+            for i in range(min(size, len(width))):
+                try:
+                    col_width = np.float64(width[i])
+                    if col_width <= 0:
+                        print(f'Non-positive column-width detected: {col_width}, set to default.', file=sys.stderr)
+                        col_width = np.nan
+                except ValueError:
+                    col_width = np.nan
+                col_widths[i] = col_width
+        return cls(
+            Align.from_aligns_string_1d(alignment, size),
+            col_widths=col_widths
+        )
+
     def to_panflute_ast(self) -> List[Tuple]:
         return [
-            (align, COLWIDTHDEFAULT)
-            for align in self.aligns.aligns_text
-        ] if self.col_widths is None else [
             (align, COLWIDTHDEFAULT if np.isnan(width) else width)
             for align, width in zip(self.aligns.aligns_text, self.col_widths)
         ]
@@ -1273,14 +1391,11 @@ class PanTableStr(PanTableAbstract):
         col_widths = spec.col_widths
 
         # table_width
-        if col_widths is None:
+        sum_ = col_widths.sum()
+        if np.isnan(sum_) or sum_ <= 0.:
             table_width = 1.
         else:
-            sum_ = col_widths.sum()
-            if np.isnan(sum_) or sum_ <= 0.:
-                table_width = 1.
-            else:
-                table_width = sum_
+            table_width = sum_
 
         # col_width
         col_widths_list = ['D' if np.isnan(i) else i for i in col_widths]
