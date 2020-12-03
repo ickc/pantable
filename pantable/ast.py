@@ -316,8 +316,8 @@ class PanCodeBlock:
         str_array,
         ms: np.ndarray[np.int64],
         fancy_table: bool = False,
-        ica_cell_pat=re.compile(r'^(\([0-9, ]+\))?({.*})?$'),
-        fancy_table_pat=re.compile(r'^({[^{}]*})? ?(---|===|___)? ?({[^{}]*})?$'),
+        ica_cell_pat=re.compile(r'^(\([0-9, ]+\))?({[^{}]*})?$'),
+        fancy_table_pat=re.compile(r'^({[^{}]*})?? ?(---|===|___)? ?({[^{}]*})?$'),
     ) -> Tuple[
         np.ndarray[np.int64],
         Optional[np.ndarray[str]],
@@ -393,15 +393,11 @@ class PanCodeBlock:
                         # if has rowblock indicators
                         marker = found[1]
                         if marker:
-                            if (ica_row := found[2]):
-                                icas_row[i] = f'[]{ica_row}'
-
                             temp_markers.append(marker)
                             temp_icas.append(found[0])
                             temp_idxs.append(i)
-                        # if there's no marker, the cell attrs will fall to the 1st
                         # * ignore the case that somone might put 2 attrs side-by-side
-                        elif (ica_row := found[0]):
+                        if (ica_row := found[2]):
                             icas_row[i] = f'[]{ica_row}'
                     else:
                         print(f'Cannot parse the fancy table cell {string}, ignroing...', file=sys.stderr)
