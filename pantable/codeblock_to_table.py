@@ -1,28 +1,37 @@
-import panflute
+from __future__ import annotations
 
-from .csv_to_table_ast import csv_to_table_ast
-from .csv_to_table_markdown import csv_to_table_markdown
+from typing import TYPE_CHECKING
+import sys
+
+from .ast import PanCodeBlock
 from .util import EmptyTableError
 
+if TYPE_CHECKING:
+    from typing import Optional
 
-def codeblock_to_table(options: dict, data: str, **args):
-    use_pipe_tables = options.get('pipe_tables', False)
-    use_grid_tables = options.get('grid_tables', False)
+    from panflute.elements import Doc, CodeBlock
 
+def codeblock_to_table(
+    options: Optional[dict] = None,
+    data: str = '',
+    element: Optional[CodeBlock] = None,
+    doc: Optional[Doc] = None,
+):
     try:
-        if use_pipe_tables or use_grid_tables:
-            # if both are specified, use grid_tables
-            return csv_to_table_markdown(options, data, use_grid_tables)
-        else:
-            return csv_to_table_ast(options, data)
-
+        return (
+            PanCodeBlock
+            .from_yaml_filter(options=options, data=data, element=element, doc=doc)
+            .to_pantablestr()
+            .to_pantable()
+            .to_panflute_ast()
+        )
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
     except FileNotFoundError:
-        panflute.debug("pantable: include path not found. Codeblock shown as is.")
+        print("pantable: include path not found. Codeblock shown as is.", file=sys.stderr)
         return
     except EmptyTableError:
-        panflute.debug("pantable: table is empty. Deleted.")
+        print("pantable: table is empty. Deleted.", file=sys.stderr)
         # [] means delete the current element
         return []
     except ImportError:
