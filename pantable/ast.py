@@ -390,7 +390,8 @@ class PanCodeBlock:
                     founds = fancy_table_pat.findall(string)
                     if founds:
                         found = founds[0]
-                        icas_row[i] = found[2]
+                        if (ica_row := found[2]):
+                            icas_row[i] = f'[]{ica_row}'
                         # if has rowblock indicators
                         marker = found[1]
                         if marker:
@@ -441,25 +442,31 @@ class PanCodeBlock:
                 icas_rowblock_list = []
                 if has_head:
                     ms_list.append(ms_excluding_empty_rowblocks[0])
-                    icas_rowblock_list.append(temp_icas[0])
+                    ica = temp_icas[0]
+                    icas_rowblock_list.append(f'[]{ica}' if ica else '')
                 for body in body_list:
+                    ica = ''
                     if 'head' in body:
-                        m_, ica = body['head']
+                        m_, ica_ = body['head']
                         ms_list.append(m_)
+                        if ica_:
+                            ica = ica_
                     else:
                         ms_list.append(0)
-                    if 'body' in body:
-                        m_, ica = body['body']
-                        ms_list.append(m_)
-                    else:
-                        ms_list.append(0)
-                    # ica at least defined once here because eith 'head' or 'body' must be in body
                     # * ica of body-body will overwrite that of body-head
-                    icas_rowblock_list.append(ica)
+                    if 'body' in body:
+                        m_, ica_ = body['body']
+                        ms_list.append(m_)
+                        if ica_:
+                            ica = ica_
+                    else:
+                        ms_list.append(0)
+                    icas_rowblock_list.append(f'[]{ica}' if ica else '')
                 if has_foot:
                     i = size - 1
                     ms_list.append(ms_excluding_empty_rowblocks[i])
-                    icas_rowblock_list.append(temp_icas[i])
+                    ica = temp_icas[i]
+                    icas_rowblock_list.append(f'[]{ica}' if ica else '')
                 ms = np.array(ms_list, dtype=np.int64)
                 icas_rowblock = np.array(icas_rowblock_list, dtype='O')
 
@@ -547,8 +554,12 @@ class Ica:
     @classmethod
     def from_panflute_ast(cls, elem: ListContainer[Block]) -> Ica:
         if elem:
-            span = elem[0].content[0]
-            return cls(identifier=span.identifier, classes=span.classes, attributes=span.attributes)
+            try:
+                span = elem[0].content[0]
+                return cls(identifier=span.identifier, classes=span.classes, attributes=span.attributes)
+            except AttributeError:
+                print(f'Cannot parse element {elem}, setting to default', file=sys.stderr)
+                return cls()
         else:
             return cls()
 
