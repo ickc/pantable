@@ -39,8 +39,8 @@ def read(path: Path) -> Tuple[str, str, str, str]:
     pan_code_block = pan_table_markdown.to_pancodeblock(fancy_table=True)
     pan_table_markdown_idem = pan_code_block.to_pantablestr()
     # TODO
-    # pan_table_idem2 = pan_table_markdown_idem.to_pantable()
-    # table_idem3 = pan_table_idem2.to_panflute_ast()
+    pan_table_idem2 = pan_table_markdown_idem.to_pantable()
+    table_idem3 = pan_table_idem2.to_panflute_ast()
     # TODO: for now just check it can convert
     pf_code_block = pan_code_block.to_panflute_ast()
     # check for idempotence
@@ -55,7 +55,7 @@ def routine(name):
     path = DIR / f'{name}.{EXT}'
     res = read(path)
     # TODO
-    assert res[0] == res[1] == res[2]  # == res[3]
+    assert res[0] == res[1] == res[2] == res[3]
 
 
 # test_NAME will test against the file NAME.native

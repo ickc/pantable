@@ -316,8 +316,8 @@ class PanCodeBlock:
         str_array,
         ms: np.ndarray[np.int64],
         fancy_table: bool = False,
-        ica_cell_pat=re.compile(r'^(\([0-9, ]+\))?(\{.*\})?$'),
-        fancy_table_pat=re.compile(r'^(\{.*\})? ?(---|===|___)? ?(\{.*\})?$'),
+        ica_cell_pat=re.compile(r'^(\([0-9, ]+\))?({.*})?$'),
+        fancy_table_pat=re.compile(r'^({[^{}]*})? ?(---|===|___)? ?({[^{}]*})?$'),
     ) -> Tuple[
         np.ndarray[np.int64],
         Optional[np.ndarray[str]],
@@ -449,6 +449,9 @@ class PanCodeBlock:
                     ms_list.append(ms_excluding_empty_rowblocks[0])
                     ica = temp_icas[0]
                     icas_rowblock_list.append(f'[]{ica}' if ica else '')
+                else:
+                    ms_list.append(0)
+                    icas_rowblock_list.append('')
                 for body in body_list:
                     ica = ''
                     if 'head' in body:
@@ -472,6 +475,9 @@ class PanCodeBlock:
                     ms_list.append(ms_excluding_empty_rowblocks[i])
                     ica = temp_icas[i]
                     icas_rowblock_list.append(f'[]{ica}' if ica else '')
+                else:
+                    ms_list.append(0)
+                    icas_rowblock_list.append('')
                 ms = np.array(ms_list, dtype=np.int64)
                 icas_rowblock = np.array(icas_rowblock_list, dtype='O')
 
