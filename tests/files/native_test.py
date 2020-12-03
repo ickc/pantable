@@ -19,7 +19,7 @@ def gen_funcs():
     routine('{name}')''', end='\n\n\n')
 
 
-def read(path: Path) -> Tuple[str, str, str]:
+def read(path: Path) -> Tuple[str, str, str, str]:
     '''test parsing native table into Pantable
     '''
     print(f'Testing case {path}...', file=sys.stderr)
@@ -36,20 +36,26 @@ def read(path: Path) -> Tuple[str, str, str]:
     pan_table_idem = pan_table_markdown.to_pantable()
     table_idem2 = pan_table_idem.to_panflute_ast()
     # PanCodeBlock
-    # TODO: for now just check it can convert
     pan_code_block = pan_table_markdown.to_pancodeblock(fancy_table=True)
-    pf_ast = pan_code_block.to_panflute_ast()
+    pan_table_markdown_idem = pan_code_block.to_pantablestr()
+    # TODO
+    # pan_table_idem2 = pan_table_markdown_idem.to_pantable()
+    # table_idem3 = pan_table_idem2.to_panflute_ast()
+    # TODO: for now just check it can convert
+    pf_code_block = pan_code_block.to_panflute_ast()
     # check for idempotence
     native_orig = convert_text(table, input_format='panflute', output_format='native')
     native_idem = convert_text(table_idem, input_format='panflute', output_format='native')
     native_idem2 = convert_text(table_idem2, input_format='panflute', output_format='native')
-    return native_orig, native_idem, native_idem2
+    native_idem3 = convert_text(table_idem3, input_format='panflute', output_format='native')
+    return native_orig, native_idem, native_idem2, native_idem3
 
 
 def routine(name):
     path = DIR / f'{name}.{EXT}'
     res = read(path)
-    assert res[0] == res[1] == res[2]
+    # TODO
+    assert res[0] == res[1] == res[2]  # == res[3]
 
 
 # test_NAME will test against the file NAME.native

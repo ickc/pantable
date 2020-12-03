@@ -230,6 +230,13 @@ class PanCodeBlock:
         options: Optional[PanTableOption] = None,
         ica: Optional[Ica] = None,
     ) -> PanCodeBlock:
+        '''construct from different data formats
+
+        TODO: should io be done by PanCodeBLock.to_panflute_ast or other places?
+        seems wrong to be here
+
+        but it may actually belongs to here because where else for binary data?
+        '''
         dump_func = {
             'csv': dump_csv_io,
         }
@@ -285,8 +292,10 @@ class PanCodeBlock:
         header = options.header
         if ms is None:
             ms = np.array([1, 0, m - 1, 0]) if header else np.array([0, 0, m, 0])
-        elif not header:
-            print('Ignoring "header: False" as ms is specified.', file=sys.stderr)
+        # this is too noisy as the default writer would have header defaulted to false and has ms specified already
+        # TODO: just document this behavior
+        # elif not header:
+            # print('Ignoring "header: False" as ms is specified.', file=sys.stderr)
 
         # ns_head
         _ns_head = options.ns_head
@@ -305,12 +314,13 @@ class PanCodeBlock:
     @staticmethod
     def parse_data_markdown(
         str_array,
+        ms: np.ndarray[np.int64],
         fancy_table: bool = False,
-        ms: Optional[np.ndarray[np.int64]] = None,
-        ica_cell_pat = re.compile(r'^(\([0-9, ]+\))?(\{.*\})?$'),
+        ica_cell_pat=re.compile(r'^(\([0-9, ]+\))?(\{.*\})?$'),
+        fancy_table_pat=re.compile(r'^(\{.*\})? ?(---|===|___)? ?(\{.*\})?$'),
     ) -> Tuple[
         np.ndarray[np.int64],
-        np.ndarray[str],
+        Optional[np.ndarray[str]],
         np.ndarray[str],
         np.ndarray[str],
         np.ndarray[PanCell],
@@ -322,11 +332,10 @@ class PanCodeBlock:
         m, n = str_array.shape
         offset = int(fancy_table)
         n -= offset
+
         shape = (m, n)
-        # icas_rowblock
-        icas_row = np.full(m, '', dtype='O')
-        icas = np.empty(shape, dtype='O')
-        cells = np.empty(shape, dtype='O')
+        icas: np.ndarray[str] = np.empty(shape, dtype='O')
+        cells: np.ndarray[PanCell] = np.empty(shape, dtype='O')
         for i in range(m):
             for j in range(n):
                 # protect already written PanCellBlock
@@ -337,19 +346,25 @@ class PanCodeBlock:
                     # if newline
                     if idx_newline != -1:
                         ica_maybe = string[:idx_newline]
-                        found = ica_cell_pat.findall(ica_maybe)
-                        if found:
+                        founds = ica_cell_pat.findall(ica_maybe)
+                        if founds:
+                            found = founds[0]
                             has_ica = True
-                            ica_temp = found[0][1]
+                            ica_temp = found[1]
                             ica = f'[]{ica_temp}' if ica_temp else ''
-                            shape_temp = found[0][0]
-                            shape = tuple(int(i.strip()) for i in shape_temp[1:-1].split(',')) if shape_temp else (1, 1)
-                            if len(shape) != 2:
+                            shape_temp = found[0]
+                            try:
+                                shape = tuple(int(i.strip()) for i in shape_temp[1:-1].split(',')) if shape_temp else (1, 1)
+                                if len(shape) != 2 or shape[0] <= 0 or shape[1] <= 0:
+                                    print(f'Invalid cell shape {shape}, ignoring...', file=sys.stderr)
+                                    has_ica = False
+                                # TODO: get smarter to enlarge the box?
+                                # Or expect a normalization later and modified PanCell.put to never write beyond boundary?
+                                elif (shape[0] + i > m) or (shape[1] + j > n):
+                                    print(f'The following cell overflow the table, ignoring the attributes: {string}', file=sys.stderr)
+                                    has_ica = False
+                            except ValueError:
                                 print(f'Invalid cell shape {shape}, ignoring...', file=sys.stderr)
-                                has_ica = False
-                            # TODO: get smarter to enlarge the box? Quite complicated here...
-                            if (shape[0] + i > m) or (shape[1] + j > n):
-                                print(f'The following cell overflow the table, ignoring the attributes: {string}', file=sys.stderr)
                                 has_ica = False
                     if has_ica:
                         content = string[(idx_newline + 1):]
@@ -361,11 +376,92 @@ class PanCodeBlock:
                     # since we already checked the cell is None, overwrite can default to True
                     PanCell.put(content, shape, (i, j), cells, overwrite=True)
 
-        # TODO: fancy_table: ms, icas_rowblock, icas_row
-        # if fancy_table:
-        # else:
-        m_icas_rowblock = ms.size // 2 + 1
-        icas_rowblock = np.full(m_icas_rowblock, '', dtype='O')
+        # ms, icas_rowblock, icas_row
+        icas_rowblock: Optional[np.ndarray[str]] = None
+        icas_row: np.ndarray[str] = np.full(m, '', dtype='O')
+        if fancy_table:
+            temp_markers = []
+            temp_icas = []
+            temp_idxs = []
+            # icas_row
+            for i in range(m):
+                string = str_array[i, 0]
+                if string.strip():
+                    founds = fancy_table_pat.findall(string)
+                    if founds:
+                        found = founds[0]
+                        icas_row[i] = found[2]
+                        # if has rowblock indicators
+                        marker = found[1]
+                        if marker:
+                            temp_markers.append(marker)
+                            temp_icas.append(found[0])
+                            temp_idxs.append(i)
+                    else:
+                        print(f'Cannot parse the fancy table cell {string}, ignroing...', file=sys.stderr)
+            # only if markers found, determine ms, icas_rowblock
+            if temp_idxs:
+                temp_idxs = np.array(temp_idxs, dtype=np.int64)
+                ms_excluding_empty_rowblocks = np.diff(temp_idxs + 1, prepend=0)
+                size = ms_excluding_empty_rowblocks.size
+
+                has_head = False
+                has_foot = False
+                i_start = 0
+                i_end = size
+                if temp_markers[0] == '===':
+                    has_head = True
+                    i_start = 1
+                if size > 1 and temp_markers[-1] == '===':
+                    has_foot = True
+                    i_end = size - 1
+
+                # put in a temporary structure first
+                # because we don't know if body-head or body-body exists in each body
+                body_list: List[Dict[str, Tuple[int, str]]] = []
+                for i in range(i_start, i_end):
+                    marker = temp_markers[i]
+                    temp = (
+                        ms_excluding_empty_rowblocks[i],
+                        temp_icas[i],
+                    )
+                    # is_body_body
+                    if marker == '___':
+                        if body_list and 'body' not in (last_body := body_list[-1]):
+                            last_body['body'] = temp
+                        else:
+                            body_list.append({'body': temp})
+                    # is_body_head
+                    elif marker == '---':
+                        body_list.append({'head': temp})
+                    else:
+                        print(f'Cannot determine the following fancy-table row as head or foot, ignoring...: {str_array[temp_idxs[i], 0]}', file=sys.stderr)
+
+                ms_list = []
+                icas_rowblock_list = []
+                if has_head:
+                    ms_list.append(ms_excluding_empty_rowblocks[0])
+                    icas_rowblock_list.append(temp_icas[0])
+                for body in body_list:
+                    if 'head' in body:
+                        m_, ica = body['head']
+                        ms_list.append(m_)
+                    else:
+                        ms_list.append(0)
+                    if 'body' in body:
+                        m_, ica = body['body']
+                        ms_list.append(m_)
+                    else:
+                        ms_list.append(0)
+                    # ica at least defined once here because eith 'head' or 'body' must be in body
+                    # * ica of body-body will overwrite that of body-head
+                    icas_rowblock_list.append(ica)
+                if has_foot:
+                    i = size - 1
+                    ms_list.append(ms_excluding_empty_rowblocks[i])
+                    icas_rowblock_list.append(temp_icas[i])
+                ms = np.array(ms_list, dtype=np.int64)
+                icas_rowblock = np.array(icas_rowblock_list, dtype='O')
 
         return ms, icas_rowblock, icas_row, icas, cells
 
@@ -401,7 +497,7 @@ class PanCodeBlock:
         icas: Optional[np.ndarray[str]]
         if options.markdown:
             cls = PanTableMarkdown
-            ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(str_array, fancy_table=options.fancy_table, ms=_ms)
+            ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(str_array, _ms, fancy_table=options.fancy_table)
         else:
             cls = PanTableStr
             ms = None
@@ -1612,10 +1708,10 @@ class PanTableMarkdown(PanTableStr):
                 if i in last_row_of_rowblock_idxs:
                     temp_list = []
                     is_body_head = is_body_heads[i]
-                    if not is_body_head:
-                        ica_rowblock = icas_rowblock[icas_rowblock_idxs_row[i]]
-                        if ica_rowblock:
-                            temp_list.append(ica_rowblock[2:])
+                    # * this is duplicated if within a body both body-head and body-body exists
+                    ica_rowblock = icas_rowblock[icas_rowblock_idxs_row[i]]
+                    if ica_rowblock:
+                        temp_list.append(ica_rowblock[2:])
                     if is_body_bodies[i]:
                         temp_list.append('___')
                     elif is_body_head:
