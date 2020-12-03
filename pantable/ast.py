@@ -314,12 +314,11 @@ class PanCodeBlock:
     @staticmethod
     def parse_data_markdown(
         str_array,
-        ms: np.ndarray[np.int64],
         fancy_table: bool = False,
         ica_cell_pat=re.compile(r'^(\([0-9, ]+\))?({[^{}]*})?$'),
         fancy_table_pat=re.compile(r'^({[^{}]*})?? ?(---|===|___)? ?({[^{}]*})?$'),
     ) -> Tuple[
-        np.ndarray[np.int64],
+        Optional[np.ndarray[np.int64]],
         Optional[np.ndarray[str]],
         np.ndarray[str],
         np.ndarray[str],
@@ -377,6 +376,7 @@ class PanCodeBlock:
                     PanCell.put(content, shape, (i, j), cells, overwrite=True)
 
         # ms, icas_rowblock, icas_row
+        ms = None
         icas_rowblock: Optional[np.ndarray[str]] = None
         icas_row: np.ndarray[str] = np.full(m, '', dtype='O')
         if fancy_table:
@@ -493,16 +493,8 @@ class PanCodeBlock:
         # c.f. PanTable(Str|Markdown).to_str_array
         try:
             str_array = load_func[options.format](self.data, options)
-        except KeyError as e:
-            print(f'Unknown format {options.format}.', file=sys.stderr)
-            raise e
-
-        m, n = str_array.shape
-        offset = int(options.fancy_table)
-        n -= offset
-        shape = (m, n)
-
-        short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(shape)
+        except KeyError:
+            raise ValueError(f'Unknown format: {options.format}')
 
         cls: Type[PanTableStr]
         ms: Optional[np.ndarray[np.int64]]
@@ -511,7 +503,7 @@ class PanCodeBlock:
         icas: Optional[np.ndarray[str]]
         if options.markdown:
             cls = PanTableMarkdown
-            ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(str_array, _ms, fancy_table=options.fancy_table)
+            ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(str_array, fancy_table=options.fancy_table)
         else:
             cls = PanTableStr
             ms = None
@@ -519,7 +511,9 @@ class PanCodeBlock:
             icas_row = None
             icas = None
             cells = self.parse_data_str(str_array)
-        # ignoring ms from options if it is in fancy_table
+
+        short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(cells.shape)
+
         if ms is None:
             ms = _ms
 
