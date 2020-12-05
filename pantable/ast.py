@@ -30,7 +30,7 @@ import numpy as np
 import yaml
 
 from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
-from panflute.elements import CodeBlock, Plain, Span
+from panflute.elements import CodeBlock, Plain, Span, Str, Para
 from panflute.containers import ListContainer
 from panflute.tools import stringify, convert_text
 
@@ -1152,6 +1152,7 @@ class PanTable(PanTableAbstract):
             for i in range(m):
                 for j in range(n):
                     temp[i, j] = Ica()
+            self.icas = temp
         else:
             self.icas = icas
 
@@ -1447,7 +1448,7 @@ class PanTable(PanTableAbstract):
 
         All contents are stringified so it is lossy.
         '''
-        cells =self.cells
+        cells = self.cells
         shape = cells.shape
         m, n = shape
         cells_res = np.empty(shape, dtype='O')
@@ -1476,6 +1477,8 @@ class PanTableStr(PanTableAbstract):
 
     All PanCell in cells should have content type as str
     although not strictly enforced here
+
+    TODO: check that icas* are always empty and remove them
     '''
 
     def __init__(
@@ -1595,7 +1598,29 @@ class PanTableStr(PanTableAbstract):
     def to_pantable(self) -> PanTable:
         '''return a PanTable representation of self
         '''
-        raise NotImplementedError
+        cells = self.cells
+        shape = cells.shape
+        m, n = shape
+        cells_res = np.empty(shape, dtype='O')
+        for i in range(m):
+            for j in range(n):
+                cell = cells[i, j]
+                if cell.is_at((i, j)):
+                    PanCell.put(ListContainer(Plain(Str(cell.content))), cell.shape, (i, j), cells_res, overwrite=True)
+        short_caption = None if self.short_caption is None else Plain(Str(self.short_caption))
+        caption = Para(Str(self.caption))
+
+        return PanTable(
+            cells_res,
+            ica_table=self.ica_table,
+            short_caption=short_caption, caption=caption,
+            spec=self.spec,
+            ms=self._ms, ns_head=self.ns_head,
+            icas_rowblock=None,
+            icas_row=None,
+            icas=None,
+            aligns=self.aligns,
+        )
 
     def to_str_array(self) -> np.ndarray[str]:
         raise NotImplementedError
