@@ -4,7 +4,8 @@ from typing import Tuple
 
 from panflute import convert_text
 
-from pantable.ast import PanTable
+from pantable.ast import PanTable, PanCodeBlock
+from pantable.util import parse_markdown_codeblock
 
 EXT = 'native'
 DIR = Path(__file__).parent / EXT
@@ -19,7 +20,7 @@ def gen_funcs():
     routine('{name}')''', end='\n\n\n')
 
 
-def read(path: Path) -> Tuple[str, str, str, str]:
+def read(path: Path) -> Tuple[str, str, str, str, str]:
     '''test parsing native table into Pantable
     '''
     print(f'Testing case {path}...', file=sys.stderr)
@@ -36,26 +37,34 @@ def read(path: Path) -> Tuple[str, str, str, str]:
     pan_table_idem = pan_table_markdown.to_pantable()
     table_idem2 = pan_table_idem.to_panflute_ast()
     # PanCodeBlock
-    pan_code_block = pan_table_markdown.to_pancodeblock(fancy_table=True)
-    pan_table_markdown_idem = pan_code_block.to_pantablestr()
-    # TODO
+    pan_codeblock = pan_table_markdown.to_pancodeblock(fancy_table=True)
+    pan_table_markdown_idem = pan_codeblock.to_pantablestr()
     pan_table_idem2 = pan_table_markdown_idem.to_pantable()
     table_idem3 = pan_table_idem2.to_panflute_ast()
-    # TODO: for now just check it can convert
-    pf_code_block = pan_code_block.to_panflute_ast()
+    # CodeBlock
+    pf_codeblock = pan_codeblock.to_panflute_ast()
+    md_codeblock = convert_text(pf_codeblock, input_format='panflute', output_format='markdown')
+    kwargs = parse_markdown_codeblock(md_codeblock)
+    pan_codeblock_idem = PanCodeBlock.from_yaml_filter(**kwargs)
+    pan_table_markdown_idem2 = pan_codeblock_idem.to_pantablestr()
+    pan_table_idem3 = pan_table_markdown_idem2.to_pantable()
+    table_idem4 = pan_table_idem3.to_panflute_ast()
     # check for idempotence
     native_orig = convert_text(table, input_format='panflute', output_format='native')
     native_idem = convert_text(table_idem, input_format='panflute', output_format='native')
     native_idem2 = convert_text(table_idem2, input_format='panflute', output_format='native')
     native_idem3 = convert_text(table_idem3, input_format='panflute', output_format='native')
-    return native_orig, native_idem, native_idem2, native_idem3
+    native_idem4 = convert_text(table_idem4, input_format='panflute', output_format='native')
+    return native_orig, native_idem, native_idem2, native_idem3, native_idem4
 
 
 def routine(name):
     path = DIR / f'{name}.{EXT}'
     res = read(path)
-    # TODO
-    assert res[0] == res[1] == res[2] == res[3]
+    assert res[0] == res[1]
+    assert res[0] == res[2]
+    assert res[0] == res[3]
+    assert res[0] == res[4]
 
 
 # test_NAME will test against the file NAME.native
