@@ -1623,7 +1623,16 @@ class PanTableStr(PanTableAbstract):
         )
 
     def to_str_array(self) -> np.ndarray[str]:
-        raise NotImplementedError
+        cells = self.cells
+        shape = cells.shape
+        m, n = shape
+        cells_res = np.full(shape, '', dtype='O')
+        for i in range(m):
+            for j in range(n):
+                cell = cells[i, j]
+                if cell.is_at((i, j)):
+                    cells_res[i, j] = cell.content
+        return cells_res
 
 
 class PanTableMarkdown(PanTableStr):
