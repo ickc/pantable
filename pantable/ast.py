@@ -1447,7 +1447,28 @@ class PanTable(PanTableAbstract):
 
         All contents are stringified so it is lossy.
         '''
-        raise NotImplementedError
+        cells =self.cells
+        shape = cells.shape
+        m, n = shape
+        cells_res = np.empty(shape, dtype='O')
+        for i in range(m):
+            for j in range(n):
+                cell = cells[i, j]
+                if cell.is_at((i, j)):
+                    PanCell.put(stringify(TableCell(*cell.content)), cell.shape, (i, j), cells_res, overwrite=True)
+        short_caption = None if self.short_caption is None else stringify(Plain(*self.short_caption))
+        caption = stringify(Caption(*self.caption))
+        return PanTableStr(
+            cells_res,
+            ica_table=self.ica_table,
+            short_caption=short_caption, caption=caption,
+            spec=self.spec,
+            ms=self._ms, ns_head=self.ns_head,
+            icas_rowblock=None,
+            icas_row=None,
+            icas=None,
+            aligns=self.aligns,
+        )
 
 
 class PanTableStr(PanTableAbstract):
