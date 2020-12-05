@@ -39,6 +39,7 @@ docs/*
 !docs/comparison.csv
 !docs/example.csv
 !docs/README.md
+!docs/changelog.md
 # Sphinx
 !docs/conf.py
 !docs/index.rst
