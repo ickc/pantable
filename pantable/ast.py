@@ -191,7 +191,7 @@ class PanCodeBlock:
         pan_table_options = PanTableOption() if options is None else PanTableOption.from_kwargs(**options)
         ica = Ica() if element is None else Ica(
             identifier=element.identifier,
-            classes=element.classes,
+            classes=[cls_ for cls_ in element.classes if cls_ != 'table'],
             attributes=element.attributes,
         )
         return cls(options=pan_table_options, data=data, ica=ica)
@@ -215,7 +215,7 @@ class PanCodeBlock:
         classes = self.ica.classes
         if 'table' not in classes:
             # don't mutate it
-            classes = classes + ['table']
+            classes = ['table'] + classes
         return CodeBlock(
             code_block,
             identifier=self.ica.identifier,
