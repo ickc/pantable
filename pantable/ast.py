@@ -307,13 +307,18 @@ class PanCodeBlock:
         return short_caption, caption, spec, aligns, ms, ns_head
 
     @staticmethod
-    def parse_data_str(str_array) -> np.ndarray[PanCell]:
-        raise NotImplementedError
-        return cells
+    def parse_data_str(str_array: np.ndarray[str]) -> np.ndarray[PanCell]:
+        shape = str_array.shape
+        m, n = shape
+        cells_res = np.empty(shape, dtype='O')
+        for i in range(m):
+            for j in range(n):
+                cells_res[i, j] = PanCell(str_array[i, j])
+        return cells_res
 
     @staticmethod
     def parse_data_markdown(
-        str_array,
+        str_array: np.ndarray[str],
         fancy_table: bool = False,
         ica_cell_pat=re.compile(r'^(\([0-9, ]+\))?({[^{}]*})?$'),
         fancy_table_pat=re.compile(r'^({[^{}]*})?? ?(---|===|___)? ?({[^{}]*})?$'),
@@ -1102,7 +1107,7 @@ class PanTable(PanTableAbstract):
         self,
         cells: np.ndarray[PanCell],
         ica_table: Optional[Ica] = None,
-        short_caption: Optional[Inline] = None, caption: ListContainer[Optional[Block]] = ListContainer(),
+        short_caption: Optional[ListContainer[Inline]] = None, caption: Optional[ListContainer[Block]] = None,
         spec: Optional[Spec] = None,
         ms: Optional[np.ndarray[np.int64]] = None, ns_head: Optional[np.ndarray[np.int64]] = None,
         icas_rowblock: Optional[np.ndarray[Ica]] = None,
@@ -1112,7 +1117,7 @@ class PanTable(PanTableAbstract):
     ):
         self.cells = cells
         self.short_caption = short_caption
-        self.caption = caption
+        self.caption: ListContainer[Block] = ListContainer() if caption is None else caption
 
         shape: Tuple[int, int] = cells.shape
         m, n = shape
@@ -1607,8 +1612,8 @@ class PanTableStr(PanTableAbstract):
                 cell = cells[i, j]
                 if cell.is_at((i, j)):
                     PanCell.put(ListContainer(Plain(Str(cell.content))), cell.shape, (i, j), cells_res, overwrite=True)
-        short_caption = None if self.short_caption is None else Plain(Str(self.short_caption))
-        caption = Para(Str(self.caption))
+        short_caption = None if self.short_caption is None else ListContainer(Str(self.short_caption))
+        caption = ListContainer(Para(Str(self.caption)))
 
         return PanTable(
             cells_res,
