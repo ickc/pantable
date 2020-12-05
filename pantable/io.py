@@ -26,8 +26,9 @@ def load_csv(
     Note that this can emit EmptyTableError, FileNotFoundError
     '''
     include = options.include
+    encoding = encoding_ if (encoding_ := options.include_encoding) else None
     with (
-        open(include, encoding=options.include_encoding, newline='')
+        open(include, encoding=encoding, newline='')
     ) if include else (
         io.StringIO(data, newline='')
     ) as f:
