@@ -183,7 +183,7 @@ class PanCodeBlock:
         options: Optional[dict] = None,
         data: str = '',
         element: Optional[CodeBlock] = None,
-        doc: Optional[Doc] = None
+        doc: Optional[Doc] = None,
     ) -> PanCodeBlock:
         '''
         these args are those passed from within yaml_filter
