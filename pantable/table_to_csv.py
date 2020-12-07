@@ -15,6 +15,10 @@ from .ast import PanTable
 def table_to_csv(
     element: Optional[Table] = None,
     doc: Optional[Doc] = None,
+    format: str = 'csv',
+    fancy_table: bool = False,
+    include: str = '',
+    csv_kwargs: Optional[dict] = None,
 ):
     """convert Table element and to csv table in code-block with class "table" in panflute AST"""
     if type(element) == Table:
@@ -23,7 +27,12 @@ def table_to_csv(
             .from_panflute_ast(element)
             .to_pantablemarkdown()
             # no options chosen here to match historical behavior
-            .to_pancodeblock()
+            .to_pancodeblock(
+                format=format,
+                fancy_table=fancy_table,
+                include=include,
+                csv_kwargs=csv_kwargs,
+            )
             .to_panflute_ast()
         )
     return None
