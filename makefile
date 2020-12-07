@@ -20,12 +20,12 @@ docsAll = docs/README.pdf README.md docs/README.rst
 
 # Main Targets #################################################################
 
-.PHONY: all docs test testFull clean
+.PHONY: test testFull files clean
 
-test: pytest
-	coverage html
-testFull: pytest pep8 pylint
-	coverage html
+test:
+	$(python) -m pytest -vv --workers auto --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests
+testFull: pep8 pylint
+	$(python) -m pytest -vv --workers auto --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests --cov-report html
 files:
 	cd tests/files; $(MAKE)
 
@@ -38,7 +38,7 @@ clean:
 
 # maintenance ##################################################################
 
-.PHONY: pypi pypiManual pytest pytestLite pep8 pylint autopep8 autopep8Aggressive
+.PHONY: pypi pypiManual pep8 pylint autopep8 autopep8Aggressive
 # Deploy to PyPI
 ## by CI, properly git tagged
 pypi:
@@ -46,9 +46,6 @@ pypi:
 ## Manually
 pypiManual:
 	$(python) setup.py sdist bdist_wheel && twine upload dist/*
-
-pytest:
-	$(python) -m pytest -vv --cov=pantable --cov-branch --cov-append tests
 
 # check python styles
 pep8:

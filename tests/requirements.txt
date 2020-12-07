@@ -2,6 +2,7 @@ shutilwhich
 pep8
 pytest
 pytest-cov
+pytest-parallel
 coverage
 coveralls
 future
