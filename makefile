@@ -30,6 +30,8 @@ MDFILES = $(wildcard tests/files/md/*.md)
 MDFILESOUTPUT = $(patsubst tests/files/md/%.md,tests/files/md_reference/%.md,$(MDFILES))
 MDCODEBLOCKFILES = $(wildcard tests/files/md_codeblock/*.md)
 MDCODEBLOCKFILESOUTPUT = $(patsubst tests/files/md_codeblock/%.md,tests/files/md_codeblock_reference/%.md,$(MDCODEBLOCKFILES))
+NATIVEFILES = $(wildcard tests/files/native/*.native)
+NATIVEFILESOUTPUT = $(patsubst tests/files/native/%.native,tests/files/native_reference/%.md,$(NATIVEFILES))
 
 # Main Targets #################################################################
 
@@ -63,6 +65,10 @@ tests/files/md_reference/%.md: tests/files/md/%.md
 md_codeblock_reference: $(MDCODEBLOCKFILESOUTPUT)
 tests/files/md_codeblock_reference/%.md: tests/files/md_codeblock/%.md
 	pandoc -F pantable -o $@ $<
+
+native_reference: $(NATIVEFILESOUTPUT)
+tests/files/native_reference/%.md: tests/files/native/%.native
+	pandoc -F pantable2csvx -o $@ $<
 
 # maintenance ##################################################################
 
