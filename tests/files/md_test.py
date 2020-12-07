@@ -4,7 +4,7 @@ from typing import Tuple
 
 from panflute import convert_text
 # use the function exactly used by the cli
-from pantable.cli.pantable2csv import table_to_csv
+from pantable.cli.pantable2csv import table_to_codeblock
 
 EXT = 'md'
 PWD = Path(__file__).parent
@@ -33,7 +33,7 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
     # input files should only have 1 single outter block
     assert len(doc) == 1
     table = doc[0]
-    doc_out = table_to_csv(table, doc)
+    doc_out = table_to_codeblock(table, doc)
     md_out = convert_text(doc_out, input_format='panflute', output_format='markdown')
 
     return md_reference, md_out

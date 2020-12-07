@@ -1,6 +1,6 @@
 import panflute
 
-from ..table_to_codeblock import table_to_csv
+from ..table_to_codeblock import table_to_codeblock
 
 
 def main(doc: panflute.Doc = None):
@@ -11,7 +11,7 @@ def main(doc: panflute.Doc = None):
     - table in CSV
     """
     return panflute.run_filter(
-        table_to_csv,
+        table_to_codeblock,
         doc=doc
     )
 

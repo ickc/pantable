@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 from .ast import PanTable
 
 
-def table_to_csv(
+def table_to_codeblock(
     element: Optional[Table] = None,
     doc: Optional[Doc] = None,
     format: str = 'csv',
