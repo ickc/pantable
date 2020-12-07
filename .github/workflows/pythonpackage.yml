@@ -13,7 +13,12 @@ jobs:
       fail-fast: false
       matrix:
         # see setup.py for supported versions
-        python-version: [3.6, 3.7, 3.8, 3.9, pypy3]
+        python-version:
+          # - 3.6
+          # - 3.7
+          - 3.8
+          - 3.9
+          # - pypy3
         # should test sparingly across API breaking boundaries
         pandoc-version:
           # - 2.0.6
@@ -32,7 +37,7 @@ jobs:
           # 2.10 has breaking change
           # - 2.10.1
           # 2.11 has minor breaking change, fixing some quirks in 2.10
-          - 2.11.0.4
+          # - 2.11.0.4
           - latest
 
     steps:
