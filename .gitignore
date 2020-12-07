@@ -48,3 +48,4 @@ docs/*
 !docs/requirements.txt
 
 .ipynb_checkpoints
+*.ipynb
