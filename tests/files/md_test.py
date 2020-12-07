@@ -4,7 +4,7 @@ from typing import Tuple
 
 from panflute import convert_text
 # use the function exactly used by the cli
-from pantable.cli.pantable2csv import table_to_codeblock
+from pantable.table_to_codeblock import table_to_codeblock
 
 EXT = 'md'
 PWD = Path(__file__).parent
