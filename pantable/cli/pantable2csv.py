@@ -1,6 +1,6 @@
 import panflute
 
-from ..table_to_csv import table_to_csv
+from ..table_to_codeblock import table_to_csv
 
 
 def main(doc: panflute.Doc = None):
