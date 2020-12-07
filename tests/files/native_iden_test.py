@@ -2,6 +2,8 @@ from pathlib import Path
 import sys
 from typing import Tuple
 
+from pytest import mark
+
 from panflute import convert_text
 
 from pantable.ast import PanTable, PanCodeBlock
@@ -9,15 +11,6 @@ from pantable.util import parse_markdown_codeblock
 
 EXT = 'native'
 DIR = Path(__file__).parent / EXT
-
-
-def gen_funcs():
-    paths = list(Path(DIR).glob(f'*.{EXT}'))
-    paths.sort()
-    for path in paths:
-        name = path.stem
-        print(f'''def test_{name}():
-    routine('{name}')''', end='\n\n\n')
 
 
 def read(path: Path) -> Tuple[str, str, str, str, str]:
@@ -58,27 +51,11 @@ def read(path: Path) -> Tuple[str, str, str, str, str]:
     return native_orig, native_idem, native_idem2, native_idem3, native_idem4
 
 
-def routine(name):
+@mark.parametrize('name', (path.stem for path in DIR.glob(f'*.{EXT}')))
+def test_native_iden(name):
     path = DIR / f'{name}.{EXT}'
     res = read(path)
     assert res[0] == res[1]
     assert res[0] == res[2]
     assert res[0] == res[3]
     assert res[0] == res[4]
-
-
-# test_NAME will test against the file NAME.native
-# use gen_funcs to generate the functions below
-# python -c 'from tests.files.native_iden_test import gen_funcs as f; f()'
-
-
-def test_nordics():
-    routine('nordics')
-
-
-def test_planets():
-    routine('planets')
-
-
-def test_students():
-    routine('students')
