@@ -1,15 +1,8 @@
 SHELL = /usr/bin/env bash
 
-# configure engine
-python = python
-pip = pip
-# docs
-pandocEngine = pdflatex
-HTMLVersion = html5
-
-test = $(wildcard tests/*.md)
-testNative = $(patsubst %.md,%.native,$(test))
-testAll = $(testNative)
+python ?= python
+pandocEngine ?= pdflatex
+HTMLVersion ?= html5
 
 # docs
 CSSURL:=https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css
@@ -25,50 +18,23 @@ pandocArgReadmePypi = $(pandocArgFragment) -s -t rst --reference-location=block 
 
 docsAll = docs/README.pdf README.md docs/README.rst
 
-# files
-MDFILES = $(wildcard tests/files/md/*.md)
-MDFILESOUTPUT = $(patsubst tests/files/md/%.md,tests/files/md_reference/%.md,$(MDFILES))
-MDCODEBLOCKFILES = $(wildcard tests/files/md_codeblock/*.md)
-MDCODEBLOCKFILESOUTPUT = $(patsubst tests/files/md_codeblock/%.md,tests/files/md_codeblock_reference/%.md,$(MDCODEBLOCKFILES))
-NATIVEFILES = $(wildcard tests/files/native/*.native)
-NATIVEFILESOUTPUT = $(patsubst tests/files/native/%.native,tests/files/native_reference/%.md,$(NATIVEFILES))
-
 # Main Targets #################################################################
 
 .PHONY: all docs test testFull clean
-
-all: $(testAll)
 
 test: pytest
 	coverage html
 testFull: pytest pep8 pylint
 	coverage html
+files:
+	cd tests/files; $(MAKE)
 
 clean:
-	rm -f .coverage $(testAll) tests/reference_idempotent.native $(docsAll) docs/pantable*.rst docs/modules.rst docs/setup.rst
+	cd docs && $(MAKE) clean
+	rm -f .coverage $(docsAll) docs/pantable*.rst docs/modules.rst docs/setup.rst
 	rm -rf htmlcov pantable.egg-info .cache .idea dist docs/_build docs/_static docs/_templates
 	find . -type f \( -name "*.py[co]" -o -name ".coverage.*" \) -delete -or -type d -name "__pycache__" -delete
-	find tests -name '*.pdf' -delete
-	cd docs && make clean
 	[[ -d gh-pages ]] && find gh-pages -maxdepth 1 -mindepth 1 \! -name .git -exec rm -rf {} + || true
-
-# Making dependancies ##########################################################
-
-%.native: %.md
-	pandoc -t json $< | coverage run --append --branch -m pantable.cli.pantable | pandoc -f json -t native -o $@
-
-# files
-md_reference: $(MDFILESOUTPUT)
-tests/files/md_reference/%.md: tests/files/md/%.md
-	pandoc -F pantable2csv -o $@ $<
-
-md_codeblock_reference: $(MDCODEBLOCKFILESOUTPUT)
-tests/files/md_codeblock_reference/%.md: tests/files/md_codeblock/%.md
-	pandoc -F pantable -o $@ $<
-
-native_reference: $(NATIVEFILESOUTPUT)
-tests/files/native_reference/%.md: tests/files/native/%.native
-	pandoc -F pantable2csvx -o $@ $<
 
 # maintenance ##################################################################
 
@@ -81,19 +47,8 @@ pypi:
 pypiManual:
 	$(python) setup.py sdist bdist_wheel && twine upload dist/*
 
-pytest: $(testNative) tests/test_idempotent.native
-	$(python) -m pytest -vv --cov=pantable --cov-branch tests
-pytestLite:
+pytest:
 	$(python) -m pytest -vv --cov=pantable --cov-branch --cov-append tests
-tests/reference_idempotent.native: tests/test_pantable.md
-	pandoc -t json $< |\
-		coverage run --append --branch -m pantable.cli.pantable | coverage run --append --branch -m pantable.cli.pantable2csv |\
-		coverage run --append --branch -m pantable.cli.pantable | coverage run --append --branch -m pantable.cli.pantable2csv |\
-		pandoc -f json -t native > $@
-tests/test_idempotent.native: tests/reference_idempotent.native
-	pandoc -f native -t json $< |\
-		coverage run --append --branch -m pantable.cli.pantable | coverage run --append --branch -m pantable.cli.pantable2csv |\
-		pandoc -f json -t native > $@
 
 # check python styles
 pep8:
@@ -135,7 +90,7 @@ docs/README.rst: docs/badges.markdown docs/README.md
 .PHONY: docs
 docs: $(docsAll)
 	sphinx-apidoc -d 10 -f -e -o $@ . tests
-	cd $@ && make html
+	cd $@ && $(MAKE) html
 
 .PHONY: gh-pages
 gh-pages:
