@@ -6,4 +6,11 @@ pytest-parallel
 coverage
 coveralls
 future
-terminaltables
+tabulate
+sphinx
+sphinx_bootstrap_theme
+pygments-style-solarized
+data-science-types
+numpy
+pandas
+yamlloader

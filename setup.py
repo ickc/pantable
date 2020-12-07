@@ -106,7 +106,24 @@ setup(
     # $ pip install -e .[dev,test]
     extras_require={
         'dev': ['check-manifest'],
-        'test': ['shutilwhich', 'pep8', 'pytest', 'pytest-cov', 'coverage', 'coveralls', 'future', 'tabulate', 'sphinx', 'sphinx_bootstrap_theme', 'pygments-style-solarized', 'data-science-types', 'numpy', 'pandas', 'yamlloader'],
+        'test': [
+            'shutilwhich',
+            'pep8',
+            'pytest',
+            'pytest-cov',
+            'pytest-parallel',
+            'coverage',
+            'coveralls',
+            'future',
+            'tabulate',
+            'sphinx',
+            'sphinx_bootstrap_theme',
+            'pygments-style-solarized',
+            'data-science-types',
+            'numpy',
+            'pandas',
+            'yamlloader',
+        ],
     },
 
     # If there are data files included in your packages that need to be
