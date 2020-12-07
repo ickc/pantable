@@ -1,13 +1,18 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, _SpecialForm, Any, get_origin, get_args, get_type_hints
+
 import sys
-from typing import List, Optional, Iterable, Iterator
 from functools import partial
 
 import numpy as np
 
-from panflute.elements import ListContainer, Para, Str
-from panflute.table_elements import Table
 from panflute.tools import convert_text, run_pandoc, yaml_filter
+from panflute.elements import Para, Str, ListContainer
 
+if TYPE_CHECKING:
+    from typing import List, Optional, Iterable, Iterator, Callable, Dict, Tuple, Generator
+    from panflute.elements import Element
 
 class PandocVersion:
     '''get runtime pandoc verison
@@ -16,30 +21,21 @@ class PandocVersion:
     '''
 
     def __init__(self):
-        self._repr = run_pandoc(args=['--version'])
+        self._repr: str = run_pandoc(args=['--version'])
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._repr.split('\n')[0].split(' ')[1]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self._repr
 
     @property
-    def version(self):
+    def version(self) -> Tuple[int, ...]:
         return tuple(int(i) for i in str(self).split('.'))
 
 
 class EmptyTableError(Exception):
     pass
-
-
-def ast_to_markdown(ast):
-    """convert panflute AST to Markdown"""
-    return convert_text(
-        ast,
-        input_format='panflute',
-        output_format='markdown'
-    )
 
 
 def convert_texts(
@@ -127,7 +123,7 @@ def iter_convert_texts_panflute_to_markdown(
     return iter_split_by_seperator(texts_converted, seperator)
 
 
-convert_texts_func = {
+convert_texts_func: Dict[Tuple[str, str], Callable[[Iterable, Optional[List[str]]], Iterator]] = {
     # this is just to convert returned value from
     # Iterator[ListContainer] to Iterator[list]
     # which is what convert_texts does
@@ -155,7 +151,7 @@ def convert_texts_fast(
                 (input_format, output_format)
             ](
                 texts,
-                extra_args=extra_args
+                extra_args,
             )
         )
     except KeyError:
@@ -168,11 +164,11 @@ def convert_texts_fast(
         )
 
 
-def eq_panflute_elem(elem1, elem2) -> bool:
+def eq_panflute_elem(elem1: Element, elem2: Element) -> bool:
     return repr(elem1) == repr(elem2)
 
 
-def eq_panflute_elems(elems1: list, elems2: list) -> bool:
+def eq_panflute_elems(elems1: List[Element], elems2: List[Element]) -> bool:
     if not len(elems1) == len(elems2):
         return False
     for elem1, elem2 in zip(elems1, elems2):
@@ -197,56 +193,34 @@ def parse_markdown_codeblock(text: str) -> dict:
     return yaml_filter(doc.content[0], doc, tag='table', function=function, strict_yaml=True)
 
 
-def table_for_pprint(table: Table):
-    '''represent panflute Table in a dict structure for pprint
+def get_types(cls: Any) -> Dict[str, tuple]:
+    '''returns all type hints in a Union
 
-    >>> pprint(table_for_pprint(table), sort_dicts=False, compact=False, width=-1)
-
-    Note:
-
-    Each HeadRow, BodyRow, FootRow, Cell also has ica not shown here.
-
-    TableBody has RowHeadColumns int
+    c.f. https://stackoverflow.com/a/50622643
     '''
-    return {
-        'Table': (table.identifier, table.classes, table.attributes),
-        'Caption': (tuple(short_caption) if (short_caption := table.caption.short_caption) else None, tuple(table.caption.content)),
-        'specs': table.colspec,
-        'TableHead': [list(row.content) for row in table.head.content],
-        'TableBody': [list(row.content) for row in table.content[0].content],
-        'TableFoot': [list(row.content) for row in table.foot.content],
-    }
 
-
-def get_types(cls):
-    '''c.f. https://stackoverflow.com/a/50622643'''
-    import typing
-
-    def _find_type_origin(type_hint):
-        if isinstance(type_hint, typing._SpecialForm):
-            # case of typing.Any, typing.ClassVar, typing.Final, typing.Literal,
-            # typing.NoReturn, typing.Optional, or typing.Union without parameters
-            yield typing.Any
+    def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
+        if isinstance(type_hint, _SpecialForm):
+            # case of Any, ClassVar, Final, Literal,
+            # NoReturn, Optional, or Union without parameters
+            yield Any
             return
 
-        actual_type = typing.get_origin(type_hint) or type_hint  # requires Python 3.8
-        if isinstance(actual_type, typing._SpecialForm):
-            # case of typing.Union[…] or typing.ClassVar[…] or …
-            for origins in map(_find_type_origin, typing.get_args(type_hint)):
+        actual_type = get_origin(type_hint) or type_hint  # requires Python 3.8
+        if isinstance(actual_type, _SpecialForm):
+            # case of Union[…] or ClassVar[…] or …
+            for origins in map(_find_type_origin, get_args(type_hint)):
                 yield from origins
         else:
             yield actual_type
 
-    hints = typing.get_type_hints(cls)
-
-    # this one returns all types in a Union
     return {
         name: tuple(
             origin
             for origin in _find_type_origin(type_hint)
-            if origin is not typing.Any
+            if origin is not Any
         )
-        for name, type_hint in hints.items()
+        for name, type_hint in get_type_hints(cls).items()
     }
 
 
