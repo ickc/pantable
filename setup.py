@@ -128,7 +128,8 @@ setup(
     entry_points={
         'console_scripts': [
             'pantable = pantable.cli.pantable:main',
-            'pantable2csv = pantable.cli.pantable2csv:main'
+            'pantable2csv = pantable.cli.pantable2csv:main',
+            'pantable2csvx = pantable.cli.pantable2csvx:main',
         ],
     },
 )
