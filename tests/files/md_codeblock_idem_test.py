@@ -5,7 +5,7 @@ from typing import Tuple
 from panflute import convert_text
 from pantable.util import parse_markdown_codeblock
 # use the function exactly used by the cli
-from pantable.cli.pantable import codeblock_to_table
+from pantable.codeblock_to_table import codeblock_to_table
 from pantable.ast import PanCodeBlock
 
 EXT = 'md'
@@ -81,10 +81,6 @@ def test_full_test():
     routine('full_test')
 
 
-def test_grid_table():
-    routine('grid_table')
-
-
 def test_include_external_csv():
     routine('include_external_csv')
 
@@ -104,14 +100,6 @@ def test_irregular_csv():
 
 def test_one_row_table():
     routine('one_row_table')
-
-
-def test_pipe_table_1():
-    routine('pipe_table_1')
-
-
-def test_pipe_table_2():
-    routine('pipe_table_2')
 
 
 def test_simple_test():

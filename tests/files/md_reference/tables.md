@@ -1,16 +1,24 @@
 ``` {.table}
 ---
-alignment: LRCD
 caption: '*abcd*'
-header: true
-markdown: true
-table-width: 0
+alignment: LRCD
+alignment-cells: 'DDDD
+
+  DDDD'
 width:
+- D
+- D
+- D
+- D
+ms:
+- 1
 - 0
+- 1
 - 0
+ns-head:
 - 0
-- 0
----
+markdown: true
+...
 1,2,3,4
 1,2,3,4
 ```

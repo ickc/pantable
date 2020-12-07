@@ -69,7 +69,7 @@ def routine(name):
 
 # test_NAME will test against the file NAME.native
 # use gen_funcs to generate the functions below
-# python -c 'from tests.files.native_test import gen_funcs as f; f()'
+# python -c 'from tests.files.native_iden_test import gen_funcs as f; f()'
 
 
 def test_nordics():
