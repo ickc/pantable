@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Union, List, Optional, Type, ClassVar
 from itertools import chain, repeat
 from pprint import pformat
 from fractions import Fraction
-from abc import ABC
 from textwrap import wrap
 
 if (sys.version_info.major, sys.version_info.minor) < (3, 8):
@@ -970,33 +969,22 @@ class TableArray:
         return res
 
 
-class PanTableAbstract(ABC, FakeRepr):
+@dataclass
+class PanTableAbstract:
     '''an abstract class of PanTables
     '''
 
-    def __init__(
-        self,
-        cells: TableArray,
-        ica_table: Ica,
-        short_caption, caption,
-        spec: Spec,
-        ms: np.ndarray[np.int64], ns_head: np.ndarray[np.int64],
-        icas_rowblock: np.ndarray,
-        icas_row: np.ndarray,
-        icas: np.ndarray,
-        aligns: Align,
-    ):
-        self.cells = cells
-        self.ica_table = ica_table
-        self.short_caption = short_caption
-        self.caption = caption
-        self.spec = spec
-        self._ms = ms
-        self.ns_head = ns_head
-        self.icas_rowblock = icas_rowblock
-        self.icas_row = icas_row
-        self.icas = icas
-        self.aligns = aligns
+    cells: TableArray
+    ica_table: Ica
+    short_caption: Optional[Union[ListContainer[Inline], str]]
+    caption: Union[ListContainer[Block], str]
+    spec: Spec
+    _ms: np.ndarray[np.int64]
+    ns_head: np.ndarray[np.int64]
+    icas_rowblock: np.ndarray
+    icas_row: np.ndarray
+    icas: np.ndarray
+    aligns: Align
 
     def __str__(self, width: int = 15, cannonical=True, tablefmt='grid') -> str:
         '''print the table as ascii table
@@ -1015,23 +1003,6 @@ class PanTableAbstract(ABC, FakeRepr):
         except ImportError:
             print('Consider having a better str by `pip install tabulate` or `conda install tabulate`.', file=sys.stderr)
             return self.__repr__()
-
-    def to_dict(self) -> dict:
-        return {
-            'cells': self.cells,
-            'ica_table': self.ica_table,
-            'short_caption': self.short_caption,
-            'caption': self.caption,
-            'spec': self.spec.to_dict(),
-            'ms': self.ms,
-            'ns_head': self.ns_head,
-            'icas_rowblock': self.icas_rowblock,
-            'icas_row': self.icas_row,
-            'icas': self.icas,
-            'aligns': self.aligns.aligns_text,
-            # properties
-            'shape': self.shape,
-        }
 
     @property
     def m(self) -> int:
@@ -1150,6 +1121,7 @@ class PanTableAbstract(ABC, FakeRepr):
         return np.split(array, self.rowblock_splitting_idxs)
 
 
+@dataclass
 class PanTable(PanTableAbstract):
     '''a representation of panflute Table
 
@@ -1157,63 +1129,55 @@ class PanTable(PanTableAbstract):
     although not strictly enforced here
     '''
 
-    def __init__(
-        self,
-        cells: TableArray,
-        ica_table: Optional[Ica] = None,
-        short_caption: Optional[ListContainer[Inline]] = None, caption: Optional[ListContainer[Block]] = None,
-        spec: Optional[Spec] = None,
-        ms: Optional[np.ndarray[np.int64]] = None, ns_head: Optional[np.ndarray[np.int64]] = None,
-        icas_rowblock: Optional[np.ndarray[Ica]] = None,
-        icas_row: Optional[np.ndarray[Ica]] = None,
-        icas: Optional[np.ndarray[Ica]] = None,
-        aligns: Optional[Align] = None,
-    ):
-        self.cells = cells
-        self.short_caption = short_caption
-        self.caption: ListContainer[Block] = ListContainer() if caption is None else caption
+    cells: TableArray
+    ica_table: Ica = field(default_factory=Ica)
+    short_caption: Optional[ListContainer[Inline]] = None
+    caption: ListContainer[Block] = field(default_factory=ListContainer)
+    spec: Optional[Spec] = None
+    _ms: Optional[np.ndarray[np.int64]] = None
+    ns_head: Optional[np.ndarray[np.int64]] = None
+    icas_rowblock: Optional[np.ndarray[Ica]] = None
+    icas_row: Optional[np.ndarray[Ica]] = None
+    icas: Optional[np.ndarray[Ica]] = None
+    aligns: Optional[Align] = None
 
-        shape: Tuple[int, int] = cells.contents.shape
+    def __post_init__(self):
+
+        shape: Tuple[int, int] = self.cells.contents.shape
         m, n = shape
 
-        self.ica_table: Ica = Ica() if ica_table is None else ica_table
-        self.spec: Spec = Spec.default(n) if spec is None else spec
-        self.aligns: Align = Align.default(shape) if aligns is None else aligns
+        if self.spec is None:
+            self.spec: Spec = Spec.default(n)
+        if self.aligns is None:
+            self.aligns: Align = Align.default(shape)
 
         # default to 1 row of TableHead and the rest is a single body of body
-        self._ms: np.ndarray[np.int64] = np.array([1, 0, m - 1, 0], dtype=np.int64) if ms is None else ms
+        if self._ms is None:
+            self._ms: np.ndarray[np.int64] = np.array([1, 0, m - 1, 0], dtype=np.int64)
 
         m_bodies = (self._ms.size - 2) // 2
-        self.ns_head: np.ndarray[np.int64] = np.zeros(m_bodies, dtype=np.int64) if ns_head is None else ns_head
+        if self.ns_head is None:
+            self.ns_head: np.ndarray[np.int64] = np.zeros(m_bodies, dtype=np.int64)
 
         m_icas_rowblock = m_bodies + 2
-        self.icas_rowblock: np.ndarray[Ica]
-        if icas_rowblock is None:
+        if self.icas_rowblock is None:
             temp = np.empty(m_icas_rowblock, dtype='O')
             for i in range(m_icas_rowblock):
                 temp[i] = Ica()
-            self.icas_rowblock = temp
-        else:
-            self.icas_rowblock = icas_rowblock
+            self.icas_rowblock: np.ndarray[Ica] = temp
 
-        self.icas_row: np.ndarray[Ica]
-        if icas_row is None:
+        if self.icas_row is None:
             temp = np.empty(m, dtype='O')
             for i in range(m):
                 temp[i] = Ica()
-            self.icas_row = temp
-        else:
-            self.icas_row = icas_row
+            self.icas_row: np.ndarray[Ica] = temp
 
-        self.icas: np.ndarray[Ica]
-        if icas is None:
+        if self.icas is None:
             temp = np.empty(shape, dtype='O')
             for i in range(m):
                 for j in range(n):
                     temp[i, j] = Ica()
-            self.icas = temp
-        else:
-            self.icas = icas
+            self.icas: np.ndarray[Ica] = temp
 
     def _repr_html_(self) -> str:
         try:
@@ -1325,14 +1289,14 @@ class PanTable(PanTableAbstract):
                 aligns_text[i, j] = cell.alignment
         return cls(
             cells,
-            ica_table=ica_table,
-            short_caption=short_caption, caption=caption,
-            spec=spec,
-            ms=ms, ns_head=ns_head,
-            icas_rowblock=icas_rowblock,
-            icas_row=icas_row,
-            icas=icas,
-            aligns=Align.from_aligns_text(aligns_text),
+            ica_table,
+            short_caption, caption,
+            spec,
+            ms, ns_head,
+            icas_rowblock,
+            icas_row,
+            icas,
+            Align.from_aligns_text(aligns_text),
         )
 
     def to_panflute_ast(self) -> Table:
@@ -1474,14 +1438,14 @@ class PanTable(PanTableAbstract):
 
         return PanTableMarkdown(
             cells_res,
-            ica_table=self.ica_table,
-            short_caption=cache_texts['short_caption'], caption=cache_texts['caption'],
-            spec=self.spec,
-            ms=self._ms, ns_head=self.ns_head,
-            icas_rowblock=icas_rowblock_res,
-            icas_row=icas_row_res,
-            icas=icas_res,
-            aligns=self.aligns,
+            self.ica_table,
+            cache_texts['short_caption'], cache_texts['caption'],
+            self.spec,
+            self._ms, self.ns_head,
+            icas_rowblock_res,
+            icas_row_res,
+            icas_res,
+            self.aligns,
         )
 
     def to_pantablestr(self) -> PanTableStr:
@@ -1507,6 +1471,7 @@ class PanTable(PanTableAbstract):
         )
 
 
+@dataclass
 class PanTableStr(PanTableAbstract):
     '''similar to PanTable, but with panflute ASTs as str
 
@@ -1518,41 +1483,43 @@ class PanTableStr(PanTableAbstract):
     TODO: implement auto_width
     '''
 
-    def __init__(
-        self,
-        cells: TableArray,
-        ica_table: Optional[Ica] = None,
-        short_caption: Optional[str] = None, caption: str = '',
-        spec: Optional[Spec] = None,
-        ms: Optional[np.ndarray[np.int64]] = None, ns_head: Optional[np.ndarray[np.int64]] = None,
-        icas_rowblock: Optional[np.ndarray[str]] = None,
-        icas_row: Optional[np.ndarray[str]] = None,
-        icas: Optional[np.ndarray[str]] = None,
-        aligns: Optional[Align] = None,
-        table_width: Optional[float] = None,
-    ):
-        self.cells = cells
-        self.short_caption = short_caption
-        self.caption = caption
-        self.table_width = table_width
+    cells: TableArray
+    ica_table: Ica = field(default_factory=Ica)
+    short_caption: Optional[str] = None
+    caption: str = ''
+    spec: Optional[Spec] = None
+    _ms: Optional[np.ndarray[np.int64]] = None
+    ns_head: Optional[np.ndarray[np.int64]] = None
+    icas_rowblock: Optional[np.ndarray[str]] = None
+    icas_row: Optional[np.ndarray[str]] = None
+    icas: Optional[np.ndarray[str]] = None
+    aligns: Optional[Align] = None
+    table_width: Optional[float] = None
 
-        shape = cells.contents.shape
+    def __post_init__(self):
+        shape = self.cells.contents.shape
         m, n = shape
 
-        self.ica_table: Ica = Ica() if ica_table is None else ica_table
-        self.spec: Spec = Spec.default(n) if spec is None else spec
-        self.aligns: Align = Align.default(shape) if aligns is None else aligns
+        if self.spec is None:
+            self.spec: Spec = Spec.default(n)
+        if self.aligns is None:
+            self.aligns: Align = Align.default(shape)
 
         # default to 1 row of TableHead and the rest is a single body of body
-        self._ms: np.ndarray[np.int64] = np.array([1, 0, m - 1, 0], dtype=np.int64) if ms is None else ms
+        if self._ms is None:
+            self._ms: np.ndarray[np.int64] = np.array([1, 0, m - 1, 0], dtype=np.int64)
 
         m_bodies = (self._ms.size - 2) // 2
-        self.ns_head: np.ndarray[np.int64] = np.zeros(m_bodies, dtype=np.int64) if ns_head is None else ns_head
+        if self.ns_head is None:
+            self.ns_head: np.ndarray[np.int64] = np.zeros(m_bodies, dtype=np.int64)
 
         m_icas_rowblock = m_bodies + 2
-        self.icas_rowblock: np.ndarray[str] = np.full(m_icas_rowblock, '', dtype='O') if icas_rowblock is None else icas_rowblock
-        self.icas_row: np.ndarray[str] = np.full(m, '', dtype='O') if icas_row is None else icas_row
-        self.icas: np.ndarray[str] = np.full(shape, '', dtype='O') if icas is None else icas
+        if self.icas_rowblock is None:
+            self.icas_rowblock: np.ndarray[str] = np.full(m_icas_rowblock, '', dtype='O')
+        if self.icas_row is None:
+            self.icas_row: np.ndarray[str] = np.full(m, '', dtype='O')
+        if self.icas is None:
+            self.icas: np.ndarray[str] = np.full(shape, '', dtype='O')
 
     def _repr_html_(self) -> str:
         return self.__str__(tablefmt='html')
@@ -1623,13 +1590,10 @@ class PanTableStr(PanTableAbstract):
 
         return PanTable(
             res,
-            ica_table=self.ica_table,
-            short_caption=short_caption, caption=caption,
-            spec=self.spec,
-            ms=self._ms, ns_head=self.ns_head,
-            icas_rowblock=None,
-            icas_row=None,
-            icas=None,
+            self.ica_table,
+            short_caption, caption,
+            self.spec,
+            self._ms, self.ns_head,
             aligns=self.aligns,
         )
 
@@ -1779,14 +1743,14 @@ class PanTableMarkdown(PanTableStr):
 
         return PanTable(
             res,
-            ica_table=self.ica_table,
-            short_caption=short_caption_res, caption=cache_elems['caption'],
-            spec=self.spec,
-            ms=self._ms, ns_head=self.ns_head,
-            icas_rowblock=icas_rowblock_res,
-            icas_row=icas_row_res,
-            icas=icas_res,
-            aligns=self.aligns,
+            self.ica_table,
+            short_caption_res, cache_elems['caption'],
+            self.spec,
+            self._ms, self.ns_head,
+            icas_rowblock_res,
+            icas_row_res,
+            icas_res,
+            self.aligns,
         )
 
     def to_str_array(self, fancy_table: bool = False) -> np.ndarray[str]:
