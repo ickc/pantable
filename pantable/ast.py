@@ -7,6 +7,7 @@ from itertools import chain, repeat
 from pprint import pformat
 from fractions import Fraction
 from abc import ABC, abstractmethod
+from textwrap import wrap
 
 if (sys.version_info.major, sys.version_info.minor) < (3, 8):
     try:
@@ -52,12 +53,12 @@ def single_para_to_plain(elem: ListContainer) -> ListContainer:
         return elem
 
 
-def cell_width_func(cell: PanCell) -> int:
+def cell_width_func(string: str) -> int:
     '''return max no. of characters +3 among lines in the cell
 
     The +3 match the way pandoc handle width, see jgm/pandoc commit 0dfceda
     '''
-    return max(map(len, cell.content.split("\n"))) + 3
+    return max(map(len, string.split("\n"))) + 3
 
 
 # CodeBlock
@@ -479,14 +480,8 @@ class PanCodeBlock:
         return short_caption, caption, spec, aligns, ms, ns_head
 
     @staticmethod
-    def parse_data_str(str_array: np.ndarray[str]) -> np.ndarray[PanCell]:
-        shape = str_array.shape
-        m, n = shape
-        cells_res = np.empty(shape, dtype='O')
-        for i in range(m):
-            for j in range(n):
-                cells_res[i, j] = PanCell(str_array[i, j])
-        return cells_res
+    def parse_data_str(str_array: np.ndarray[str]) -> TableArray:
+        return TableArray(str_array)
 
     @staticmethod
     def parse_data_markdown(
@@ -499,7 +494,7 @@ class PanCodeBlock:
         Optional[np.ndarray[str]],
         np.ndarray[str],
         np.ndarray[str],
-        np.ndarray[PanCell],
+        TableArray,
     ]:
         '''parse markdown in string array
 
@@ -511,11 +506,12 @@ class PanCodeBlock:
 
         shape = (m, n)
         icas: np.ndarray[str] = np.empty(shape, dtype='O')
-        cells: np.ndarray[PanCell] = np.empty(shape, dtype='O')
+        cells = TableArray.default(shape)
+        contents = cells.contents
         for i in range(m):
             for j in range(n):
-                # protect already written PanCellBlock
-                if cells[i, j] is None:
+                # protect already written cell-block
+                if contents[i, j] is None:
                     string = str_array[i, j + offset]
                     has_ica = False
                     idx_newline = string.find('\n')
@@ -535,7 +531,7 @@ class PanCodeBlock:
                                     print(f'Invalid cell shape {shape}, ignoring...', file=sys.stderr)
                                     has_ica = False
                                 # TODO: get smarter to enlarge the box?
-                                # Or expect a normalization later and modified PanCell.put to never write beyond boundary?
+                                # Or expect a normalization later and modified TableArray.put to never write beyond boundary?
                                 elif (shape[0] + i > m) or (shape[1] + j > n):
                                     print(f'The following cell overflow the table, ignoring the attributes: {string}', file=sys.stderr)
                                     has_ica = False
@@ -550,7 +546,7 @@ class PanCodeBlock:
                         content = string
                     icas[i, j] = ica
                     # since we already checked the cell is None, overwrite can default to True
-                    PanCell.put(content, shape, (i, j), cells, overwrite=True)
+                    cells.put(content, shape[0], shape[1], i, j, overwrite=True)
 
         # ms, icas_rowblock, icas_row
         ms = None
@@ -689,7 +685,7 @@ class PanCodeBlock:
             icas = None
             cells = self.parse_data_str(str_array)
 
-        short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(cells.shape)
+        short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(cells.contents.shape)
 
         if ms is None:
             ms = _ms
@@ -890,82 +886,119 @@ class Spec:
         return cls(Align.default((n_col,)))
 
 
-class PanCell:
-    '''a class of simple cell within PanTable
+@dataclass
+class TableArray:
 
-    We don't have a concept of standalone `PanCell`,
-    they are always assumed to be within a `np.ndarray[PanCell]`.
+    contents: np.ndarray[Union[ListContainer, str]]
+    # 4d-array: [i, j, 0, :] is shape; [i, j, 1, :] is idxs
+    # shape must be >= 1, idxs will either be [i, j] or [-1, -1]
+    # where -1 indicating default values
+    geometries: Optional[np.ndarray[np.int64]] = None
 
-    e.g. `is_at` is used to determine if PanCellBlock is at the canoncial
-    location, and for `PanCell` it is always at canonical location.
-    You cannot check if the current PanCell is really at a location in the grid.
-    '''
-    shape = (1, 1)
-    idxs: Optional[Tuple[int, int]] = None
-
-    def __init__(self, content: Union[ListContainer, str]):
-        self.content = content
-
-    def __str__(self) -> str:
-        return self.__repr__()
-
-    def __repr__(self) -> str:
-        return f'PanCell({repr(self.content)})'
-
-    def is_at(self, loc: Tuple[int, int]) -> bool:
-        '''return True if self is at canonical location'''
-        return True
-
-    @staticmethod
-    def put(
-        content: Union[ListContainer, str],
-        shape: Tuple[int, int],
-        idxs: Tuple[int, int],
-        array: np.ndarray[PanCell],
-        overwrite: bool = False,
-    ):
-        '''create a PanCell and put in array
-
-        This is almost a class method but we don't
-        return the created PanCell as it is already
-        in the array, and the created PanCell does
-        not necessary has the type of current class
-        by the dispatch of PanCell/PanCellBock
-        '''
-        x, y = shape
-        idx, idy = idxs
-        if x == 1 and y == 1:
-            cell = PanCell(content)
-            array[idx, idy] = cell
+    @classmethod
+    def default(cls, shape: Tuple[int, int], has_geometries=True) -> TableArray:
+        if has_geometries:
+            m, n = shape
+            geometries = np.empty((m, n, 2, 2), dtype=np.int64)
+            geometries[:, :, 0] = 1
+            geometries[:, :, 1] = -1
         else:
-            cell = PanCellBlock(content, shape, idxs)
-            for i in range(idx, idx + x):
-                for j in range(idy, idy + y):
-                    if overwrite or array[i, j] is None:
-                        array[i, j] = cell
-                    else:
-                        raise ValueError(f"At location {idxs} there's not enough empty cells for a block of size {shape} in the given array {array}")
+            geometries = None
+        return cls(
+            np.empty(shape, dtype='O'),
+            geometries=geometries,
+        )
 
+    @property
+    def shape(self) -> Tuple[int, int]:
+        return self.contents.shape
 
-class PanCellBlock(PanCell):
-    '''a class of Block cell within PanTable
-    '''
-    def __init__(
+    def is_at(self, i: int, j: int) -> bool:
+        if self.geometries is None:
+            return True
+        elif np.all(self.geometries[i, j, 0] == 1):
+            return True
+        elif np.all(self.geometries[i, j, 1] == (i, j)):
+            return True
+        else:
+            return False
+
+    def shape_at(self, i: int, j: int) -> Tuple[int, int]:
+        return (1, 1) if self.geometries is None else self.geometries[i, j, 0]
+
+    def is_block(self, i: int, j: int) -> bool:
+        return not (self.geometries is None or np.all(self.shape_at(i, j) == 1))
+
+    def put(
         self,
         content: Union[ListContainer, str],
-        shape: Tuple[int, int],
-        idxs: Tuple[int, int],
+        row_span: int,
+        col_span: int,
+        i: int,
+        j: int,
+        overwrite: bool = False,
     ):
-        self.content = content
-        self.shape = shape
-        self.idxs = idxs
+        '''put content in self
+        '''
+        if row_span == 1 and col_span == 1:
+            self.contents[i, j] = content
+        else:
+            contents = self.contents
+            geometries = self.geometries
+            try:
+                for i_ in range(i, i + row_span):
+                    for j_ in range(j, j + col_span):
+                        if overwrite or contents[i_, j_] is None:
+                            contents[i_, j_] = content
+                            geometries[i_, j_, 0, 0] = row_span
+                            geometries[i_, j_, 0, 1] = col_span
+                            geometries[i_, j_, 1, 0] = i
+                            geometries[i_, j_, 1, 1] = j
+                        else:
+                            raise ValueError(f"At location {i, j} there's not enough empty cells for a block of size {row_span, col_span} in the given array.")
+            except TypeError as e:
+                if self.geometries is None:
+                    raise ValueError(f"You're trying to put a cell-block in a TableArray object with geometries as None.")
+                else:
+                    raise e
 
-    def __repr__(self) -> str:
-        return f'PanCellBlock({repr(self.content)}, {repr(self.shape)}, {repr(self.idxs)})'
+    @property
+    def cannonical(self) -> TableArray:
+        '''return a cell array where spanned cells appeared in cannonical location only
 
-    def is_at(self, loc: Tuple[int, int]) -> bool:
-        '''return True if self is at canonical location'''
-        return loc == self.idxs
+        top-left corner of the grid is the cannonical location of a spanned cell
+        '''
+        contents = self.contents
+        shape = contents.shape
+        m, n = shape
+        res = TableArray.default(shape, has_geometries=False)
+        for i in range(m):
+            for j in range(n):
+                if self.is_at(i, j):
+                    res.put(contents[i, j], 1, 1, i, j, overwrite=True)
+        return res
+
+    def stringified(self, width: int = 15, cannonical=True) -> TableArray:
+        '''return stringified TableArray
+
+        :param int width: width per column
+        '''
+        shape = self.shape
+        m, n = shape
+        res = TableArray.default(shape, has_geometries=False)
+        if not cannonical:
+            res.geometries = self.geometries
+        res_contents = res.contents
+        contents = self.contents
+        for i in range(m):
+            for j in range(n):
+                content = '' if cannonical and not self.is_at(i, j) else contents[i, j]
+                if type(content) != str:
+                    content = stringify(TableCell(*content))
+                if width:
+                    content = '\n'.join(wrap(content, width))
+                res_contents[i, j] = content
+        return res
 
 
 class PanTableAbstract(ABC, FakeRepr):
@@ -974,7 +1007,7 @@ class PanTableAbstract(ABC, FakeRepr):
 
     def __init__(
         self,
-        cells: np.ndarray,
+        cells: TableArray,
         ica_table: Ica,
         short_caption, caption,
         spec: Spec,
@@ -1006,7 +1039,7 @@ class PanTableAbstract(ABC, FakeRepr):
             from tabulate import tabulate
 
             return tabulate(
-                self.cells_stringified(width=width, cannonical=cannonical),
+                self.cells.stringified(width=width, cannonical=cannonical),
                 tablefmt=tablefmt,
                 headers=() if self.ms[0] == 0 else "firstrow",
             )
@@ -1030,14 +1063,6 @@ class PanTableAbstract(ABC, FakeRepr):
             # properties
             'shape': self.shape,
         }
-
-    @abstractmethod
-    def cells_stringified(self, width: int = 15, cannonical=True) -> np.ndarray[str]:
-        '''return stringified cells
-
-        :param int width: width per column
-        '''
-        return np.array([''])
 
     @property
     def m(self) -> int:
@@ -1155,67 +1180,17 @@ class PanTableAbstract(ABC, FakeRepr):
         '''
         return np.split(array, self.rowblock_splitting_idxs)
 
-    def iterrows(self):
-        '''
-        TODO: this is not a good iterrows to work with
-        '''
-        rowblock_idxs_row = self.rowblock_idxs_row
-        is_heads = self.is_heads
-        is_foots = self.is_foots
-        is_body_heads = self.is_body_heads
-        is_body_bodies = self.is_body_bodies
-        body_idxs_row = self.body_idxs_row
-
-        res = []
-        for i in range(self.shape[0]):
-            idx_block = rowblock_idxs_row[i]
-            is_head = is_heads[i]
-            is_body_head = is_body_heads[i]
-            is_body_body = is_body_bodies[i]
-            is_foot = is_foots[i]
-            idx_body = body_idxs_row[i]
-            idx_body = None if idx_body < 0 else idx_body
-            res.append({
-                'is_head': is_head,
-                'is_body_head': is_body_head,
-                'is_body_body': is_body_body,
-                'is_foot': is_foot,
-                'idx_body': idx_body,
-                'n_head': None if idx_body is None else self.ns_head[idx_body],
-                'ica_row_block': self.icas_rowblock[idx_block],
-                'ica_row': self.icas_row[i],
-                'icas': self.icas[i],
-                'aligns': self.aligns.aligns_text[i],
-                'cells': self.cells[i]
-            })
-        return res
-
-    @property
-    def cells_cannonical(self) -> np.ndarray[PanCell]:
-        '''return a cell array where spanned cells appeared in cannonical location only
-
-        top-left corner of the grid is the cannonical location of a spanned cell
-        '''
-        cells = self.cells
-        res = np.empty_like(cells)
-        m, n = cells.shape
-        for i in range(m):
-            for j in range(n):
-                cell = cells[i, j]
-                res[i, j] = cell if cell.is_at((i, j)) else None
-        return res
-
 
 class PanTable(PanTableAbstract):
     '''a representation of panflute Table
 
-    All PanCell in cells should have content type as ListContainer
+    TableArray should have content type as ListContainer
     although not strictly enforced here
     '''
 
     def __init__(
         self,
-        cells: np.ndarray[PanCell],
+        cells: TableArray,
         ica_table: Optional[Ica] = None,
         short_caption: Optional[ListContainer[Inline]] = None, caption: Optional[ListContainer[Block]] = None,
         spec: Optional[Spec] = None,
@@ -1229,7 +1204,7 @@ class PanTable(PanTableAbstract):
         self.short_caption = short_caption
         self.caption: ListContainer[Block] = ListContainer() if caption is None else caption
 
-        shape: Tuple[int, int] = cells.shape
+        shape: Tuple[int, int] = cells.contents.shape
         m, n = shape
 
         self.ica_table: Ica = Ica() if ica_table is None else ica_table
@@ -1293,52 +1268,31 @@ class PanTable(PanTableAbstract):
             for ica, pf_row_array in zip(icas_row, pf_cells)
         )
 
-    def cells_stringified(self, width: int = 15, cannonical=True) -> np.ndarray[str]:
-        '''return stringified cells
-
-        :param int width: width per column
-        '''
-        from textwrap import wrap
-
-        cells = self.cells
-        res = np.empty_like(cells)
-        m, n = cells.shape
-        for i in range(m):
-            for j in range(n):
-                cell = cells[i, j]
-                if cannonical:
-                    cell = cell if cell.is_at((i, j)) else None
-                res[i, j] = '' if cell is None else '\n'.join(wrap(
-                    stringify(TableCell(*cell.content)),
-                    width,
-                ))
-        return res
-
     @property
     def panflute_tablecells(self) -> np.ndarray[TableCell]:
-        cells = self.cells_cannonical
-        cells_flat = cells.ravel()
-        icas_flat = self.icas.ravel()
-        aligns_flat = self.aligns.aligns_text.ravel()
+        cells = self.cells
+        contents = cells.contents
+        geometries = cells.geometries
+        shape = contents.shape
+        m, n = shape
+        icas = self.icas
+        aligns = self.aligns.aligns_text
 
-        res = np.empty_like(cells)
-        res_flat = res.ravel()
-        for i in range(res_flat.size):
-            cell = cells_flat[i]
-            if cell is None:
-                res_flat[i] = None
-            else:
-                rowspan, colspan = cell.shape
-                ica = icas_flat[i]
-                res_flat[i] = TableCell(
-                    *cell.content,
-                    alignment=aligns_flat[i],
-                    rowspan=rowspan,
-                    colspan=colspan,
-                    identifier=ica.identifier,
-                    classes=ica.classes,
-                    attributes=ica.attributes,
-                )
+        res = np.empty(shape, dtype='O')
+        for i in range(m):
+            for j in range(n):
+                if cells.is_at(i, j):
+                    rowspan, colspan = [int(span) for span in cells.shape_at(i, j)]
+                    ica = icas[i, j]
+                    res[i, j] = TableCell(
+                        *contents[i, j],
+                        alignment=aligns[i, j],
+                        rowspan=rowspan,
+                        colspan=colspan,
+                        identifier=ica.identifier,
+                        classes=ica.classes,
+                        attributes=ica.attributes,
+                    )
         return res
 
     @classmethod
@@ -1384,7 +1338,8 @@ class PanTable(PanTableAbstract):
         icas_row = np.empty(m, dtype='O')
         icas = np.empty(shape, dtype='O')
         aligns_text = np.empty(shape, dtype='O')
-        cells = np.empty(shape, dtype='O')
+        cells = TableArray.default(shape)
+        contents = cells.contents
         for i, row in enumerate(chain(
             head.content,
             *sum(([body.head, body.content] for body in bodies), []),
@@ -1394,9 +1349,9 @@ class PanTable(PanTableAbstract):
             j = 0
             for cell in row.content:
                 # determine j
-                while cells[i, j] is not None:
+                while contents[i, j] is not None:
                     j += 1
-                PanCell.put(cell.content, (cell.rowspan, cell.colspan), (i, j), cells)
+                cells.put(cell.content, cell.rowspan, cell.colspan, i, j)
                 icas[i, j] = Ica(cell.identifier, cell.classes, cell.attributes)
                 aligns_text[i, j] = cell.alignment
         return cls(
@@ -1489,13 +1444,13 @@ class PanTable(PanTableAbstract):
         m = self.m
         n = self.n
         cells = self.cells
+        contents = cells.contents
         icas = self.icas
         for i in range(m):
             for j in range(n):
-                cell = cells[i, j]
-                # don't repeat PanCellBlock
-                if cell.is_at((i, j)):
-                    cache_elems[('cells', i, j)] = cell.content
+                # don't repeat cell-blocks
+                if cells.is_at(i, j):
+                    cache_elems[('cells', i, j)] = contents[i, j]
                     cache_elems[('icas', i, j)] = icas[i, j].to_panflute_ast()
                 else:
                     cache_none.append(('cells', i, j))
@@ -1526,16 +1481,18 @@ class PanTable(PanTableAbstract):
 
         # * 2nd pass: get output from cache
         # cells and icas
-        cells_res = np.empty((m, n), dtype='O')
+        cells_res = TableArray.default((m, n), has_geometries=False)
+        geometries = cells.geometries
+        cells_res.geometries = geometries
         icas_res = np.empty((m, n), dtype='O')
         for i in range(m):
             for j in range(n):
                 content = cache_texts[('cells', i, j)]
                 if content is not None:
-                    cell = cells[i, j]
                     # overwrite as cells is already valid so it is impossible to have
                     # colliding cells to be overwritten
-                    PanCell.put(content, cell.shape, (i, j), cells_res, overwrite=True)
+                    cell_shape = cells.shape_at(i, j)
+                    cells_res.put(content, cell_shape[0], cell_shape[1], i, j, overwrite=True)
                     icas_res[i, j] = cache_texts[('icas', i, j)]
         # icas_row
         icas_row_res = np.empty(m, dtype='O')
@@ -1566,16 +1523,10 @@ class PanTable(PanTableAbstract):
         cells = self.cells
         shape = cells.shape
         m, n = shape
-        cells_res = np.empty(shape, dtype='O')
-        for i in range(m):
-            for j in range(n):
-                cell = cells[i, j]
-                if cell.is_at((i, j)):
-                    PanCell.put(stringify(TableCell(*cell.content)), cell.shape, (i, j), cells_res, overwrite=True)
         short_caption = None if self.short_caption is None else stringify(Plain(*self.short_caption))
         caption = stringify(Caption(*self.caption))
         return PanTableStr(
-            cells_res,
+            cells.stringified(width=None, cannonical=False),
             ica_table=self.ica_table,
             short_caption=short_caption, caption=caption,
             spec=self.spec,
@@ -1590,7 +1541,7 @@ class PanTable(PanTableAbstract):
 class PanTableStr(PanTableAbstract):
     '''similar to PanTable, but with panflute ASTs as str
 
-    All PanCell in cells should have content type as str
+    TableArray should have content type as str
     although not strictly enforced here
 
     TODO: check that icas* are always empty and remove them
@@ -1600,7 +1551,7 @@ class PanTableStr(PanTableAbstract):
 
     def __init__(
         self,
-        cells: np.ndarray[PanCell],
+        cells: TableArray,
         ica_table: Optional[Ica] = None,
         short_caption: Optional[str] = None, caption: str = '',
         spec: Optional[Spec] = None,
@@ -1616,7 +1567,7 @@ class PanTableStr(PanTableAbstract):
         self.caption = caption
         self.table_width = table_width
 
-        shape = cells.shape
+        shape = cells.contents.shape
         m, n = shape
 
         self.ica_table: Ica = Ica() if ica_table is None else ica_table
@@ -1636,27 +1587,6 @@ class PanTableStr(PanTableAbstract):
 
     def _repr_html_(self) -> str:
         return self.__str__(tablefmt='html')
-
-    def cells_stringified(self, width: int = 15, cannonical=True) -> np.ndarray[str]:
-        '''return stringified cells
-
-        :param int width: width per column
-        '''
-        from textwrap import wrap
-
-        cells = self.cells
-        res = np.empty_like(cells)
-        m, n = cells.shape
-        for i in range(m):
-            for j in range(n):
-                cell = cells[i, j]
-                if cannonical:
-                    cell = cell if cell.is_at((i, j)) else None
-                res[i, j] = '' if cell is None else '\n'.join(wrap(
-                    cell.content,
-                    width,
-                ))
-        return res
 
     def to_pantableoption(
         self,
@@ -1708,19 +1638,22 @@ class PanTableStr(PanTableAbstract):
         '''return a PanTable representation of self
         '''
         cells = self.cells
-        shape = cells.shape
+        contents = cells.contents
+        shape = contents.shape
         m, n = shape
-        cells_res = np.empty(shape, dtype='O')
+        res = TableArray.default(shape, has_geometries=False)
+        geometries = cells.geometries
+        res.geometries = geometries
         for i in range(m):
             for j in range(n):
-                cell = cells[i, j]
-                if cell.is_at((i, j)):
-                    PanCell.put(ListContainer(Plain(Str(cell.content))), cell.shape, (i, j), cells_res, overwrite=True)
+                if cells.is_at(i, j):
+                    cell_shape = cells.shape_at(i, j)
+                    res.put(ListContainer(Plain(Str(contents[i, j]))), cell_shape[0], cell_shape[1], i, j, overwrite=True)
         short_caption = None if self.short_caption is None else ListContainer(Str(self.short_caption))
         caption = ListContainer(Para(Str(self.caption)))
 
         return PanTable(
-            cells_res,
+            res,
             ica_table=self.ica_table,
             short_caption=short_caption, caption=caption,
             spec=self.spec,
@@ -1732,21 +1665,12 @@ class PanTableStr(PanTableAbstract):
         )
 
     def to_str_array(self) -> np.ndarray[str]:
-        cells = self.cells
-        shape = cells.shape
-        m, n = shape
-        cells_res = np.full(shape, '', dtype='O')
-        for i in range(m):
-            for j in range(n):
-                cell = cells[i, j]
-                if cell.is_at((i, j)):
-                    cells_res[i, j] = cell.content
-        return cells_res
+        return self.cells.cannonical.contents
 
     def auto_width(
         self,
         override_width: bool = False,
-        cell_width_func: Optional[Callable[[PanCell], int]] = cell_width_func,
+        cell_width_func: Optional[Callable[[str], int]] = cell_width_func,
     ):
         '''calculate column widths
 
@@ -1754,17 +1678,18 @@ class PanTableStr(PanTableAbstract):
         '''
         table_width: float = 1. if self.table_width is None else self.table_width
         cells = self.cells
+        contents = cells.contents
+        geometries = cells.geometries
         n = self.n
         col_widths = self.spec.col_widths
 
         temp: List[List[Union[int, Tuple[int, int]]]] = [[]] * n
         for i in range(self.m):
             for j in range(n):
-                cell = cells[i, j]
-                if cell.is_at((i, j)):
-                    width_int = cell_width_func(cell)
+                if cells.is_at(i, j):
+                    width_int = cell_width_func(contents[i, j])
                     # if cell spans multiple columns
-                    cell_n = cell.shape[1]
+                    cell_n = cells.shape_at(i, j)[1]
                     if cell_n > 1:
                         temp[j].append((width_int, cell_n))
                     else:
@@ -1821,13 +1746,13 @@ class PanTableMarkdown(PanTableStr):
         m = self.m
         n = self.n
         cells = self.cells
+        contents = cells.contents
         icas = self.icas
         for i in range(m):
             for j in range(n):
-                cell = cells[i, j]
-                # don't repeat PanCellBlock
-                if cell.is_at((i, j)):
-                    cache_texts[('cells', i, j)] = cell.content
+                # don't repeat cell-block
+                if cells.is_at(i, j):
+                    cache_texts[('cells', i, j)] = contents[i, j]
                     cache_texts[('icas', i, j)] = icas[i, j]
                 else:
                     cache_none.append(('cells', i, j))
@@ -1861,16 +1786,18 @@ class PanTableMarkdown(PanTableStr):
         temp = cache_elems['short_caption']
         short_caption_res = temp[0].content if temp else None
         # cells and icas
-        cells_res = np.empty((m, n), dtype='O')
+        res = TableArray.default((m, n), has_geometries=False)
+        geometries = cells.geometries
+        res.geometries = geometries
         icas_res = np.empty((m, n), dtype='O')
         for i in range(m):
             for j in range(n):
                 content = cache_elems[('cells', i, j)]
                 if content is not None:
-                    cell = cells[i, j]
                     # overwrite as cells is already valid so it is impossible to have
                     # colliding cells to be overwritten
-                    PanCell.put(single_para_to_plain(content), cell.shape, (i, j), cells_res, overwrite=True)
+                    cell_shape = cells.shape_at(i, j)
+                    res.put(single_para_to_plain(content), cell_shape[0], cell_shape[1], i, j, overwrite=True)
                     icas_res[i, j] = Ica.from_panflute_ast(cache_elems[('icas', i, j)])
         # icas_row
         icas_row_res = np.empty(m, dtype='O')
@@ -1882,7 +1809,7 @@ class PanTableMarkdown(PanTableStr):
             icas_rowblock_res[i] = Ica.from_panflute_ast(cache_elems[('icas_rowblock', i)])
 
         return PanTable(
-            cells_res,
+            res,
             ica_table=self.ica_table,
             short_caption=short_caption_res, caption=cache_elems['caption'],
             spec=self.spec,
@@ -1903,16 +1830,17 @@ class PanTableMarkdown(PanTableStr):
 
         res = np.full((m, n + offset), '', dtype='O')
         cells = self.cells
+        contents = cells.contents
+        geometries = cells.geometries
         icas = self.icas
         # cells, icas
         for i in range(m):
             for j in range(n):
-                cell = cells[i, j]
-                if cell.is_at((i, j)):
+                if cells.is_at(i, j):
                     ica = icas[i, j]
                     cell_res = []
-                    if type(cell) == PanCellBlock:
-                        shape = cell.shape
+                    if cells.is_block(i, j):
+                        shape = geometries[i, j, 0]
                         cell_res.append(f'({shape[0]}, {shape[1]})')
                     if ica:
                         # discard first 2 char which is `[]`
@@ -1920,7 +1848,7 @@ class PanTableMarkdown(PanTableStr):
                     # if cell_res has content so far that means we have first row for cell attributes
                     if cell_res:
                         cell_res.append('\n')
-                    cell_res.append(cell.content)
+                    cell_res.append(contents[i, j])
                     res[i, j + offset] = ''.join(cell_res)
         # icas_rowblock, icas_row
         if fancy_table:
