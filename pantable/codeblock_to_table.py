@@ -18,10 +18,15 @@ def codeblock_to_table(
     doc: Optional[Doc] = None,
 ):
     try:
-        return (
+        pan_table_str = (
             PanCodeBlock
             .from_yaml_filter(options=options, data=data, element=element, doc=doc)
             .to_pantablestr()
+        )
+        if pan_table_str.table_width is not None:
+            pan_table_str.auto_width()
+        return (
+            pan_table_str
             .to_pantable()
             .to_panflute_ast()
         )

@@ -1,6 +1,6 @@
 ``` {.table}
 ---
-table-width: 1.3
+table-width: 1.
 ---
 ,pandoc-csv2table,pandoc-placetable,panflute example,my proposal
 type,type=simple|multiline|grid|pipe,,,
