@@ -2,29 +2,10 @@
 ---
 caption: List of Students
 alignment: LL
-alignment-cells: 'CC
-
-  DD
-
-  DD
-
-  DD
-
-  DD
-
-  DD
-
-  DD
-
-  DD
-
-  DD
-
-  DD'
+alignment-cells: CC
 width:
 - 0.5
 - 0.5
-header: false
 ms:
 - 1
 - 1
@@ -33,10 +14,6 @@ ms:
 - 1
 - 1
 - 2
-- 0
-ns-head:
-- 0
-- 0
 - 0
 markdown: true
 fancy-table: true

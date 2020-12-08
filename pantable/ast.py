@@ -120,6 +120,8 @@ class PanTableOption:
         '''normalize
 
         assume the types are correct. Normalize what's beyond type-correctness.
+
+        e.g. from PanCodeBlock to PanTableStr should uses this
         '''
         m, n = shape
 
@@ -180,6 +182,63 @@ class PanTableOption:
             except ValueError as e:
                 print(e, file=sys.stderr)
                 self.ns_head = None
+
+    def simplify(self):
+        '''Reduced equivalent attrs to simplest form
+
+        e.g. from PanTableStr to PanCodeBlock should uses this
+        '''
+        # alignment: simplify LRCD...D to LRC
+        alignment = self.alignment
+        last_idx = -1
+        for i, char in enumerate(alignment):
+            if char != 'D':
+                last_idx = i
+        self.alignment = alignment[:last_idx + 1]
+
+        # alignment_cells
+        align_list = self.alignment_cells.split('\n')
+        last_idx = -1
+        last_idy = -1
+        for i, alignment in enumerate(align_list):
+            for j, char in enumerate(alignment):
+                if char != 'D':
+                    last_idx = i
+                    last_idy = j
+        self.alignment_cells = '\n'.join(line[:last_idy + 1] for line in align_list[:last_idx + 1])
+
+        # width
+        default = True
+        for width in self.width:
+            if type(width) == float:
+                default = False
+                break
+        if default:
+            self.width = None
+
+        # header & ms
+        # single body, no foot, header of one row or below
+        # is special case of header = True/False
+        ms = self.ms
+        if ms is not None:
+            if len(ms) == 4 and ms[1] == 0 and ms[3] == 0:
+                if ms[0] == 1:
+                    self.ms = None
+                    self.header = True
+                elif ms[0] == 0:
+                    self.ms = None
+                    self.header = False
+
+        # ns_head
+        # if all zero that equiv. to None
+        ns_head = self.ns_head
+        default = True
+        for n in ns_head:
+            if n != 0:
+                default = False
+                break
+        if default:
+            self.ns_head = None
 
     @classmethod
     def from_kwargs(cls, **kwargs) -> PanTableOption:
@@ -1597,20 +1656,14 @@ class PanTableStr(PanTableAbstract):
         # col_width
         col_widths_list = ['D' if np.isnan(i) else float(i) for i in col_widths]
 
-        # header
-        ms = self._ms
-        # if single row header
-        header = (ms.size == 4 and ms[0] == 1 and ms[1] == 0 and ms[3] == 0)
-
-        return PanTableOption(
+        options = PanTableOption(
             short_caption='' if short_caption is None else short_caption,
             caption=self.caption,
             alignment=spec.aligns.aligns_string,
             alignment_cells=self.aligns.aligns_string,
             width=col_widths_list,
             table_width=self.table_width,
-            header=header,
-            ms=ms.tolist(),
+            ms=self._ms.tolist(),
             ns_head=self.ns_head.tolist(),
             markdown=True,  # TODO: provide this as class attr and unify with stringify?
             fancy_table=fancy_table,
@@ -1618,6 +1671,9 @@ class PanTableStr(PanTableAbstract):
             csv_kwargs=dict() if csv_kwargs is None else csv_kwargs,
             format=format,
         )
+        options.simplify()
+
+        return options
 
     def to_pancodeblock(
         self,

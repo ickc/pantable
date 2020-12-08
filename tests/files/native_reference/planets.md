@@ -1,44 +1,7 @@
 ``` {.table}
 ---
 caption: Data about the planets of our solar system.
-alignment: CCDRRRRRRRRD
-alignment-cells: 'DDDDDDDDDDDD
-
-  DDDDDDDDDDDD
-
-  DDDDDDDDDDDD
-
-  DDDDDDDDDDDD
-
-  DDDDDDDDDDDD
-
-  DDDDDDDDDDDD
-
-  DDDDDDDDDDDD
-
-  DDDDDDDDDDDD
-
-  DDDDDDDDDDDD
-
-  DDDDDDDDDDDD'
-width:
-- D
-- D
-- D
-- D
-- D
-- D
-- D
-- D
-- D
-- D
-- D
-- D
-ms:
-- 1
-- 0
-- 9
-- 0
+alignment: CCDRRRRRRRR
 ns-head:
 - 3
 markdown: true

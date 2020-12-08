@@ -3,25 +3,12 @@
 short-caption: Nordic countries
 caption: States belonging to the *Nordics.*
 alignment: CLLL
-alignment-cells: 'CCCC
-
-  DDDD
-
-  DDDD
-
-  DDDD
-
-  DDDD
-
-  DDDD
-
-  DDDD'
+alignment-cells: CCCC
 width:
 - 0.3
 - 0.3
 - 0.2
 - 0.2
-header: false
 ms:
 - 1
 - 0
