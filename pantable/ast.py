@@ -1210,7 +1210,7 @@ class PanTable(PanTableAbstract):
     ) -> Iterator[TableRow]:
         return (
             TableRow(
-                *[i for i in pf_row_array if i is not None],
+                *(i for i in pf_row_array if i is not None),
                 identifier=ica.identifier,
                 classes=ica.classes,
                 attributes=ica.attributes
