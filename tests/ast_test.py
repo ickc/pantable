@@ -20,14 +20,6 @@ from pantable.ast import PanTableOption, Align
     ),
     (
         {},
-        {'width': [1, 2, None]},
-    ),
-    (
-        {'width': [1, 2, '2/3']},
-        {'width': [1, 2, 2 / 3]},
-    ),
-    (
-        {},
         {'csv_kwargs': []},
     ),
     (
@@ -37,6 +29,27 @@ from pantable.ast import PanTableOption, Align
 ))
 def test_pantableoption_type(kwargs1, kwargs2):
     assert PanTableOption(**kwargs1) == PanTableOption(**kwargs2)
+
+
+@mark.parametrize('kwargs1,kwargs2,shape', (
+    (
+        {'width': [1, 2, 'D']},
+        {'width': [1, 2, None]},
+        (3, 3),
+    ),
+    (
+        {'width': [1, 2, '2/3']},
+        {'width': [1, 2, 2 / 3]},
+        (3, 3),
+    ),
+))
+def test_pantableoption_normalize(kwargs1, kwargs2, shape):
+    op1 = PanTableOption(**kwargs1)
+    op1.normalize(shape=shape)
+    op2 = PanTableOption(**kwargs2)
+    op2.normalize(shape=shape)
+    assert op1 == op2
+
 
 
 case_test = PanTableOption.from_kwargs(**{

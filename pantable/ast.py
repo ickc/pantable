@@ -67,7 +67,7 @@ class PanTableOption:
     alignment: str = ''
     alignment_cells: str = ''
     width: Optional[List[Union[float, str]]] = None
-    table_width: float = 1.
+    table_width: float = 1.  # TODO
     header: bool = True
     ms: Optional[List[int]] = None
     ns_head: Optional[List[int]] = None
@@ -103,13 +103,9 @@ class PanTableOption:
                 except (ValueError, TypeError):
                     print(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: {default}", file=sys.stderr)
                     setattr(self, key, default)
-        # check Optional[List[float]]
-        if self.width is not None:
-            try:
-                self.width = ['D' if x == 'D' else float(Fraction(x)) for x in self.width]
-            except (ValueError, TypeError):
-                print(f'Option width with value {self.width} has invalid type and set to default: None', file=sys.stderr)
-                self.width = None
+        # width: Optional[List[Union[float, str]]] is not checked here
+        # * i.e. we only guarantee width is Optional[list] so far
+        # see normalize
         # check Optional[List[int]]
         for key in ('ms', 'ns_head'):
             value = getattr(self, key)
@@ -119,6 +115,71 @@ class PanTableOption:
                 except (ValueError, TypeError):
                     print(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: None", file=sys.stderr)
                     setattr(self, key, None)
+
+    def normalize(self, shape: Tuple[int, int]):
+        '''normalize
+
+        assume the types are correct. Normalize what's beyond type-correctness.
+        '''
+        m, n = shape
+
+        # set all str or negative width to default
+        sum_ = 0.
+        width = self.width
+        if width is not None:
+            widths: List[Union[float, str]] = ['D'] * n
+            for i, width_ in enumerate(width):
+                if i >= n:
+                    break
+                try:
+                    temp = float(Fraction(width_))
+                    if temp >= 0.:
+                        widths[i] = temp
+                        sum_ += temp
+                except (ValueError, TypeError):
+                    pass
+            self.width = widths
+
+        table_width = self.table_width
+        # set table_width to default if smaller than sum of positive width
+        if table_width is not None and table_width < sum_:
+            print(f'table-width smaller than sum of width: {sum_}. Set to default.', file=sys.stderr)
+            self.table_width = 1.  # TODO
+
+        ms = self.ms
+        ms_sum = 0
+        if ms is not None:
+            try:
+                l = len(ms)
+                if l < 4:
+                    raise ValueError(f'ms is too short, set to default: {ms}')
+                if l % 2 != 0:
+                    raise ValueError(f'ms is not of even length, set to default: {ms}')
+                for m_ in ms:
+                    if m_ >= 0:
+                        ms_sum += m_
+                    else:
+                        raise ValueError(f'ms cannot be negative, set to default: {ms}')
+                if ms_sum != m:
+                    raise ValueError(f'Sum of ms {ms} does not equal no of rows {m}, set to default.')
+            except ValueError as e:
+                print(e, file=sys.stderr)
+                self.ms = None
+                ms = None
+
+        m_body = 1 if ms is None else len(ms) // 2 - 1
+        ns_head = self.ns_head
+        if ns_head is not None:
+            try:
+                l = len(ns_head)
+                if l != m_body:
+                    raise ValueError(f'ns_head {ns_head} should be of length as no. of bodies {m_body}, set to default.')
+                for n_ in ns_head:
+                    if n_ > n:
+                        raise ValueError(f'ns_head {ns_head} cannot be larger than no. of columns {n}, set to default.')
+            except ValueError as e:
+                print(e, file=sys.stderr)
+                self.ns_head = None
 
     @classmethod
     def from_kwargs(cls, **kwargs) -> PanTableOption:
@@ -147,6 +208,60 @@ class PanTableOption:
                 field_.default
             )
         }
+
+    @staticmethod
+    def to_align_1d(alignment: str, size: int) -> Align:
+        alignment_norm = alignment.strip().upper()
+        try:
+            aligns_char = np.fromiter(alignment_norm, dtype='S1')
+            aligns_char_size = aligns_char.size
+            if aligns_char_size >= size:
+                aligns = Align.from_aligns_char(aligns_char[:size])
+            elif aligns_char_size < size:
+                aligns = Align.default(shape=(size,))
+                aligns.aligns[:aligns_char_size] = Align.from_aligns_char(aligns_char).aligns
+        except UnicodeEncodeError:
+            print(f'Non-ASCII character detected in {alignment}, ignoring and set to default.', file=sys.stderr)
+            aligns = Align.default(shape=(size,))
+        return aligns
+
+    @staticmethod
+    def to_align_2d(alignment_cells: str, shape: Tuple[int, int]) -> Align:
+        m, n = shape
+        res = Align.default(shape)
+        aligns = res.aligns
+        for i, row in enumerate(alignment_cells.strip().split('\n')):
+            # in case where no. of rows is more than needed
+            if i >= m:
+                break
+            aligns[i] = PanTableOption.to_align_1d(row, n).aligns
+        return res
+
+    def alignment_to_align(self, size: int) -> Align:
+        return self.to_align_1d(self.alignment, size)
+
+    def alignment_cells_to_align(self, shape: Tuple[int, int]) -> Align:
+        return self.to_align_2d(self.alignment_cells, shape)
+
+    def to_spec(self, size: int) -> Spec:
+        '''to Spec
+
+        assume normalized self.
+        '''
+        width = self.width
+
+        if width is None:
+            col_widths = None
+        else:
+            col_widths = np.full(size, np.nan, dtype=np.float64)
+            for i in range(size):
+                temp = width[i]
+                if type(temp) != str:
+                    col_widths[i] = temp
+        return Spec(
+            self.alignment_to_align(size),
+            col_widths=col_widths
+        )
 
 
 class PanCodeBlock:
@@ -269,41 +384,23 @@ class PanCodeBlock:
         '''
         m, n = shape
         options = self.options
+        options.normalize(shape=shape)
 
         short_caption = options.short_caption
         caption = options.caption
 
         # alignment, width
-        spec = Spec.from_pantableoption(options, shape[1])
+        spec = options.to_spec(n)
         # alignment_cells
-        aligns = Align.from_aligns_string_2d(options.alignment_cells, shape)
+        aligns = options.alignment_cells_to_align(shape)
 
         # ms
         _ms = options.ms
         ms: Optional[np.ndarray[np.int64]] = None if _ms is None else np.array(_ms, dtype=np.int64)
-        if ms is not None:
-            if np.any(ms < 0):
-                print(f'Negative no. of rows detected in ms: {_ms}, set to default.', file=sys.stderr)
-                ms = None
-            elif ms.sum() != m:
-                print(f'The total no. of rows in all row-blocks (sum of {ms}) is not equal to the total no. of rows ({m}), set to default.', file=sys.stderr)
-                ms = None
-        # header
-        header = options.header
-        if ms is None:
-            ms = np.array([1, 0, m - 1, 0]) if header else np.array([0, 0, m, 0])
-        # this is too noisy as the default writer would have header defaulted to false and has ms specified already
-        # TODO: just document this behavior
-        # elif not header:
-            # print('Ignoring "header: False" as ms is specified.', file=sys.stderr)
 
         # ns_head
         _ns_head = options.ns_head
         ns_head = None if _ns_head is None else np.array(_ns_head, dtype=np.int64)
-        if ns_head is not None:
-            if np.any((ns_head < 0) | (ns_head > n)):
-                print(f'ns_head {_ns_head} overflow the table, set to default.', file=sys.stderr)
-                ns_head = None
         return short_caption, caption, spec, aligns, ms, ns_head
 
     @staticmethod
@@ -654,41 +751,6 @@ class Align:
         return cls.from_aligns_char(aligns_char)
 
     @classmethod
-    def from_aligns_string_1d(cls, alignment: str, size: int) -> Align:
-        '''from alignment in PanTableOption
-
-        e.g.
-        >>> Align.from_aligns_string_1d('LDRC', 4)
-        '''
-        alignment_norm = alignment.strip().upper()
-        try:
-            aligns_char = np.fromiter(alignment_norm, dtype='S1')
-            aligns_char_size = aligns_char.size
-            if aligns_char_size >= size:
-                aligns = Align.from_aligns_char(aligns_char[:size])
-            elif aligns_char_size < size:
-                aligns = Align.default(shape=(size,))
-                aligns.aligns[:aligns_char_size] = Align.from_aligns_char(aligns_char).aligns
-        except UnicodeEncodeError:
-            print(f'Non-ASCII character detected in {alignment}, ignoring and set to default.', file=sys.stderr)
-            aligns = Align.default(shape=(size,))
-        return aligns
-
-    @classmethod
-    def from_aligns_string_2d(cls, alignment_cells: str, shape: Tuple[int, int]) -> Align:
-        '''from alignment_cells in PanTableOption
-        '''
-        m, n = shape
-        res = cls.default(shape)
-        aligns = res.aligns
-        for i, row in enumerate(alignment_cells.strip().split('\n')):
-            # in case where no. of rows is more than needed
-            if i >= m:
-                break
-            aligns[i] = Align.from_aligns_string_1d(row, n).aligns
-        return res
-
-    @classmethod
     def default(cls, shape: Union[Tuple[int], Tuple[int, int]] = (1,)) -> Align:
         return cls(np.full(shape, 68, dtype=np.int8))
 
@@ -740,33 +802,6 @@ class Spec:
         return cls(
             aligns,
             col_widths,
-        )
-
-    @classmethod
-    def from_pantableoption(
-        cls,
-        options: PanTableOption,
-        size: int,
-    ) -> Spec:
-        alignment: str = options.alignment
-        width: Optional[List[Union[float, str]]] = options.width
-
-        if width is None:
-            col_widths = None
-        else:
-            col_widths = np.full(size, np.nan, dtype=np.float64)
-            for i in range(min(size, len(width))):
-                try:
-                    col_width = np.float64(width[i])
-                    if col_width <= 0:
-                        print(f'Non-positive column-width detected: {col_width}, set to default.', file=sys.stderr)
-                        col_width = np.nan
-                except ValueError:
-                    col_width = np.nan
-                col_widths[i] = col_width
-        return cls(
-            Align.from_aligns_string_1d(alignment, size),
-            col_widths=col_widths
         )
 
     def to_panflute_ast(self) -> List[Tuple]:
@@ -1563,7 +1598,7 @@ class PanTableStr(PanTableAbstract):
             table_width = sum_
 
         # col_width
-        col_widths_list = ['D' if np.isnan(i) else i for i in col_widths]
+        col_widths_list = ['D' if np.isnan(i) else float(i) for i in col_widths]
 
         # header
         ms = self._ms
