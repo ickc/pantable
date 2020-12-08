@@ -807,29 +807,17 @@ class Align:
         return cls(np.full(shape, 68, dtype=np.int8))
 
 
+@dataclass
 class Spec:
     '''a class of spec of PanTable
     '''
 
-    def __init__(
-        self,
-        aligns: Align,
-        col_widths: Optional[np.ndarray[np.float64]] = None,
-    ):
-        self.aligns = aligns
-        self.col_widths: np.ndarray[np.float64] = np.full_like(aligns.aligns, np.nan, dtype=np.float64) if col_widths is None else col_widths
+    aligns: Align
+    col_widths: Optional[np.ndarray[np.float64]] = None
 
-    def to_dict(self) -> dict:
-        return {
-            'aligns': self.aligns.aligns_text,
-            'col_widths': self.col_widths,
-        }
-
-    def __repr__(self):
-        return f'Spec({self.aligns.__repr__()}, {self.col_widths})'
-
-    def __str__(self):
-        return self.__repr__()
+    def __post_init__(self):
+        if self.col_widths is None:
+            self.col_widths: np.ndarray[np.float64] = np.full_like(self.aligns.aligns, np.nan, dtype=np.float64)
 
     @property
     def size(self) -> int:
