@@ -727,20 +727,6 @@ class PanCodeBlock:
 # Table
 
 
-class FakeRepr:
-    '''mixin for repr that doesn't yield itself after eval, from to_dict method
-    '''
-
-    def __str__(self) -> str:
-        return self.__repr__()
-
-    def __repr__(self) -> str:
-        return pformat(self.to_dict(), sort_dicts=False, compact=False, width=-1)
-
-    def to_dict(self) -> dict:
-        raise NotImplementedError
-
-
 @dataclass
 class Align:
     '''Alignment class
