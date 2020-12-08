@@ -687,41 +687,44 @@ class PanCodeBlock:
         except KeyError:
             raise ValueError(f'Unknown format: {options.format}')
 
-        cls: Type[PanTableStr]
         ms: Optional[np.ndarray[np.int64]]
         icas_rowblock: Optional[np.ndarray[str]]
         icas_row: Optional[np.ndarray[str]]
         icas: Optional[np.ndarray[str]]
+
         if options.markdown:
-            cls = PanTableMarkdown
             ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(str_array, fancy_table=options.fancy_table)
+            short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(cells.contents.shape)
+            if ms is None:
+                ms = _ms
+            return PanTableMarkdown(
+                cells,
+                caption,
+                icas_rowblock,
+                icas_row,
+                icas,
+                short_caption=short_caption,
+                ica_table=self.ica,
+                spec=spec,
+                aligns=aligns,
+                _ms=ms,
+                ns_head=ns_head,
+                table_width=options.table_width,
+            )
         else:
-            cls = PanTableStr
-            ms = None
-            icas_rowblock = None
-            icas_row = None
-            icas = None
             cells = TableArray(str_array)
-
-        short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(cells.contents.shape)
-
-        if ms is None:
-            ms = _ms
-
-        return cls(
-            cells,
-            caption,
-            icas_rowblock,
-            icas_row,
-            icas,
-            short_caption=short_caption,
-            ica_table=self.ica,
-            spec=spec,
-            aligns=aligns,
-            _ms=ms,
-            ns_head=ns_head,
-            table_width=options.table_width,
-        )
+            short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(cells.contents.shape)
+            return PanTableText(
+                cells,
+                caption,
+                short_caption=short_caption,
+                ica_table=self.ica,
+                spec=spec,
+                aligns=aligns,
+                _ms=_ms,
+                ns_head=ns_head,
+                table_width=options.table_width,
+            )
 
 
 # Table
@@ -1568,9 +1571,6 @@ class PanTableStr(PanTableAbstract):
             ns_head=self.ns_head,
         )
 
-    def to_str_array(self) -> np.ndarray[str]:
-        return self.cells.cannonical.contents
-
     def auto_width(
         self,
         override_width: bool = False,
@@ -1788,3 +1788,18 @@ class PanTableMarkdown(PanTableStr):
                 else:
                     res[i, 0] = ica_row[2:]
         return res
+
+
+@dataclass
+class PanTableText(PanTableStr):
+    '''a quick and dirty PanTableStr without Ica
+
+    Except for ica_table, If you try to access icas* and any methods that use them, it will errs.
+    '''
+
+    icas_rowblock: ClassVar = None
+    icas_row: ClassVar = None
+    icas: ClassVar = None
+
+    def __post_init__(self):
+        PanTableAbstract.__post_init__(self)
