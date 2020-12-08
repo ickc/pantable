@@ -4,8 +4,8 @@ caption: List of Students
 alignment: LL
 alignment-cells: CC
 width:
-- 0.5
-- 0.5
+- 1/2
+- 1/2
 ms:
 - 1
 - 1

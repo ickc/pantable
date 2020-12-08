@@ -5,10 +5,10 @@ caption: States belonging to the *Nordics.*
 alignment: CLLL
 alignment-cells: CCCC
 width:
-- 0.3
-- 0.3
-- 0.2
-- 0.2
+- 3/10
+- 3/10
+- 1/5
+- 1/5
 ms:
 - 1
 - 0

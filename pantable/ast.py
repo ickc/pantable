@@ -208,13 +208,21 @@ class PanTableOption:
         self.alignment_cells = '\n'.join(line[:last_idy + 1] for line in align_list[:last_idx + 1])
 
         # width
-        default = True
-        for width in self.width:
-            if type(width) == float:
-                default = False
-                break
-        if default:
-            self.width = None
+        widths = self.width
+        if widths is not None:
+            default = True
+            for width in widths:
+                if width != 'D':
+                    default = False
+                    break
+            if default:
+                self.width = None
+            else:
+                for i, width in enumerate(widths):
+                    # convert float to Fraction if lossless
+                    temp = str(Fraction(width).limit_denominator())
+                    if float(Fraction(temp)) == width:
+                        widths[i] = temp
 
         # header & ms
         # single body, no foot, header of one row or below
