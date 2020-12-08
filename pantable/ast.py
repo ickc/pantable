@@ -67,7 +67,7 @@ class PanTableOption:
     alignment: str = ''
     alignment_cells: str = ''
     width: Optional[List[Union[float, str]]] = None
-    table_width: float = 1.  # TODO
+    table_width: Optional[float] = None
     header: bool = True
     ms: Optional[List[int]] = None
     ns_head: Optional[List[int]] = None
@@ -144,7 +144,7 @@ class PanTableOption:
         # set table_width to default if smaller than sum of positive width
         if table_width is not None and table_width < sum_:
             print(f'table-width smaller than sum of width: {sum_}. Set to default.', file=sys.stderr)
-            self.table_width = 1.  # TODO
+            self.table_width = None
 
         ms = self.ms
         ms_sum = 0
@@ -373,7 +373,7 @@ class PanCodeBlock:
         str,
         Spec,
         Align,
-        np.ndarray[np.int64],
+        Optional[np.ndarray[np.int64]],
         Optional[np.ndarray[np.int64]],
     ]:
         '''parsing PanTableOption to whatever PanTableStr.__init__ needed
@@ -619,7 +619,6 @@ class PanCodeBlock:
         if ms is None:
             ms = _ms
 
-        # TODO: implement table_width and auto_width
         return cls(
             cells,
             self.ica,
@@ -630,6 +629,7 @@ class PanCodeBlock:
             icas_row,
             icas,
             aligns,
+            options.table_width,
         )
 
 
@@ -1519,6 +1519,8 @@ class PanTableStr(PanTableAbstract):
     although not strictly enforced here
 
     TODO: check that icas* are always empty and remove them
+
+    TODO: implement auto_width
     '''
 
     def __init__(
@@ -1532,10 +1534,12 @@ class PanTableStr(PanTableAbstract):
         icas_row: Optional[np.ndarray[str]] = None,
         icas: Optional[np.ndarray[str]] = None,
         aligns: Optional[Align] = None,
+        table_width: Optional[float] = None,
     ):
         self.cells = cells
         self.short_caption = short_caption
         self.caption = caption
+        self.table_width = table_width
 
         shape = cells.shape
         m, n = shape
@@ -1590,13 +1594,6 @@ class PanTableStr(PanTableAbstract):
         spec = self.spec
         col_widths = spec.col_widths
 
-        # table_width
-        sum_ = col_widths.sum()
-        if np.isnan(sum_) or sum_ <= 0.:
-            table_width = 1.
-        else:
-            table_width = sum_
-
         # col_width
         col_widths_list = ['D' if np.isnan(i) else float(i) for i in col_widths]
 
@@ -1611,7 +1608,7 @@ class PanTableStr(PanTableAbstract):
             alignment=spec.aligns.aligns_string,
             alignment_cells=self.aligns.aligns_string,
             width=col_widths_list,
-            table_width=table_width,
+            table_width=self.table_width,
             header=header,
             ms=ms.tolist(),
             ns_head=self.ns_head.tolist(),
