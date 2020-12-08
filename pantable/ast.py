@@ -21,7 +21,7 @@ except ImportError:
     raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
 if TYPE_CHECKING:
-    from typing import Tuple, Dict, Iterator, Set
+    from typing import Tuple, Dict, Iterator, Set, Callable
 
     from panflute.base import Inline, Block
     from panflute.elements import Doc
@@ -50,6 +50,14 @@ def single_para_to_plain(elem: ListContainer) -> ListContainer:
         return ListContainer(Plain(*elem[0].content))
     else:
         return elem
+
+
+def cell_width_func(cell: PanCell) -> int:
+    '''return max no. of characters +3 among lines in the cell
+
+    The +3 match the way pandoc handle width, see jgm/pandoc commit 0dfceda
+    '''
+    return max(map(len, cell.content.split("\n"))) + 3
 
 
 # CodeBlock
@@ -1734,6 +1742,60 @@ class PanTableStr(PanTableAbstract):
                 if cell.is_at((i, j)):
                     cells_res[i, j] = cell.content
         return cells_res
+
+    def auto_width(
+        self,
+        override_width: bool = False,
+        cell_width_func: Optional[Callable[[PanCell], int]] = cell_width_func,
+    ):
+        '''calculate column widths
+
+        assume a normalized table
+        '''
+        table_width: float = 1. if self.table_width is None else self.table_width
+        cells = self.cells
+        n = self.n
+        col_widths = self.spec.col_widths
+
+        temp: List[List[Union[int, Tuple[int, int]]]] = [[]] * n
+        for i in range(self.m):
+            for j in range(n):
+                cell = cells[i, j]
+                if cell.is_at((i, j)):
+                    width_int = cell_width_func(cell)
+                    # if cell spans multiple columns
+                    cell_n = cell.shape[1]
+                    if cell_n > 1:
+                        temp[j].append((width_int, cell_n))
+                    else:
+                        temp[j].append(width_int)
+        widths_int = np.empty(n, dtype=np.int64)
+        # assume a normalized table
+        for j in range(n):
+            width_int_max = max(width_int for width_int in temp[j] if type(width_int) == int)
+            widths_int[j] = width_int_max
+            # for column span, put to next columns
+            for width in temp[j]:
+                if type(width) == tuple:
+                    width_int, cell_n = width
+                    width_int_resid = width_int - width_int_max
+                    cell_n_new = cell_n - 1
+                    if width_int_resid > 0:
+                        if cell_n_new > 1:
+                            temp[j+1].append((width_int_resid, cell_n_new))
+                        else:
+                            temp[j+1].append(width_int_resid)
+
+        if col_widths is None or override_width:
+            scale = table_width / widths_int.sum()
+            self.spec.col_widths = widths_int
+        else:
+            is_defaults = np.isnan(col_widths)
+            table_width_spent = np.nansum(col_widths)
+            # assume a normalized table
+            scale = (table_width - table_width_spent) / widths_int[is_defaults].sum()
+            # modified in-place
+            col_widths[is_defaults] = widths_int[is_defaults] * scale
 
 
 class PanTableMarkdown(PanTableStr):
