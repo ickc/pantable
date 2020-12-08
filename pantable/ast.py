@@ -1015,6 +1015,10 @@ class PanTableAbstract:
             return self.__repr__()
 
     @property
+    def contents(self) -> np.ndarray[Union[ListContainer, str]]:
+        return self.cells.contents
+
+    @property
     def m(self) -> int:
         return self._ms.sum()
 
