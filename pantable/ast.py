@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 import sys
-from typing import TYPE_CHECKING, Union, List, Optional, Type
+from typing import TYPE_CHECKING, Union, List, Optional, Type, ClassVar
 from itertools import chain, repeat
 from pprint import pformat
 from fractions import Fraction
@@ -740,25 +740,18 @@ class FakeRepr:
         raise NotImplementedError
 
 
+@dataclass
 class Align:
     '''Alignment class
     '''
 
-    ALIGN = np.array([
+    aligns: np.ndarray[np.int8]
+    ALIGN: ClassVar = np.array([
         "AlignDefault",
         "AlignLeft",
         "AlignRight",
         "AlignCenter",
     ])
-
-    def __init__(self, aligns: np.ndarray[np.int8]):
-        self.aligns = aligns
-
-    def __repr__(self):
-        return f'Align.from_aligns_text({self.aligns_text})'
-
-    def __str__(self):
-        return self.__repr__()
 
     @property
     def aligns_char(self):
