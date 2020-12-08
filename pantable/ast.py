@@ -524,7 +524,7 @@ class PanCodeBlock:
 
         shape = (m, n)
         icas: np.ndarray[str] = np.empty(shape, dtype='O')
-        cells = TableArray.default(shape)
+        cells = TableArray.default(shape, has_geometries=True)
         contents = cells.contents
         for i in range(m):
             for j in range(n):
@@ -712,10 +712,9 @@ class PanCodeBlock:
                 table_width=options.table_width,
             )
         else:
-            cells = TableArray(str_array)
-            short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(cells.contents.shape)
+            short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(str_array.shape)
             return PanTableText(
-                cells,
+                str_array,
                 caption,
                 short_caption=short_caption,
                 ica_table=self.ica,
@@ -855,7 +854,7 @@ class TableArray:
     geometries: Optional[np.ndarray[np.int64]] = None
 
     @classmethod
-    def default(cls, shape: Tuple[int, int], has_geometries=True) -> TableArray:
+    def default(cls, shape: Tuple[int, int], has_geometries=False) -> TableArray:
         if has_geometries:
             m, n = shape
             geometries = np.empty((m, n, 2, 2), dtype=np.int64)
@@ -930,7 +929,7 @@ class TableArray:
         contents = self.contents
         shape = contents.shape
         m, n = shape
-        res = TableArray.default(shape, has_geometries=False)
+        res = TableArray.default(shape)
         for i in range(m):
             for j in range(n):
                 if self.is_at(i, j):
@@ -944,7 +943,7 @@ class TableArray:
         '''
         shape = self.shape
         m, n = shape
-        res = TableArray.default(shape, has_geometries=False)
+        res = TableArray.default(shape)
         if not cannonical:
             res.geometries = self.geometries
         res_contents = res.contents
@@ -965,7 +964,7 @@ class PanTableAbstract:
     '''an abstract class of PanTables
     '''
 
-    cells: TableArray
+    cells: Union[TableArray, np.ndarray[Union[ListContainer, str]]]
     caption: Union[ListContainer[Block], str]
     icas_rowblock: np.ndarray
     icas_row: np.ndarray
@@ -979,6 +978,8 @@ class PanTableAbstract:
     ns_head: Optional[np.ndarray[np.int64]] = None
 
     def __post_init__(self):
+        if type(self.cells) != TableArray:
+            self.cells: TableArray = TableArray(self.cells)
         shape: Tuple[int, int] = self.cells.contents.shape
         m, n = shape
 
@@ -1262,7 +1263,7 @@ class PanTable(PanTableAbstract):
         icas_row = np.empty(m, dtype='O')
         icas = np.empty(shape, dtype='O')
         aligns_text = np.empty(shape, dtype='O')
-        cells = TableArray.default(shape)
+        cells = TableArray.default(shape, has_geometries=True)
         contents = cells.contents
         for i, row in enumerate(chain(
             head.content,
@@ -1407,7 +1408,7 @@ class PanTable(PanTableAbstract):
 
         # * 2nd pass: get output from cache
         # cells and icas
-        cells_res = TableArray.default((m, n), has_geometries=False)
+        cells_res = TableArray.default((m, n))
         geometries = cells.geometries
         cells_res.geometries = geometries
         icas_res = np.empty((m, n), dtype='O')
@@ -1549,7 +1550,7 @@ class PanTableStr(PanTableAbstract):
         contents = cells.contents
         shape = contents.shape
         m, n = shape
-        res = TableArray.default(shape, has_geometries=False)
+        res = TableArray.default(shape)
         geometries = cells.geometries
         res.geometries = geometries
         for i in range(m):
@@ -1690,7 +1691,7 @@ class PanTableMarkdown(PanTableStr):
         temp = cache_elems['short_caption']
         short_caption_res = temp[0].content if temp else None
         # cells and icas
-        res = TableArray.default((m, n), has_geometries=False)
+        res = TableArray.default((m, n))
         geometries = cells.geometries
         res.geometries = geometries
         icas_res = np.empty((m, n), dtype='O')
