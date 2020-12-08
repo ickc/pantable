@@ -61,6 +61,37 @@ def cell_width_func(string: str) -> int:
     return max(map(len, string.split("\n"))) + 3
 
 
+@dataclass
+class Ica:
+    """a class of identifier, classes, and attributes"""
+    identifier: str = ''
+    classes: List[str] = field(default_factory=list)
+    attributes: Dict[str, str] = field(default_factory=dict)
+
+    def to_panflute_ast(self) -> ListContainer[Plain]:
+        '''to panflute AST element
+
+        we choose a ListContainer-Plain-Span here as it is simplest to capture the Ica
+        '''
+        return ListContainer(Plain(Span(
+            identifier=self.identifier,
+            classes=self.classes,
+            attributes=self.attributes,
+        )))
+
+    @classmethod
+    def from_panflute_ast(cls, elem: ListContainer[Block]) -> Ica:
+        if elem:
+            try:
+                span = elem[0].content[0]
+                return cls(identifier=span.identifier, classes=span.classes, attributes=span.attributes)
+            except AttributeError:
+                print(f'Cannot parse element {elem}, setting to default', file=sys.stderr)
+                return cls()
+        else:
+            return cls()
+
+
 # CodeBlock
 
 
@@ -340,6 +371,7 @@ class PanTableOption:
         )
 
 
+@dataclass
 class PanCodeBlock:
 
     '''A PanTable representation of CodeBlock
@@ -355,18 +387,9 @@ class PanCodeBlock:
     c.f. `.util.parse_markdown_codeblock` for testing purposes
     '''
 
-    def __init__(
-        self,
-        options: Optional[PanTableOption] = None,
-        data: str = '',
-        ica: Optional[Ica] = None,
-    ):
-        '''
-        these args are those passed from within yaml_filter
-        '''
-        self.options: PanTableOption = PanTableOption() if options is None else options
-        self.data = data
-        self.ica: Ica = Ica() if ica is None else ica
+    data: str
+    options: PanTableOption = field(default_factory=PanTableOption)
+    ica: Ica = field(default_factory=Ica)
 
     @classmethod
     def from_yaml_filter(
@@ -701,37 +724,6 @@ class PanCodeBlock:
 
 
 # Table
-
-
-@dataclass
-class Ica:
-    """a class of identifier, classes, and attributes"""
-    identifier: str = ''
-    classes: List[str] = field(default_factory=list)
-    attributes: Dict[str, str] = field(default_factory=dict)
-
-    def to_panflute_ast(self) -> ListContainer[Plain]:
-        '''to panflute AST element
-
-        we choose a ListContainer-Plain-Span here as it is simplest to capture the Ica
-        '''
-        return ListContainer(Plain(Span(
-            identifier=self.identifier,
-            classes=self.classes,
-            attributes=self.attributes,
-        )))
-
-    @classmethod
-    def from_panflute_ast(cls, elem: ListContainer[Block]) -> Ica:
-        if elem:
-            try:
-                span = elem[0].content[0]
-                return cls(identifier=span.identifier, classes=span.classes, attributes=span.attributes)
-            except AttributeError:
-                print(f'Cannot parse element {elem}, setting to default', file=sys.stderr)
-                return cls()
-        else:
-            return cls()
 
 
 class FakeRepr:
