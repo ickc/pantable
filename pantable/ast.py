@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Union, List, Optional, Type
 from itertools import chain, repeat
 from pprint import pformat
 from fractions import Fraction
-from abc import ABC, abstractmethod
+from abc import ABC
 from textwrap import wrap
 
 if (sys.version_info.major, sys.version_info.minor) < (3, 8):
@@ -480,10 +480,6 @@ class PanCodeBlock:
         return short_caption, caption, spec, aligns, ms, ns_head
 
     @staticmethod
-    def parse_data_str(str_array: np.ndarray[str]) -> TableArray:
-        return TableArray(str_array)
-
-    @staticmethod
     def parse_data_markdown(
         str_array: np.ndarray[str],
         fancy_table: bool = False,
@@ -683,7 +679,7 @@ class PanCodeBlock:
             icas_rowblock = None
             icas_row = None
             icas = None
-            cells = self.parse_data_str(str_array)
+            cells = TableArray(str_array)
 
         short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(cells.contents.shape)
 
