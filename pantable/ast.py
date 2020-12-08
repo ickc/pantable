@@ -1016,7 +1016,7 @@ class PanTableAbstract:
             from tabulate import tabulate
 
             return tabulate(
-                self.cells.stringified(width=width, cannonical=cannonical),
+                self.cells.stringified(width=width, cannonical=cannonical).contents,
                 tablefmt=tablefmt,
                 headers=() if self.ms[0] == 0 else "firstrow",
             )
