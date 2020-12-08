@@ -1171,6 +1171,7 @@ class PanTable(PanTableAbstract):
             return convert_text(self.to_panflute_ast(), input_format='panflute', output_format='html')
         # in case of an invalid panflute AST and still want to show something
         except Exception:
+            print(f'Invalid AST.', file=sys.stderr)
             return self.__str__(tablefmt='html')
 
     @staticmethod
@@ -1490,7 +1491,7 @@ class PanTableStr(PanTableAbstract):
             self.icas: np.ndarray[str] = np.full(self.shape, '', dtype='O')
 
     def _repr_html_(self) -> str:
-        return self.__str__(tablefmt='html')
+        return self.to_pantable()._repr_html_()
 
     def to_pantableoption(
         self,
