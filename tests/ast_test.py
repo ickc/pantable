@@ -94,7 +94,6 @@ def test_align_text_1D():
     assert aligns_string == 'DRCL'
 
     assert Align.from_aligns_text(aligns_text) == aligns
-    print(Align.from_aligns_string(aligns_string).aligns, aligns.aligns)
     assert Align.from_aligns_string(aligns_string) == aligns
 
 
