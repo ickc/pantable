@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
     from panflute.elements import Doc, CodeBlock
 
+
 def codeblock_to_table(
     options: Optional[dict] = None,
     data: str = '',
