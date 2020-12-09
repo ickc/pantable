@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import re
 import sys
-from typing import TYPE_CHECKING, Union, List, Optional, Type, ClassVar
+from typing import TYPE_CHECKING, Union, List, Optional, ClassVar
 from itertools import chain, repeat
-from pprint import pformat
 from fractions import Fraction
 from textwrap import wrap
 
@@ -439,7 +438,7 @@ class PanCodeBlock:
     @classmethod
     def from_data_format(
         cls,
-        data: np.ndarray[str],
+        data: np.ndarray[np.str_],
         options: Optional[PanTableOption] = None,
         ica: Optional[Ica] = None,
     ) -> PanCodeBlock:
@@ -480,7 +479,7 @@ class PanCodeBlock:
         Here we assumed the types are already correct, so we are checking
         things beyond types such as Optional, shape, positivity, etc.
         '''
-        m, n = shape
+        n = shape[1]
         options = self.options
         options.normalize(shape=shape)
 
@@ -503,15 +502,15 @@ class PanCodeBlock:
 
     @staticmethod
     def parse_data_markdown(
-        str_array: np.ndarray[str],
+        str_array: np.ndarray[np.str_],
         fancy_table: bool = False,
         ica_cell_pat=re.compile(r'^(\([0-9, ]+\))?({[^{}]*})?$'),
         fancy_table_pat=re.compile(r'^({[^{}]*})?? ?(---|===|___)? ?({[^{}]*})?$'),
     ) -> Tuple[
         Optional[np.ndarray[np.int64]],
-        Optional[np.ndarray[str]],
-        np.ndarray[str],
-        np.ndarray[str],
+        Optional[np.ndarray[np.str_]],
+        np.ndarray[np.str_],
+        np.ndarray[np.str_],
         TableArray,
     ]:
         '''parse markdown in string array
@@ -523,7 +522,7 @@ class PanCodeBlock:
         n -= offset
 
         shape = (m, n)
-        icas: np.ndarray[str] = np.empty(shape, dtype='O')
+        icas: np.ndarray[np.str_] = np.empty(shape, dtype=np.object_)
         cells = TableArray.default(shape, has_geometries=True)
         contents = cells.contents
         for i in range(m):
@@ -568,8 +567,8 @@ class PanCodeBlock:
 
         # ms, icas_rowblock, icas_row
         ms = None
-        icas_rowblock: Optional[np.ndarray[str]] = None
-        icas_row: np.ndarray[str] = np.full(m, '', dtype='O')
+        icas_rowblock: Optional[np.ndarray[np.str_]] = None
+        icas_row: np.ndarray[np.str_] = np.full(m, '', dtype=np.object_)
         if fancy_table:
             temp_markers = []
             temp_icas = []
@@ -666,7 +665,7 @@ class PanCodeBlock:
                     ms_list.append(0)
                     icas_rowblock_list.append('')
                 ms = np.array(ms_list, dtype=np.int64)
-                icas_rowblock = np.array(icas_rowblock_list, dtype='O')
+                icas_rowblock = np.array(icas_rowblock_list, dtype=np.object_)
 
         return ms, icas_rowblock, icas_row, icas, cells
 
@@ -688,9 +687,9 @@ class PanCodeBlock:
             raise ValueError(f'Unknown format: {options.format}')
 
         ms: Optional[np.ndarray[np.int64]]
-        icas_rowblock: Optional[np.ndarray[str]]
-        icas_row: Optional[np.ndarray[str]]
-        icas: Optional[np.ndarray[str]]
+        icas_rowblock: Optional[np.ndarray[np.str_]]
+        icas_row: Optional[np.ndarray[np.str_]]
+        icas: Optional[np.ndarray[np.str_]]
 
         if options.markdown:
             ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(str_array, fancy_table=options.fancy_table)
@@ -863,7 +862,7 @@ class TableArray:
         else:
             geometries = None
         return cls(
-            np.empty(shape, dtype='O'),
+            np.empty(shape, dtype=np.object_),
             geometries=geometries,
         )
 
@@ -1168,19 +1167,19 @@ class PanTable(PanTableAbstract):
         m, n = shape
         m_icas_rowblock = self._ms.size // 2 + 1
         if self.icas_rowblock is None:
-            temp = np.empty(m_icas_rowblock, dtype='O')
+            temp = np.empty(m_icas_rowblock, dtype=np.object_)
             for i in range(m_icas_rowblock):
                 temp[i] = Ica()
             self.icas_rowblock: np.ndarray[Ica] = temp
 
         if self.icas_row is None:
-            temp = np.empty(m, dtype='O')
+            temp = np.empty(m, dtype=np.object_)
             for i in range(m):
                 temp[i] = Ica()
             self.icas_row: np.ndarray[Ica] = temp
 
         if self.icas is None:
-            temp = np.empty(shape, dtype='O')
+            temp = np.empty(shape, dtype=np.object_)
             for i in range(m):
                 for j in range(n):
                     temp[i, j] = Ica()
@@ -1213,13 +1212,12 @@ class PanTable(PanTableAbstract):
     def panflute_tablecells(self) -> np.ndarray[TableCell]:
         cells = self.cells
         contents = cells.contents
-        geometries = cells.geometries
         shape = contents.shape
         m, n = shape
         icas = self.icas
         aligns = self.aligns.aligns_text
 
-        res = np.empty(shape, dtype='O')
+        res = np.empty(shape, dtype=np.object_)
         for i in range(m):
             for j in range(n):
                 if cells.is_at(i, j):
@@ -1256,7 +1254,7 @@ class PanTable(PanTableAbstract):
         bodies = table.content
         m_bodies = len(bodies)
         ns_head = np.empty(m_bodies, dtype=np.int64)
-        icas_rowblock = np.empty(m_bodies + 2, dtype='O')
+        icas_rowblock = np.empty(m_bodies + 2, dtype=np.object_)
         icas_rowblock[0] = Ica(head.identifier, head.classes, head.attributes)
         for i, body in enumerate(bodies):
             ns_head[i] = body.row_head_columns
@@ -1276,9 +1274,9 @@ class PanTable(PanTableAbstract):
         m = ms.sum()
 
         shape = (m, n)
-        icas_row = np.empty(m, dtype='O')
-        icas = np.empty(shape, dtype='O')
-        aligns_text = np.empty(shape, dtype='O')
+        icas_row = np.empty(m, dtype=np.object_)
+        icas = np.empty(shape, dtype=np.object_)
+        aligns_text = np.empty(shape, dtype=np.object_)
         cells = TableArray.default(shape, has_geometries=True)
         contents = cells.contents
         for i, row in enumerate(chain(
@@ -1301,7 +1299,7 @@ class PanTable(PanTableAbstract):
             icas_rowblock=icas_rowblock,
             icas_row=icas_row,
             icas=icas,
-            short_caption=short_caption, 
+            short_caption=short_caption,
             ica_table=ica_table,
             spec=spec,
             aligns=Align.from_aligns_text(aligns_text),
@@ -1427,7 +1425,7 @@ class PanTable(PanTableAbstract):
         cells_res = TableArray.default((m, n))
         geometries = cells.geometries
         cells_res.geometries = geometries
-        icas_res = np.empty((m, n), dtype='O')
+        icas_res = np.empty((m, n), dtype=np.object_)
         for i in range(m):
             for j in range(n):
                 content = cache_texts[('cells', i, j)]
@@ -1438,11 +1436,11 @@ class PanTable(PanTableAbstract):
                     cells_res.put(content, cell_shape[0], cell_shape[1], i, j, overwrite=True)
                     icas_res[i, j] = cache_texts[('icas', i, j)]
         # icas_row
-        icas_row_res = np.empty(m, dtype='O')
+        icas_row_res = np.empty(m, dtype=np.object_)
         for i in range(m):
             icas_row_res[i] = cache_texts[('icas_row', i)]
         # icas_rowblock
-        icas_rowblock_res = np.empty(m_rowblocks, dtype='O')
+        icas_rowblock_res = np.empty(m_rowblocks, dtype=np.object_)
         for i in range(m_rowblocks):
             icas_rowblock_res[i] = cache_texts[('icas_rowblock', i)]
 
@@ -1465,7 +1463,6 @@ class PanTable(PanTableAbstract):
         '''
         cells = self.cells
         shape = cells.shape
-        m, n = shape
         short_caption = None if self.short_caption is None else stringify(Plain(*self.short_caption))
         caption = stringify(Caption(*self.caption))
         return PanTableStr(
@@ -1493,9 +1490,9 @@ class PanTableStr(PanTableAbstract):
     '''
 
     caption: str = ''
-    icas_rowblock: Optional[np.ndarray[str]] = None
-    icas_row: Optional[np.ndarray[str]] = None
-    icas: Optional[np.ndarray[str]] = None
+    icas_rowblock: Optional[np.ndarray[np.str_]] = None
+    icas_row: Optional[np.ndarray[np.str_]] = None
+    icas: Optional[np.ndarray[np.str_]] = None
     short_caption: Optional[str] = None
     table_width: Optional[float] = None
 
@@ -1504,11 +1501,11 @@ class PanTableStr(PanTableAbstract):
 
         m_icas_rowblock = self._ms.size // 2 + 1
         if self.icas_rowblock is None:
-            self.icas_rowblock: np.ndarray[str] = np.full(m_icas_rowblock, '', dtype='O')
+            self.icas_rowblock: np.ndarray[np.str_] = np.full(m_icas_rowblock, '', dtype=np.object_)
         if self.icas_row is None:
-            self.icas_row: np.ndarray[str] = np.full(self.m, '', dtype='O')
+            self.icas_row: np.ndarray[np.str_] = np.full(self.m, '', dtype=np.object_)
         if self.icas is None:
-            self.icas: np.ndarray[str] = np.full(self.shape, '', dtype='O')
+            self.icas: np.ndarray[np.str_] = np.full(self.shape, '', dtype=np.object_)
 
     def _repr_html_(self) -> str:
         try:
@@ -1604,7 +1601,6 @@ class PanTableStr(PanTableAbstract):
         table_width: float = 1. if self.table_width is None else self.table_width
         cells = self.cells
         contents = cells.contents
-        geometries = cells.geometries
         n = self.n
         col_widths = self.spec.col_widths
 
@@ -1714,7 +1710,7 @@ class PanTableMarkdown(PanTableStr):
         res = TableArray.default((m, n))
         geometries = cells.geometries
         res.geometries = geometries
-        icas_res = np.empty((m, n), dtype='O')
+        icas_res = np.empty((m, n), dtype=np.object_)
         for i in range(m):
             for j in range(n):
                 content = cache_elems[('cells', i, j)]
@@ -1725,11 +1721,11 @@ class PanTableMarkdown(PanTableStr):
                     res.put(single_para_to_plain(content), cell_shape[0], cell_shape[1], i, j, overwrite=True)
                     icas_res[i, j] = Ica.from_panflute_ast(cache_elems[('icas', i, j)])
         # icas_row
-        icas_row_res = np.empty(m, dtype='O')
+        icas_row_res = np.empty(m, dtype=np.object_)
         for i in range(m):
             icas_row_res[i] = Ica.from_panflute_ast(cache_elems[('icas_row', i)])
         # icas_rowblock
-        icas_rowblock_res = np.empty(m_rowblocks, dtype='O')
+        icas_rowblock_res = np.empty(m_rowblocks, dtype=np.object_)
         for i in range(m_rowblocks):
             icas_rowblock_res[i] = Ica.from_panflute_ast(cache_elems[('icas_rowblock', i)])
 
@@ -1747,7 +1743,7 @@ class PanTableMarkdown(PanTableStr):
             ns_head=self.ns_head,
         )
 
-    def to_str_array(self, fancy_table: bool = False) -> np.ndarray[str]:
+    def to_str_array(self, fancy_table: bool = False) -> np.ndarray[np.str_]:
         '''construct a table with both content and ica together
         '''
         # prepend a column if fancy-table
@@ -1755,7 +1751,7 @@ class PanTableMarkdown(PanTableStr):
         m = self.m
         n = self.n
 
-        res = np.full((m, n + offset), '', dtype='O')
+        res = np.full((m, n + offset), '', dtype=np.object_)
         cells = self.cells
         contents = cells.contents
         geometries = cells.geometries
