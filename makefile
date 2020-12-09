@@ -40,7 +40,7 @@ clean:
 
 # maintenance ##################################################################
 
-.PHONY: pypi pypiManual pep8 pylint autopep8 autopep8Aggressive
+.PHONY: pypi pypiManual pep8 flake8 pylint autopep8 autopep8Aggressive
 # Deploy to PyPI
 ## by CI, properly git tagged
 pypi:
@@ -52,6 +52,8 @@ pypiManual:
 # check python styles
 pep8:
 	pycodestyle . --ignore=E501
+flake8:
+	flake8 . --ignore=E501
 pylint:
 	pylint pantable
 
