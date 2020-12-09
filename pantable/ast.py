@@ -386,7 +386,7 @@ class PanCodeBlock:
     c.f. `.util.parse_markdown_codeblock` for testing purposes
     '''
 
-    data: str
+    data: str = ''
     options: PanTableOption = field(default_factory=PanTableOption)
     ica: Ica = field(default_factory=Ica)
 
@@ -951,8 +951,11 @@ class TableArray:
         for i in range(m):
             for j in range(n):
                 content = '' if cannonical and not self.is_at(i, j) else contents[i, j]
-                if type(content) != str:
+                type_ = type(content)
+                if type_ == ListContainer:
                     content = stringify(TableCell(*content))
+                elif type_ != str:
+                    content = str(content)
                 if width:
                     content = '\n'.join(wrap(content, width))
                 res_contents[i, j] = content
@@ -1013,6 +1016,15 @@ class PanTableAbstract:
         except ImportError:
             print('Consider having a better str by `pip install tabulate` or `conda install tabulate`.', file=sys.stderr)
             return self.__repr__()
+
+    @classmethod
+    def default(cls, shape: Tuple[int, int], has_geometries=False):
+        '''return a default object given shape, etc
+
+        This won't work in PanTableAbstract itself but all derived classes
+        including PanTableStr, PanTableMarkdown, PanTableText
+        '''
+        return cls(TableArray.default(shape=shape, has_geometries=has_geometries))
 
     @property
     def contents(self) -> np.ndarray[Union[ListContainer, str]]:
@@ -1499,7 +1511,11 @@ class PanTableStr(PanTableAbstract):
             self.icas: np.ndarray[str] = np.full(self.shape, '', dtype='O')
 
     def _repr_html_(self) -> str:
-        return self.to_pantable()._repr_html_()
+        try:
+            return self.to_pantable()._repr_html_()
+        except Exception:
+            print(f'Invalid table.', file=sys.stderr)
+            return self.__str__(tablefmt='html')
 
     def to_pantableoption(
         self,
