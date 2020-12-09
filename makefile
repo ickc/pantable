@@ -49,7 +49,7 @@ pypiManual:
 
 # check python styles
 pep8:
-	pycodestyle . --ignore=E402,E501,E731
+	pycodestyle . --ignore=E501
 pylint:
 	pylint pantable
 
