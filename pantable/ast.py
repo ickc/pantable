@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from logging import getLogger
 import re
 import sys
 from fractions import Fraction
 from itertools import chain, repeat
+from logging import getLogger
 from textwrap import wrap
 from typing import TYPE_CHECKING, ClassVar, List, Optional, Union
 

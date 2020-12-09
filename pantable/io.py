@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import csv
 import io
+from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING
-from logging import getLogger
 
 import numpy as np
 

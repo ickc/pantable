@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from logging import getLogger
 from functools import partial
+from logging import getLogger
 from typing import (TYPE_CHECKING, Any, _SpecialForm, get_args, get_origin,
                     get_type_hints)
 

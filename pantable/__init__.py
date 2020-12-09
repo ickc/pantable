@@ -1,7 +1,7 @@
-from .version import __version__
-
 import logging
 import os
+
+from .version import __version__
 
 try:
     from coloredlogs import ColoredFormatter as Formatter
