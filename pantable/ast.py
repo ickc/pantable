@@ -1513,7 +1513,7 @@ class PanTable(PanTableAbstract):
             ica_table=self.ica_table,
             spec=self.spec,
             aligns=self.aligns,
-            ms=self._ms,
+            _ms=self._ms,
             ns_head=self.ns_head,
         )
 
