@@ -1,13 +1,13 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 from typing import Tuple
 
+from panflute import convert_text
 from pytest import mark
 
-from panflute import convert_text
-from pantable.util import parse_markdown_codeblock
 # use the function exactly used by the cli
 from pantable.codeblock_to_table import codeblock_to_table
+from pantable.util import parse_markdown_codeblock
 
 EXT = 'md'
 PWD = Path(__file__).parent

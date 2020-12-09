@@ -1,8 +1,7 @@
 import numpy as np
-
 from pytest import mark
 
-from pantable.ast import PanTableOption, Align
+from pantable.ast import Align, PanTableOption
 
 
 @mark.parametrize('kwargs1,kwargs2', (

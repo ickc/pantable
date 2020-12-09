@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import re
 import sys
-from typing import TYPE_CHECKING, Union, List, Optional, ClassVar
-from itertools import chain, repeat
 from fractions import Fraction
+from itertools import chain, repeat
 from textwrap import wrap
+from typing import TYPE_CHECKING, ClassVar, List, Optional, Union
 
 if (sys.version_info.major, sys.version_info.minor) < (3, 8):
     try:
@@ -15,7 +15,7 @@ if (sys.version_info.major, sys.version_info.minor) < (3, 8):
 else:
     from functools import cached_property
 try:
-    from dataclasses import dataclass, field, fields, MISSING
+    from dataclasses import MISSING, dataclass, field, fields
 except ImportError:
     raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
@@ -27,14 +27,16 @@ if TYPE_CHECKING:
 
 import numpy as np
 import yaml
-
-from panflute.table_elements import Table, TableCell, Caption, TableHead, TableFoot, TableRow, TableBody
-from panflute.elements import CodeBlock, Plain, Span, Str, Para
 from panflute.containers import ListContainer
-from panflute.tools import stringify, convert_text
+from panflute.elements import CodeBlock, Para, Plain, Span, Str
+from panflute.table_elements import (Caption, Table, TableBody, TableCell,
+                                     TableFoot, TableHead, TableRow)
+from panflute.tools import convert_text, stringify
 
-from .util import get_types, get_yaml_dumper, iter_convert_texts_panflute_to_markdown, iter_convert_texts_markdown_to_panflute
-from .io import load_csv_array, dump_csv_io
+from .io import dump_csv_io, load_csv_array
+from .util import (get_types, get_yaml_dumper,
+                   iter_convert_texts_markdown_to_panflute,
+                   iter_convert_texts_panflute_to_markdown)
 
 COLWIDTHDEFAULT = 'ColWidthDefault'
 

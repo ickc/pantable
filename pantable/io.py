@@ -1,18 +1,17 @@
 from __future__ import annotations
 
-from pathlib import Path
-
-from typing import TYPE_CHECKING
 import csv
 import io
 import sys
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from .util import EmptyTableError
 
 if TYPE_CHECKING:
-    from typing import Optional, List
+    from typing import List, Optional
 
     from .ast import PanTableOption
 

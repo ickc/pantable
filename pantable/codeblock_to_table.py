@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 import sys
+from typing import TYPE_CHECKING
 
 from .ast import PanCodeBlock
 from .util import EmptyTableError
@@ -9,7 +9,7 @@ from .util import EmptyTableError
 if TYPE_CHECKING:
     from typing import Optional
 
-    from panflute.elements import Doc, CodeBlock
+    from panflute.elements import CodeBlock, Doc
 
 
 def codeblock_to_table(

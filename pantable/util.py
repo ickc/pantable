@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, _SpecialForm, Any, get_origin, get_args, get_type_hints
-
 import sys
 from functools import partial
+from typing import (TYPE_CHECKING, Any, _SpecialForm, get_args, get_origin,
+                    get_type_hints)
 
 import numpy as np
-
+from panflute.elements import ListContainer, Para, Str
 from panflute.tools import convert_text, run_pandoc, yaml_filter
-from panflute.elements import Para, Str, ListContainer
 
 if TYPE_CHECKING:
-    from typing import List, Optional, Iterable, Iterator, Callable, Dict, Tuple, Generator
+    from typing import (Callable, Dict, Generator, Iterable, Iterator, List,
+                        Optional, Tuple)
+
     from panflute.elements import Element
 
 class PandocVersion:

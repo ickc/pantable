@@ -1,10 +1,10 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 from typing import Tuple
 
+from panflute import convert_text
 from pytest import mark
 
-from panflute import convert_text
 # use the function exactly used by the cli
 from pantable.table_to_codeblock import table_to_codeblock
 

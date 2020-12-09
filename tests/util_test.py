@@ -1,6 +1,6 @@
-from pantable.util import convert_texts, convert_texts_fast, eq_panflute_elems
-
 from pytest import mark
+
+from pantable.util import convert_texts, convert_texts_fast, eq_panflute_elems
 
 # construct some texts cases
 texts_1 = [

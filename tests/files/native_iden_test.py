@@ -1,12 +1,11 @@
-from pathlib import Path
 import sys
+from pathlib import Path
 from typing import Tuple
 
+from panflute import convert_text
 from pytest import mark
 
-from panflute import convert_text
-
-from pantable.ast import PanTable, PanCodeBlock
+from pantable.ast import PanCodeBlock, PanTable
 from pantable.util import parse_markdown_codeblock
 
 EXT = 'native'
