@@ -15,7 +15,7 @@ if (sys.version_info.major, sys.version_info.minor) < (3, 8):
 else:
     from functools import cached_property
 try:
-    from dataclasses import dataclass, field, fields
+    from dataclasses import dataclass, field, fields, MISSING
 except ImportError:
     raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
@@ -211,8 +211,7 @@ class PanTableOption:
         ns_head = self.ns_head
         if ns_head is not None:
             try:
-                l = len(ns_head)
-                if l != m_body:
+                if len(ns_head) != m_body:
                     raise ValueError(f'ns_head {ns_head} should be of length as no. of bodies {m_body}, set to default.')
                 for n_ in ns_head:
                     if n_ > n:
@@ -318,7 +317,7 @@ class PanTableOption:
     def to_align_1d(alignment: str, size: int) -> Align:
         alignment_norm = alignment.strip().upper()
         try:
-            aligns_char = np.fromiter(alignment_norm, dtype='S1')
+            aligns_char = np.fromiter(alignment_norm, dtype=np.dtype('S1'))
             aligns_char_size = aligns_char.size
             if aligns_char_size >= size:
                 aligns = Align.from_aligns_char(aligns_char[:size])
@@ -392,21 +391,26 @@ class PanCodeBlock:
     @classmethod
     def from_yaml_filter(
         cls,
-        options: Optional[dict] = None,
         data: str = '',
+        options: Optional[dict] = None,
         element: Optional[CodeBlock] = None,
         doc: Optional[Doc] = None,
     ) -> PanCodeBlock:
         '''
         these args are those passed from within yaml_filter
         '''
-        pan_table_options = PanTableOption() if options is None else PanTableOption.from_kwargs(**options)
-        ica = Ica() if element is None else Ica(
+        # MISSING -> default_factory above
+        options_res: PanTableOption = MISSING if options is None else PanTableOption.from_kwargs(**options)
+        ica: Ica = MISSING if element is None else Ica(
             identifier=element.identifier,
             classes=[cls_ for cls_ in element.classes if cls_ != 'table'],
             attributes=element.attributes,
         )
-        return cls(options=pan_table_options, data=data, ica=ica)
+        return cls(
+            data,
+            options=options_res,
+            ica=ica,
+        )
 
     def to_panflute_ast(self) -> CodeBlock:
         '''return a panflute AST representation
@@ -452,12 +456,13 @@ class PanCodeBlock:
         dump_func = {
             'csv': dump_csv_io,
         }
-        options = PanTableOption() if options is None else options
         try:
+            options = PanTableOption() if options is None else options
             return cls(
+                dump_func[options.format](data, options),
                 options=options,
-                data=dump_func[options.format](data, options),
-                ica=Ica() if ica is None else ica,
+                # MISSING -> default_factory above
+                ica=MISSING if ica is None else ica,
             )
         except KeyError:
             raise ValueError(f'Unspported format {options.format}.')
@@ -743,7 +748,7 @@ class Align:
 
     @property
     def aligns_char(self):
-        return self.aligns.view('S1')
+        return self.aligns.view(np.dtype('S1'))
 
     @property
     def aligns_idx(self) -> np.ndarray[np.int8]:
@@ -776,12 +781,12 @@ class Align:
             raise TypeError(f'The Align {self.aligns_char} has unexpected no. of dim.: {ndim}')
 
     @classmethod
-    def from_aligns_char(cls, aligns_char: np.ndarray['S1']) -> Align:
+    def from_aligns_char(cls, aligns_char: np.ndarray[np.dtype('S1')]) -> Align:
         return cls(aligns_char.view(np.int8))
 
     @classmethod
     def from_aligns_text(cls, aligns_text: np.ndarray[Optional[str]]) -> Align:
-        aligns_char = np.empty_like(aligns_text, dtype='S1')
+        aligns_char = np.empty_like(aligns_text, dtype=np.dtype('S1'))
         # ravel to handle arbitrary dimenions
         aligns_char_ravel = np.ravel(aligns_char)
         aligns_text_ravel = np.ravel(aligns_text)
