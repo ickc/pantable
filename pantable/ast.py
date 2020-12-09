@@ -548,7 +548,7 @@ class PanCodeBlock:
         if fancy_table:
             temp_markers = []
             temp_icas = []
-            temp_idxs = []
+            temp_idxs: Union[List[int], np.ndarray[np.int64]] = []
             # icas_row
             for i in range(m):
                 string = str_array[i, 0]
@@ -605,7 +605,7 @@ class PanCodeBlock:
                     else:
                         logger.error(f'Cannot determine the following fancy-table row as head or foot, ignoring...: {str_array[temp_idxs[i], 0]}')
 
-                ms_list = []
+                ms_list: List[int] = []
                 icas_rowblock_list = []
                 if has_head:
                     ms_list.append(ms_excluding_empty_rowblocks[0])
@@ -872,6 +872,9 @@ class Spec:
 
     def to_panflute_ast(self) -> List[Tuple]:
         return [
+            (align, COLWIDTHDEFAULT)
+            for align in self.aligns.aligns_text
+        ] if self.col_widths is None else [
             (align, COLWIDTHDEFAULT if np.isnan(width) else width)
             for align, width in zip(self.aligns.aligns_text, self.col_widths)
         ]
