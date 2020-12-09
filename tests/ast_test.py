@@ -92,12 +92,12 @@ def test_align_text_1D():
     for i in range(n):
         assert aligns_text[i] == ALIGN_DICT[aligns_char_1D[i].decode()]
 
-    assert aligns.aligns_string == 'DRCL'
+    aligns_string = aligns.aligns_string
+    assert aligns_string == 'DRCL'
 
-    np.testing.assert_array_equal(
-        Align.from_aligns_text(aligns_text).aligns,
-        aligns.aligns,
-    )
+    assert Align.from_aligns_text(aligns_text) == aligns
+    print(Align.from_aligns_string(aligns_string).aligns, aligns.aligns)
+    assert Align.from_aligns_string(aligns_string) == aligns
 
 
 def test_align_text_2D():
@@ -118,9 +118,8 @@ def test_align_text_2D():
         for j in range(n):
             assert aligns_text[i, j] == ALIGN_DICT[aligns_char_2D[i, j].decode()]
 
-    assert aligns.aligns_string == 'DRCL\nLCRD'
+    aligns_string = aligns.aligns_string
+    assert aligns_string == 'DRCL\nLCRD'
 
-    np.testing.assert_array_equal(
-        Align.from_aligns_text(aligns_text).aligns,
-        aligns.aligns,
-    )
+    assert Align.from_aligns_text(aligns_text) == aligns
+    assert Align.from_aligns_string(aligns_string) == aligns

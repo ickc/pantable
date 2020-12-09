@@ -313,40 +313,6 @@ class PanTableOption:
             )
         }
 
-    @staticmethod
-    def to_align_1d(alignment: str, size: int) -> Align:
-        alignment_norm = alignment.strip().upper()
-        try:
-            aligns_char = np.fromiter(alignment_norm, dtype=np.dtype('S1'))
-            aligns_char_size = aligns_char.size
-            if aligns_char_size >= size:
-                aligns = Align.from_aligns_char(aligns_char[:size])
-            elif aligns_char_size < size:
-                aligns = Align.default(shape=(size,))
-                aligns.aligns[:aligns_char_size] = Align.from_aligns_char(aligns_char).aligns
-        except UnicodeEncodeError:
-            print(f'Non-ASCII character detected in {alignment}, ignoring and set to default.', file=sys.stderr)
-            aligns = Align.default(shape=(size,))
-        return aligns
-
-    @staticmethod
-    def to_align_2d(alignment_cells: str, shape: Tuple[int, int]) -> Align:
-        m, n = shape
-        res = Align.default(shape)
-        aligns = res.aligns
-        for i, row in enumerate(alignment_cells.strip().split('\n')):
-            # in case where no. of rows is more than needed
-            if i >= m:
-                break
-            aligns[i] = PanTableOption.to_align_1d(row, n).aligns
-        return res
-
-    def alignment_to_align(self, size: int) -> Align:
-        return self.to_align_1d(self.alignment, size)
-
-    def alignment_cells_to_align(self, shape: Tuple[int, int]) -> Align:
-        return self.to_align_2d(self.alignment_cells, shape)
-
     def to_spec(self, size: int) -> Spec:
         '''to Spec
 
@@ -363,7 +329,7 @@ class PanTableOption:
                 if type(temp) != str:
                     col_widths[i] = temp
         return Spec(
-            self.alignment_to_align(size),
+            Align.from_aligns_string_1d(self.alignment, size),
             col_widths=col_widths
         )
 
@@ -494,7 +460,7 @@ class PanCodeBlock:
         # alignment, width
         spec = options.to_spec(n)
         # alignment_cells
-        aligns = options.alignment_cells_to_align(shape)
+        aligns = Align.from_aligns_string_2d(options.alignment_cells, shape)
 
         # ms
         _ms = options.ms
@@ -746,6 +712,12 @@ class Align:
         "AlignCenter",
     ])
 
+    def __repr__(self) -> str:
+        return f'Align.from_aligns_string({repr(self.aligns_string)})'
+
+    def __eq__(self, others) -> bool:
+        return np.array_equal(self.aligns, others.aligns)
+
     @property
     def aligns_char(self):
         return self.aligns.view(np.dtype('S1'))
@@ -794,6 +766,62 @@ class Align:
             align_text = aligns_text_ravel[i]
             aligns_char_ravel[i] = 'D' if align_text is None else align_text[5]
         return cls.from_aligns_char(aligns_char)
+
+    @classmethod
+    def from_aligns_string_1d(cls, alignment: str, size: int) -> Align:
+        '''create Align from aligns_string, 1-dimensional
+
+        should be used by data created by users
+        '''
+        alignment_norm = alignment.strip().upper()
+        try:
+            aligns_char = np.fromiter(alignment_norm, dtype=np.dtype('S1'))
+            aligns_char_size = aligns_char.size
+            if aligns_char_size >= size:
+                aligns = cls.from_aligns_char(aligns_char[:size])
+            elif aligns_char_size < size:
+                aligns = cls.default(shape=(size,))
+                aligns.aligns[:aligns_char_size] = cls.from_aligns_char(aligns_char).aligns
+        except UnicodeEncodeError:
+            print(f'Non-ASCII character detected in {alignment}, ignoring and set to default.', file=sys.stderr)
+            aligns = cls.default(shape=(size,))
+        return aligns
+
+    @classmethod
+    def from_aligns_string_2d(cls, alignment_cells: str, shape: Tuple[int, int]) -> Align:
+        '''create Align from aligns_string, 2-dimensional
+
+        should be used by data created by users
+        '''
+        m, n = shape
+        res = cls.default(shape)
+        aligns = res.aligns
+        for i, row in enumerate(alignment_cells.strip().split('\n')):
+            # in case where no. of rows is more than needed
+            if i >= m:
+                break
+            aligns[i] = cls.from_aligns_string_1d(row, n).aligns
+        return res
+
+    @classmethod
+    def from_aligns_string(_, alignment: str) -> Align:
+        '''create Align from aligns_string
+
+        used in __repr__
+
+        should not be used by data created by users
+
+        should satisfies
+        `Align.from_aligns_string(align.aligns_string) == align`
+        '''
+        alignment_norm = alignment.strip().upper()
+        alignment_list = alignment_norm.split('\n')
+        m = len(alignment_list)
+        n = max(map(len, alignment_list))
+        if m == 1:
+            return Align.from_aligns_string_1d(alignment_norm, n)
+        else:
+            return Align.from_aligns_string_2d(alignment_norm, (m, n))
 
     @classmethod
     def default(cls, shape: Union[Tuple[int], Tuple[int, int]] = (1,)) -> Align:
