@@ -26,8 +26,9 @@ docsAll = docs/README.pdf README.md docs/README.rst
 
 test:
 	$(python) -m pytest -vv --workers auto --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests
-testFull: pep8 pylint
+pytest:
 	$(python) -m pytest -vv --workers auto --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests --cov-report html
+testFull: pytest pep8 pylint
 files:
 	cd tests/files; $(MAKE)
 
