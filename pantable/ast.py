@@ -895,6 +895,7 @@ class TableArray:
 
     @classmethod
     def default(cls, shape: Tuple[int, int], has_geometries=False) -> TableArray:
+        geometries: Optional[np.ndarray[np.int64]]
         if has_geometries:
             m, n = shape
             geometries = np.empty((m, n, 2, 2), dtype=np.int64)
