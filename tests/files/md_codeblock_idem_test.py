@@ -6,8 +6,6 @@ from panflute import convert_text
 from pytest import mark
 
 from pantable.ast import PanCodeBlock
-# use the function exactly used by the cli
-from pantable.codeblock_to_table import codeblock_to_table
 from pantable.util import parse_markdown_codeblock
 
 EXT = 'md'

@@ -722,7 +722,7 @@ class Align:
 
     @property
     def aligns_char(self):
-        return self.aligns.view(np.dtype('S1'))
+        return self.aligns.view('S1')
 
     @property
     def aligns_idx(self) -> np.ndarray[np.int8]:
@@ -759,8 +759,8 @@ class Align:
         return cls(aligns_char.view(np.int8))
 
     @classmethod
-    def from_aligns_text(cls, aligns_text: np.ndarray[Optional[str]]) -> Align:
-        aligns_char = np.empty_like(aligns_text, dtype=np.dtype('S1'))
+    def from_aligns_text(cls, aligns_text: np.ndarray[Optional[np.str_]]) -> Align:
+        aligns_char = np.empty_like(aligns_text, dtype='S1')
         # ravel to handle arbitrary dimenions
         aligns_char_ravel = np.ravel(aligns_char)
         aligns_text_ravel = np.ravel(aligns_text)
@@ -777,7 +777,7 @@ class Align:
         '''
         alignment_norm = alignment.strip().upper()
         try:
-            aligns_char = np.fromiter(alignment_norm, dtype=np.dtype('S1'))
+            aligns_char = np.fromiter(alignment_norm, dtype='S1')
             aligns_char_size = aligns_char.size
             if aligns_char_size >= size:
                 aligns = cls.from_aligns_char(aligns_char[:size])
@@ -950,7 +950,7 @@ class TableArray:
                             raise ValueError(f"At location {i, j} there's not enough empty cells for a block of size {row_span, col_span} in the given array.")
             except TypeError as e:
                 if self.geometries is None:
-                    raise ValueError(f"You're trying to put a cell-block in a TableArray object with geometries as None.")
+                    raise ValueError("You're trying to put a cell-block in a TableArray object with geometries as None.")
                 else:
                     raise e
 
@@ -1225,7 +1225,7 @@ class PanTable(PanTableAbstract):
             return convert_text(self.to_panflute_ast(), input_format='panflute', output_format='html')
         # in case of an invalid panflute AST and still want to show something
         except Exception:
-            print(f'Invalid AST.', file=sys.stderr)
+            print('Invalid AST.', file=sys.stderr)
             return self.__str__(tablefmt='html')
 
     @staticmethod
@@ -1497,7 +1497,6 @@ class PanTable(PanTableAbstract):
         All contents are stringified so it is lossy.
         '''
         cells = self.cells
-        shape = cells.shape
         short_caption = None if self.short_caption is None else stringify(Plain(*self.short_caption))
         caption = stringify(Caption(*self.caption))
         return PanTableStr(
@@ -1546,7 +1545,7 @@ class PanTableStr(PanTableAbstract):
         try:
             return self.to_pantable()._repr_html_()
         except Exception:
-            print(f'Invalid table.', file=sys.stderr)
+            print('Invalid table.', file=sys.stderr)
             return self.__str__(tablefmt='html')
 
     def to_pantableoption(

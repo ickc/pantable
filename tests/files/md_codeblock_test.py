@@ -28,7 +28,7 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
         doc = codeblock_to_table(**kwargs)
         md_out = convert_text(doc, input_format='panflute', output_format='markdown')
     except TypeError:
-        print(f'Cannot parse input codeblock, leaving as is.', file=sys.stderr)
+        print('Cannot parse input codeblock, leaving as is.', file=sys.stderr)
         md_out = text
 
     return md_reference, md_out

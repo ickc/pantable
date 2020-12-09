@@ -11,7 +11,7 @@ import numpy as np
 from .util import EmptyTableError
 
 if TYPE_CHECKING:
-    from typing import List, Optional
+    from typing import List
 
     from .ast import PanTableOption
 
