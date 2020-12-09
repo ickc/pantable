@@ -192,10 +192,10 @@ class PanTableOption:
         ms_sum = 0
         if ms is not None:
             try:
-                l = len(ms)
-                if l < 4:
+                l_ms = len(ms)
+                if l_ms < 4:
                     raise ValueError(f'ms is too short, set to default: {ms}')
-                if l % 2 != 0:
+                if l_ms % 2 != 0:
                     raise ValueError(f'ms is not of even length, set to default: {ms}')
                 for m_ in ms:
                     if m_ >= 0:
@@ -1663,9 +1663,9 @@ class PanTableStr(PanTableAbstract):
                     cell_n_new = cell_n - 1
                     if width_int_resid > 0:
                         if cell_n_new > 1:
-                            temp[j+1].append((width_int_resid, cell_n_new))
+                            temp[j + 1].append((width_int_resid, cell_n_new))
                         else:
-                            temp[j+1].append(width_int_resid)
+                            temp[j + 1].append(width_int_resid)
 
         if col_widths is None or override_width:
             scale = table_width / widths_int.sum()

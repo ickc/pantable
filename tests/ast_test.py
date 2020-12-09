@@ -50,7 +50,6 @@ def test_pantableoption_normalize(kwargs1, kwargs2, shape):
     assert op1 == op2
 
 
-
 case_test = PanTableOption.from_kwargs(**{
     'caption': 'Some interesting...',
     'unknown-key': 'path towards error',
