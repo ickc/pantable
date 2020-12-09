@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
     from panflute.elements import Element
 
+
 class PandocVersion:
     '''get runtime pandoc verison
 

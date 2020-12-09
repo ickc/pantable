@@ -34,6 +34,7 @@ def read(path: Path) -> Tuple[str, str, str]:
 
     return text_out, text_idem, text
 
+
 @mark.parametrize('name', (path.stem for path in DIR.glob(f'*.{EXT}')))
 def test_md_codeblock_idem(name):
     path = DIR / f'{name}.{EXT}'
