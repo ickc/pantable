@@ -1595,8 +1595,14 @@ class PanTableStr(PanTableAbstract):
         include: str = '',
         csv_kwargs: Optional[dict] = None,
     ) -> PanCodeBlock:
+        '''to PanCodeBlock object
+
+        This is lossy as there's no way to encode the geometries of `self.cells`
+        in PanCodeBlock. Use PanTableMarkdown instead if you want to preserve that
+        info.
+        '''
         return PanCodeBlock.from_data_format(
-            self.to_str_array(fancy_table=fancy_table),
+            self.cells.cannonical.contents,
             options=self.to_pantableoption(format=format, fancy_table=fancy_table, include=include, csv_kwargs=csv_kwargs),
             ica=self.ica_table,
         )
@@ -1846,6 +1852,19 @@ class PanTableMarkdown(PanTableStr):
                 else:
                     res[i, 0] = ica_row[2:]
         return res
+
+    def to_pancodeblock(
+        self,
+        format: str = 'csv',
+        fancy_table: bool = False,
+        include: str = '',
+        csv_kwargs: Optional[dict] = None,
+    ) -> PanCodeBlock:
+        return PanCodeBlock.from_data_format(
+            self.to_str_array(fancy_table=fancy_table),
+            options=self.to_pantableoption(format=format, fancy_table=fancy_table, include=include, csv_kwargs=csv_kwargs),
+            ica=self.ica_table,
+        )
 
 
 @dataclass
