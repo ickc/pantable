@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from logging import getLogger
 from typing import TYPE_CHECKING
 
