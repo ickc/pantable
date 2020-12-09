@@ -41,6 +41,61 @@ def test_pantableoption_type(kwargs1, kwargs2):
         {'width': [1, 2, 2 / 3]},
         (3, 3),
     ),
+    (
+        {'width': [1, 2, '2/3']},
+        {'width': [1, 2]},
+        (2, 2),
+    ),
+    (
+        {
+            'width': [1, 2, '2/3'],
+            'table_width': 3,
+        }, {
+            'width': [1, 2, '2/3'],
+            'table_width': None,
+        },
+        (3, 3),
+    ),
+    (
+        {'ms': [1, 1]},
+        {'ms': None},
+        (3, 3),
+    ),
+    (
+        {'ms': [1, 1, 0, 0, 1]},
+        {'ms': None},
+        (3, 3),
+    ),
+    (
+        {'ms': [-1, 1, 0, 3]},
+        {'ms': None},
+        (3, 3),
+    ),
+    (
+        {'ms': [1, 1, 0, 3]},
+        {'ms': None},
+        (3, 3),
+    ),
+    (
+        {
+            'ms': [1, 1, 1, 1, 3, 3],
+            'ns_head': [1],
+        }, {
+            'ms': [1, 1, 1, 1, 3, 3],
+            'ns_head': None,
+        },
+        (10, 10),
+    ),
+    (
+        {
+            'ms': [1, 1, 1, 1, 3, 3],
+            'ns_head': [11, 11],
+        }, {
+            'ms': [1, 1, 1, 1, 3, 3],
+            'ns_head': None,
+        },
+        (10, 10),
+    ),
 ))
 def test_pantableoption_normalize(kwargs1, kwargs2, shape):
     op1 = PanTableOption(**kwargs1)
@@ -48,6 +103,44 @@ def test_pantableoption_normalize(kwargs1, kwargs2, shape):
     op2 = PanTableOption(**kwargs2)
     op2.normalize(shape=shape)
     assert op1 == op2
+
+
+@mark.parametrize('kwargs1,kwargs2', (
+    (
+        {'width': ['D', 'D', 'D']},
+        {'width': None},
+    ),
+    (
+        {'width': [1 / 3, 2 / 3, 10 / 3]},
+        {'width': ['1/3', '2/3', '10/3']},
+    ),
+    (
+        {'ms': [1, 0, 9, 0]},
+        {'header': True},
+    ),
+    (
+        {'ms': [0, 0, 9, 0]},
+        {'header': False},
+    ),
+))
+def test_pantableoption_simplify(kwargs1, kwargs2):
+    op1 = PanTableOption(**kwargs1)
+    op1.simplify()
+    op2 = PanTableOption(**kwargs2)
+    op2.simplify()
+    assert op1 == op2
+
+
+@mark.parametrize('kwargs', (
+    {'ms': [2, 0, 9, 0]},
+))
+def test_pantableoption_simplify_2(kwargs):
+    '''nothing to simplify cases
+    '''
+    res = PanTableOption(**kwargs)
+    res.simplify()
+    for key, value in kwargs.items():
+        assert getattr(res, key) == value
 
 
 case_test = PanTableOption.from_kwargs(**{
