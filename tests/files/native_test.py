@@ -80,6 +80,7 @@ def read_table_to_codeblock_str(path: Path):
     pan_table = PanTable.from_panflute_ast(table)
     pan_table_str = pan_table.to_pantablestr()
     pan_table_str.to_pancodeblock()
+    pan_table_str.to_pantable()
 
 
 @mark.parametrize('name', (path.stem for path in DIRS[0].glob(f'*.{EXTs[0]}')))
