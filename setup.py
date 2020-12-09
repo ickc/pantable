@@ -122,6 +122,7 @@ setup(
             'numpy',
             'pandas',
             'yamlloader',
+            'coloredlogs',
         ],
     },
 
