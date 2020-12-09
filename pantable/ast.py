@@ -282,13 +282,14 @@ class PanTableOption:
         # ns_head
         # if all zero that equiv. to None
         ns_head = self.ns_head
-        default = True
-        for n in ns_head:
-            if n != 0:
-                default = False
-                break
-        if default:
-            self.ns_head = None
+        if ns_head is not None:
+            default = True
+            for n in ns_head:
+                if n != 0:
+                    default = False
+                    break
+            if default:
+                self.ns_head = None
 
     @classmethod
     def from_kwargs(cls, **kwargs) -> PanTableOption:
