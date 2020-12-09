@@ -1,4 +1,4 @@
-import sys
+from logging import getLogger
 from pathlib import Path
 from typing import Tuple
 
@@ -7,6 +7,8 @@ from pytest import mark
 
 from pantable.ast import PanCodeBlock
 from pantable.util import parse_markdown_codeblock
+
+logger = getLogger('pantable')
 
 EXT = 'md'
 PWD = Path(__file__).parent
@@ -23,7 +25,7 @@ def round_trip(text: str) -> str:
 def read(path: Path) -> Tuple[str, str, str]:
     '''test parsing markdown codeblock to PanCodeBlock
     '''
-    print(f'Testing idempotence with {path}...', file=sys.stderr)
+    logger.info(f'Testing idempotence with {path}...')
     with open(path, 'r') as f:
         text = f.read()
 

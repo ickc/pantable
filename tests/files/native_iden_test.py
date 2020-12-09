@@ -1,4 +1,4 @@
-import sys
+from logging import getLogger
 from pathlib import Path
 from typing import Tuple
 
@@ -8,6 +8,8 @@ from pytest import mark
 from pantable.ast import PanCodeBlock, PanTable
 from pantable.util import parse_markdown_codeblock
 
+logger = getLogger('pantable')
+
 EXT = 'native'
 DIR = Path(__file__).parent / EXT
 
@@ -15,7 +17,7 @@ DIR = Path(__file__).parent / EXT
 def read(path: Path) -> Tuple[str, str, str, str, str]:
     '''test parsing native table into Pantable
     '''
-    print(f'Testing case {path}...', file=sys.stderr)
+    logger.info(f'Testing case {path}...')
     with open(path, 'r') as f:
         native = f.read()
     doc = convert_text(native, input_format='native')

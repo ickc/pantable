@@ -1,4 +1,4 @@
-import sys
+from logging import getLogger
 from pathlib import Path
 from typing import Tuple
 
@@ -8,6 +8,8 @@ from pytest import mark
 # use the function exactly used by the cli
 from pantable.table_to_codeblock import table_to_codeblock
 
+logger = getLogger('pantable')
+
 EXTs = ('native', 'md')
 PWD = Path(__file__).parent
 DIRS = (PWD / 'native', PWD / 'native_reference')
@@ -16,7 +18,7 @@ DIRS = (PWD / 'native', PWD / 'native_reference')
 def read(path: Path, path_ref: Path) -> Tuple[str, str]:
     '''test parsing native to markdown codeblock with fancy-table
     '''
-    print(f'Comparing {path} and {path_ref}...', file=sys.stderr)
+    logger.info(f'Comparing {path} and {path_ref}...')
     with open(path, 'r') as f:
         text = f.read()
     with open(path_ref, 'r') as f:

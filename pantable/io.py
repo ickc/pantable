@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import csv
 import io
-import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
+from logging import getLogger
 
 import numpy as np
 
@@ -14,6 +14,8 @@ if TYPE_CHECKING:
     from typing import List
 
     from .ast import PanTableOption
+
+logger = getLogger('pantable')
 
 
 def load_csv(
@@ -26,19 +28,22 @@ def load_csv(
     '''
     include = options.include
     encoding = encoding_ if (encoding_ := options.include_encoding) else None
-    with (
-        open(include, encoding=encoding, newline='')
-    ) if include else (
-        io.StringIO(data, newline='')
-    ) as f:
-        table_list = list(csv.reader(f, **options.csv_kwargs))
-    if table_list:
-        for row in table_list:
-            if row:
-                for i in row:
-                    if i.strip():
-                        return table_list
-    raise EmptyTableError
+    try:
+        with (
+            open(include, encoding=encoding, newline='')
+        ) if include else (
+            io.StringIO(data, newline='')
+        ) as f:
+            table_list = list(csv.reader(f, **options.csv_kwargs))
+        if table_list:
+            for row in table_list:
+                if row:
+                    for i in row:
+                        if i.strip():
+                            return table_list
+        raise EmptyTableError
+    except FileNotFoundError:
+        raise FileNotFoundError(f'include path {include} not found.')
 
 
 def load_csv_array(
@@ -91,6 +96,6 @@ def dump_csv_io(
                 f.write(text)
             return ''
         except (PermissionError, FileExistsError):
-            print(f'Data cannot be written to file {options.include}, Overriding include path to empty...', file=sys.stderr)
+            logger.error(f'Data cannot be written to file {options.include}, Overriding include path to empty...')
             options.include = ''
     return text

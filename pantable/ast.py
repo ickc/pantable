@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from logging import getLogger
 import re
 import sys
 from fractions import Fraction
@@ -39,6 +40,8 @@ from .util import (get_types, get_yaml_dumper,
                    iter_convert_texts_panflute_to_markdown)
 
 COLWIDTHDEFAULT = 'ColWidthDefault'
+
+logger = getLogger('pantable')
 
 
 def single_para_to_plain(elem: ListContainer) -> ListContainer:
@@ -86,7 +89,7 @@ class Ica:
                 span = elem[0].content[0]
                 return cls(identifier=span.identifier, classes=span.classes, attributes=span.attributes)
             except AttributeError:
-                print(f'Cannot parse element {elem}, setting to default', file=sys.stderr)
+                logger.error(f'Cannot parse element {elem}, setting to default.')
                 return cls()
         else:
             return cls()
@@ -141,7 +144,7 @@ class PanTableOption:
                         # cast it into first type
                         setattr(self, key, types[0](value))
                 except (ValueError, TypeError):
-                    print(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: {default}", file=sys.stderr)
+                    logger.error(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: {default}")
                     setattr(self, key, default)
         # width: Optional[List[Union[float, str]]] is not checked here
         # * i.e. we only guarantee width is Optional[list] so far
@@ -153,7 +156,7 @@ class PanTableOption:
                 try:
                     setattr(self, key, [int(x) for x in value])
                 except (ValueError, TypeError):
-                    print(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: None", file=sys.stderr)
+                    logger.error(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: None")
                     setattr(self, key, None)
 
     def normalize(self, shape: Tuple[int, int]):
@@ -185,7 +188,7 @@ class PanTableOption:
         table_width = self.table_width
         # set table_width to default if smaller than sum of positive width
         if table_width is not None and table_width < sum_:
-            print(f'table-width smaller than sum of width: {sum_}. Set to default.', file=sys.stderr)
+            logger.error(f'table-width smaller than sum of width: {sum_}. Set to default.')
             self.table_width = None
 
         ms = self.ms
@@ -205,7 +208,7 @@ class PanTableOption:
                 if ms_sum != m:
                     raise ValueError(f'Sum of ms {ms} does not equal no of rows {m}, set to default.')
             except ValueError as e:
-                print(e, file=sys.stderr)
+                logger.error(e)
                 self.ms = None
                 ms = None
 
@@ -219,7 +222,7 @@ class PanTableOption:
                     if n_ > n:
                         raise ValueError(f'ns_head {ns_head} cannot be larger than no. of columns {n}, set to default.')
             except ValueError as e:
-                print(e, file=sys.stderr)
+                logger.error(e)
                 self.ns_head = None
 
     def simplify(self):
@@ -518,15 +521,15 @@ class PanCodeBlock:
                             try:
                                 shape = tuple(int(i.strip()) for i in shape_temp[1:-1].split(',')) if shape_temp else (1, 1)
                                 if len(shape) != 2 or shape[0] <= 0 or shape[1] <= 0:
-                                    print(f'Invalid cell shape {shape}, ignoring...', file=sys.stderr)
+                                    logger.error(f'Invalid cell shape {shape}, ignoring...')
                                     has_ica = False
                                 # TODO: get smarter to enlarge the box?
                                 # Or expect a normalization later and modified TableArray.put to never write beyond boundary?
                                 elif (shape[0] + i > m) or (shape[1] + j > n):
-                                    print(f'The following cell overflow the table, ignoring the attributes: {string}', file=sys.stderr)
+                                    logger.error(f'The following cell overflow the table, ignoring the attributes: {string}')
                                     has_ica = False
                             except ValueError:
-                                print(f'Invalid cell shape {shape}, ignoring...', file=sys.stderr)
+                                logger.error(f'Invalid cell shape {shape}, ignoring...')
                                 has_ica = False
                     if has_ica:
                         content = string[(idx_newline + 1):]
@@ -563,7 +566,7 @@ class PanCodeBlock:
                         if (ica_row := found[2]):
                             icas_row[i] = f'[]{ica_row}'
                     else:
-                        print(f'Cannot parse the fancy table cell {string}, ignroing...', file=sys.stderr)
+                        logger.error(f'Cannot parse the fancy table cell {string}, ignroing...')
             # only if markers found, determine ms, icas_rowblock
             if temp_idxs:
                 temp_idxs = np.array(temp_idxs, dtype=np.int64)
@@ -600,7 +603,7 @@ class PanCodeBlock:
                     elif marker == '---':
                         body_list.append({'head': temp})
                     else:
-                        print(f'Cannot determine the following fancy-table row as head or foot, ignoring...: {str_array[temp_idxs[i], 0]}', file=sys.stderr)
+                        logger.error(f'Cannot determine the following fancy-table row as head or foot, ignoring...: {str_array[temp_idxs[i], 0]}')
 
                 ms_list = []
                 icas_rowblock_list = []
@@ -785,7 +788,7 @@ class Align:
                 aligns = cls.default(shape=(size,))
                 aligns.aligns[:aligns_char_size] = cls.from_aligns_char(aligns_char).aligns
         except UnicodeEncodeError:
-            print(f'Non-ASCII character detected in {alignment}, ignoring and set to default.', file=sys.stderr)
+            logger.error(f'Non-ASCII character detected in {alignment}, ignoring and set to default.')
             aligns = cls.default(shape=(size,))
         return aligns
 
@@ -1048,7 +1051,7 @@ class PanTableAbstract:
                 headers=() if self.ms[0] == 0 else "firstrow",
             )
         except ImportError:
-            print('Consider having a better str by `pip install tabulate` or `conda install tabulate`.', file=sys.stderr)
+            logger.warning('Consider having a better str by `pip install tabulate` or `conda install tabulate`.')
             return self.__repr__()
 
     @classmethod
@@ -1225,7 +1228,7 @@ class PanTable(PanTableAbstract):
             return convert_text(self.to_panflute_ast(), input_format='panflute', output_format='html')
         # in case of an invalid panflute AST and still want to show something
         except Exception:
-            print('Invalid AST.', file=sys.stderr)
+            logger.critical('Invalid AST.')
             return self.__str__(tablefmt='html')
 
     @staticmethod
@@ -1545,7 +1548,7 @@ class PanTableStr(PanTableAbstract):
         try:
             return self.to_pantable()._repr_html_()
         except Exception:
-            print('Invalid table.', file=sys.stderr)
+            logger.critical('Invalid table.')
             return self.__str__(tablefmt='html')
 
     def to_pantableoption(

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from typing import TYPE_CHECKING
+from logging import getLogger
 
 from .ast import PanCodeBlock
 from .util import EmptyTableError
@@ -10,6 +11,8 @@ if TYPE_CHECKING:
     from typing import Optional
 
     from panflute.elements import CodeBlock, Doc
+
+logger = getLogger('pantable')
 
 
 def codeblock_to_table(
@@ -33,11 +36,11 @@ def codeblock_to_table(
         )
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
-    except FileNotFoundError:
-        print("pantable: include path not found. Codeblock shown as is.", file=sys.stderr)
+    except FileNotFoundError as e:
+        logger.error(f'{e} Codeblock shown as is.')
         return
     except EmptyTableError:
-        print("pantable: table is empty. Deleted.", file=sys.stderr)
+        logger.warning("table is empty. Deleted.")
         # [] means delete the current element
         return []
     except ImportError:

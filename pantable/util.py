@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import sys
+from logging import getLogger
 from functools import partial
 from typing import (TYPE_CHECKING, Any, _SpecialForm, get_args, get_origin,
                     get_type_hints)
@@ -14,6 +14,8 @@ if TYPE_CHECKING:
                         Optional, Tuple)
 
     from panflute.elements import Element
+
+logger = getLogger('pantable')
 
 
 class PandocVersion:
@@ -53,7 +55,7 @@ def convert_texts(
 
         _map_parallel = partial(map_parallel, mode='multithreading')
     except ImportError:
-        print('Consider `pip install map_parallel` to speed up `convert_texts`.', file=sys.stderr)
+        logger.warning('Consider `pip install map_parallel` to speed up `convert_texts`.')
 
         def _map_parallel(f, arg):
             return list(map(f, arg))
@@ -157,7 +159,7 @@ def convert_texts_fast(
             )
         )
     except KeyError:
-        print(f'Unsupported input/output format pair: {input_format}, {output_format}. Doing it slowly...', file=sys.stderr)
+        logger.warning(f'Unsupported input/output format pair: {input_format}, {output_format}. Doing it slowly...')
         return convert_texts(
             texts,
             input_format,
@@ -233,7 +235,7 @@ def get_yaml_dumper():
         try:
             from yamlloader.ordereddict.dumpers import SafeDumper as Dumper
         except ImportError:
-            print('Try `pip install yamlloader` or `conda install yamlloader -c conda-forge` to preserve yaml dict ordering.', file=sys.stderr)
+            logger.warning('Try `pip install yamlloader` or `conda install yamlloader -c conda-forge` to preserve yaml dict ordering.')
             try:
                 from yaml.cyaml import CSafeDumper as Dumper
             except ImportError:
