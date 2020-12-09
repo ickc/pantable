@@ -75,7 +75,7 @@ def dump_csv(
 def dump_csv_io(
     data: np.ndarray[np.str_],
     options: PanTableOption,
-) -> Optional[str]:
+) -> str:
     '''dump data as CSV
 
     it will mutate options.include if it is an invalid write path.
@@ -90,7 +90,7 @@ def dump_csv_io(
             include.parent.mkdir(parents=True, exist_ok=True)
             with open(include, 'x', encoding=options.include_encoding, newline='') as f:
                 f.write(text)
-            return None
+            return ''
         except (PermissionError, FileExistsError):
             print(f'Data cannot be written to file {options.include}, Overriding include path to empty...', file=sys.stderr)
             options.include = ''
