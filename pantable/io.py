@@ -12,7 +12,7 @@ import numpy as np
 from .util import EmptyTableError
 
 if TYPE_CHECKING:
-    from typing import Optional, Iterator, List
+    from typing import Optional, List
 
     from .ast import PanTableOption
 
@@ -45,7 +45,7 @@ def load_csv(
 def load_csv_array(
     data: str,
     options: PanTableOption,
-) -> np.ndarray[str]:
+) -> np.ndarray[np.str_]:
     '''loading CSV table in `numpy.ndarray`
 
     Note that this can emit EmptyTableError, FileNotFoundError
@@ -53,7 +53,7 @@ def load_csv_array(
     table_list = load_csv(data, options)
     m = len(table_list)
     n = max(len(row) for row in table_list)
-    res = np.full((m, n), '', dtype='O')
+    res = np.full((m, n), '', dtype=np.object_)
     for i, row in enumerate(table_list):
         for j, cell in enumerate(row):
             res[i, j] = cell
@@ -61,7 +61,7 @@ def load_csv_array(
 
 
 def dump_csv(
-    data: np.ndarray[str],
+    data: np.ndarray[np.str_],
     options: PanTableOption,
 ) -> str:
     '''dump data as CSV string
@@ -73,7 +73,7 @@ def dump_csv(
 
 
 def dump_csv_io(
-    data: np.ndarray[str],
+    data: np.ndarray[np.str_],
     options: PanTableOption,
 ) -> Optional[str]:
     '''dump data as CSV
