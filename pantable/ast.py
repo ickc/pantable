@@ -683,7 +683,7 @@ class PanCodeBlock:
                 ica_table=self.ica,
                 spec=spec,
                 aligns=aligns,
-                _ms=ms,
+                ms=ms,
                 ns_head=ns_head,
                 table_width=options.table_width,
             )
@@ -696,7 +696,7 @@ class PanCodeBlock:
                 ica_table=self.ica,
                 spec=spec,
                 aligns=aligns,
-                _ms=_ms,
+                ms=_ms,
                 ns_head=ns_head,
                 table_width=options.table_width,
             )
@@ -1019,7 +1019,7 @@ class PanTableAbstract:
     # __post_init__
     spec: Optional[Spec] = None
     aligns: Optional[Align] = None
-    _ms: Optional[np.ndarray[np.int64]] = None
+    ms: Optional[np.ndarray[np.int64]] = None
     ns_head: Optional[np.ndarray[np.int64]] = None
 
     def __post_init__(self):
@@ -1115,20 +1115,29 @@ class PanTableAbstract:
         return self.icas_rowblock[-1]
 
     @property
-    def ms(self) -> np.ndarray[np.int64]:
+    def _ms_(self) -> np.ndarray[np.int64]:
+        '''setter and getter of ms
+
+        quirks of dataclass with property
+        see https://stackoverflow.com/a/61480946/5769446
+        '''
         return self._ms
 
-    @ms.setter
-    def ms(self, ms):
-        del self.rowblock_idxs_row
-        del self.is_heads
-        del self.is_foots
-        del self.is_body_heads
-        del self.is_body_bodies
-        del self.body_idxs_row
-        del self.icas_rowblock_idxs_row
-        del self.rowblock_splitting_idxs
-        del self.last_row_of_rowblock_idxs
+    @_ms_.setter
+    def _ms_(self, ms):
+        try:
+            del self.rowblock_idxs_row
+            del self.is_heads
+            del self.is_foots
+            del self.is_body_heads
+            del self.is_body_bodies
+            del self.body_idxs_row
+            del self.icas_rowblock_idxs_row
+            del self.rowblock_splitting_idxs
+            del self.last_row_of_rowblock_idxs
+        # at __init__ stage those cached_property aren't defined
+        except AttributeError:
+            pass
         self._ms = ms
 
     @cached_property
@@ -1187,6 +1196,9 @@ class PanTableAbstract:
         assume array is iterables of rows
         '''
         return np.split(array, self.rowblock_splitting_idxs)
+
+
+PanTableAbstract.ms = PanTableAbstract._ms_
 
 
 @dataclass
@@ -1346,7 +1358,7 @@ class PanTable(PanTableAbstract):
             ica_table=ica_table,
             spec=spec,
             aligns=Align.from_aligns_text(aligns_text),
-            _ms=ms,
+            ms=ms,
             ns_head=ns_head,
         )
 
@@ -1492,7 +1504,7 @@ class PanTable(PanTableAbstract):
             ica_table=self.ica_table,
             short_caption=cache_texts['short_caption'], caption=cache_texts['caption'],
             spec=self.spec,
-            _ms=self._ms, ns_head=self.ns_head,
+            ms=self._ms, ns_head=self.ns_head,
             icas_rowblock=icas_rowblock_res,
             icas_row=icas_row_res,
             icas=icas_res,
@@ -1514,7 +1526,7 @@ class PanTable(PanTableAbstract):
             ica_table=self.ica_table,
             spec=self.spec,
             aligns=self.aligns,
-            _ms=self._ms,
+            ms=self._ms,
             ns_head=self.ns_head,
         )
 
@@ -1633,7 +1645,7 @@ class PanTableStr(PanTableAbstract):
             ica_table=self.ica_table,
             spec=self.spec,
             aligns=self.aligns,
-            _ms=self._ms,
+            ms=self._ms,
             ns_head=self.ns_head,
         )
 
@@ -1787,7 +1799,7 @@ class PanTableMarkdown(PanTableStr):
             ica_table=self.ica_table,
             spec=self.spec,
             aligns=self.aligns,
-            _ms=self._ms,
+            ms=self._ms,
             ns_head=self.ns_head,
         )
 
