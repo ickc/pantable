@@ -293,10 +293,22 @@ class PanTableOption:
 
     @classmethod
     def from_kwargs(cls, **kwargs) -> PanTableOption:
+        # TODO: Python 3.8
+        # return cls(**{
+        #     key_underscored: value
+        #     for key, value in kwargs.items()
+        #     if (key_underscored := str(key).replace('-', '_')) in cls.__annotations__
+        # })
         return cls(**{
-            key_underscored: value
-            for key, value in kwargs.items()
-            if (key_underscored := str(key).replace('-', '_')) in cls.__annotations__
+            key: value
+            for key, value in (
+                (
+                    str(key).replace('-', '_'),
+                    value
+                )
+                for key, value in kwargs.items()
+            )
+            if key in cls.__annotations__
         })
 
     @property
@@ -305,19 +317,39 @@ class PanTableOption:
 
         expect `self.from_kwargs(**self.kwargs) == self`
         '''
+        # TODO: Python 3.8
+        # return {
+        #     key.replace('_', '-'): value
+        #     for field_ in fields(self)
+        #     # check value == default
+        #     if (
+        #         value := getattr(self, (key := field_.name))
+        #     ) != (
+        #         dict()
+        #         # special case: default factory
+        #         if key == 'csv_kwargs' else
+        #         field_.default
+        #     )
+        # }
         return {
             key.replace('_', '-'): value
-            for field_ in fields(self)
-            # check value == default
-            if (
-                value := getattr(self, (key := field_.name))
-            ) != (
-                dict()
-                # special case: default factory
-                if key == 'csv_kwargs' else
-                field_.default
+            for key, value, default in (
+                (
+                    key,
+                    getattr(self, key),
+                    default
+                )
+                for key, default in (
+                    (
+                        field_.name,
+                        field_.default,
+                    )
+                    for field_ in fields(self)
+                )
             )
+            if value != (dict() if key == 'csv_kwargs' else default)
         }
+
 
     def to_spec(self, size: int) -> Spec:
         '''to Spec
@@ -564,7 +596,8 @@ class PanCodeBlock:
                             temp_icas.append(found[0])
                             temp_idxs.append(i)
                         # * ignore the case that somone might put 2 attrs side-by-side
-                        if (ica_row := found[2]):
+                        ica_row = found[2]
+                        if ica_row:
                             icas_row[i] = f'[]{ica_row}'
                     else:
                         logger.error(f'Cannot parse the fancy table cell {string}, ignroing...')
@@ -596,8 +629,13 @@ class PanCodeBlock:
                     )
                     # is_body_body
                     if marker == '___':
-                        if body_list and 'body' not in (last_body := body_list[-1]):
-                            last_body['body'] = temp
+                        # TODO: Python 3.8
+                        # if body_list and 'body' not in (last_body := body_list[-1]):
+                        #     last_body['body'] = temp
+                        if body_list:
+                            last_body = body_list[-1]
+                            if 'body' not in last_body:
+                                last_body['body'] = temp
                         else:
                             body_list.append({'body': temp})
                     # is_body_head
