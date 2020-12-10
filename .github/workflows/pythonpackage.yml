@@ -17,7 +17,7 @@ jobs:
           # - 3.6
           - 3.7
           - 3.8
-          # - 3.9
+          - 3.9
           # - pypy3
         # should test sparingly across API breaking boundaries
         pandoc-version:
@@ -59,7 +59,9 @@ jobs:
         wget --quiet "$downloadUrl"
         sudo dpkg -i "${downloadUrl##*/}"
     - name: Tests
-      run: make clean && make test -j1
+      run: |
+        make clean
+        [[ ${{ matrix.python-version }} == 3.9 ]] && make test PYTESTPARALLEL= || make test
     # c.f. https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
     - name: Build a binary wheel and a source tarball
       if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.9 && matrix.pandoc-version == '2.9.2.1' }}

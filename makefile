@@ -5,6 +5,7 @@ HTMLVersion ?= html5
 PANTABLELOGLEVEL ?= DEBUG
 python ?= PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) python
 pandoc ?= PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) pandoc
+PYTESTPARALLEL ?= --workers auto
 
 # docs
 CSSURL:=https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css
@@ -25,9 +26,9 @@ docsAll = docs/README.pdf README.md docs/README.rst
 .PHONY: test testFull files clean
 
 test:
-	$(python) -m pytest -vv --workers auto --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests
+	$(python) -m pytest -vv $(PYTESTPARALLEL) --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests
 pytest:
-	$(python) -m pytest -vv --workers auto --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests --cov-report html
+	$(python) -m pytest -vv $(PYTESTPARALLEL) --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests --cov-report html
 testFull: pytest pep8 pylint
 files:
 	cd tests/files; $(MAKE)
