@@ -1,2 +1,3 @@
 panflute
 pyyaml
+numpy

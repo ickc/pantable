@@ -97,7 +97,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['panflute>=2', 'pyyaml'],
+    install_requires=['panflute>=2', 'pyyaml', 'numpy'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
@@ -119,7 +119,6 @@ setup(
             'sphinx_bootstrap_theme',
             'pygments-style-solarized',
             'data-science-types',
-            'numpy',
             'pandas',
             'yamlloader',
             'coloredlogs',
