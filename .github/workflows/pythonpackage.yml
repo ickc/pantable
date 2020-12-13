@@ -73,7 +73,6 @@ jobs:
         sudo dpkg -i "${downloadUrl##*/}"
     - name: Tests
       run: |
-        make clean
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           make test python=pypy
         else
