@@ -47,10 +47,10 @@ logger = getLogger('pantable')
 def single_para_to_plain(elem: ListContainer) -> ListContainer:
     '''convert single element to Plain
 
-    if `elem` is a ListContainer of a single element, then convert it to a ListContainer of Plain and return that.
+    if `elem` is a ListContainer of a single Para, then convert it to a ListContainer of Plain and return that.
     Else return `elem`.
     '''
-    if len(elem) == 1:
+    if len(elem) == 1 and type(elem[0]) is Para:
         return ListContainer(Plain(*elem[0].content))
     else:
         return elem
@@ -365,7 +365,7 @@ class PanTableOption:
             col_widths = np.full(size, np.nan, dtype=np.float64)
             for i in range(size):
                 temp = width[i]
-                if type(temp) != str:
+                if type(temp) is not str:
                     col_widths[i] = temp
         return Spec(
             Align.from_aligns_string_1d(self.alignment, size),
@@ -1062,7 +1062,7 @@ class PanTableAbstract:
     ns_head: Optional[np.ndarray[np.int64]] = None
 
     def __post_init__(self):
-        if type(self.cells) != TableArray:
+        if type(self.cells) is not TableArray:
             self.cells: TableArray = TableArray(self.cells)
         shape: Tuple[int, int] = self.cells.contents.shape
         m, n = shape
@@ -1717,11 +1717,11 @@ class PanTableStr(PanTableAbstract):
         widths_int = np.empty(n, dtype=np.int64)
         # assume a normalized table
         for j in range(n):
-            width_int_max = max(width_int for width_int in temp[j] if type(width_int) == int)
+            width_int_max = max(width_int for width_int in temp[j] if type(width_int) is int)
             widths_int[j] = width_int_max
             # for column span, put to next columns
             for width in temp[j]:
-                if type(width) == tuple:
+                if type(width) is tuple:
                     width_int, cell_n = width
                     width_int_resid = width_int - width_int_max
                     cell_n_new = cell_n - 1
