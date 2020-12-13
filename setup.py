@@ -12,19 +12,13 @@ from setuptools import find_packages, setup
 from pantable.version import __version__
 
 # see https://python3statement.org/practicalities/
-if sys.version_info < (3, 6):
+if sys.version_info < (3, 7):
 
-    error = """
-    pantable v0.13+ supports Python 3.6 and above.
-
-    See pantable documentation for more information:
-
-    https://github.com/ickc/pantable
-
-    Python {py} detected.
-
-    Try upgrading pip and retry.
-    """.format(py='.'.join([str(v) for v in sys.version_info[:3]]))
+    error = """Python {py} detected.
+pantable v0.13+ supports Python 3.7 and above.
+See pantable documentation for more information:
+https://github.com/ickc/pantable
+""".format(py='.'.join([str(v) for v in sys.version_info[:3]]))
 
     print(error, file=sys.stderr)
     sys.exit(1)
@@ -48,9 +42,9 @@ setup(
     author_email='christian.kolen@gmail.com',
 
     # Choose your license
-    license='GPLv3',
+    license='BSD-3-Clause License',
 
-    python_requires='>=3.6',
+    python_requires='>=3.7',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -68,13 +62,12 @@ setup(
         'Topic :: Text Processing :: Filters',
 
         # Pick your license as you wish (should match "license" above)
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'License :: OSI Approved :: BSD License',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
         # https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',

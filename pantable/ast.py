@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import sys
+from dataclasses import MISSING, dataclass, field, fields
 from fractions import Fraction
 from itertools import chain, repeat
 from logging import getLogger
@@ -12,13 +13,9 @@ if (sys.version_info.major, sys.version_info.minor) < (3, 8):
     try:
         from backports.cached_property import cached_property
     except ImportError:
-        raise ImportError('Using Python 3.6 or 3.7? Please run "pip install backports.cached_property".')
+        raise ImportError('Using Python 3.7? Please run "pip install backports.cached_property".')
 else:
     from functools import cached_property
-try:
-    from dataclasses import MISSING, dataclass, field, fields
-except ImportError:
-    raise ImportError('Using Python 3.6? Please run `pip install dataclasses` or `conda install dataclasses`.')
 
 if TYPE_CHECKING:
     from typing import Tuple, Dict, Iterator, Set, Callable
