@@ -21,7 +21,7 @@ def table_to_codeblock(
     csv_kwargs: Optional[dict] = None,
 ):
     """convert Table element and to csv table in code-block with class "table" in panflute AST"""
-    if type(element) == Table:
+    if type(element) is Table:
         return (
             PanTable
             .from_panflute_ast(element)
