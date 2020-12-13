@@ -50,7 +50,7 @@ jobs:
       run: |
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           # install our own pypy37
-          wget https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2
+          wget --quiet https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2
           tar -xf pypy3.7-v7.3.3-linux64.tar.bz2
           mv pypy3.7-v7.3.3-linux64 ~
           export PATH="$HOME/pypy3.7-v7.3.3-linux64/bin:$PATH"
@@ -74,7 +74,7 @@ jobs:
     - name: Tests
       run: |
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
-          make test python=pypy
+          make test python=$HOME/pypy3.7-v7.3.3-linux64/bin/pypy
         else
           [[ ${{ matrix.python-version }} == 3.9 ]] && make test PYTESTPARALLEL= || make test
         fi
