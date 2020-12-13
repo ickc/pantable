@@ -151,7 +151,7 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
     default: None
 
 `include-encoding`
-: if specified, the file from `include` will be decoded according to this encoding, else assumed to be UTF-8.
+: if specified, the file from `include` will be decoded according to this encoding, else assumed to be UTF-8. Hint: if you save the CSV file via Microsoft Excel, you may need to set this to `utf-8-sig`.
 
 `csv-kwargs`
 : If specified, should be a dictionary passed to `csv.reader` as options. e.g.
