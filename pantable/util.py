@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+import sys
 from functools import partial
 from logging import getLogger
-import sys
-
 # TODO: Python 3.8
 from typing import TYPE_CHECKING, Any, _SpecialForm, get_type_hints
+
 if sys.version_info.minor > 7:
     from typing import get_args, get_origin
 
