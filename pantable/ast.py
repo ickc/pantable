@@ -56,12 +56,13 @@ def single_para_to_plain(elem: ListContainer) -> ListContainer:
         return elem
 
 
-def cell_width_func(string: str) -> int:
+def cell_width_func(string: str, offset: int = 3) -> int:
     '''return max no. of characters +3 among lines in the cell
 
     The +3 match the way pandoc handle width, see jgm/pandoc commit 0dfceda
     '''
-    return max(map(len, string.split("\n"))) + 3
+    lines = string.splitlines()
+    return max(map(len, lines)) + offset if lines else offset
 
 
 @dataclass
@@ -239,7 +240,7 @@ class PanTableOption:
         self.alignment = alignment[:last_idx + 1]
 
         # alignment_cells
-        align_list = self.alignment_cells.split('\n')
+        align_list = self.alignment_cells.splitlines()
         last_idx = -1
         last_idy = -1
         for i, alignment in enumerate(align_list):
@@ -540,10 +541,10 @@ class PanCodeBlock:
                 if contents[i, j] is None:
                     string = str_array[i, j + offset]
                     has_ica = False
-                    idx_newline = string.find('\n')
+                    lines = string.splitlines()
                     # if newline
-                    if idx_newline != -1:
-                        ica_maybe = string[:idx_newline]
+                    if len(lines) > 0:
+                        ica_maybe = lines[0]
                         founds = ica_cell_pat.findall(ica_maybe)
                         if founds:
                             found = founds[0]
@@ -565,7 +566,7 @@ class PanCodeBlock:
                                 logger.error(f'Invalid cell shape {shape}, ignoring...')
                                 has_ica = False
                     if has_ica:
-                        content = string[(idx_newline + 1):]
+                        content = '\n'.join(lines[1:])
                     else:
                         ica = ''
                         shape = (1, 1)
@@ -840,7 +841,7 @@ class Align:
         m, n = shape
         res = cls.default(shape)
         aligns = res.aligns
-        for i, row in enumerate(alignment_cells.strip().split('\n')):
+        for i, row in enumerate(alignment_cells.strip().splitlines()):
             # in case where no. of rows is more than needed
             if i >= m:
                 break
@@ -859,7 +860,7 @@ class Align:
         `Align.from_aligns_string(align.aligns_string) == align`
         '''
         alignment_norm = alignment.strip().upper()
-        alignment_list = alignment_norm.split('\n')
+        alignment_list = alignment_norm.splitlines()
         m = len(alignment_list)
         n = max(map(len, alignment_list))
         if m == 1:

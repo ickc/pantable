@@ -32,7 +32,7 @@ class PandocVersion:
         self._repr: str = run_pandoc(args=['--version'])
 
     def __str__(self) -> str:
-        return self._repr.split('\n')[0].split(' ')[1]
+        return self._repr.splitlines()[0].split(' ')[1]
 
     def __repr__(self) -> str:
         return self._repr
@@ -115,7 +115,7 @@ def iter_convert_texts_panflute_to_markdown(
         '''split the text into list by the seperator
         '''
         temp = []
-        for line in text.split('\n'):
+        for line in text.splitlines():
             if line != seperator:
                 temp.append(line)
             else:
