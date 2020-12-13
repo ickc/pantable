@@ -112,7 +112,6 @@ setup(
             'sphinx_bootstrap_theme',
             'pygments-style-solarized',
             'data-science-types',
-            'pandas',
             'yamlloader',
             'coloredlogs',
         ],
