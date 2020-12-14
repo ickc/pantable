@@ -1,12 +1,12 @@
 import logging
 import os
 
-from .version import __version__
-
 try:
     from coloredlogs import ColoredFormatter as Formatter
 except ImportError:
     from logging import Formatter
+
+__version__ = '0.13.0'
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
