@@ -348,7 +348,6 @@ class PanTableOption:
             if value != (dict() if key == 'csv_kwargs' else default)
         }
 
-
     def to_spec(self, size: int) -> Spec:
         '''to Spec
 
