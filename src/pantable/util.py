@@ -14,8 +14,7 @@ from panflute.elements import ListContainer, Para, Str
 from panflute.tools import convert_text, run_pandoc, yaml_filter
 
 if TYPE_CHECKING:
-    from typing import (Callable, Dict, Generator, Iterable, Iterator, List,
-                        Optional, Tuple)
+    from typing import Callable, Dict, Generator, Iterable, Iterator, List, Optional, Tuple
 
     from panflute.elements import Element
 

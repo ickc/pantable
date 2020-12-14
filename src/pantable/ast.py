@@ -27,13 +27,11 @@ import numpy as np
 import yaml
 from panflute.containers import ListContainer
 from panflute.elements import CodeBlock, Para, Plain, Span, Str
-from panflute.table_elements import (Caption, Table, TableBody, TableCell,
-                                     TableFoot, TableHead, TableRow)
+from panflute.table_elements import Caption, Table, TableBody, TableCell, TableFoot, TableHead, TableRow
 from panflute.tools import convert_text, stringify
 
 from .io import dump_csv_io, load_csv_array
-from .util import (get_types, get_yaml_dumper,
-                   iter_convert_texts_markdown_to_panflute,
+from .util import (get_types, get_yaml_dumper, iter_convert_texts_markdown_to_panflute,
                    iter_convert_texts_panflute_to_markdown)
 
 COLWIDTHDEFAULT = 'ColWidthDefault'
