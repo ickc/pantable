@@ -1,66 +1,47 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
-# -- Path setup --------------------------------------------------------------
+import sphinx_py3doc_enhanced_theme
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-import os
-import sys
-
-import sphinx_bootstrap_theme
-
-sys.path.insert(0, os.path.abspath('..'))
-
-
-# -- Project information -----------------------------------------------------
-
-project = 'pantable'
-copyright = '2020, Kolen Cheung'
-author = 'Kolen Cheung'
-
-# The full version, including alpha/beta/rc tags
-# release = 'v0.12.4'
-
-
-# -- General configuration ---------------------------------------------------
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.todo',
+    'sphinx.ext.autosummary',
     'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
+    'sphinx.ext.doctest',
+    'sphinx.ext.extlinks',
+    'sphinx.ext.ifconfig',
     'sphinx.ext.napoleon',
+    'sphinx.ext.todo',
+    'sphinx.ext.viewcode',
 ]
+source_suffix = '.rst'
+master_doc = 'index'
+project = 'pantable'
+year = '2016-2020'
+author = 'Kolen Cheung'
+copyright = '{0}, {1}'.format(year, author)
+version = release = '0.13.0'
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+pygments_style = 'trac'
+templates_path = ['.']
+extlinks = {
+    'issue': ('https://github.com/ickc/pantable/issues/%s', '#'),
+    'pr': ('https://github.com/ickc/pantable/pull/%s', 'PR #'),
+}
+html_theme = "sphinx_py3doc_enhanced_theme"
+html_theme_path = [sphinx_py3doc_enhanced_theme.get_html_theme_path()]
+html_theme_options = {
+    'githuburl': 'https://github.com/ickc/pantable/'
+}
 
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+html_use_smartypants = True
+html_last_updated_fmt = '%b %d, %Y'
+html_split_index = False
+html_sidebars = {
+   '**': ['searchbox.html', 'globaltoc.html', 'sourcelink.html'],
+}
+html_short_title = '%s-%s' % (project, version)
 
-
-# -- Options for HTML output -------------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-pygments_style = 'solarizedlight'
-html_theme = 'bootstrap'
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+napoleon_use_ivar = True
+napoleon_use_rtype = False
+napoleon_use_param = False

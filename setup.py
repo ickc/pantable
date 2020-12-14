@@ -1,94 +1,88 @@
-"""CSV Tables in Markdown: Pandoc Filter for CSV Tables.
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import print_function
 
-See:
-https://github.com/ickc/pantable
-"""
+import io
+import re
+from glob import glob
+from os.path import basename
+from os.path import dirname
+from os.path import join
+from os.path import splitext
 
-import sys
+from setuptools import find_packages
+from setuptools import setup
 
-# Always prefer setuptools over distutils
-from setuptools import find_packages, setup
 
-from pantable.version import __version__
+def read(*names, **kwargs):
+    with io.open(
+        join(dirname(__file__), *names),
+        encoding=kwargs.get('encoding', 'utf8')
+    ) as fh:
+        return fh.read()
+
 
 setup(
     name='pantable',
-
-    # Versions should comply with PEP440.  For a discussion on single-sourcing
-    # the version across setup.py and the project code, see
-    # https://packaging.python.org/en/latest/single_source_version.html
-    version=__version__,
-
-    description='CSV Tables in Markdown: Pandoc Filter for CSV Tables',
-    long_description='See doc in https://github.com/ickc/pantable.',
-
-    # The project's main homepage.
-    url='https://github.com/ickc/pantable',
-
-    # Author details
+    version='0.13.0',
+    license='BSD-3-Clause',
+    description='A Python library for writing pandoc filters for tables with batteries included.',
+    long_description='%s\n%s' % (
+        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
+        re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
+    ),
     author='Kolen Cheung',
     author_email='christian.kolen@gmail.com',
-
-    # Choose your license
-    license='BSD-3-Clause License',
-
-    python_requires='>=3.7',
-
-    # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    url='https://github.com/ickc/pantable',
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
+    include_package_data=True,
+    zip_safe=False,
     classifiers=[
-        # How mature is this project? Common values are
-        #   3 - Alpha
-        #   4 - Beta
-        #   5 - Production/Stable
+        # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Development Status :: 4 - Beta',
-
-        # Indicate who your project is intended for
         'Environment :: Console',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'Topic :: Text Processing :: Filters',
-
-        # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: BSD License',
-
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
-        # https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        'Operating System :: Unix',
+        'Operating System :: POSIX',
+        'Operating System :: Microsoft :: Windows',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
+        'Topic :: Utilities',
     ],
-
-    # What does your project relate to?
-    keywords='pandoc pandocfilters panflute markdown latex html csv table',
-
-    # You can just specify the packages manually here if your project is
-    # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-
-    # Alternatively, if you want to distribute just a my_module.py, uncomment
-    # this:
-    #   py_modules=["my_module"],
-
-    # List run-time dependencies here.  These will be installed by pip when
-    # your project is installed. For an analysis of "install_requires" vs pip's
-    # requirements files see:
-    # https://packaging.python.org/en/latest/requirements.html
+    project_urls={
+        'Documentation': 'https://pantable.readthedocs.io/',
+        'Changelog': 'https://pantable.readthedocs.io/en/latest/changelog.html',
+        'Issue Tracker': 'https://github.com/ickc/pantable/issues',
+    },
+    keywords=[
+        'pandoc',
+        'pandocfilters',
+        'panflute',
+        'markdown',
+        'latex',
+        'html',
+        'csv',
+        'table',
+    ],
+    python_requires='>=3.7',
     install_requires=[
         'panflute>=2',
         'pyyaml',
         'numpy',
         'backports.cached_property; python_version < "3.8"',
     ],
-
-    # List additional groups of dependencies here (e.g. development
-    # dependencies). You can install these using the following syntax,
-    # for example:
-    # $ pip install -e .[dev,test]
     extras_require={
         'dev': ['check-manifest'],
         'test': [
@@ -109,28 +103,11 @@ setup(
             'coloredlogs',
         ],
     },
-
-    # If there are data files included in your packages that need to be
-    # installed, specify them here.  If using Python 2.6 or less, then these
-    # have to be included in MANIFEST.in as well.
-    # package_data={
-    #     'sample': ['package_data.dat'],
-    # },
-
-    # Although 'package_data' is the preferred approach, in some case you may
-    # need to place data files outside of your packages. See:
-    # http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files # noqa
-    # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
-    # data_files=[('my_data', ['data/data_file'])],
-
-    # To provide executable scripts, use entry points in preference to the
-    # "scripts" keyword. Entry points provide cross-platform support and allow
-    # pip to create the appropriate form of executable for the target platform.
     entry_points={
         'console_scripts': [
             'pantable = pantable.cli.pantable:main',
             'pantable2csv = pantable.cli.pantable2csv:main',
             'pantable2csvx = pantable.cli.pantable2csvx:main',
-        ],
+        ]
     },
 )

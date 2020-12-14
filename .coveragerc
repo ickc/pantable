@@ -1,10 +1,16 @@
-[report]
+[paths]
+source =
+   src
+   */site-packages
 
-exclude_lines =
-    if __name__ == .__main__.:
-    def main
-    except ZeroDivisionError
-    return \[\]
-    return None
-    __version__
-    py2
+[run]
+branch = true
+source =
+    pantable
+    tests
+parallel = true
+
+[report]
+show_missing = true
+precision = 2
+omit = *migrations*
