@@ -58,7 +58,6 @@ jobs:
         else
           pip install --upgrade setuptools pip
           pip install wheel
-          [[ ${{ matrix.python-version }} == 3.7 ]] && pip install backports.cached_property || true
         fi
         pip install -e .[test]
     - name: Install dependencies—pandoc
