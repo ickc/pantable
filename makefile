@@ -36,7 +36,7 @@ files:
 clean:
 	cd docs && $(MAKE) clean
 	rm -f .coverage $(docsAll) docs/pantable*.rst docs/modules.rst docs/setup.rst
-	rm -rf htmlcov pantable.egg-info .cache .idea dist docs/_build docs/_static docs/_templates
+	rm -rf htmlcov pantable.egg-info .cache .idea dist docs/_build docs/_static docs/_templates .ipynb_checkpoints .mypy_cache .pytest_cache README.html
 	find . -type f \( -name "*.py[co]" -o -name ".coverage.*" \) -delete -or -type d -name "__pycache__" -delete
 	[[ -d gh-pages ]] && find gh-pages -maxdepth 1 -mindepth 1 \! -name .git -exec rm -rf {} + || true
 
