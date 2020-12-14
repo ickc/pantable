@@ -50,6 +50,7 @@ jobs:
       run: |
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           # install our own pypy37
+          mkdir -p ~/.local
           wget -qO- https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2 | tar -xjf - -C ~/.local --strip-components=1
           echo $PATH  #TODO
           pypy -m ensurepip
