@@ -101,7 +101,7 @@ def iter_convert_texts_panflute_to_markdown(
     '''a faster, specialized convert_texts
 
     :param list elems: must be list of ListContainer of Block.
-    This is more restrictive than convert_texts which can also accept list of Block
+        This is more restrictive than convert_texts which can also accept list of Block
     :param str seperator: a string for seperator in the temporary markdown output
     '''
     def iter_seperator(elems: List[ListContainer], inserter: Para):
