@@ -9,7 +9,6 @@ Contents
    readme
    installation
    usage
-   reference/index
    contributing
    changelog
    modules
