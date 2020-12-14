@@ -68,7 +68,7 @@ Also see the README in `GitHub Pages <https://ickc.github.io/pantable/>`__. Ther
 
    - following standard markdown syntax
    - like this"
-   2,"Any markdown syntax, e.g.",$$E = mc^2$$
+   2,"Any markdown syntax, e.g.",E = mc^2^
    ```
 
 becomes
@@ -83,7 +83,7 @@ becomes
    |                                           |                                           | -  following standard markdown syntax     |
    |                                           |                                           | -  like this                              |
    +-------------------------------------------+-------------------------------------------+-------------------------------------------+
-   | 2                                         | Any markdown syntax, e.g.                 | .. math:: E = mc^2                        |
+   | 2                                         | Any markdown syntax, e.g.                 | E = mc\ :sup:`2`                          |
    +-------------------------------------------+-------------------------------------------+-------------------------------------------+
 
 (The equation might not work if you view this on PyPI.)
