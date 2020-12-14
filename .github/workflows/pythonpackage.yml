@@ -52,7 +52,7 @@ jobs:
           # install our own pypy37
           mkdir -p ~/.local
           wget -qO- https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2 | tar -xjf - -C ~/.local --strip-components=1
-          echo $PATH  #TODO
+          export PATH="$HOME/.local/bin:$PATH"
           pypy -m ensurepip
           pypy -m pip install 'numpy==1.20.0rc1' backports.cached_property
         else
@@ -71,7 +71,8 @@ jobs:
     - name: Tests
       run: |
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
-          make test python=$HOME/pypy3.7-v7.3.3-linux64/bin/pypy
+          export PATH="$HOME/.local/bin:$PATH"
+          make test python=pypy
         else
           [[ ${{ matrix.python-version }} == 3.9 ]] && make test PYTESTPARALLEL= || make test
         fi
