@@ -50,20 +50,16 @@ jobs:
       run: |
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           # install our own pypy37
-          wget --quiet https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2
-          tar -xf pypy3.7-v7.3.3-linux64.tar.bz2
-          mv pypy3.7-v7.3.3-linux64 ~
-          export PATH="$HOME/pypy3.7-v7.3.3-linux64/bin:$PATH"
+          wget -qO- https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2 | tar -xjf - -C ~/.local --strip-components=1
+          echo $PATH  #TODO
           pypy -m ensurepip
           pypy -m pip install 'numpy==1.20.0rc1' backports.cached_property
-          pypy -m pip install -r requirements.txt
-          pypy -m pip install -r tests/requirements.txt
         else
           pip install --upgrade setuptools pip
           pip install wheel
-          pip install -e .[test]
           [[ ${{ matrix.python-version }} == 3.7 ]] && pip install backports.cached_property || true
         fi
+        pip install -e .[test]
     - name: Install dependencies—pandoc
       run: |
         # pandoc
