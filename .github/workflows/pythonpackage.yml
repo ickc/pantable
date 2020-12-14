@@ -47,8 +47,8 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies—pip
+      # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
       run: |
-        # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           # install our own pypy37
           mkdir -p ~/.local
@@ -70,13 +70,13 @@ jobs:
         wget --quiet "$downloadUrl"
         sudo dpkg -i "${downloadUrl##*/}"
     - name: Tests
+      # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
+      # TODO cleanup when pytest-parallel support python 3.9 and runs sucessfully
       run: |
-        # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           export PATH="$HOME/.local/bin:$PATH"
           make test python=pypy
         else
-          # TODO cleanup when pytest-parallel support python 3.9 and runs sucessfully
           [[ ${{ matrix.python-version }} == 3.9 ]] && make test PYTESTPARALLEL= || make test
         fi
     # c.f. https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
