@@ -3,7 +3,7 @@ fontsize:	11pt
 documentclass:	memoir
 classoption: article
 geometry:	inner=1in, outer=1in, top=1in, bottom=1.25in
-title:	CSV Tables in Markdown --- Pandoc Filter for CSV Tables
+title:	Pantable—A Python library for writing pandoc filters for tables with batteries included.
 ...
 
 ``` {.table}
@@ -66,13 +66,13 @@ To enforce using Python 3, depending on your system, you may need to specify `py
 
 pandoc versioning semantics is [MAJOR.MAJOR.MINOR.PATCH](https://pvp.haskell.org) and pantable/panflute's is MAJOR.MINOR.PATCH. Below we shows matching versions of pandoc that pantable and panflute supports, in descending order. Only major version is shown as long as the minor versions doesn't matter.
 
-<!-- For pandoc API verion, check https://hackage.haskell.org/package/pandoc for pandoc-types, which is the same thing. -->
-
 | pantable | panflute version  | supported pandoc versions | supported pandoc API versions |
 | --- | ---   | ---   |  ---  |
 | TBA | 2.0 | 2.11.0.4—2.11.x  | 1.22    |
 | - | not supported | 2.10  | 1.21  |
 | 0.12 | 1.12 | 2.7-2.9 | 1.17.5–1.20  |
+
+: Version Matching^[For pandoc API verion, check https://hackage.haskell.org/package/pandoc for pandoc-types, which is the same thing.]
 
 Note: pandoc 2.10 is short lived and 2.11 has minor API changes comparing to that, mainly for fixing its shortcomings. Please avoid using pandoc 2.10.
 
