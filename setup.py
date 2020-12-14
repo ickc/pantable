@@ -11,18 +11,6 @@ from setuptools import find_packages, setup
 
 from pantable.version import __version__
 
-# see https://python3statement.org/practicalities/
-if sys.version_info < (3, 7):
-
-    error = """Python {py} detected.
-pantable v0.13+ supports Python 3.7 and above.
-See pantable documentation for more information:
-https://github.com/ickc/pantable
-""".format(py='.'.join([str(v) for v in sys.version_info[:3]]))
-
-    print(error, file=sys.stderr)
-    sys.exit(1)
-
 setup(
     name='pantable',
 
@@ -94,7 +82,7 @@ setup(
         'panflute>=2',
         'pyyaml',
         'numpy',
-        'backports.cached_property; python_version < "3.8"'
+        'backports.cached_property; python_version < "3.8"',
     ],
 
     # List additional groups of dependencies here (e.g. development
