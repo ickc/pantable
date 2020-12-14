@@ -6,7 +6,12 @@ geometry:	inner=1in, outer=1in, top=1in, bottom=1.25in
 title:	CSV Tables in Markdown --- Pandoc Filter for CSV Tables
 ...
 
-**Warning: Currently pantable only support pandoc < 2.10. This is because there's a new AST change related to table spans. See more in https://github.com/ickc/pantable/issues/51. Until that is resolved, please stick with 2.9.2.1 or below.**
+``` {.table}
+---
+header: false
+markdown: true
+include: docs/badges.csv
+...
 
 The pantable package comes with 2 pandoc filters, `pantable` and `pantable2csv`. `pantable` is the main filter, introducing a syntax to include CSV table in markdown source. `pantable2csv` complements `pantable`, is the inverse of `pantable`, which convert native pandoc tables into the CSV table format defined by `pantable`.
 
@@ -22,8 +27,35 @@ Some example uses are:
 
 # Installation
 
-```bash
-pip install -U pantable
+    pip install pantable
+
+You can also install the in-development version with:
+
+    pip install https://github.com/ickc/pantable/archive/master.zip
+
+# Documentation
+
+<https://pantable.readthedocs.io/>
+
+# Development
+
+To run all the tests run:
+
+    tox
+
+Note, to combine the coverage data from all the tox environments run:
+
+``` {.table}
+---
+width:
+- 1/10
+- 9/10
+header: false
+markdown: true
+...
+Windows,"    set PYTEST_ADDOPTS=--cov-append
+    tox"
+Other,    PYTEST_ADDOPTS=--cov-append tox
 ```
 
 ## Supported versions
