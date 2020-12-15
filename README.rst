@@ -4,7 +4,7 @@
 Pantable—A Python library for writing pandoc filters for tables with batteries included.
 ========================================================================================
 
-:Date:   December 13, 2020
+:Date:   December 14, 2020
 
 .. contents::
    :depth: 3
@@ -207,6 +207,19 @@ running ``pandoc -F pantable2csv -o output.md input.md``, it becomes
    "
    2,"Any markdown syntax, e.g.",$$E = mc^2$$
    ```
+
+Pantable as a library
+=====================
+
+.. figure:: dot/pipeline-simple.svg
+   :alt: Overview
+
+   Overview
+
+.. figure:: dot/pipeline.svg
+   :alt: Detailed w/ methods
+
+   Detailed w/ methods
 
 Related Filters
 ===============
