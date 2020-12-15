@@ -10,7 +10,7 @@ title:	Pantable—A Python library for writing pandoc filters for tables with ba
 ---
 header: false
 markdown: true
-include: docs/badges.csv
+include: badges.csv
 ...
 
 The pantable package comes with 2 pandoc filters, `pantable` and `pantable2csv`. `pantable` is the main filter, introducing a syntax to include CSV table in markdown source. `pantable2csv` complements `pantable`, is the inverse of `pantable`, which convert native pandoc tables into the CSV table format defined by `pantable`.
@@ -274,6 +274,6 @@ The followings are pandoc filters written in Haskell that provide similar functi
 ```table
 ---
 Caption: Comparison
-include: docs/comparison.csv
+include: comparison.csv
 ...
 ```
