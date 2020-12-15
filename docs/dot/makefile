@@ -5,7 +5,7 @@ DOT ?= dot
 
 FONT ?= "Latin Modern Roman"
 
-DOTs = $(wildcard *.dot)
+DOTs = $(wildcard *.dot) pipeline-simple.dot
 SVGs = $(patsubst %.dot,%.svg,$(DOTs))
 
 svg: $(SVGs)
