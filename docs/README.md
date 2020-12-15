@@ -263,6 +263,12 @@ First row,defaulted to be header row,can be disabled
 ```
 ~~~
 
+# Pantable as a library
+
+![Overview](dot/pipeline-simple.svg)
+
+![Detailed w/ methods](dot/pipeline.svg)
+
 # Related Filters
 
 The followings are pandoc filters written in Haskell that provide similar functionality. This filter is born after testing with theirs.
