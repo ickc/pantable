@@ -1637,7 +1637,6 @@ class PanTableStr(PanTableAbstract):
     def to_pancodeblock(
         self,
         format: str = 'csv',
-        fancy_table: bool = False,
         include: str = '',
         csv_kwargs: Optional[dict] = None,
     ) -> PanCodeBlock:
@@ -1649,7 +1648,7 @@ class PanTableStr(PanTableAbstract):
         '''
         return PanCodeBlock.from_data_format(
             self.cells.cannonical.contents,
-            options=self.to_pantableoption(format=format, fancy_table=fancy_table, include=include, csv_kwargs=csv_kwargs),
+            options=self.to_pantableoption(format=format, include=include, csv_kwargs=csv_kwargs),
             ica=self.ica_table,
         )
 
