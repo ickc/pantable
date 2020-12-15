@@ -33,7 +33,7 @@ testFull: pytest pep8 pylint
 files:
 	cd tests/files; $(MAKE)
 dot:
-	cd docs/dot; $(MAKE)
+	cd dot; $(MAKE)
 
 clean:
 	cd docs && $(MAKE) clean

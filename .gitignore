@@ -1,6 +1,6 @@
 docs/modules.rst
 docs/pantable*.rst
-docs/dot/pipeline-simple.dot
+dot/pipeline-simple.dot
 
 .ipynb_checkpoints
 *.ipynb
