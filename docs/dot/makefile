@@ -12,7 +12,7 @@ svg: $(SVGs)
 
 # remove edge label
 pipeline-simple.dot: pipeline.dot
-	sed -E -e 's/->(.*)label="[^"]+",? ?/->\1/' -e 's/ \[\]//' $< > $@
+	sed -E -e 's/->(.*)label="[^"]+",? ?/->\1/' -e 's/ \[\]//' -e 's/^.*rankdir=LR.*$$//' $< > $@
 
 pipeline-simple.svg: DOT=sfdp
 

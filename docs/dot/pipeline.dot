@@ -2,7 +2,7 @@ digraph {
     rankdir=LR
 
     graph [fontname = "Latin Modern Roman"]
-    node [fontname = "Latin Modern Roman" shape=ellipse]
+    node [fontname = "Latin Modern Roman" shape=box]
     edge [fontname = "Latin Modern Roman" penwidth=0.6]
 
     Table [label="AST-Table"]
