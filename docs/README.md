@@ -265,9 +265,9 @@ First row,defaulted to be header row,can be disabled
 
 # Pantable as a library
 
-![Overview](dot/pipeline-simple.svg)
+![Overview](  docs/dot/pipeline-simple.svg)
 
-![Detailed w/ methods](dot/pipeline.svg)
+![Detailed w/ methods](  docs/dot/pipeline.svg)
 
 # Related Filters
 
