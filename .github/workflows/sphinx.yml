@@ -1,0 +1,39 @@
+name: GitHub Pages
+
+on: push
+  # TODO
+  # push:
+  #   branches:
+  #     - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - 3.9
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies—pip
+        run: |
+          pip install -U poetry setuptools
+          make editable EXTRAS=[docs]
+    - name: Install dependencies—pandoc
+      run: |
+        # pandoc
+        [[ ${{ matrix.pandoc-version }} == "latest" ]] && url="https://github.com/jgm/pandoc/releases/latest" || url="https://github.com/jgm/pandoc/releases/tag/${{ matrix.pandoc-version }}"
+        downloadUrl="https://github.com$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64\.deb')"
+        wget --quiet "$downloadUrl"
+        sudo dpkg -i "${downloadUrl##*/}"
+      - name: Make docs
+        run: make docs
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist/docs
