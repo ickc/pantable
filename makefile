@@ -8,6 +8,7 @@ _python = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(python)
 pandoc ?= pandoc
 _pandoc = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(pandoc)
 PYTESTPARALLEL ?= --workers auto
+EXTRAS ?=
 
 # docs
 CSSURL:=https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css
@@ -109,4 +110,4 @@ editable:
 	cd dist; tar -xf pantable-0.13.0.tar.gz pantable-0.13.0/setup.py
 	mv dist/pantable-0.13.0/setup.py .
 	mv pyproject.toml .pyproject.toml
-	$(_python) -m pip install -e .[extras,tests]; mv .pyproject.toml pyproject.toml
+	$(_python) -m pip install -e .$(EXTRAS); mv .pyproject.toml pyproject.toml
