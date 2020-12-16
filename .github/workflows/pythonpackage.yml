@@ -56,11 +56,12 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
           pypy -m ensurepip
           pypy -m pip install 'numpy==1.20.0rc1'
-          pypy -m pip install -e .[test]
+          pypy -m pip install -r tests/requirements.txt
+          pypy -m pip install .
         else
-          pip install --upgrade setuptools pip
-          pip install wheel
-          pip install -e .[test]
+          pip install --upgrade setuptools pip wheel
+          pip install -r tests/requirements.txt
+          pip install .
         fi
     - name: Install dependencies—pandoc
       run: |
