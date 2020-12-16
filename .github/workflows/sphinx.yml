@@ -30,10 +30,10 @@ jobs:
         downloadUrl="https://github.com$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64\.deb')"
         wget --quiet "$downloadUrl"
         sudo dpkg -i "${downloadUrl##*/}"
-      - name: Make docs
-        run: make docs
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist/docs
+    - name: Make docs
+      run: make docs
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist/docs
