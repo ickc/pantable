@@ -97,3 +97,14 @@ docs: $(docsAll)
 gh-pages:
 	rsync -av --delete --stats --exclude='.git/' docs/_build/html/ gh-pages/
 	cp -f docs/README.pdf gh-pages/
+
+# poetry #####################################################################
+
+# since poetry doesn't support editable, we can build and extract, copy the setup.py
+# temporary remove pyproject.toml and ask pip to install from setup.py instead.
+editable:
+	poetry build
+	cd dist; tar -xf pantable-0.13.0.tar.gz pantable-0.13.0/setup.py
+	mv dist/pantable-0.13.0/setup.py .
+	mv pyproject.toml .pyproject.toml
+	pip install -e .; mv .pyproject.toml pyproject.toml

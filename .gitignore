@@ -3,6 +3,7 @@ docs/pantable*.rst
 dot/pipeline-simple.dot
 
 poetry.lock
+setup.py
 
 .ipynb_checkpoints
 *.ipynb
