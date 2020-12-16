@@ -64,10 +64,6 @@ coloredlogs = {optional = true, version = "*"}
 tabulate = {optional = true, version = "*"}
 yamlloader = {optional = true, version = "*"}
 
-[tool.poetry.dev-dependencies]
-tox = "*"
-data-science-types = "*"
-
 # tests: sync this with tests/equirements.txt
 coverage = {optional = true, version = "*"}
 coveralls = {optional = true, version = "*"}
@@ -79,6 +75,10 @@ pytest-parallel = {optional = true, version = "*"}
 # docs: sync this with docs/requirements.txt
 sphinx = {optional = true, version = "^1.3"}
 sphinx-py3doc-enhanced-theme = {optional = true, version = "*"}
+
+[tool.poetry.dev-dependencies]
+tox = "*"
+data-science-types = "*"
 
 [tool.poetry.extras]
 extras = [
