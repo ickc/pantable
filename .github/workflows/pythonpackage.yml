@@ -55,14 +55,12 @@ jobs:
           wget -qO- https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2 | tar -xjf - -C ~/.local --strip-components=1
           export PATH="$HOME/.local/bin:$PATH"
           pypy -m ensurepip
-          pypy -m pip install 'numpy==1.20.0rc1'
-          pypy -m pip install -r tests/requirements.txt
-          pypy -m pip install .
+          pypy -m pip install -U 'numpy==1.20.0rc1' poetry
+          poetry install --extras 'extras tests'
         else
-          pip install --upgrade setuptools pip wheel
-          pip install -r tests/requirements.txt
-          pip install .
+          pip install -U poetry
         fi
+        poetry install --extras 'extras tests'
     - name: Install dependencies—pandoc
       run: |
         # pandoc
