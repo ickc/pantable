@@ -59,24 +59,26 @@ pyyaml = "*"
 numpy = "*"
 "backports.cached-property" = {python = "<3.8", version = "*"}
 
+# extras: sync this with tests/equirements.txt
 coloredlogs = {optional = true, version = "*"}
 tabulate = {optional = true, version = "*"}
 yamlloader = {optional = true, version = "*"}
 
 [tool.poetry.dev-dependencies]
 tox = "*"
+data-science-types = "*"
 
+# tests: sync this with tests/equirements.txt
 coverage = {optional = true, version = "*"}
 coveralls = {optional = true, version = "*"}
-data-science-types = {optional = true, version = "*"}
-pep8 = {optional = true, version = "*"}
-pygments-style-solarized = {optional = true, version = "*"}
+flake8 = {optional = true, version = "*"}
 pytest = {optional = true, version = "*"}
 pytest-cov = {optional = true, version = "*"}
 pytest-parallel = {optional = true, version = "*"}
-shutilwhich = {optional = true, version = "*"}
-sphinx = {optional = true, version = "*"}
-sphinx-bootstrap-theme = {optional = true, version = "*"}
+
+# docs: sync this with docs/requirements.txt
+sphinx = {optional = true, version = "^1.3"}
+sphinx-py3doc-enhanced-theme = {optional = true, version = "*"}
 
 [tool.poetry.extras]
 extras = [
@@ -84,17 +86,15 @@ extras = [
     "tabulate",
     "yamlloader",
 ]
-test = [
+tests = [
     "coverage",
     "coveralls",
-    "data-science-types",
-    "future",
-    "pep8",
-    "pygments-style-solarized",
+    "flake8",
     "pytest",
     "pytest-cov",
     "pytest-parallel",
-    "shutilwhich",
+]
+docs = [
     "sphinx",
     "sphinx-bootstrap-theme",
 ]
