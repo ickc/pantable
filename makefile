@@ -107,4 +107,4 @@ editable:
 	cd dist; tar -xf pantable-0.13.0.tar.gz pantable-0.13.0/setup.py
 	mv dist/pantable-0.13.0/setup.py .
 	mv pyproject.toml .pyproject.toml
-	pip install -e .; mv .pyproject.toml pyproject.toml
+	pip install -e .[extras,tests]; mv .pyproject.toml pyproject.toml
