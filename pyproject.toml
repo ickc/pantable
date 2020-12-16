@@ -59,12 +59,12 @@ pyyaml = "*"
 numpy = "*"
 "backports.cached-property" = {python = "<3.8", version = "*"}
 
-# extras: sync this with tests/equirements.txt
+# extras
 coloredlogs = {optional = true, version = "*"}
 tabulate = {optional = true, version = "*"}
 yamlloader = {optional = true, version = "*"}
 
-# tests: sync this with tests/equirements.txt
+# tests
 coverage = {optional = true, version = "*"}
 coveralls = {optional = true, version = "*"}
 flake8 = {optional = true, version = "*"}

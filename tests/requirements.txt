@@ -1,9 +1,0 @@
-coloredlogs
-tabulate
-yamlloader
-coverage
-coveralls
-flake8
-pytest
-pytest-cov
-pytest-parallel
