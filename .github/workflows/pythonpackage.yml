@@ -56,12 +56,10 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
           pypy -m ensurepip
           pypy -m pip install -U 'numpy==1.20.0rc1' poetry setuptools
-          make editable
-          pypy -m pip install -e .[extras,tests]
+          make editable python=pypy
         else
           pip install -U poetry setuptools
           make editable
-          pip install -e .[extras,tests]
         fi
     - name: Install dependencies—pandoc
       run: |
