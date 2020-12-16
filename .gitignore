@@ -1,6 +1,6 @@
 docs/modules.rst
 docs/pantable*.rst
-dot/pipeline-simple.dot
+docs/dot/pipeline-simple.dot
 
 poetry.lock
 setup.py
