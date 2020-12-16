@@ -1,21 +1,21 @@
 [build-system]
 requires = [
-    "setuptools>=30.3.0",
-    "wheel",
-    "setuptools_scm>=3.3.1",
+    'setuptools>=30.3.0',
+    'wheel',
+    'setuptools_scm>=3.3.1',
 ]
 
 [tool.coverage.paths]
 source = [
-    "src",
-    "*/site-packages",
+    'src',
+    '*/site-packages',
 ]
 
 [tool.coverage.run]
 branch = true
 source = [
-    "pantable",
-    "tests",
+    'pantable',
+    'tests',
 ]
 parallel = true
 
@@ -26,19 +26,19 @@ precision = 2
 [tool.pytest.ini_options]
 
 python_files = [
-    "test_*.py",
-    "*_test.py",
-    "tests.py",
+    'test_*.py',
+    '*_test.py',
+    'tests.py',
 ]
 
 addopts = [
-    "-ra",
-    "--strict",
-    "--doctest-modules",
-    "--doctest-glob=\*.rst",
-    "--tb=short",
+    '-ra',
+    '--strict',
+    '--doctest-modules',
+    '--doctest-glob=\*.rst',
+    '--tb=short',
 ]
 
 testpaths = [
-    "tests",
+    'tests',
 ]
