@@ -26,9 +26,9 @@ docsAll = CHANGELOG.rst README.rst
 .PHONY: test testFull files clean
 
 test:
-	$(python) -m pytest -vv $(PYTESTPARALLEL) --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests
+	$(python) -m pytest -vv $(PYTESTPARALLEL) --cov=src --cov-report term --no-cov-on-fail --cov-branch tests
 pytest:
-	$(python) -m pytest -vv $(PYTESTPARALLEL) --cov=pantable --cov-report term --no-cov-on-fail --cov-branch tests --cov-report html
+	$(python) -m pytest -vv $(PYTESTPARALLEL) --cov=src --cov-report term --no-cov-on-fail --cov-branch tests --cov-report html
 testFull: pytest pep8 pylint
 files:
 	cd tests/files; $(MAKE)
