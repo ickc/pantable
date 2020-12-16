@@ -213,12 +213,12 @@ running ``pandoc -F pantable2csv -o output.md input.md``, it becomes
 Pantable as a library
 =====================
 
-.. figure:: dot/pipeline-simple.svg
+.. figure:: docs/dot/pipeline-simple.svg
    :alt: Overview
 
    Overview
 
-.. figure:: dot/pipeline.svg
+.. figure:: docs/dot/pipeline.svg
    :alt: Detailed w/ methods
 
    Detailed w/ methods
