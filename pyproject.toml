@@ -4,3 +4,21 @@ requires = [
     "wheel",
     "setuptools_scm>=3.3.1",
 ]
+
+[tool.coverage.paths]
+source = [
+    "src",
+    "*/site-packages",
+]
+
+[tool.coverage.run]
+branch = true
+source = [
+    "pantable",
+    "tests",
+]
+parallel = true
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
