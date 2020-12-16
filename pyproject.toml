@@ -22,3 +22,23 @@ parallel = true
 [tool.coverage.report]
 show_missing = true
 precision = 2
+
+[tool.pytest.ini_options]
+
+python_files = [
+    "test_*.py",
+    "*_test.py",
+    "tests.py",
+]
+
+addopts = [
+    "-ra",
+    "--strict",
+    "--doctest-modules",
+    "--doctest-glob=\*.rst",
+    "--tb=short",
+]
+
+testpaths = [
+    "tests",
+]
