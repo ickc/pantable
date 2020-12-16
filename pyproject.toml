@@ -42,3 +42,16 @@ addopts = [
 testpaths = [
     'tests',
 ]
+
+[tool.isort]
+line_length = 120
+known_first_party = 'pantable'
+default_section = 'THIRDPARTY'
+forced_separate = 'test_pantable'
+skip = [
+    '.tox',
+    '.eggs',
+    'ci/templates',
+    'build',
+    'dist',
+]
