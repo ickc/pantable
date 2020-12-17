@@ -13,6 +13,8 @@ jobs:
       matrix:
         python-version:
           - 3.9
+        pandoc-version:
+          - latest
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -31,9 +33,9 @@ jobs:
         wget --quiet "$downloadUrl"
         sudo dpkg -i "${downloadUrl##*/}"
     - name: Make docs
-      run: make docs
+      run: make html
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist/docs
+        publish_dir: dist/docs
