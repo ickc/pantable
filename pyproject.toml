@@ -72,9 +72,10 @@ pytest = {optional = true, version = "*"}
 pytest-cov = {optional = true, version = "*"}
 pytest-parallel = {optional = true, version = "*"}
 
-# docs: sync this with docs/requirements.txt
-sphinx = {optional = true, version = "^1.3"}
-sphinx-py3doc-enhanced-theme = {optional = true, version = "*"}
+# docs: sync this with tox.testenv.docs below
+sphinx = {optional = true, version = "^3.3"}
+sphinx-bootstrap-theme = {optional = true, version = "*"}
+pygments-style-solarized = {optional = true, version = "*"}
 
 [tool.poetry.dev-dependencies]
 tox = "*"
@@ -97,6 +98,7 @@ tests = [
 docs = [
     "sphinx",
     "sphinx-bootstrap-theme",
+    "pygments-style-solarized",
 ]
 
 [tool.poetry.scripts]
@@ -223,11 +225,14 @@ commands =
     isort --verbose --check-only --diff --filter-files .
 
 [testenv:docs]
-usedevelop = true
+usedevelop = false
 deps =
-    -r{toxinidir}/docs/requirements.txt
+    sphinx >=3.3,<4
+    sphinx-bootstrap-theme
+    pygments-style-solarized
 commands =
-    sphinx-build {posargs:-E} -b html docs dist/docs
+    sphinx-apidoc -d 10 -f -e -o docs src
+    sphinx-build {posargs:-E} -b dirhtml docs dist/docs
     sphinx-build -b linkcheck docs dist/docs
 
 [testenv:coveralls]
