@@ -36,11 +36,11 @@ dot:
 	cd docs/dot; $(MAKE)
 
 clean:
-	rm -f .coverage docs/pantable*.rst docs/modules.rst docs/setup.rst
+	rm -f .coverage* docs/pantable*.rst docs/modules.rst docs/setup.rst
 	rm -rf htmlcov pantable.egg-info .cache .idea dist docs/_build \
 		docs/_static docs/_templates .ipynb_checkpoints .mypy_cache \
 		.pytest_cache .tox
-	find . -type f \( -name "*.py[co]" -o -name ".coverage.*" \) -delete \
+	find . -type f -name "*.py[co]" -delete \
 		-or -type d -name "__pycache__" -delete
 Clean: clean
 	rm -f $(RSTs)
