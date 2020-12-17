@@ -23,7 +23,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies—pip
       run: |
-        pip install -U poetry setuptools
+        pip install -U poetry setuptools tox
         make editable EXTRAS=[docs]
     - name: Install dependencies—pandoc
       run: |
