@@ -265,8 +265,8 @@ The followings are pandoc filters written in Haskell that provide similar functi
 .. [1]
    For pandoc API verion, check https://hackage.haskell.org/package/pandoc for pandoc-types, which is the same thing.
 
-.. |Documentation Status| image:: https://readthedocs.org/projects/pantable/badge/?style=flat
-   :target: https://readthedocs.org/projects/pantable
+.. |Documentation Status| image:: https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg
+   :target: https://ickc.github.io/pantable
 .. |GitHub Actions| image:: https://github.com/ickc/pantable/workflows/Python%20package/badge.svg
 .. |Coverage Status| image:: https://coveralls.io/repos/ickc/pantable/badge.svg?branch=master&service=github
    :target: https://coveralls.io/r/ickc/pantable
