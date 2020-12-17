@@ -30,7 +30,7 @@ html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 html_theme_options = {
     "navbar_links": [("GitHub", "https://github.com/ickc/pantable/", True,)],
     "source_link_position": None,
-    "bootswatch_theme": "Readable",
+    "bootswatch_theme": "readable",
     "bootstrap_version": "3",
 }
 
