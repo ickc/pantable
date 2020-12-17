@@ -35,7 +35,7 @@ You can also install the in-development version with:
 
 # Documentation
 
-<https://pantable.readthedocs.io/>
+<https://ickc.github.io/pantable>
 
 # Development
 

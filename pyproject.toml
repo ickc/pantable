@@ -39,7 +39,7 @@ classifiers = [
 ]
 homepage = "https://github.com/ickc/pantable"
 repository = "https://github.com/ickc/pantable"
-documentation = "https://pantable.readthedocs.io"
+documentation = "https://ickc.github.io/pantable"
 authors = ["Kolen Cheung <christian.kolen@gmail.com>"]
 readme = "README.rst"
 packages = [

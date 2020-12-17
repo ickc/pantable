@@ -1,4 +1,4 @@
-docs,[![Documentation Status](https://readthedocs.org/projects/pantable/badge/?style=flat)](https://readthedocs.org/projects/pantable)
+docs,[![Documentation Status](https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg)](https://ickc.github.io/pantable)
 tests,"| 
 | ![GitHub Actions](https://github.com/ickc/pantable/workflows/Python%20package/badge.svg)
   [![Coverage Status](https://coveralls.io/repos/ickc/pantable/badge.svg?branch=master&service=github)](https://coveralls.io/r/ickc/pantable)
