@@ -27,7 +27,7 @@ def load_csv(
     Note that this can emit EmptyTableError, FileNotFoundError
     '''
     include = options.include
-    # TODO: Python 3.8
+    # TODO: PY37
     # encoding = encoding_ if (encoding_ := options.include_encoding) else None
     encoding = options.include_encoding
     # default include_encoding is ''

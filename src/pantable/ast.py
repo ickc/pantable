@@ -9,7 +9,9 @@ from logging import getLogger
 from textwrap import wrap
 from typing import TYPE_CHECKING, ClassVar, List, Optional, Union
 
-if (sys.version_info.major, sys.version_info.minor) < (3, 8):
+from . import PY37
+
+if PY37:
     try:
         from backports.cached_property import cached_property
     except ImportError:
@@ -289,7 +291,7 @@ class PanTableOption:
 
     @classmethod
     def from_kwargs(cls, **kwargs) -> PanTableOption:
-        # TODO: Python 3.8
+        # TODO: PY37
         # return cls(**{
         #     key_underscored: value
         #     for key, value in kwargs.items()
@@ -313,7 +315,7 @@ class PanTableOption:
 
         expect `self.from_kwargs(**self.kwargs) == self`
         '''
-        # TODO: Python 3.8
+        # TODO: PY37
         # return {
         #     key.replace('_', '-'): value
         #     for field_ in fields(self)
@@ -624,7 +626,7 @@ class PanCodeBlock:
                     )
                     # is_body_body
                     if marker == '___':
-                        # TODO: Python 3.8
+                        # TODO: PY37
                         # if body_list and 'body' not in (last_body := body_list[-1]):
                         #     last_body['body'] = temp
                         if body_list:

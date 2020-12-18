@@ -3,10 +3,11 @@ from __future__ import annotations
 import sys
 from functools import partial
 from logging import getLogger
-# TODO: Python 3.8
 from typing import TYPE_CHECKING, Any, _SpecialForm, get_type_hints
 
-if sys.version_info.minor > 7:
+from . import PY37
+
+if not PY37:
     from typing import get_args, get_origin
 
 import numpy as np
@@ -200,22 +201,7 @@ def parse_markdown_codeblock(text: str) -> dict:
     return yaml_filter(doc.content[0], doc, tag='table', function=function, strict_yaml=True)
 
 
-# TODO: Python 3.8
-if sys.version_info.minor > 7:
-    def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
-        if isinstance(type_hint, _SpecialForm):
-            # case of Any, ClassVar, Final, Literal,
-            # NoReturn, Optional, or Union without parameters
-            yield Any
-            return
-        actual_type = get_origin(type_hint) or type_hint
-        if isinstance(actual_type, _SpecialForm):
-            # case of Union[…] or ClassVar[…] or …
-            for origins in map(_find_type_origin, get_args(type_hint)):
-                yield from origins
-        else:
-            yield actual_type
-else:
+if PY37:
     def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
         if isinstance(type_hint, _SpecialForm):
             # case of Any, ClassVar, Final, Literal,
@@ -230,6 +216,20 @@ else:
         if isinstance(actual_type, _SpecialForm):
             # case of Union[…] or ClassVar[…] or …
             for origins in map(_find_type_origin, type_hint.__args__):
+                yield from origins
+        else:
+            yield actual_type
+else:
+    def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
+        if isinstance(type_hint, _SpecialForm):
+            # case of Any, ClassVar, Final, Literal,
+            # NoReturn, Optional, or Union without parameters
+            yield Any
+            return
+        actual_type = get_origin(type_hint) or type_hint
+        if isinstance(actual_type, _SpecialForm):
+            # case of Union[…] or ClassVar[…] or …
+            for origins in map(_find_type_origin, get_args(type_hint)):
                 yield from origins
         else:
             yield actual_type
