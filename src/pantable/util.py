@@ -132,11 +132,11 @@ def iter_convert_texts_panflute_to_markdown(
 
 
 convert_texts_func: Dict[Tuple[str, str], Callable[[Iterable, Optional[List[str]]], Iterator]] = {
-    # this is just to convert returned value from
-    # Iterator[ListContainer] to Iterator[list]
-    # which is what convert_texts does
     ('markdown', 'panflute'): (
         lambda *args, **kwargs:
+        # this is just to convert returned value from
+        # Iterator[ListContainer] to Iterator[list]
+        # which is what convert_texts does
         map(list, iter_convert_texts_markdown_to_panflute(*args, **kwargs))
     ),
     ('panflute', 'markdown'): iter_convert_texts_panflute_to_markdown,

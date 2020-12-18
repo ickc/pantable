@@ -7,9 +7,10 @@ from .ast import PanCodeBlock
 from .util import EmptyTableError
 
 if TYPE_CHECKING:
-    from typing import Optional
+    from typing import Optional, Union
 
     from panflute.elements import CodeBlock, Doc
+    from panflute.table_elements import Table
 
 logger = getLogger('pantable')
 
@@ -19,7 +20,7 @@ def codeblock_to_table(
     data: str = '',
     element: Optional[CodeBlock] = None,
     doc: Optional[Doc] = None,
-):
+) -> Union[Table, list, None]:
     try:
         pan_table_str = (
             PanCodeBlock
@@ -37,10 +38,11 @@ def codeblock_to_table(
     # element unchanged if include is invalid (by returning None)
     except FileNotFoundError as e:
         logger.error(f'{e} Codeblock shown as is.')
-        return
+        return None
     except EmptyTableError:
         logger.warning("table is empty. Deleted.")
         # [] means delete the current element
         return []
-    except ImportError:
-        return
+    except ImportError as e:
+        logger.error(f'Some modules cannot be imported, Codeblock shown as is: {e}')
+        return None

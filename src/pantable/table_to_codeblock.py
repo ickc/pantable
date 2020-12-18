@@ -19,7 +19,7 @@ def table_to_codeblock(
     fancy_table: bool = False,
     include: str = '',
     csv_kwargs: Optional[dict] = None,
-):
+) -> Optional[PanTable]:
     """convert Table element and to csv table in code-block with class "table" in panflute AST"""
     if type(element) is Table:
         return (
