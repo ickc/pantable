@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from functools import partial
 from logging import getLogger
 from typing import TYPE_CHECKING, Any, _SpecialForm, get_type_hints

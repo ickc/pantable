@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-import sys
 from dataclasses import MISSING, dataclass, field, fields
 from fractions import Fraction
 from itertools import chain, repeat
