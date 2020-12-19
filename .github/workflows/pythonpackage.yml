@@ -72,8 +72,6 @@ jobs:
         sudo dpkg -i "${downloadUrl##*/}"
     - name: Tests
       run: |
-        # for coveralls to work properly
-        export PYTHONPATH=$(realpath src)
         # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           export PATH="$HOME/.local/bin:$PATH"
@@ -86,6 +84,8 @@ jobs:
       uses: AndreMiras/coveralls-python-action@develop
       with:
         parallel: true
+        base-path: src
+        flag-name: python-${{ matrix.python-version }}_pandoc-${{ matrix.pandoc-version }}
     - name: Coverage—Codecov
       uses: codecov/codecov-action@v1
       with:
@@ -111,3 +111,4 @@ jobs:
       uses: AndreMiras/coveralls-python-action@develop
       with:
         parallel-finished: true
+        base-path: src
