@@ -28,48 +28,44 @@ Some example uses are:
 
 # Installation
 
-    pip install pantable
+## Pip
 
-You can also install the in-development version with:
+To manage pantable using pip, open the command line and run
 
-    pip install https://github.com/ickc/pantable/archive/master.zip
+- `pip install pantable` to install
+    - `pip install https://github.com/ickc/pantable/archive/master.zip` to install the in-development version
+- `pip install -U pantable` to upgrade
+- `pip uninstall pantable` to remove
 
-# Documentation
+You need a matching pandoc version for pantable to work flawlessly. See [Supported pandoc versions] for details. Or, use the [Conda] method to install below to have the pandoc version automatically managed for you.
 
-<https://ickc.github.io/pantable>
+## Conda
 
-# Development
+To manage pantable **with a matching pandoc version**, open the command line and run
 
-To run all the tests run:
+- `conda install -c conda-forge pantable` to install
+- `conda update pantable` to upgrade
+- `conda remove pantable` to remove
 
-    tox
+You may also replace `conda` by `mamba`, which is basically a drop-in replacement of the conda package manager. See [mamba-org/mamba: The Fast Cross-Platform Package Manager](https://github.com/mamba-org/mamba) for details.
 
-Note, to combine the coverage data from all the tox environments run:
+## Note on versions
 
-``` {.table}
----
-width:
-- 1/10
-- 9/10
-header: false
-markdown: true
-...
-Windows,"    set PYTEST_ADDOPTS=--cov-append
-    tox"
-Other,    PYTEST_ADDOPTS=--cov-append tox
-```
+### Supported Python versions
 
-## Supported versions
-
-pantable v0.12 drop Python 2 support. You need to install `pantable<0.12` if you need to run it on Python 2.
+pantable v0.12 drop Python 2 support. You need to `pip install pantable<0.12` if you need to run it on Python 2.
 
 To enforce using Python 3, depending on your system, you may need to specify `python3` and `pip3` explicitly.
 
-pandoc versioning semantics is [MAJOR.MAJOR.MINOR.PATCH](https://pvp.haskell.org) and pantable/panflute's is MAJOR.MINOR.PATCH. Below we shows matching versions of pandoc that pantable and panflute supports, in descending order. Only major version is shown as long as the minor versions doesn't matter.
+Check the badge above or `setup.py` for supported Python versions, `setup.py` further indicates support of pypy in additional of CPython.
+
+#### Supported pandoc versions
+
+pandoc versioning semantics is [MAJOR.MAJOR.MINOR.PATCH](https://pvp.haskell.org) and panflute's is MAJOR.MINOR.PATCH. Below we shows matching versions of pandoc that panflute supports, in descending order. Only major version is shown as long as the minor versions doesn't matter.
 
 | pantable | panflute version  | supported pandoc versions | supported pandoc API versions |
 | --- | ---   | ---   |  ---  |
-| TBA | 2.0 | 2.11.0.4—2.11.x  | 1.22    |
+| 0.13 | 2.0 | 2.11.0.4—2.11.x  | 1.22    |
 | - | not supported | 2.10  | 1.21  |
 | 0.12 | 1.12 | 2.7-2.9 | 1.17.5–1.20  |
 
@@ -79,7 +75,9 @@ Note: pandoc 2.10 is short lived and 2.11 has minor API changes comparing to tha
 
 To use pantable with pandoc < 2.10, install pantable 0.12 explicitly by `pip install pantable~=0.12.4`.
 
-# `pantable`
+# Pantable as pandoc filters
+
+## `pantable`
 
 This allows CSV tables, optionally containing markdown syntax (disabled by default), to be put in markdown as a fenced code blocks.
 
@@ -297,7 +295,7 @@ auto-width will be performed such that the sum of `width` equals this number.
 
     Default: None
 
-# `pantable2csv`
+## `pantable2csv`
 
 This one is the inverse of `pantable`, a panflute filter to convert any native pandoc tables into the CSV table format used by pantable.
 
@@ -346,7 +344,7 @@ First row,defaulted to be header row,can be disabled
 ```
 ~~~
 
-# `pantable2csvx`
+## `pantable2csvx`
 
 (experimental, may drop in the future)
 
@@ -396,7 +394,13 @@ Dwarf planets",,Pluto,0.0146,"2,370",2095,0.7,153.3,5906.4,-225,5,Declassified a
 
 ![Detailed w/ methods](  docs/dot/pipeline.svg)
 
+# Development
+
+To run all the tests run `tox`. GitHub Actions is used for CI too so if you fork this you can check if your commits passes there.
+
 # Related Filters
+
+(The table here is created in the beginning of pantable, which has since added more features. This is left here for historical reason and also as a credit to those before this.)
 
 The followings are pandoc filters written in Haskell that provide similar functionality. This filter is born after testing with theirs.
 
