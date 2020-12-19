@@ -73,11 +73,19 @@ jobs:
         # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           export PATH="$HOME/.local/bin:$PATH"
-          make test COVHTML= python=pypy
+          make test COVHTML='--cov-report=xml' python=pypy
         else
           # TODO cleanup when pytest-parallel support python 3.9 and runs sucessfully
-          [[ ${{ matrix.python-version }} == 3.9 ]] && make test COVHTML= PYTESTPARALLEL= || make test COVHTML=
+          [[ ${{ matrix.python-version }} == 3.9 ]] && make test COVHTML= PYTESTPARALLEL='--cov-report=xml' || make test COVHTML='--cov-report=xml'
         fi
+    - name: Coverage—Coveralls
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel: true
+    - name: Coverage—Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage.xml
     # c.f. https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
     - name: Build a binary wheel and a source tarball
       if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.9 && matrix.pandoc-version == 'latest' }}
@@ -87,3 +95,12 @@ jobs:
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.pypi_password }}
+
+  coveralls_finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coverage—Coveralls finishing
+      uses: AndreMiras/coveralls-python-action@develop
+      with:
+        parallel-finished: true
