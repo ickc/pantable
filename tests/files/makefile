@@ -11,7 +11,11 @@ MDCODEBLOCKFILESOUTPUT = $(patsubst md_codeblock/%.md,md_codeblock_reference/%.m
 NATIVEFILES = $(wildcard native/*.native)
 NATIVEFILESOUTPUT = $(patsubst native/%.native,native_reference/%.md,$(NATIVEFILES))
 
+HTML = $(patsubst native/%.native,native/%.html,$(NATIVEFILES))
+
 all: $(MDFILESOUTPUT) $(MDCODEBLOCKFILESOUTPUT) $(NATIVEFILESOUTPUT)
+
+html: $(HTML)
 
 md_reference/%.md: md/%.md
 	cd ../..; $(_pandoc) -F pantable2csv -o tests/files/$@ tests/files/$<
@@ -21,3 +25,6 @@ md_codeblock_reference/%.md: md_codeblock/%.md
 
 native_reference/%.md: native/%.native
 	cd ../..; $(_pandoc) -F pantable2csvx -o tests/files/$@ tests/files/$<
+
+native/%.html: native/%.native
+	pandoc $< -s -o $@
