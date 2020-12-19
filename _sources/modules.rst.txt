@@ -1,8 +1,7 @@
-pantable
-========
+src
+===
 
 .. toctree::
    :maxdepth: 10
 
    pantable
-   setup

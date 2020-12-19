@@ -1,7 +1,0 @@
-pantable.csv\_to\_table\_markdown module
-========================================
-
-.. automodule:: pantable.csv_to_table_markdown
-   :members:
-   :undoc-members:
-   :show-inheritance:

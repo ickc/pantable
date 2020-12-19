@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pantable.util &#8212; pantable 0.13.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css/css/_table.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css/fonts/fonts.min.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex/" />
+    <link rel="search" title="Search" href="../../../search/" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../">
+          pantable</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.13.0</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+                <li><a href="https://github.com/ickc/pantable/">GitHub</a></li>
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme/">Pantable—A Python library for writing pandoc filters for tables with batteries included.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation/">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage/">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog/">Revision history for Pantable</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/">src</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../search/" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <h1>Source code for pantable.util</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">getLogger</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">_SpecialForm</span><span class="p">,</span> <span class="n">get_type_hints</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">PY37</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">PY37</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">get_args</span><span class="p">,</span> <span class="n">get_origin</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">panflute.elements</span> <span class="kn">import</span> <span class="n">ListContainer</span><span class="p">,</span> <span class="n">Para</span><span class="p">,</span> <span class="n">Str</span>
+<span class="kn">from</span> <span class="nn">panflute.tools</span> <span class="kn">import</span> <span class="n">convert_text</span><span class="p">,</span> <span class="n">run_pandoc</span><span class="p">,</span> <span class="n">yaml_filter</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+    <span class="kn">from</span> <span class="nn">panflute.elements</span> <span class="kn">import</span> <span class="n">Element</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;pantable&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PandocVersion"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.PandocVersion">[docs]</a><span class="k">class</span> <span class="nc">PandocVersion</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;get runtime pandoc verison</span>
+
+<span class="sd">    use PandocVersion().version for comparing versions</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_repr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">run_pandoc</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--version&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repr</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repr</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="EmptyTableError"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.EmptyTableError">[docs]</a><span class="k">class</span> <span class="nc">EmptyTableError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="convert_texts"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.convert_texts">[docs]</a><span class="k">def</span> <span class="nf">convert_texts</span><span class="p">(</span>
+    <span class="n">texts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">input_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;markdown&#39;</span><span class="p">,</span>
+    <span class="n">output_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;panflute&#39;</span><span class="p">,</span>
+    <span class="n">standalone</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">extra_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
+    <span class="sd">&#39;&#39;&#39;run convert_text on list of text&#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">map_parallel</span> <span class="kn">import</span> <span class="n">map_parallel</span>
+
+        <span class="n">_map_parallel</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">map_parallel</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;multithreading&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Consider `pip install map_parallel` to speed up `convert_texts`.&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">_map_parallel</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">arg</span><span class="p">))</span>
+
+    <span class="n">_convert_text</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+        <span class="n">convert_text</span><span class="p">,</span>
+        <span class="n">input_format</span><span class="o">=</span><span class="n">input_format</span><span class="p">,</span>
+        <span class="n">output_format</span><span class="o">=</span><span class="n">output_format</span><span class="p">,</span>
+        <span class="n">standalone</span><span class="o">=</span><span class="n">standalone</span><span class="p">,</span>
+        <span class="n">extra_args</span><span class="o">=</span><span class="n">extra_args</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_map_parallel</span><span class="p">(</span><span class="n">_convert_text</span><span class="p">,</span> <span class="n">texts</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="iter_convert_texts_markdown_to_panflute"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.iter_convert_texts_markdown_to_panflute">[docs]</a><span class="k">def</span> <span class="nf">iter_convert_texts_markdown_to_panflute</span><span class="p">(</span>
+    <span class="n">texts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">extra_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">ListContainer</span><span class="p">]:</span>
+    <span class="sd">&#39;&#39;&#39;a faster, specialized convert_texts</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># put each text in a Div together</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;&#39;&#39;::: PanTableDiv :::</span>
+<span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1"></span>
+<span class="s1">:::&#39;&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">texts</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">pf</span> <span class="o">=</span> <span class="n">convert_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">input_format</span><span class="o">=</span><span class="s1">&#39;markdown&#39;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;panflute&#39;</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="n">extra_args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">content</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">pf</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="iter_convert_texts_panflute_to_markdown"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.iter_convert_texts_panflute_to_markdown">[docs]</a><span class="k">def</span> <span class="nf">iter_convert_texts_panflute_to_markdown</span><span class="p">(</span>
+    <span class="n">elems</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ListContainer</span><span class="p">],</span>
+    <span class="n">extra_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">seperator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">65</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="s1">&#39;S256&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&#39;&#39;&#39;a faster, specialized convert_texts</span>
+
+<span class="sd">    :param list elems: must be list of ListContainer of Block.</span>
+<span class="sd">        This is more restrictive than convert_texts which can also accept list of Block</span>
+<span class="sd">    :param str seperator: a string for seperator in the temporary markdown output</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">iter_seperator</span><span class="p">(</span><span class="n">elems</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ListContainer</span><span class="p">],</span> <span class="n">inserter</span><span class="p">:</span> <span class="n">Para</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;insert between every element in a ListContainer&#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">elems</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">elem</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">i</span>
+            <span class="k">yield</span> <span class="n">inserter</span>
+
+    <span class="k">def</span> <span class="nf">iter_split_by_seperator</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">seperator</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&#39;&#39;&#39;split the text into list by the seperator</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="n">seperator</span><span class="p">:</span>
+                <span class="n">temp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="c1"># reset for next yield</span>
+                <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">yield</span> <span class="n">res</span>
+
+    <span class="n">inserter</span> <span class="o">=</span> <span class="n">Para</span><span class="p">(</span><span class="n">Str</span><span class="p">(</span><span class="n">seperator</span><span class="p">))</span>
+
+    <span class="n">elems_inserted</span> <span class="o">=</span> <span class="n">ListContainer</span><span class="p">(</span><span class="o">*</span><span class="n">iter_seperator</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span> <span class="n">inserter</span><span class="p">))</span>
+    <span class="n">texts_converted</span> <span class="o">=</span> <span class="n">convert_text</span><span class="p">(</span><span class="n">elems_inserted</span><span class="p">,</span> <span class="n">input_format</span><span class="o">=</span><span class="s1">&#39;panflute&#39;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;markdown&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">iter_split_by_seperator</span><span class="p">(</span><span class="n">texts_converted</span><span class="p">,</span> <span class="n">seperator</span><span class="p">)</span></div>
+
+
+<span class="n">convert_texts_func</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span> <span class="n">Iterator</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="s1">&#39;markdown&#39;</span><span class="p">,</span> <span class="s1">&#39;panflute&#39;</span><span class="p">):</span> <span class="p">(</span>
+        <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span>
+        <span class="c1"># this is just to convert returned value from</span>
+        <span class="c1"># Iterator[ListContainer] to Iterator[list]</span>
+        <span class="c1"># which is what convert_texts does</span>
+        <span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">iter_convert_texts_markdown_to_panflute</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;panflute&#39;</span><span class="p">,</span> <span class="s1">&#39;markdown&#39;</span><span class="p">):</span> <span class="n">iter_convert_texts_panflute_to_markdown</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="convert_texts_fast"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.convert_texts_fast">[docs]</a><span class="k">def</span> <span class="nf">convert_texts_fast</span><span class="p">(</span>
+    <span class="n">texts</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">input_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;markdown&#39;</span><span class="p">,</span>
+    <span class="n">output_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;panflute&#39;</span><span class="p">,</span>
+    <span class="n">extra_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">list</span><span class="p">]:</span>
+    <span class="sd">&#39;&#39;&#39;a faster, specialized convert_texts</span>
+
+<span class="sd">    should have identical result from convert_texts</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">convert_texts_func</span><span class="p">[</span>
+                <span class="p">(</span><span class="n">input_format</span><span class="p">,</span> <span class="n">output_format</span><span class="p">)</span>
+            <span class="p">](</span>
+                <span class="n">texts</span><span class="p">,</span>
+                <span class="n">extra_args</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported input/output format pair: </span><span class="si">{</span><span class="n">input_format</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">output_format</span><span class="si">}</span><span class="s1">. Doing it slowly...&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">convert_texts</span><span class="p">(</span>
+            <span class="n">texts</span><span class="p">,</span>
+            <span class="n">input_format</span><span class="p">,</span>
+            <span class="n">output_format</span><span class="p">,</span>
+            <span class="n">extra_args</span><span class="o">=</span><span class="n">extra_args</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="eq_panflute_elem"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.eq_panflute_elem">[docs]</a><span class="k">def</span> <span class="nf">eq_panflute_elem</span><span class="p">(</span><span class="n">elem1</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span> <span class="n">elem2</span><span class="p">:</span> <span class="n">Element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="n">elem1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">repr</span><span class="p">(</span><span class="n">elem2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="eq_panflute_elems"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.eq_panflute_elems">[docs]</a><span class="k">def</span> <span class="nf">eq_panflute_elems</span><span class="p">(</span><span class="n">elems1</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Element</span><span class="p">],</span> <span class="n">elems2</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Element</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">elems1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">elems2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">elem1</span><span class="p">,</span> <span class="n">elem2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">elems1</span><span class="p">,</span> <span class="n">elems2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">eq_panflute_elem</span><span class="p">(</span><span class="n">elem1</span><span class="p">,</span> <span class="n">elem2</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="parse_markdown_codeblock"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.parse_markdown_codeblock">[docs]</a><span class="k">def</span> <span class="nf">parse_markdown_codeblock</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;parse markdown CodeBlock just as `panflute.yaml_filter` would</span>
+
+<span class="sd">    useful for development to obtain the objects that the filter</span>
+<span class="sd">    would see after passed to `panflute.yaml_filter`</span>
+
+<span class="sd">    :param str text: must be a single codeblock of class table in markdown</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">kwargs</span>
+
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">convert_text</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">standalone</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml_filter</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">doc</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;table&#39;</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">function</span><span class="p">,</span> <span class="n">strict_yaml</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="n">PY37</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_find_type_origin</span><span class="p">(</span><span class="n">type_hint</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_hint</span><span class="p">,</span> <span class="n">_SpecialForm</span><span class="p">):</span>
+            <span class="c1"># case of Any, ClassVar, Final, Literal,</span>
+            <span class="c1"># NoReturn, Optional, or Union without parameters</span>
+            <span class="k">yield</span> <span class="n">Any</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">actual_type</span> <span class="o">=</span> <span class="n">type_hint</span><span class="o">.</span><span class="n">__origin__</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># In case of non-typing types (such as &lt;class &#39;int&#39;&gt;, for instance)</span>
+            <span class="n">actual_type</span> <span class="o">=</span> <span class="n">type_hint</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actual_type</span><span class="p">,</span> <span class="n">_SpecialForm</span><span class="p">):</span>
+            <span class="c1"># case of Union[…] or ClassVar[…] or …</span>
+            <span class="k">for</span> <span class="n">origins</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="n">_find_type_origin</span><span class="p">,</span> <span class="n">type_hint</span><span class="o">.</span><span class="n">__args__</span><span class="p">):</span>
+                <span class="k">yield from</span> <span class="n">origins</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">actual_type</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_find_type_origin</span><span class="p">(</span><span class="n">type_hint</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_hint</span><span class="p">,</span> <span class="n">_SpecialForm</span><span class="p">):</span>
+            <span class="c1"># case of Any, ClassVar, Final, Literal,</span>
+            <span class="c1"># NoReturn, Optional, or Union without parameters</span>
+            <span class="k">yield</span> <span class="n">Any</span>
+            <span class="k">return</span>
+        <span class="n">actual_type</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span> <span class="ow">or</span> <span class="n">type_hint</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">actual_type</span><span class="p">,</span> <span class="n">_SpecialForm</span><span class="p">):</span>
+            <span class="c1"># case of Union[…] or ClassVar[…] or …</span>
+            <span class="k">for</span> <span class="n">origins</span> <span class="ow">in</span> <span class="nb">map</span><span class="p">(</span><span class="n">_find_type_origin</span><span class="p">,</span> <span class="n">get_args</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)):</span>
+                <span class="k">yield from</span> <span class="n">origins</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">actual_type</span>
+
+
+<div class="viewcode-block" id="get_types"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.get_types">[docs]</a><span class="k">def</span> <span class="nf">get_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]:</span>
+    <span class="sd">&#39;&#39;&#39;returns all type hints in a Union</span>
+
+<span class="sd">    c.f. https://stackoverflow.com/a/50622643</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">origin</span>
+            <span class="k">for</span> <span class="n">origin</span> <span class="ow">in</span> <span class="n">_find_type_origin</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Any</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">type_hint</span> <span class="ow">in</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="get_yaml_dumper"><a class="viewcode-back" href="../../../pantable.util/#pantable.util.get_yaml_dumper">[docs]</a><span class="k">def</span> <span class="nf">get_yaml_dumper</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">yamlloader.ordereddict.dumpers</span> <span class="kn">import</span> <span class="n">CSafeDumper</span> <span class="k">as</span> <span class="n">Dumper</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">yamlloader.ordereddict.dumpers</span> <span class="kn">import</span> <span class="n">SafeDumper</span> <span class="k">as</span> <span class="n">Dumper</span>
+        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Try `pip install yamlloader` or `conda install yamlloader -c conda-forge` to preserve yaml dict ordering.&#39;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">yaml.cyaml</span> <span class="kn">import</span> <span class="n">CSafeDumper</span> <span class="k">as</span> <span class="n">Dumper</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">yaml.dumper</span> <span class="kn">import</span> <span class="n">SafeDumper</span> <span class="k">as</span> <span class="n">Dumper</span>
+    <span class="k">return</span> <span class="n">Dumper</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2016-2020, Kolen Cheung.<br/>
+      Last updated on Dec 19, 2020.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

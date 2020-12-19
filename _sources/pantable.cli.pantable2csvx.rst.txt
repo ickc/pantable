@@ -1,0 +1,7 @@
+pantable.cli.pantable2csvx module
+=================================
+
+.. automodule:: pantable.cli.pantable2csvx
+   :members:
+   :undoc-members:
+   :show-inheritance:

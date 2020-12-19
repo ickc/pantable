@@ -1,0 +1,7 @@
+pantable.table\_to\_codeblock module
+====================================
+
+.. automodule:: pantable.table_to_codeblock
+   :members:
+   :undoc-members:
+   :show-inheritance:

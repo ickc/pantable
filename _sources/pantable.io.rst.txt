@@ -1,0 +1,7 @@
+pantable.io module
+==================
+
+.. automodule:: pantable.io
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -9,6 +9,7 @@ Submodules
 
    pantable.cli.pantable
    pantable.cli.pantable2csv
+   pantable.cli.pantable2csvx
 
 Module contents
 ---------------

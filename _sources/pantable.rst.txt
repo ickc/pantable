@@ -15,14 +15,11 @@ Submodules
 .. toctree::
    :maxdepth: 10
 
+   pantable.ast
    pantable.codeblock_to_table
-   pantable.const
-   pantable.csv_to_table_ast
-   pantable.csv_to_table_markdown
-   pantable.read_csv
-   pantable.table_to_csv
+   pantable.io
+   pantable.table_to_codeblock
    pantable.util
-   pantable.version
 
 Module contents
 ---------------

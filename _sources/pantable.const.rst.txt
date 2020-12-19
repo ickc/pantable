@@ -1,7 +1,0 @@
-pantable.const module
-=====================
-
-.. automodule:: pantable.const
-   :members:
-   :undoc-members:
-   :show-inheritance:
