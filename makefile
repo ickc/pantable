@@ -51,8 +51,8 @@ Clean: clean
 # Deploy to PyPI
 ## by CI, properly git tagged
 pypi:
-	git tag -a v$$($(_python) setup.py --version) -m 'Deploy to PyPI'
-	git push origin v$$($(_python) setup.py --version)
+	git tag -a v0.13.0 -m 'Deploy to PyPI'
+	git push origin v0.13.0
 ## Manually
 pypiManual:
 	rm -rf dist
