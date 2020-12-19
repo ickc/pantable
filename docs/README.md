@@ -449,7 +449,7 @@ It can then losslessly converts between PanTable and PanTableMarkdown, where eve
 
 Lastly, it defines a one-one correspondence to PanCodeBlock with `fancy_table` syntax mentioned earlier.
 
-Below is the same diagram with the method names:
+Below is the same diagram with the method names. You'd probably want to zoom into it to see it clearly.
 
 ![Detailed w/ methods](docs/dot/pipeline.svg)
 
