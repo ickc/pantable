@@ -14,7 +14,17 @@ include: badges.csv
 ...
 ```
 
-The pantable package comes with 2 pandoc filters, `pantable` and `pantable2csv`. `pantable` is the main filter, introducing a syntax to include CSV table in markdown source. `pantable2csv` complements `pantable`, is the inverse of `pantable`, which convert native pandoc tables into the CSV table format defined by `pantable`.
+# Introduction
+
+Pantable is a Python library that maps the pandoc Table AST to an internal structure losslessly. This enables writing pandoc filters specifically manipulating tables in pandoc.
+
+This also comes with 3 pandoc filters, `pantable`, `pantable2csv`, `pantable2csvx`.
+
+`pantable` is the main filter, introducing a syntax to include CSV table in markdown source. It supports all table features supported by the pandoc Table AST.
+
+`pantable2csv` complements `pantable`, is the inverse of `pantable`, which convert native pandoc tables into the CSV table format defined by `pantable`. This is lossy as of pandoc 2.11+, which is supported since pantable 0.13.
+
+`pantable2csvx` (experimental, may drop in the future) is similar to `pantable2csv`, but introduces an extra column with the `fancy-table` syntax defined below such that any general pandoc Table AST can be losslessly encoded in CSV format.
 
 Some example uses are:
 
@@ -24,7 +34,19 @@ Some example uses are:
 
 3. You want lower-level control on the table and column widths.
 
-4. You want to use all table features supported by the pandoc's internal AST table format, which is not possible in markdown for pandoc \<= 1.18.^[In pandoc 1.19, grid-tables is improved to support all features available to the AST too.]
+4. You want to use all table features supported by the pandoc's internal AST table format, which is not possible in markdown for pandoc (as of writing.)
+
+## A word on support
+
+Note that the above is exactly how I use pantable personally. So you can count on the round-trip losslessness. `pantable` and `pantable2csv` should have robust support since it has been used for years. But since pandoc 2.11 the table AST has been majorly revised. Pantable 0.13 added support for this new AST by completely rewriting pantable, at the same time addresses some of the shortcoming of the original design. Part of the new design is to enable pantable as a library (see [Pantable as a library] below) so that its functionality can be extended, similar to how to write a pandoc filter to intercept the AST and modify it, you can intercept the internal structure of PanTable and modify it.
+
+However, since this library is completely rewritten as of v0.13,
+
+- `pantable` and `pantable2csv` as pandoc filters should be stable
+    - there may be regression, please open an issue to report this
+- round-trip losslessness may break, please open an issue to report this
+- `pantable2csvx` as pandoc filter is experimental. API here might change in the future or may be dropped completed (e.g. replaces by something even more general)
+- Pantable as a library also is experimental, meaning that the API might be changed in the future.
 
 # Installation
 
@@ -357,7 +379,7 @@ e.g.
 pandoc -F pantable2csvx -o tests/files/native_reference/planets.md tests/files/native/planets.native
 ```
 
-would turn the native Table from [`platnets.native`](https://github.com/jgm/pandoc/blob/master/test/tables/planets.native) to
+would turn the native Table from `platnets.native`^[copied from pandoc from [here](https://github.com/jgm/pandoc/blob/master/test/tables/planets.native), which was dual licensed as CC0 [here](https://github.com/sergiocorreia/panflute/pull/172#issuecomment-736252008)] to
 
 ~~~
 ``` {.table}
