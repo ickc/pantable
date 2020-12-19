@@ -83,7 +83,9 @@ def iter_convert_texts_markdown_to_panflute(
     text = '\n\n'.join(
         (
             f'''::: PanTableDiv :::
+
 {text}
+
 :::'''
             for text in texts
         )
