@@ -28,7 +28,7 @@ test:
 docs-all: docs html epub
 docs: $(RSTs)
 html: dist/docs/
-epub: dist/pantable.epub
+epub: dist/epub/pantable.epub
 
 files:
 	cd tests/files; $(MAKE)
@@ -94,8 +94,8 @@ dist/docs/:
 # depends on docs as the api doc is built there
 # didn't put this in tox as we should build this once every release
 # TODO: consider put this in tox and automate it in GH Actions
-dist/pantable.epub: docs
-	sphinx-build -E -b epub docs dist
+dist/epub/pantable.epub: docs
+	sphinx-build -E -b epub docs dist/epub
 # the badges and dots has svg files that LaTeX complains about
 # dist/pantable.pdf: docs
 # 	sphinx-build -E -b latex docs dist/pdf
