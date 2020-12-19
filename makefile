@@ -110,5 +110,6 @@ editable:
 	poetry build
 	cd dist; tar -xf pantable-0.13.1.tar.gz pantable-0.13.1/setup.py
 	mv dist/pantable-0.13.1/setup.py .
+	rm -rf dist/pantable-0.13.1
 	mv pyproject.toml .pyproject.toml
 	$(_python) -m pip install -e .$(EXTRAS); mv .pyproject.toml pyproject.toml
