@@ -22,7 +22,7 @@ all: dot files editable
 
 test:
 	$(_python) -m pytest -vv $(PYTESTPARALLEL) \
-		--cov=src --cov-report term $(COVHTML) --no-cov-on-fail --cov-branch \
+		--cov=src --cov-report term $(COVHTML) --no-cov-on-fail --cov-branch --cov-config=pyproject.toml \
 		tests
 
 docs-all: docs html epub
