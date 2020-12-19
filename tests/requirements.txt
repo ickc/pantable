@@ -1,8 +1,0 @@
-shutilwhich
-pep8
-pytest
-pytest-cov
-coverage
-coveralls
-future
-terminaltables

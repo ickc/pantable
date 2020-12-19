@@ -1,0 +1,18 @@
+docs,[![Documentation Status](https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg)](https://ickc.github.io/pantable)
+tests,"| 
+| ![GitHub Actions](https://github.com/ickc/pantable/workflows/Python%20package/badge.svg)
+  [![Coverage Status](https://coveralls.io/repos/ickc/pantable/badge.svg?branch=master&service=github)](https://coveralls.io/r/ickc/pantable)
+  [![Coverage Status](https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/ickc/pantable)
+| [![Code Quality Status](https://landscape.io/github/ickc/pantable/master/landscape.svg?style=flat)](https://landscape.io/github/ickc/pantable/master)
+  [![Scrutinizer Status](https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg)](https://scrutinizer-ci.com/g/ickc/pantable/)
+  [![Codacy Code Quality Status](https://img.shields.io/codacy/grade/078ebc537c5747f68c1d4ad3d3594bbf.svg)](https://www.codacy.com/app/ickc/pantable)
+  [![CodeClimate Quality Status](https://codeclimate.com/github/ickc/pantable/badges/gpa.svg)](https://codeclimate.com/github/ickc/pantable)"
+package,"| [![GitHub Releases](https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release)](https://github.com/ickc/pantable/releases)
+  [![PyPI Package latest release](https://img.shields.io/pypi/v/pantable.svg)](https://pypi.org/project/pantable)
+  [![PyPI Wheel](https://img.shields.io/pypi/wheel/pantable.svg)](https://pypi.org/project/pantable)
+  [![Supported versions](https://img.shields.io/pypi/pyversions/pantable.svg)](https://pypi.org/project/pantable)
+  [![Supported implementations](https://img.shields.io/pypi/implementation/pantable.svg)](https://pypi.org/project/pantable)
+  [![Commits since latest release](https://img.shields.io/github/commits-since/ickc/pantable/v0.13.0.svg)](https://github.com/ickc/pantable/compare/v0.13.0...master)
+  [![Development Status](https://img.shields.io/pypi/status/pantable.svg)](https://pypi.python.org/pypi/pantable/)
+  [![Downloads](https://img.shields.io/pypi/dm/pantable.svg)](https://pypi.python.org/pypi/pantable/)
+| ![License](https://img.shields.io/pypi/l/pantable.svg)"

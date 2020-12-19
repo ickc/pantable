@@ -1,122 +1,114 @@
 SHELL = /usr/bin/env bash
 
-# configure engine
-python = python
-pip = pip
-# docs
-pandocEngine = pdflatex
-HTMLVersion = html5
+PANTABLELOGLEVEL ?= DEBUG
+python ?= python
+_python = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(python)
+pandoc ?= pandoc
+_pandoc = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(pandoc)
+PYTESTPARALLEL ?= --workers auto
+EXTRAS ?=
+COVHTML ?= --cov-report html
 
-test = $(wildcard tests/*.md)
-testNative = $(patsubst %.md,%.native,$(test))
-testAll = $(testNative)
+pandocArgs = --toc -M date="`date "+%B %e, %Y"`" --filter=pantable --wrap=none
 
-# docs
-CSSURL:=https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css
-pandocArgCommon = -f markdown+autolink_bare_uris-fancy_lists --toc -V linkcolorblue -V citecolor=blue -V urlcolor=blue -V toccolor=blue --pdf-engine=$(pandocEngine) -M date="`date "+%B %e, %Y"`"
-## TeX/PDF
-pandocArgFragment = $(pandocArgCommon) --filter=pantable
-pandocArgStandalone = $(pandocArgFragment) --toc-depth=1 -s -N
-## HTML/ePub
-pandocArgHTML = $(pandocArgFragment) -t $(HTMLVersion) --toc-depth=2 -s -N -c $(CSSURL)/css/common.min.css -c $(CSSURL)/fonts/fonts.min.css
-## GitHub README
-pandocArgReadmeGitHub = $(pandocArgFragment) --toc-depth=2 -s -t markdown_github --reference-location=block
-pandocArgReadmePypi = $(pandocArgFragment) -s -t rst --reference-location=block -f markdown+autolink_bare_uris-fancy_lists-implicit_header_references
-
-docsAll = docs/README.pdf README.md docs/README.rst
+RSTs = CHANGELOG.rst README.rst
 
 # Main Targets #################################################################
 
-.PHONY: all docs test testFull clean
+.PHONY: test docs-all docs html epub files dot clean Clean
 
-all: $(testAll)
+all: dot files editable
+	$(MAKE) test docs-all
 
-test: pytest
-	coverage html
-testFull: pytest pep8 pylint
-	coverage html
+test:
+	$(_python) -m pytest -vv $(PYTESTPARALLEL) \
+		--cov=src --cov-report term $(COVHTML) --no-cov-on-fail --cov-branch \
+		tests
+
+docs-all: docs html epub
+docs: $(RSTs)
+html: dist/docs/
+epub: dist/pantable.epub
+
+files:
+	cd tests/files; $(MAKE)
+dot:
+	cd docs/dot; $(MAKE)
 
 clean:
-	rm -f .coverage $(testAll) tests/reference_idempotent.native $(docsAll) docs/pantable*.rst docs/modules.rst docs/setup.rst
-	rm -rf htmlcov pantable.egg-info .cache .idea dist docs/_build docs/_static docs/_templates
-	find . -type f \( -name "*.py[co]" -o -name ".coverage.*" \) -delete -or -type d -name "__pycache__" -delete
-	find tests -name '*.pdf' -delete
-	cd docs && make clean
-	[[ -d gh-pages ]] && find gh-pages -maxdepth 1 -mindepth 1 \! -name .git -exec rm -rf {} + || true
-
-# Making dependancies ##########################################################
-
-%.native: %.md
-	pandoc -t json $< | coverage run --append --branch -m pantable.cli.pantable | pandoc -f json -t native -o $@
+	rm -f .coverage* docs/pantable*.rst docs/modules.rst docs/setup.rst
+	rm -rf htmlcov pantable.egg-info .cache .idea dist docs/_build \
+		docs/_static docs/_templates .ipynb_checkpoints .mypy_cache \
+		.pytest_cache .tox
+	find . -type f -name "*.py[co]" -delete \
+		-or -type d -name "__pycache__" -delete
+Clean: clean
+	rm -f $(RSTs)
 
 # maintenance ##################################################################
 
-.PHONY: pypi pypiManual pytest pytestLite pep8 pylint autopep8 autopep8Aggressive
+.PHONY: pypi pypiManual pep8 flake8 pylint
 # Deploy to PyPI
 ## by CI, properly git tagged
 pypi:
-	git tag -a v$$($(python) setup.py --version) -m 'Deploy to PyPI' && git push origin v$$($(python) setup.py --version)
+	git tag -a v$$($(_python) setup.py --version) -m 'Deploy to PyPI'
+	git push origin v$$($(_python) setup.py --version)
 ## Manually
 pypiManual:
-	$(python) setup.py sdist bdist_wheel && twine upload dist/*
-
-pytest: $(testNative) tests/test_idempotent.native
-	$(python) -m pytest -vv --cov=pantable --cov-branch tests
-pytestLite:
-	$(python) -m pytest -vv --cov=pantable --cov-branch --cov-append tests
-tests/reference_idempotent.native: tests/test_pantable.md
-	pandoc -t json $< |\
-		coverage run --append --branch -m pantable.cli.pantable | coverage run --append --branch -m pantable.cli.pantable2csv |\
-		coverage run --append --branch -m pantable.cli.pantable | coverage run --append --branch -m pantable.cli.pantable2csv |\
-		pandoc -f json -t native > $@
-tests/test_idempotent.native: tests/reference_idempotent.native
-	pandoc -f native -t json $< |\
-		coverage run --append --branch -m pantable.cli.pantable | coverage run --append --branch -m pantable.cli.pantable2csv |\
-		pandoc -f json -t native > $@
+	rm -rf dist
+	tox -e check
+	poetry build
+	twine upload dist/*
 
 # check python styles
 pep8:
-	pycodestyle . --ignore=E402,E501,E731
+	pycodestyle . --ignore=E501
+flake8:
+	flake8 . --ignore=E501
 pylint:
 	pylint pantable
-
-# cleanup python
-autopep8:
-	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose
-autopep8Aggressive:
-	autopep8 . --recursive --in-place --pep8-passes 2000 --verbose --aggressive --autopep8Aggressive
 
 print-%:
 	$(info $* = $($*))
 
-# gh-pages #####################################################################
+# docs #########################################################################
 
-%.pdf: %.md
-	pandoc $(pandocArgStandalone) -o $@ $<
-%.html: %.md
-	pandoc $(pandocArgHTML) $< -o $@
+README.rst: docs/README.md docs/badges.csv
+	printf \
+		"%s\n\n" \
+		".. This is auto-generated from \`$<\`. Do not edit this file directly." \
+		> $@
+	cd $(<D); \
+	$(_pandoc) $(pandocArgs) $(<F) -V title='pantable Documentation' -s -t rst \
+		>> ../$@
 
-# readme
-## index.html
-# docs/index.html: docs/badges.markdown docs/README.md
-# 	pandoc $(pandocArgHTML) $^ -o $@
-## GitHub README
-README.md: docs/badges.markdown docs/README.md
-	printf "%s\n\n" "<!--This README is auto-generated from \`docs/README.md\`. Do not edit this file directly.-->" > $@
-	pandoc $(pandocArgReadmeGitHub) $^ >> $@
-## PyPI README: not using this for now as rst2html emits errors
-docs/README.rst: docs/badges.markdown docs/README.md
-	printf "%s\n\n" ".. This README is auto-generated from \`docs/README.md\`. Do not edit this file directly." > $@
-	pandoc $(pandocArgReadmePypi) $^ -V title='pantable Documentation' >> $@
+%.rst: %.md
+	printf \
+		"%s\n\n" \
+		".. This is auto-generated from \`$<\`. Do not edit this file directly." \
+		> $@
+	$(_pandoc) $(pandocArgs) $< -s -t rst >> $@
 
-# API docs #####################################################################
+dist/docs/:
+	tox -e docs
+# depends on docs as the api doc is built there
+# didn't put this in tox as we should build this once every release
+# TODO: consider put this in tox and automate it in GH Actions
+dist/pantable.epub: docs
+	sphinx-build -E -b epub docs dist
+# the badges and dots has svg files that LaTeX complains about
+# dist/pantable.pdf: docs
+# 	sphinx-build -E -b latex docs dist/pdf
+# 	cd dist/pdf; make
+# 	mv dist/pdf/pantable.pdf dist
 
-.PHONY: docs
-docs: $(docsAll)
-	sphinx-apidoc -d 10 -f -e -o $@ . tests
-	cd $@ && make html
+# poetry #######################################################################
 
-.PHONY: gh-pages
-gh-pages:
-	rsync -av --delete --stats --exclude='.git/' docs/_build/html/ gh-pages/
-	cp -f docs/README.pdf gh-pages/
+# since poetry doesn't support editable, we can build and extract the setup.py,
+# temporary remove pyproject.toml and ask pip to install from setup.py instead.
+editable:
+	poetry build
+	cd dist; tar -xf pantable-0.13.0.tar.gz pantable-0.13.0/setup.py
+	mv dist/pantable-0.13.0/setup.py .
+	mv pyproject.toml .pyproject.toml
+	$(_python) -m pip install -e .$(EXTRAS); mv .pyproject.toml pyproject.toml

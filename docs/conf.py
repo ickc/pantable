@@ -1,66 +1,44 @@
-# Configuration file for the Sphinx documentation builder.
-#
-# This file only contains a selection of the most common options. For a full
-# list see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Path setup --------------------------------------------------------------
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-import os
-import sys
-
 import sphinx_bootstrap_theme
 
-sys.path.insert(0, os.path.abspath('..'))
-
-
-# -- Project information -----------------------------------------------------
-
-project = 'pantable'
-copyright = '2020, Kolen Cheung'
-author = 'Kolen Cheung'
-
-# The full version, including alpha/beta/rc tags
-# release = 'v0.12.4'
-
-
-# -- General configuration ---------------------------------------------------
-
-# Add any Sphinx extension module names here, as strings. They can be
-# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
-# ones.
-extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.napoleon',
+html_css_files = [
+    "https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css/css/_table.min.css",
+    "https://cdn.jsdelivr.net/gh/ickc/markdown-latex-css/fonts/fonts.min.css",
 ]
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.extlinks",
+    "sphinx.ext.ifconfig",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
+]
+source_suffix = ".rst"
+master_doc = "index"
+project = "pantable"
+year = "2016-2020"
+author = "Kolen Cheung"
+copyright = f"{year}, {author}"
+version = release = "0.13.0"
 
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+pygments_style = "solarizedlight"
+html_theme = "bootstrap"
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme_options = {
+    "navbar_links": [("GitHub", "https://github.com/ickc/pantable/", True,)],
+    "source_link_position": None,
+    "bootswatch_theme": "readable",
+    "bootstrap_version": "3",
+}
 
+html_use_smartypants = True
+html_last_updated_fmt = "%b %d, %Y"
+html_split_index = False
+html_short_title = f"{project}-{version}"
 
-# -- Options for HTML output -------------------------------------------------
-
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-pygments_style = 'solarizedlight'
-html_theme = 'bootstrap'
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+napoleon_use_ivar = True
+napoleon_use_rtype = False
+napoleon_use_param = False

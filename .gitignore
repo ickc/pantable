@@ -1,47 +1,83 @@
-# macOS files
-.DS_Store
+docs/modules.rst
+docs/pantable*.rst
+docs/dot/pipeline-simple.dot
 
-tests/reference_idempotent.native
-tests/*.native
-!tests/reference_pantable.native
-tests/*.pdf
+poetry.lock
+setup.py
 
-# python auxiliary 
-__pycache__/
-.cache
-*.pyc
+.ipynb_checkpoints
+*.ipynb
 
-# pypi
-dist/
-pantable.egg-info/
+*.py[cod]
+__pycache__
 
-# coverage
-.coverage
-.coverage.*
-htmlcov/
+# C extensions
+*.so
 
-# pycharm
-.idea/
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+.eggs
+parts
+bin
+var
+sdist
+wheelhouse
+develop-eggs
+.installed.cfg
+lib
+lib64
+venv*/
+pyvenv*/
+pip-wheel-metadata/
 
-# rst2html
-README.rst
-README.html
+# Installer logs
+pip-log.txt
 
-.mypy_cache/
+# Unit test / coverage reports
+.coverage*
+.tox
 .pytest_cache/
-build/
-.vscode/
+nosetests.xml
+coverage.xml
+htmlcov
 
-gh-pages/
+# Translations
+*.mo
 
-docs/*
-!docs/badges.markdown
-!docs/comparison.csv
-!docs/example.csv
-!docs/README.md
+# Buildout
+.mr.developer.cfg
+
+# IDE project files
+.project
+.pydevproject
+.idea
+.vscode
+*.iml
+*.komodoproject
+
+# Complexity
+output/*.html
+output/*/index.html
+
 # Sphinx
-!docs/conf.py
-!docs/index.rst
-!docs/make.bat
-!docs/Makefile
-!docs/requirements.txt
+docs/_build
+
+.DS_Store
+*~
+.*.sw[po]
+.build
+.ve
+.env
+.cache
+.pytest
+.benchmarks
+.bootstrap
+.appveyor.token
+*.bak
+
+# Mypy Cache
+.mypy_cache/

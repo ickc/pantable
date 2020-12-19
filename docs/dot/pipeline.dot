@@ -1,0 +1,42 @@
+digraph {
+    rankdir=LR
+
+    graph [fontname = "Latin Modern Roman"]
+    node [fontname = "Latin Modern Roman" shape=box]
+    edge [fontname = "Latin Modern Roman" penwidth=0.6]
+
+    Table [label="AST-Table"]
+    CodeBlock [label="AST-CodeBlock"]
+
+    {
+        rank=same
+        PanTableStr
+        PanTableMarkdown
+        PanTableText
+    }
+
+    // PanTable methods
+    Table -> PanTable [label="PanTable.from_panflute_ast"]
+    PanTable -> Table [label="PanTable.to_panflute_ast" weight=1000000]
+    PanTable -> PanTableMarkdown [label="PanTable.to_pantablemarkdown" weight=1000000]
+    PanTable -> PanTableStr [label="PanTable.to_pantablestr" style=dashed]
+
+    // PanTableMarkdown methods
+    PanTableMarkdown -> PanTable [label="PanTableMarkdown.to_pantable"]
+    PanTableMarkdown -> PanCodeBlock [label="PanTableMarkdown.to_pancodeblock(fancy_table=True)"]
+    PanTableMarkdown -> PanCodeBlock [label="PanTableMarkdown.to_pancodeblock", style=dashed]
+
+    // PanTableStr methods
+    PanTableStr -> PanTable [label="PanTableStr.to_pantable"]
+    PanTableStr -> PanCodeBlock [label="PanTableStr.to_pancodeblock", style=dashed]
+
+    // PanTableText methods
+    PanTableText -> PanTable [label="PanTableText.to_pantable"]
+    PanTableText -> PanCodeBlock [label="PanTableText.to_pancodeblock"]
+
+    // PanCodeBlock methods
+    PanCodeBlock -> CodeBlock [label="PanCodeBlock.to_panflute_ast"]
+    PanCodeBlock -> PanTableMarkdown [label="PanCodeBlock.to_pantablestr w/ PanTableOption.markdown=True" weight=1000000]
+    PanCodeBlock -> PanTableText [label="PanCodeBlock.to_pantablestr w/ PanTableOption.markdown=False"]
+    CodeBlock -> PanCodeBlock [label="PanCodeBlock.from_yaml_filter" weight=1000000]
+}

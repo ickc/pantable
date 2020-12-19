@@ -13,10 +13,15 @@ jobs:
       fail-fast: false
       matrix:
         # see setup.py for supported versions
-        python-version: [3.6, 3.7, 3.8, 3.9, pypy3]
+        python-version:
+          # - 3.6
+          - 3.7
+          - 3.8
+          - 3.9
+          - pypy3
         # should test sparingly across API breaking boundaries
         pandoc-version:
-          - 2.0.6
+          # - 2.0.6
           # - 2.1.3
           # - 2.2.3.2
           # - 2.3.1
@@ -27,13 +32,13 @@ jobs:
           # - 2.7.3
           # no major API change between 2.7 to 2.9
           # - 2.8.1
-          - 2.9.2.1
+          # - 2.9.2.1
           # as of writing, panflute only support pandoc<= 2.9. But GitHub workflow does not support "allow failure" yet. See https://github.com/actions/toolkit/issues/399
           # 2.10 has breaking change
           # - 2.10.1
           # 2.11 has minor breaking change, fixing some quirks in 2.10
-          # - 2.11.1
-          # - latest
+          # - 2.11.0.4
+          - latest
 
     steps:
     - uses: actions/checkout@v2
@@ -43,9 +48,19 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies—pip
       run: |
-        pip install --upgrade setuptools pip
-        pip install wheel
-        pip install -e .[test]
+        # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
+        if [[ ${{ matrix.python-version }} == pypy3 ]]; then
+          # install our own pypy37
+          mkdir -p ~/.local
+          wget -qO- https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2 | tar -xjf - -C ~/.local --strip-components=1
+          export PATH="$HOME/.local/bin:$PATH"
+          pypy -m ensurepip
+          pypy -m pip install -U 'numpy==1.20.0rc1' poetry setuptools
+          make editable EXTRAS=[extras,tests] python=pypy
+        else
+          pip install -U poetry setuptools
+          make editable EXTRAS=[extras,tests]
+        fi
     - name: Install dependencies—pandoc
       run: |
         # pandoc
@@ -54,13 +69,21 @@ jobs:
         wget --quiet "$downloadUrl"
         sudo dpkg -i "${downloadUrl##*/}"
     - name: Tests
-      run: make clean && make test -j1
+      run: |
+        # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
+        if [[ ${{ matrix.python-version }} == pypy3 ]]; then
+          export PATH="$HOME/.local/bin:$PATH"
+          make test COVHTML= python=pypy
+        else
+          # TODO cleanup when pytest-parallel support python 3.9 and runs sucessfully
+          [[ ${{ matrix.python-version }} == 3.9 ]] && make test COVHTML= PYTESTPARALLEL= || make test COVHTML=
+        fi
     # c.f. https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
     - name: Build a binary wheel and a source tarball
-      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.9 && matrix.pandoc-version == '2.9.2.1' }}
-      run: python setup.py sdist bdist_wheel
+      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.9 && matrix.pandoc-version == 'latest' }}
+      run: poetry build
     - name: Publish distribution 📦 to PyPI
-      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.9 && matrix.pandoc-version == '2.9.2.1' }}
+      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.9 && matrix.pandoc-version == 'latest' }}
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.pypi_password }}

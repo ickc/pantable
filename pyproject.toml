@@ -1,0 +1,267 @@
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "pantable"
+version = "0.13.0"
+description = "A Python library for writing pandoc filters for tables with batteries included."
+license = "BSD-3-Clause"
+keywords = [
+    "pandoc",
+    "pandocfilters",
+    "panflute",
+    "markdown",
+    "latex",
+    "html",
+    "csv",
+    "table",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Build Tools",
+    "Topic :: Text Processing :: Filters",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: Unix",
+    "Operating System :: POSIX",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Utilities",
+]
+homepage = "https://github.com/ickc/pantable"
+repository = "https://github.com/ickc/pantable"
+documentation = "https://ickc.github.io/pantable"
+authors = ["Kolen Cheung <christian.kolen@gmail.com>"]
+readme = "README.rst"
+packages = [
+    { include = "pantable", from = "src" },
+]
+include = [
+    'CHANGELOG.rst',
+    'CONTRIBUTING.rst',
+    'LICENSE',
+    'README.rst',
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+panflute = "^2"
+pyyaml = "*"
+numpy = "*"
+"backports.cached-property" = {python = "<3.8", version = "*"}
+
+# extras
+coloredlogs = {optional = true, version = "*"}
+tabulate = {optional = true, version = "*"}
+yamlloader = {optional = true, version = "*"}
+
+# tests
+coverage = {optional = true, version = "*"}
+coveralls = {optional = true, version = "*"}
+flake8 = {optional = true, version = "*"}
+pytest = {optional = true, version = "*"}
+pytest-cov = {optional = true, version = "*"}
+pytest-parallel = {optional = true, version = "*"}
+
+# docs: sync this with tox.testenv.docs below
+sphinx = {optional = true, version = "^3.3"}
+sphinx-bootstrap-theme = {optional = true, version = "*"}
+pygments-style-solarized = {optional = true, version = "*"}
+
+[tool.poetry.dev-dependencies]
+tox = "*"
+data-science-types = "*"
+
+[tool.poetry.extras]
+extras = [
+    "coloredlogs",
+    "tabulate",
+    "yamlloader",
+]
+tests = [
+    "coverage",
+    "coveralls",
+    "flake8",
+    "pytest",
+    "pytest-cov",
+    "pytest-parallel",
+]
+docs = [
+    "sphinx",
+    "sphinx-bootstrap-theme",
+    "pygments-style-solarized",
+]
+
+[tool.poetry.scripts]
+pantable = 'pantable.cli.pantable:main'
+pantable2csv = 'pantable.cli.pantable2csv:main'
+pantable2csvx = 'pantable.cli.pantable2csvx:main'
+
+[tool.coverage.paths]
+source = [
+    'src',
+    '*/site-packages',
+]
+
+[tool.coverage.run]
+branch = true
+source = [
+    'src',
+    'tests',
+]
+parallel = true
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
+
+[tool.pytest.ini_options]
+
+python_files = [
+    'test_*.py',
+    '*_test.py',
+    'tests.py',
+]
+
+addopts = [
+    '-ra',
+    '--strict-markers',
+    '--doctest-modules',
+    '--doctest-glob=\*.rst',
+    '--tb=short',
+]
+
+testpaths = [
+    'tests',
+]
+
+[tool.isort]
+line_length = 120
+known_first_party = 'pantable'
+default_section = 'THIRDPARTY'
+forced_separate = 'test_pantable'
+skip = [
+    '.tox',
+    '.eggs',
+    'ci/templates',
+    'build',
+    'dist',
+]
+
+[tool.tox]
+legacy_tox_ini = '''
+[testenv:bootstrap]
+deps =
+    jinja2
+    matrix
+    tox
+skip_install = true
+commands =
+    python ci/bootstrap.py --no-env
+passenv =
+    *
+; a generative tox configuration, see: https://tox.readthedocs.io/en/latest/config.html#generative-envlist
+
+[tox]
+isolated_build = True
+envlist =
+    clean,
+    check,
+    docs,
+    {py37,py38,py39,pypy3},
+    report
+ignore_basepython_conflict = true
+
+[gh-actions]
+python =
+    3.7: py37
+    3.8: py38, mypy
+    3.9: py39
+    pypy3: pypy3
+
+[testenv]
+basepython =
+    pypy: {env:TOXPYTHON:pypy}
+    pypy3: {env:TOXPYTHON:pypy3}
+    py37: {env:TOXPYTHON:python3.7}
+    py38: {env:TOXPYTHON:python3.8}
+    py39: {env:TOXPYTHON:python3.9}
+    {bootstrap,clean,check,report,docs,codecov,coveralls}: {env:TOXPYTHON:python3}
+    .package: python3
+setenv =
+    # for coverage to work properly
+    PYTHONPATH={toxinidir}/src
+    PYTHONUNBUFFERED=yes
+passenv =
+    *
+usedevelop = false
+deps =
+    pytest
+    pytest-cov
+    yamlloader
+commands =
+    {posargs:pytest --cov --cov-branch --cov-report=term-missing --cov-report=xml -vv tests}
+
+[testenv:check]
+deps =
+    docutils
+    check-manifest
+    flake8
+    readme-renderer
+    pygments
+    isort
+skip_install = true
+commands =
+    flake8 --ignore F821,E501 --max-line-length 140 --exclude '.tox,.eggs,ci/templates,build,dist,setup.py'
+    isort --verbose --check-only --diff --filter-files .
+
+[testenv:docs]
+usedevelop = false
+deps =
+    sphinx >=3.3,<4
+    sphinx-bootstrap-theme
+    pygments-style-solarized
+commands =
+    sphinx-apidoc -d 10 -f -e -o docs src
+    sphinx-build {posargs:-E} -b dirhtml docs dist/docs
+    # sphinx-build -b linkcheck docs dist/docs
+
+[testenv:coveralls]
+deps =
+    coveralls
+skip_install = true
+commands =
+    coveralls []
+
+[testenv:codecov]
+deps =
+    codecov
+skip_install = true
+commands =
+    codecov []
+
+[testenv:report]
+deps =
+    coverage
+    toml
+skip_install = true
+commands =
+    coverage report
+    coverage html
+
+[testenv:clean]
+commands = coverage erase
+skip_install = true
+deps =
+    coverage
+    toml
+'''
