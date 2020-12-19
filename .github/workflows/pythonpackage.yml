@@ -72,6 +72,8 @@ jobs:
         sudo dpkg -i "${downloadUrl##*/}"
     - name: Tests
       run: |
+        # for coveralls to work properly
+        export PYTHONPATH=$(realpath src)
         # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           export PATH="$HOME/.local/bin:$PATH"
