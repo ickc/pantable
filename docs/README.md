@@ -105,7 +105,7 @@ This allows CSV tables, optionally containing markdown syntax (disabled by defau
 
 ## Example
 
-Also see the README in [GitHub Pages](https://ickc.github.io/pantable/). There's a [LaTeX output](https://ickc.github.io/pantable/README.pdf) too.
+Also see the README in [GitHub Pages](https://ickc.github.io/pantable/).
 
 ~~~
 ```table
@@ -412,9 +412,46 @@ Dwarf planets",,Pluto,0.0146,"2,370",2095,0.7,153.3,5906.4,-225,5,Declassified a
 
 # Pantable as a library
 
-![Overview](  docs/dot/pipeline-simple.svg)
+(experimental, API may change in the future)
 
-![Detailed w/ methods](  docs/dot/pipeline.svg)
+Documentation here is sparse, partly because the upstream (pandoc) may change the table AST again. See [Crazy ideas: table structure from upstream GitHub](https://github.com/jgm/pandoc-types/issues/86).
+
+See the API docs in <https://ickc.github.io/pantable/>.
+
+For example, looking at the source of `pantable` as a pandoc filter, in `codeblock_to_table.py`, you will see the main function doing the work is now
+
+```python
+pan_table_str = (
+    PanCodeBlock
+    .from_yaml_filter(options=options, data=data, element=element, doc=doc)
+    .to_pantablestr()
+)
+if pan_table_str.table_width is not None:
+    pan_table_str.auto_width()
+return (
+    pan_table_str
+    .to_pantable()
+    .to_panflute_ast()
+)
+```
+
+You can see another example from `table_to_codeblock.py` which is what `pantable2csv` and `pantable2csvx` called.
+
+Below is a diagram illustrating the API:
+
+![Overview](docs/dot/pipeline-simple.svg)
+
+Solid arrows are lossless conversions. Dashed arrows are lossy.
+
+You can see the pantable internal structure, `PanTable` is one-one correspondence to the pandoc Table AST. Similarly for `PanCodeBlock`.
+
+It can then losslessly converts between PanTable and PanTableMarkdown, where everything in PanTableMarkdown is now markdown strings (whereas those in PanTable are panflute or panflute-like AST objects.)
+
+Lastly, it defines a one-one correspondence to PanCodeBlock with `fancy_table` syntax mentioned earlier.
+
+Below is the same diagram with the method names:
+
+![Detailed w/ methods](docs/dot/pipeline.svg)
 
 # Development
 
