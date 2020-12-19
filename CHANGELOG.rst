@@ -9,6 +9,7 @@
 Revision history for Pantable
 =============================
 
+-  v0.13.1: util.py: fix ``iter_convert_texts_markdown_to_panflute``
 -  v0.13:added pandoc 2.11.0.4+ & panflute 2+ support
 
    -  pandoc 2.10 introduces a new table AST. This version provides complete support of all features supported in the pandoc AST. Hence, older pandoc versions are no longer supported. Install ``pantable=0.12.4`` if you need to use ``pandoc<2.10``.
