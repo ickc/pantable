@@ -136,21 +136,64 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
 
 `caption`
 
-: the caption of the table. If omitted, no caption will be inserted.
+: the caption of the table. Can be block-like. If omitted, no caption will be inserted.
+Interpreted as markdown only if `markdown: true` below.
+
+    Default: disabled.
+
+`short-caption`
+
+: the short-caption of the table. Must be inline-like element.
+Interpreted as markdown only if `markdown: true` below.
+
     Default: disabled.
 
 `alignment`
 
-: a string of characters among `L,R,C,D`, case-insensitive,
-        corresponds to Left-aligned, Right-aligned,
-        Center-aligned, Default-aligned respectively.
-    e.g. `LCRD` for a table with 4 columns.
+: alignment for columns:
+a string of characters among `L,R,C,D`, case-insensitive,
+corresponds to Left-aligned, Right-aligned,
+Center-aligned, Default-aligned respectively.
+e.g. `LCRD` for a table with 4 columns.
+
+    You can specify only the beginning that's non-default.
+    e.g. `DLCR` for a table with 8 columns is equivalent to `DLCRDDDD`.
+
     Default: `DDD...`
+
+`alignment-cells`
+
+: alignment per cell. One row per line.
+A string of characters among `L,R,C,D`, case-insensitive,
+corresponds to Left-aligned, Right-aligned,
+Center-aligned, Default-aligned respectively.
+e.g.
+
+        LCRD
+        DRCL
+
+    for a table with 4 columns, 2 rows.
+
+    you can specify only the top left block that is not default, and the
+    rest of the cells with be default to default automatically.
+    e.g.
+
+        DC
+        LR
+
+    for a table with 4 columns, 3 rows will be equivalent to
+
+        DCDD
+        LRDD
+        DDDD
+
+    Default: `DDD...\n...`
 
 `width`
 
 : a list of relative width corresponding to the width of each columns.
-    e.g.
+`D` means default width.
+e.g.
 
     ```yaml
     - width
@@ -158,35 +201,59 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
         - 0.2
         - 0.3
         - 0.4
+        - D
     ```
 
-    Default: auto calculated from the length of each line in table cells.
+    Again, you can specify only the left ones that are non-default and it will be padded
+    with defaults.
+
+    Default: `[D, D, D, ...]`
 
 `table-width`
 
 : the relative width of the table (e.g. relative to `\linewidth`).
-    default: 1.0
+If specified as a number, and if any of the column width in `width` is default, then
+auto-width will be performed such that the sum of `width` equals this number.
+
+    Default: None
 
 `header`
+
 : If it has a header row or not.
-    True/False/yes/NO are accepted, case-insensitive.
-    default: True
+
+    Default: True
 
 `markdown`
+
 : If CSV table cell contains markdown syntax or not.
-     Same as above.
+
      Default: False
+
+`fancy_table`
+
+: if true, then the first column of the table will be interpreted as a special fancy-table
+    syntax s.t. it encodes which rows are
+
+    - table-header,
+    - table-foot,
+    - multiple table-bodies and
+    - "body-head" within table-bodies.
+
+    see example below.
 
 `include`
 : the path to an CSV file, can be relative/absolute.
     If non-empty, override the CSV in the CodeBlock.
-    default: None
+
+    Default: None
 
 `include-encoding`
+
 : if specified, the file from `include` will be decoded according to this encoding, else assumed to be UTF-8. Hint: if you save the CSV file via Microsoft Excel, you may need to set this to `utf-8-sig`.
 
 `csv-kwargs`
 : If specified, should be a dictionary passed to `csv.reader` as options. e.g.
+
     ```yaml
     ---
     csv-kwargs:
@@ -195,24 +262,39 @@ Optionally, YAML metadata block can be used within the fenced code block, follow
     ...
     ```
 
-`pipe_tables`
+`format`
 
-: If True, a pipe table will be constructed directly in markdown syntax instead of via AST. `markdown` is implied to be True. `header` will be overridden as true because `pipe_tables` must has header in pandoc.
+: The file format from the data in code-block or include if specified.
 
-    This trades correctness for speed. It won't be correct if any of the cell is multiline for example, resulting in an invalid pipe table. However, it is much faster comparing to previous `markdown: True` case because previously per cell a subprocess to execute pandoc the parse the markdown to AST is needed.
+    Default: `csv` for data from code-block, and infer from extension in include.
 
-`grid_tables`
+    Currently only `csv` is supported.
 
-: If True, a grid table will be constructed directly in markdown syntax instead of via AST. `markdown` is implied to be True. `header` can be used together with this.
+`ms`
 
-    This trades correctness for speed. This should be more robust than `pipe_tables` since the `grid_tables` syntax supports everything the pandoc AST supports. This however depends on an external dependency. Install it by either `pip install terminaltables` or `conda install terminaltables`.
+: (experimental, may drop in the future): a list of int that specifies the number of
+    rows per row-block.
+    e.g. `[2, 6, 3, 4, 5, 1]` means
+    the table should have 21 rows,
+    first 2 rows are table-head,
+    last 1 row is table-foot,
+    there are 2 table-bodies (indicated by `6, 3, 4, 5` in the middle)
+    where the 1st body `6, 3` has 6 body-head and 3 "body-body",
+    and the 2nd body `4, 5` has 4 body-head and 5 "body-body".
 
-`raw_markdown`
+    If this is specified, `header` will be ignored.
 
-: If True, force output the table as a pipe table (which is tab-delimited.) This is sometimes useful if pandoc is very stubborn to not emit a pipe table even if `markdown-grid_tables...` is used. Note that this should only be used if the output format is markdown.
+    Default: None, which would be inferred from `header`.
 
-When the metadata keys is invalid, the default will be used instead.
-Note that width and table-width accept fractions as well.
+`ns_head`
+
+: (experimental, may drop in the future): a list of int that specifies the number of
+    head columns per table-body.
+    e.g. `[1, 2]` means
+    the 1st table-body has 1 column of head,
+    the 2nd table-body has 2 column of head
+
+    Default: None
 
 # `pantable2csv`
 
