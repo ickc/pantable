@@ -9,6 +9,7 @@
 Revision history for Pantable
 =============================
 
+-  v0.13.3: packaging change only: allow Python4
 -  v0.13.2: packaging change only: specified required versions for all dependencies including extras
 -  v0.13.1: util.py: fix ``iter_convert_texts_markdown_to_panflute``
 -  v0.13:added pandoc 2.11.0.4+ & panflute 2+ support
