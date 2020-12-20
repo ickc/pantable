@@ -51,7 +51,6 @@ Clean: clean
 # Deploy to PyPI
 ## by CI, properly git tagged
 pypi:
-	git tag -a v0.13.2 -m 'Deploy to PyPI'
 	git push origin v0.13.2
 ## Manually
 pypiManual:
