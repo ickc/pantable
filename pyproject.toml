@@ -55,14 +55,14 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.7"
 panflute = "^2"
-pyyaml = "*"
-numpy = "*"
-"backports.cached-property" = {python = "<3.8", version = "*"}
+pyyaml = "^5"
+numpy = "^1"
+"backports.cached-property" = {python = "<3.8", version = "^1"}
 
 # extras
-coloredlogs = {optional = true, version = "*"}
-tabulate = {optional = true, version = "*"}
-yamlloader = {optional = true, version = "*"}
+coloredlogs = {optional = true, version = ">=14,<16"}
+tabulate = {optional = true, version = "^0.8"}
+yamlloader = {optional = true, version = "^0.5"}
 
 # tests
 coverage = {optional = true, version = "*"}
