@@ -7,7 +7,7 @@ try:
 except ImportError:
     from logging import Formatter
 
-__version__ = '0.13.1'
+__version__ = '0.13.2'
 PY37 = sys.version_info.minor == 7
 
 logger = logging.getLogger(__name__)

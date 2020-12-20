@@ -12,7 +12,7 @@ package,"| [![GitHub Releases](https://img.shields.io/github/tag/ickc/pantable.s
   [![PyPI Wheel](https://img.shields.io/pypi/wheel/pantable.svg)](https://pypi.org/project/pantable)
   [![Supported versions](https://img.shields.io/pypi/pyversions/pantable.svg)](https://pypi.org/project/pantable)
   [![Supported implementations](https://img.shields.io/pypi/implementation/pantable.svg)](https://pypi.org/project/pantable)
-  [![Commits since latest release](https://img.shields.io/github/commits-since/ickc/pantable/v0.13.1.svg)](https://github.com/ickc/pantable/compare/v0.13.1...master)
+  [![Commits since latest release](https://img.shields.io/github/commits-since/ickc/pantable/v0.13.2.svg)](https://github.com/ickc/pantable/compare/v0.13.2...master)
   [![Development Status](https://img.shields.io/pypi/status/pantable.svg)](https://pypi.python.org/pypi/pantable/)
   [![Downloads](https://img.shields.io/pypi/dm/pantable.svg)](https://pypi.python.org/pypi/pantable/)
 | ![License](https://img.shields.io/pypi/l/pantable.svg)"
