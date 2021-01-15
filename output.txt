@@ -1,5 +1,5 @@
-pantable.ast.rst:3: [redirected with Found] https://stackoverflow.com/a/61480946/5769446 to https://stackoverflow.com/questions/51079503/dataclasses-and-property-decorator/61480946#61480946
-pantable.util.rst:3: [redirected with Found] https://stackoverflow.com/a/50622643 to https://stackoverflow.com/questions/50563546/validating-detailed-types-in-python-dataclasses/50622643#50622643
+api/pantable.ast.rst:3: [redirected with Found] https://stackoverflow.com/a/61480946/5769446 to https://stackoverflow.com/questions/51079503/dataclasses-and-property-decorator/61480946#61480946
+api/pantable.util.rst:3: [redirected with Found] https://stackoverflow.com/a/50622643 to https://stackoverflow.com/questions/50563546/validating-detailed-types-in-python-dataclasses/50622643#50622643
 readme.rst:5: [redirected with Found] https://codeclimate.com/github/ickc/pantable/badges/gpa.svg to https://api.codeclimate.com/v1/badges/11fec0905691d79d11ac/maintainability.svg
 readme.rst:5: [redirected with Found] https://coveralls.io/repos/ickc/pantable/badge.svg?branch=master&service=github to https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_0.svg
 readme.rst:5: [redirected permanently] https://coveralls.io/r/ickc/pantable to https://coveralls.io/github/ickc/pantable

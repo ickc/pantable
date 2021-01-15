@@ -61,7 +61,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../usage/">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing/">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog/">Revision history for Pantable</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules/">src</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules/">pantable</a></li>
 </ul>
 </ul>
 </li>
@@ -127,7 +127,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;pantable&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="load_csv"><a class="viewcode-back" href="../../../pantable.io/#pantable.io.load_csv">[docs]</a><span class="k">def</span> <span class="nf">load_csv</span><span class="p">(</span>
+<div class="viewcode-block" id="load_csv"><a class="viewcode-back" href="../../../api/pantable.io/#pantable.io.load_csv">[docs]</a><span class="k">def</span> <span class="nf">load_csv</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="n">PanTableOption</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
@@ -161,7 +161,7 @@
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;include path </span><span class="si">{</span><span class="n">include</span><span class="si">}</span><span class="s1"> not found.&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="load_csv_array"><a class="viewcode-back" href="../../../pantable.io/#pantable.io.load_csv_array">[docs]</a><span class="k">def</span> <span class="nf">load_csv_array</span><span class="p">(</span>
+<div class="viewcode-block" id="load_csv_array"><a class="viewcode-back" href="../../../api/pantable.io/#pantable.io.load_csv_array">[docs]</a><span class="k">def</span> <span class="nf">load_csv_array</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">options</span><span class="p">:</span> <span class="n">PanTableOption</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">]:</span>
@@ -179,7 +179,7 @@
     <span class="k">return</span> <span class="n">res</span></div>
 
 
-<div class="viewcode-block" id="dump_csv"><a class="viewcode-back" href="../../../pantable.io/#pantable.io.dump_csv">[docs]</a><span class="k">def</span> <span class="nf">dump_csv</span><span class="p">(</span>
+<div class="viewcode-block" id="dump_csv"><a class="viewcode-back" href="../../../api/pantable.io/#pantable.io.dump_csv">[docs]</a><span class="k">def</span> <span class="nf">dump_csv</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">],</span>
     <span class="n">options</span><span class="p">:</span> <span class="n">PanTableOption</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -191,7 +191,7 @@
         <span class="k">return</span> <span class="n">f</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="dump_csv_io"><a class="viewcode-back" href="../../../pantable.io/#pantable.io.dump_csv_io">[docs]</a><span class="k">def</span> <span class="nf">dump_csv_io</span><span class="p">(</span>
+<div class="viewcode-block" id="dump_csv_io"><a class="viewcode-back" href="../../../api/pantable.io/#pantable.io.dump_csv_io">[docs]</a><span class="k">def</span> <span class="nf">dump_csv_io</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">],</span>
     <span class="n">options</span><span class="p">:</span> <span class="n">PanTableOption</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

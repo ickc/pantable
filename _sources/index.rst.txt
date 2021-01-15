@@ -11,7 +11,7 @@ Contents
    usage
    contributing
    changelog
-   modules
+   api/modules
 
 Indices and tables
 ==================

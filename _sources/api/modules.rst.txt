@@ -1,0 +1,7 @@
+pantable
+========
+
+.. toctree::
+   :maxdepth: 4
+
+   pantable
