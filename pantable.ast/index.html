@@ -13,7 +13,6 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex/" />
     <link rel="search" title="Search" href="../search/" />
     <link rel="next" title="pantable.codeblock_to_table module" href="../pantable.codeblock_to_table/" />
@@ -129,12 +128,7 @@
 <p>Alignment class</p>
 <dl class="py attribute">
 <dt id="pantable.ast.Align.ALIGN">
-<code class="sig-name descname">ALIGN</code><em class="property">: ClassVar</em><em class="property"> = array(['AlignDefault', 'AlignLeft', 'AlignRight', 'AlignCenter'],       dtype='&lt;U12')</em><a class="headerlink" href="#pantable.ast.Align.ALIGN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pantable.ast.Align.aligns">
-<code class="sig-name descname">aligns</code><em class="property">: np.ndarray<span class="p">[</span>np.int8<span class="p">]</span></em><a class="headerlink" href="#pantable.ast.Align.aligns" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ALIGN</code><em class="property"> = array(['AlignDefault', 'AlignLeft', 'AlignRight', 'AlignCenter'],       dtype='&lt;U12')</em><a class="headerlink" href="#pantable.ast.Align.ALIGN" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -318,11 +312,6 @@ need to be able to configure pantable2csv on write location</p>
 <p>a representation of panflute Table</p>
 <p>TableArray should have content type as ListContainer
 although not strictly enforced here</p>
-<dl class="py attribute">
-<dt id="pantable.ast.PanTable.caption">
-<code class="sig-name descname">caption</code><em class="property">: ListContainer<span class="p">[</span>Block<span class="p">]</span></em><a class="headerlink" href="#pantable.ast.PanTable.caption" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt id="pantable.ast.PanTable.from_panflute_ast">
 <em class="property">classmethod </em><code class="sig-name descname">from_panflute_ast</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">table</span><span class="p">:</span> <span class="n">panflute.table_elements.Table</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pantable.ast.PanTable" title="pantable.ast.PanTable">pantable.ast.PanTable</a><a class="reference internal" href="../_modules/pantable/ast/#PanTable.from_panflute_ast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pantable.ast.PanTable.from_panflute_ast" title="Permalink to this definition">¶</a></dt>
@@ -330,17 +319,17 @@ although not strictly enforced here</p>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTable.icas">
-<code class="sig-name descname">icas</code><em class="property">: Optional<span class="p">[</span>np.ndarray<span class="p">[</span><a class="reference internal" href="#pantable.ast.Ica" title="pantable.ast.Ica">Ica</a><span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTable.icas" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icas</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTable.icas" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTable.icas_row">
-<code class="sig-name descname">icas_row</code><em class="property">: Optional<span class="p">[</span>np.ndarray<span class="p">[</span><a class="reference internal" href="#pantable.ast.Ica" title="pantable.ast.Ica">Ica</a><span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTable.icas_row" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icas_row</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTable.icas_row" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTable.icas_rowblock">
-<code class="sig-name descname">icas_rowblock</code><em class="property">: Optional<span class="p">[</span>np.ndarray<span class="p">[</span><a class="reference internal" href="#pantable.ast.Ica" title="pantable.ast.Ica">Ica</a><span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTable.icas_rowblock" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icas_rowblock</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTable.icas_rowblock" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -355,7 +344,7 @@ although not strictly enforced here</p>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTable.short_caption">
-<code class="sig-name descname">short_caption</code><em class="property">: Optional<span class="p">[</span>ListContainer<span class="p">[</span>Inline<span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTable.short_caption" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">short_caption</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTable.short_caption" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -385,7 +374,7 @@ although not strictly enforced here</p>
 <p>an abstract class of PanTables</p>
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableAbstract.aligns">
-<code class="sig-name descname">aligns</code><em class="property">: Optional<span class="p">[</span><a class="reference internal" href="#pantable.ast.Align" title="pantable.ast.Align">Align</a><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.aligns" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">aligns</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.aligns" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -394,16 +383,6 @@ although not strictly enforced here</p>
 <dd><p>calculate the i-th body that each row belongs to</p>
 <p>negative values means the row is not in a body</p>
 </dd></dl>
-
-<dl class="py attribute">
-<dt id="pantable.ast.PanTableAbstract.caption">
-<code class="sig-name descname">caption</code><em class="property">: Union<span class="p">[</span>ListContainer<span class="p">[</span>Block<span class="p">]</span><span class="p">, </span>str<span class="p">]</span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.caption" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pantable.ast.PanTableAbstract.cells">
-<code class="sig-name descname">cells</code><em class="property">: Union<span class="p">[</span><a class="reference internal" href="#pantable.ast.TableArray" title="pantable.ast.TableArray">TableArray</a><span class="p">, </span>np.ndarray<span class="p">[</span>Union<span class="p">[</span>ListContainer<span class="p">, </span>str<span class="p">]</span><span class="p">]</span><span class="p">]</span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.cells" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt id="pantable.ast.PanTableAbstract.contents">
@@ -428,29 +407,9 @@ including PanTableStr, PanTableMarkdown, PanTableText</p>
 <em class="property">property </em><code class="sig-name descname">ica_head</code><a class="headerlink" href="#pantable.ast.PanTableAbstract.ica_head" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py attribute">
-<dt id="pantable.ast.PanTableAbstract.ica_table">
-<code class="sig-name descname">ica_table</code><em class="property">: <a class="reference internal" href="#pantable.ast.Ica" title="pantable.ast.Ica">Ica</a></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.ica_table" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pantable.ast.PanTableAbstract.icas">
-<code class="sig-name descname">icas</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.icas" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt id="pantable.ast.PanTableAbstract.icas_body">
 <em class="property">property </em><code class="sig-name descname">icas_body</code><a class="headerlink" href="#pantable.ast.PanTableAbstract.icas_body" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pantable.ast.PanTableAbstract.icas_row">
-<code class="sig-name descname">icas_row</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.icas_row" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="pantable.ast.PanTableAbstract.icas_rowblock">
-<code class="sig-name descname">icas_rowblock</code><em class="property">: np.ndarray</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.icas_rowblock" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -529,7 +488,7 @@ see <a class="reference external" href="https://stackoverflow.com/a/61480946/576
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableAbstract.ns_head">
-<code class="sig-name descname">ns_head</code><em class="property">: Optional<span class="p">[</span>np.ndarray<span class="p">[</span>np.int64<span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.ns_head" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ns_head</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.ns_head" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -551,12 +510,12 @@ see <a class="reference external" href="https://stackoverflow.com/a/61480946/576
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableAbstract.short_caption">
-<code class="sig-name descname">short_caption</code><em class="property">: Optional<span class="p">[</span>Union<span class="p">[</span>ListContainer<span class="p">[</span>Inline<span class="p">]</span><span class="p">, </span>str<span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.short_caption" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">short_caption</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.short_caption" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableAbstract.spec">
-<code class="sig-name descname">spec</code><em class="property">: Optional<span class="p">[</span><a class="reference internal" href="#pantable.ast.Spec" title="pantable.ast.Spec">Spec</a><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.spec" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">spec</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableAbstract.spec" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -724,32 +683,32 @@ although not strictly enforced here</p>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableStr.caption">
-<code class="sig-name descname">caption</code><em class="property">: str</em><em class="property"> = ''</em><a class="headerlink" href="#pantable.ast.PanTableStr.caption" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">caption</code><em class="property"> = ''</em><a class="headerlink" href="#pantable.ast.PanTableStr.caption" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableStr.icas">
-<code class="sig-name descname">icas</code><em class="property">: Optional<span class="p">[</span>np.ndarray<span class="p">[</span>np.str_<span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.icas" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icas</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.icas" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableStr.icas_row">
-<code class="sig-name descname">icas_row</code><em class="property">: Optional<span class="p">[</span>np.ndarray<span class="p">[</span>np.str_<span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.icas_row" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icas_row</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.icas_row" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableStr.icas_rowblock">
-<code class="sig-name descname">icas_rowblock</code><em class="property">: Optional<span class="p">[</span>np.ndarray<span class="p">[</span>np.str_<span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.icas_rowblock" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icas_rowblock</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.icas_rowblock" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableStr.short_caption">
-<code class="sig-name descname">short_caption</code><em class="property">: Optional<span class="p">[</span>str<span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.short_caption" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">short_caption</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.short_caption" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableStr.table_width">
-<code class="sig-name descname">table_width</code><em class="property">: Optional<span class="p">[</span>float<span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.table_width" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">table_width</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableStr.table_width" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -782,17 +741,17 @@ info.</p>
 <p>Except for ica_table, If you try to access icas* and any methods that use them, it will errs.</p>
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableText.icas">
-<code class="sig-name descname">icas</code><em class="property">: ClassVar</em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableText.icas" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icas</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableText.icas" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableText.icas_row">
-<code class="sig-name descname">icas_row</code><em class="property">: ClassVar</em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableText.icas_row" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icas_row</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableText.icas_row" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt id="pantable.ast.PanTableText.icas_rowblock">
-<code class="sig-name descname">icas_rowblock</code><em class="property">: ClassVar</em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableText.icas_rowblock" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">icas_rowblock</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.PanTableText.icas_rowblock" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -803,13 +762,8 @@ info.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>a class of spec of PanTable</p>
 <dl class="py attribute">
-<dt id="pantable.ast.Spec.aligns">
-<code class="sig-name descname">aligns</code><em class="property">: <a class="reference internal" href="#pantable.ast.Align" title="pantable.ast.Align">Align</a></em><a class="headerlink" href="#pantable.ast.Spec.aligns" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
 <dt id="pantable.ast.Spec.col_widths">
-<code class="sig-name descname">col_widths</code><em class="property">: Optional<span class="p">[</span>np.ndarray<span class="p">[</span>np.float64<span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.Spec.col_widths" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">col_widths</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.Spec.col_widths" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -845,11 +799,6 @@ info.</p>
 <p>top-left corner of the grid is the cannonical location of a spanned cell</p>
 </dd></dl>
 
-<dl class="py attribute">
-<dt id="pantable.ast.TableArray.contents">
-<code class="sig-name descname">contents</code><em class="property">: np.ndarray<span class="p">[</span>Union<span class="p">[</span>ListContainer<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></em><a class="headerlink" href="#pantable.ast.TableArray.contents" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt id="pantable.ast.TableArray.default">
 <em class="property">classmethod </em><code class="sig-name descname">default</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shape</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span>int<span class="p">, </span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">has_geometries</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pantable.ast.TableArray" title="pantable.ast.TableArray">TableArray</a><a class="reference internal" href="../_modules/pantable/ast/#TableArray.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pantable.ast.TableArray.default" title="Permalink to this definition">¶</a></dt>
@@ -857,7 +806,7 @@ info.</p>
 
 <dl class="py attribute">
 <dt id="pantable.ast.TableArray.geometries">
-<code class="sig-name descname">geometries</code><em class="property">: Optional<span class="p">[</span>np.ndarray<span class="p">[</span>np.int64<span class="p">]</span><span class="p">]</span></em><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.TableArray.geometries" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">geometries</code><em class="property"> = None</em><a class="headerlink" href="#pantable.ast.TableArray.geometries" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -929,8 +878,8 @@ Else return <cite>elem</cite>.</p>
     </p>
     <p>
         &copy; Copyright 2016-2020, Kolen Cheung.<br/>
-      Last updated on Dec 20, 2020.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.3.1.<br/>
+      Last updated on Jan 15, 2021.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
     </p>
   </div>
 </footer>
