@@ -76,6 +76,7 @@ pytest-parallel = {optional = true, version = "*"}
 sphinx = {optional = true, version = "^3.3"}
 sphinx-bootstrap-theme = {optional = true, version = "*"}
 pygments-style-solarized = {optional = true, version = "*"}
+sphinxcontrib-apidoc = {optional = true, version = "*"}
 
 [tool.poetry.dev-dependencies]
 tox = "*"
@@ -99,6 +100,7 @@ docs = [
     "sphinx",
     "sphinx-bootstrap-theme",
     "pygments-style-solarized",
+    "sphinxcontrib-apidoc",
 ]
 
 [tool.poetry.scripts]
