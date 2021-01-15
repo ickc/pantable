@@ -45,6 +45,6 @@ napoleon_use_rtype = False
 napoleon_use_param = False
 
 # sphinxcontrib.apidoc
-apidoc_module_dir = '../src'
-apidoc_output_dir = '.'
+apidoc_module_dir = '../src/pantable'
 apidoc_separate_modules = True
+apidoc_module_first = True
