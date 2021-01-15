@@ -3,7 +3,6 @@ tests,"|
 | ![GitHub Actions](https://github.com/ickc/pantable/workflows/Python%20package/badge.svg)
   [![Coverage Status](https://coveralls.io/repos/ickc/pantable/badge.svg?branch=master&service=github)](https://coveralls.io/r/ickc/pantable)
   [![Coverage Status](https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/ickc/pantable)
-| [![Code Quality Status](https://landscape.io/github/ickc/pantable/master/landscape.svg?style=flat)](https://landscape.io/github/ickc/pantable/master)
   [![Scrutinizer Status](https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg)](https://scrutinizer-ci.com/g/ickc/pantable/)
   [![Codacy Code Quality Status](https://img.shields.io/codacy/grade/078ebc537c5747f68c1d4ad3d3594bbf.svg)](https://www.codacy.com/app/ickc/pantable)
   [![CodeClimate Quality Status](https://codeclimate.com/github/ickc/pantable/badges/gpa.svg)](https://codeclimate.com/github/ickc/pantable)"
