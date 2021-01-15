@@ -234,7 +234,7 @@ deps =
     sphinxcontrib-apidoc
 commands =
     sphinx-build {posargs:-E} -b dirhtml docs dist/docs
-    # sphinx-build -b linkcheck docs dist/docs
+    sphinx-build -b linkcheck docs dist/docs
 
 [testenv:coveralls]
 deps =
