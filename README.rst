@@ -4,7 +4,7 @@
 Pantable—A Python library for writing pandoc filters for tables with batteries included.
 ========================================================================================
 
-:Date:   December 18, 2020
+:Date:   January 15, 2021
 
 .. contents::
    :depth: 3
@@ -14,8 +14,7 @@ Pantable—A Python library for writing pandoc filters for tables with batteries
 | docs    | |Documentation Status|                                                                                                                                                          |
 +=========+=================================================================================================================================================================================+
 | tests   | |                                                                                                                                                                               |
-|         | | |GitHub Actions| |Coverage Status| |image2|                                                                                                                                   |
-|         | | |Code Quality Status| |Scrutinizer Status| |Codacy Code Quality Status| |CodeClimate Quality Status|                                                                          |
+|         | | |GitHub Actions| |Coverage Status| |image2| |Scrutinizer Status| |Codacy Code Quality Status| |CodeClimate Quality Status|                                                    |
 +---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | package | | |GitHub Releases| |PyPI Package latest release| |PyPI Wheel| |Supported versions| |Supported implementations| |Commits since latest release| |Development Status| |Downloads| |
 |         | | |License|                                                                                                                                                                     |
@@ -507,8 +506,6 @@ The followings are pandoc filters written in Haskell that provide similar functi
    :target: https://coveralls.io/r/ickc/pantable
 .. |image1| image:: https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master
    :target: https://codecov.io/github/ickc/pantable
-.. |Code Quality Status| image:: https://landscape.io/github/ickc/pantable/master/landscape.svg?style=flat
-   :target: https://landscape.io/github/ickc/pantable/master
 .. |Scrutinizer Status| image:: https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg
    :target: https://scrutinizer-ci.com/g/ickc/pantable/
 .. |Codacy Code Quality Status| image:: https://img.shields.io/codacy/grade/078ebc537c5747f68c1d4ad3d3594bbf.svg
