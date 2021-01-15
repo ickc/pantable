@@ -231,8 +231,8 @@ deps =
     sphinx >=3.3,<4
     sphinx-bootstrap-theme
     pygments-style-solarized
+    sphinxcontrib-apidoc
 commands =
-    sphinx-apidoc -d 10 -f -e -o docs src
     sphinx-build {posargs:-E} -b dirhtml docs dist/docs
     # sphinx-build -b linkcheck docs dist/docs
 
