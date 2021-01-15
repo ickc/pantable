@@ -10,15 +10,19 @@ Pantable—A Python library for writing pandoc filters for tables with batteries
    :depth: 3
 ..
 
-+---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| docs    | |Documentation Status|                                                                                                                                                          |
-+=========+=================================================================================================================================================================================+
-| tests   | |                                                                                                                                                                               |
-|         | | |GitHub Actions| |Coverage Status| |image2| |Scrutinizer Status| |Codacy Code Quality Status| |CodeClimate Quality Status|                                                    |
-+---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| package | | |GitHub Releases| |PyPI Package latest release| |PyPI Wheel| |Supported versions| |Supported implementations| |Commits since latest release| |Development Status| |Downloads| |
-|         | | |License|                                                                                                                                                                     |
-+---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++---------+----------------------------------------------------------------------------------+
+| docs    | |Documentation Status| |image2|                                                  |
++=========+==================================================================================+
+| tests   | |GitHub Actions| |Coverage Status|                                               |
+|         |                                                                                  |
+|         | |Codacy Code Quality Status| |Scrutinizer Status| |CodeClimate Quality Status|   |
++---------+----------------------------------------------------------------------------------+
+| package | |Supported versions| |Supported implementations| |PyPI Wheel|                    |
+|         |                                                                                  |
+|         | |PyPI Package latest release| |GitHub Releases| |Development Status| |Downloads| |
+|         |                                                                                  |
+|         | |Commits since latest release| |License|                                         |
++---------+----------------------------------------------------------------------------------+
 
 Introduction
 ============
@@ -499,35 +503,35 @@ The followings are pandoc filters written in Haskell that provide similar functi
 .. [2]
    copied from pandoc from `here <https://github.com/jgm/pandoc/blob/master/test/tables/planets.native>`__, which was dual licensed as CC0 `here <https://github.com/sergiocorreia/panflute/pull/172#issuecomment-736252008>`__
 
-.. |Documentation Status| image:: https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg
+.. |Documentation Status| image:: https://readthedocs.org/projects/pantable/badge/?version=latest
+   :target: https://pantable.readthedocs.io/en/latest/?badge=latest&style=plastic
+.. |image1| image:: https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg
    :target: https://ickc.github.io/pantable
 .. |GitHub Actions| image:: https://github.com/ickc/pantable/workflows/Python%20package/badge.svg
-.. |Coverage Status| image:: https://coveralls.io/repos/ickc/pantable/badge.svg?branch=master&service=github
-   :target: https://coveralls.io/r/ickc/pantable
-.. |image1| image:: https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master
+.. |Coverage Status| image:: https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master
    :target: https://codecov.io/github/ickc/pantable
-.. |Scrutinizer Status| image:: https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg
-   :target: https://scrutinizer-ci.com/g/ickc/pantable/
 .. |Codacy Code Quality Status| image:: https://img.shields.io/codacy/grade/078ebc537c5747f68c1d4ad3d3594bbf.svg
    :target: https://www.codacy.com/app/ickc/pantable
+.. |Scrutinizer Status| image:: https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg
+   :target: https://scrutinizer-ci.com/g/ickc/pantable/
 .. |CodeClimate Quality Status| image:: https://codeclimate.com/github/ickc/pantable/badges/gpa.svg
    :target: https://codeclimate.com/github/ickc/pantable
-.. |GitHub Releases| image:: https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release
-   :target: https://github.com/ickc/pantable/releases
-.. |PyPI Package latest release| image:: https://img.shields.io/pypi/v/pantable.svg
-   :target: https://pypi.org/project/pantable
-.. |PyPI Wheel| image:: https://img.shields.io/pypi/wheel/pantable.svg
-   :target: https://pypi.org/project/pantable
 .. |Supported versions| image:: https://img.shields.io/pypi/pyversions/pantable.svg
    :target: https://pypi.org/project/pantable
 .. |Supported implementations| image:: https://img.shields.io/pypi/implementation/pantable.svg
    :target: https://pypi.org/project/pantable
-.. |Commits since latest release| image:: https://img.shields.io/github/commits-since/ickc/pantable/v0.13.3.svg
-   :target: https://github.com/ickc/pantable/compare/v0.13.3...master
+.. |PyPI Wheel| image:: https://img.shields.io/pypi/wheel/pantable.svg
+   :target: https://pypi.org/project/pantable
+.. |PyPI Package latest release| image:: https://img.shields.io/pypi/v/pantable.svg
+   :target: https://pypi.org/project/pantable
+.. |GitHub Releases| image:: https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release
+   :target: https://github.com/ickc/pantable/releases
 .. |Development Status| image:: https://img.shields.io/pypi/status/pantable.svg
    :target: https://pypi.python.org/pypi/pantable/
 .. |Downloads| image:: https://img.shields.io/pypi/dm/pantable.svg
    :target: https://pypi.python.org/pypi/pantable/
+.. |Commits since latest release| image:: https://img.shields.io/github/commits-since/ickc/pantable/v0.13.3.svg
+   :target: https://github.com/ickc/pantable/compare/v0.13.3...master
 .. |License| image:: https://img.shields.io/pypi/l/pantable.svg
-.. |image2| image:: https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master
-   :target: https://codecov.io/github/ickc/pantable
+.. |image2| image:: https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg
+   :target: https://ickc.github.io/pantable
