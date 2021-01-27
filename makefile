@@ -8,6 +8,8 @@ _pandoc = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(pandoc)
 PYTESTPARALLEL ?= --workers auto
 EXTRAS ?=
 COVHTML ?= --cov-report html
+# for bump2version, valid options are: major, minor, patch
+PART ?= patch
 
 pandocArgs = --toc -M date="`date "+%B %e, %Y"`" --filter=pantable --wrap=none
 
@@ -112,3 +114,9 @@ editable:
 	rm -rf dist/pantable-0.13.4
 	mv pyproject.toml .pyproject.toml
 	$(_python) -m pip install -e .$(EXTRAS); mv .pyproject.toml pyproject.toml
+
+# releasing ####################################################################
+
+bump:
+	bump2version $(PART)
+	git push --follow-tags
