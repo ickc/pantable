@@ -128,7 +128,8 @@ def iter_convert_texts_panflute_to_markdown(
     inserter = Para(Str(seperator))
 
     elems_inserted = ListContainer(*iter_seperator(elems, inserter))
-    texts_converted = convert_text(elems_inserted, input_format='panflute', output_format='markdown')
+    # reference-location=block for footnotes, see issue #58
+    texts_converted = convert_text(elems_inserted, input_format='panflute', output_format='markdown', extra_args=['--reference-location=block'])
     return iter_split_by_seperator(texts_converted, seperator)
 
 
