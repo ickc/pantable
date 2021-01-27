@@ -4,25 +4,27 @@
 Pantable—A Python library for writing pandoc filters for tables with batteries included.
 ========================================================================================
 
-:Date:   January 15, 2021
+:Date:   January 26, 2021
 
 .. contents::
    :depth: 3
 ..
 
-+---------+----------------------------------------------------------------------------------+
-| docs    | |Documentation Status| |image2|                                                  |
-+=========+==================================================================================+
-| tests   | |GitHub Actions| |Coverage Status|                                               |
-|         |                                                                                  |
-|         | |Codacy Code Quality Status| |Scrutinizer Status| |CodeClimate Quality Status|   |
-+---------+----------------------------------------------------------------------------------+
-| package | |Supported versions| |Supported implementations| |PyPI Wheel|                    |
-|         |                                                                                  |
-|         | |PyPI Package latest release| |GitHub Releases| |Development Status| |Downloads| |
-|         |                                                                                  |
-|         | |Commits since latest release| |License|                                         |
-+---------+----------------------------------------------------------------------------------+
++-------------+----------------------------------------------------------------------------------+
+| docs        | |Documentation Status| |image2|                                                  |
++=============+==================================================================================+
+| tests       | |GitHub Actions| |Coverage Status|                                               |
+|             |                                                                                  |
+|             | |Codacy Code Quality Status| |Scrutinizer Status| |CodeClimate Quality Status|   |
++-------------+----------------------------------------------------------------------------------+
+| package     | |Supported versions| |Supported implementations| |PyPI Wheel|                    |
+|             |                                                                                  |
+|             | |PyPI Package latest release| |GitHub Releases| |Development Status| |Downloads| |
+|             |                                                                                  |
+|             | |Commits since latest release| |License|                                         |
++-------------+----------------------------------------------------------------------------------+
+| conda-forge | |Conda Recipe| |Conda Downloads| |Conda Version| |Conda Platforms|               |
++-------------+----------------------------------------------------------------------------------+
 
 Introduction
 ============
@@ -533,5 +535,13 @@ The followings are pandoc filters written in Haskell that provide similar functi
 .. |Commits since latest release| image:: https://img.shields.io/github/commits-since/ickc/pantable/v0.13.4.svg
    :target: https://github.com/ickc/pantable/compare/v0.13.4...master
 .. |License| image:: https://img.shields.io/pypi/l/pantable.svg
+.. |Conda Recipe| image:: https://img.shields.io/badge/recipe-pantable-green.svg
+   :target: https://anaconda.org/conda-forge/pantable
+.. |Conda Downloads| image:: https://img.shields.io/conda/dn/conda-forge/pantable.svg
+   :target: https://anaconda.org/conda-forge/pantable
+.. |Conda Version| image:: https://img.shields.io/conda/vn/conda-forge/pantable.svg
+   :target: https://anaconda.org/conda-forge/pantable
+.. |Conda Platforms| image:: https://img.shields.io/conda/pn/conda-forge/pantable.svg
+   :target: https://anaconda.org/conda-forge/pantable
 .. |image2| image:: https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg
    :target: https://ickc.github.io/pantable
