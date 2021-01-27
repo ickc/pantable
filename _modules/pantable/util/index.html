@@ -237,7 +237,8 @@
     <span class="n">inserter</span> <span class="o">=</span> <span class="n">Para</span><span class="p">(</span><span class="n">Str</span><span class="p">(</span><span class="n">seperator</span><span class="p">))</span>
 
     <span class="n">elems_inserted</span> <span class="o">=</span> <span class="n">ListContainer</span><span class="p">(</span><span class="o">*</span><span class="n">iter_seperator</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span> <span class="n">inserter</span><span class="p">))</span>
-    <span class="n">texts_converted</span> <span class="o">=</span> <span class="n">convert_text</span><span class="p">(</span><span class="n">elems_inserted</span><span class="p">,</span> <span class="n">input_format</span><span class="o">=</span><span class="s1">&#39;panflute&#39;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;markdown&#39;</span><span class="p">)</span>
+    <span class="c1"># reference-location=block for footnotes, see issue #58</span>
+    <span class="n">texts_converted</span> <span class="o">=</span> <span class="n">convert_text</span><span class="p">(</span><span class="n">elems_inserted</span><span class="p">,</span> <span class="n">input_format</span><span class="o">=</span><span class="s1">&#39;panflute&#39;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s1">&#39;markdown&#39;</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;--reference-location=block&#39;</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">iter_split_by_seperator</span><span class="p">(</span><span class="n">texts_converted</span><span class="p">,</span> <span class="n">seperator</span><span class="p">)</span></div>
 
 
@@ -387,7 +388,7 @@
     </p>
     <p>
         &copy; Copyright 2016-2020, Kolen Cheung.<br/>
-      Last updated on Jan 16, 2021.<br/>
+      Last updated on Jan 27, 2021.<br/>
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
     </p>
   </div>
