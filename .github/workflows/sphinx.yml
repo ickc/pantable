@@ -1,10 +1,9 @@
 name: GitHub Pages
 
-on: push
-  # TODO
-  # push:
-  #   branches:
-  #     - master
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   deploy:
