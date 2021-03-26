@@ -4,7 +4,7 @@
 Pantable—A Python library for writing pandoc filters for tables with batteries included.
 ========================================================================================
 
-:Date:   January 26, 2021
+:Date:   March 26, 2021
 
 .. contents::
    :depth: 3
@@ -24,6 +24,8 @@ Pantable—A Python library for writing pandoc filters for tables with batteries
 |             | |Commits since latest release| |License|                                         |
 +-------------+----------------------------------------------------------------------------------+
 | conda-forge | |Conda Recipe| |Conda Downloads| |Conda Version| |Conda Platforms|               |
++-------------+----------------------------------------------------------------------------------+
+| cite        | |DOI|                                                                            |
 +-------------+----------------------------------------------------------------------------------+
 
 Introduction
@@ -543,5 +545,7 @@ The followings are pandoc filters written in Haskell that provide similar functi
    :target: https://anaconda.org/conda-forge/pantable
 .. |Conda Platforms| image:: https://img.shields.io/conda/pn/conda-forge/pantable.svg
    :target: https://anaconda.org/conda-forge/pantable
+.. |DOI| image:: https://zenodo.org/badge/74008159.svg
+   :target: https://zenodo.org/badge/latestdoi/74008159
 .. |image2| image:: https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg
    :target: https://ickc.github.io/pantable
