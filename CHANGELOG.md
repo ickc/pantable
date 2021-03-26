@@ -1,5 +1,6 @@
 # Revision history for Pantable
 
+- v0.13.5: Fix a division error when all widths are zero.
 - v0.13.4: Fix converting from native table that contains footnotes. See #58.
 - v0.13.3: packaging change only: allow Python4
 - v0.13.2: packaging change only: specified required versions for all dependencies including extras
