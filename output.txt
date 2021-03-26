@@ -1,6 +1,6 @@
 readme.rst:18: [redirected with Found] https://codeclimate.com/github/ickc/pantable/badges/gpa.svg to https://api.codeclimate.com/v1/badges/11fec0905691d79d11ac/maintainability.svg
-readme.rst:22: [redirected permanently] https://pypi.python.org/pypi/pantable/ to https://pypi.org/project/pantable/
-api/pantable.util.rst:3: [redirected with Found] https://stackoverflow.com/a/50622643 to https://stackoverflow.com/questions/50563546/validating-detailed-types-in-python-dataclasses/50622643#50622643
-api/pantable.ast.rst:3: [redirected with Found] https://stackoverflow.com/a/61480946/5769446 to https://stackoverflow.com/questions/51079503/dataclasses-and-property-decorator/61480946#61480946
-readme.rst:18: [redirected with See Other] https://www.codacy.com/app/ickc/pantable to https://app.codacy.com/manual/ickc/pantable
 readme.rst:22: [redirected permanently] https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release to https://img.shields.io/github/v/tag/ickc/pantable.svg?label=github%20release&sort=semver
+readme.rst:22: [redirected permanently] https://pypi.python.org/pypi/pantable/ to https://pypi.org/project/pantable/
+api/pantable.ast.rst:3: [redirected with Found] https://stackoverflow.com/a/61480946/5769446 to https://stackoverflow.com/questions/51079503/dataclasses-and-property-decorator/61480946#61480946
+api/pantable.util.rst:3: [redirected with Found] https://stackoverflow.com/a/50622643 to https://stackoverflow.com/questions/50563546/validating-detailed-types-in-python-dataclasses/50622643#50622643
+readme.rst:18: [redirected with See Other] https://www.codacy.com/app/ickc/pantable to https://app.codacy.com/manual/ickc/pantable
