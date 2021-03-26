@@ -1726,15 +1726,23 @@ class PanTableStr(PanTableAbstract):
                             temp[j + 1].append(width_int_resid)
 
         if col_widths is None or override_width:
-            scale = table_width / widths_int.sum()
-            self.spec.col_widths = widths_int
+            widths_int_sum = widths_int.sum()
+            if widths_int_sum > 0.:
+                scale = table_width / widths_int_sum
+                self.spec.col_widths = widths_int * scale
+            else:
+                self.spec.col_widths = np.zeros_like(col_widths)
         else:
             is_defaults = np.isnan(col_widths)
-            table_width_spent = np.nansum(col_widths)
-            # assume a normalized table
-            scale = (table_width - table_width_spent) / widths_int[is_defaults].sum()
-            # modified in-place
-            col_widths[is_defaults] = widths_int[is_defaults] * scale
+            widths_int_sum = widths_int[is_defaults].sum()
+            if widths_int_sum > 0.:
+                table_width_spent = np.nansum(col_widths)
+                # assume a normalized table
+                scale = (table_width - table_width_spent) / widths_int_sum
+                # modified in-place
+                col_widths[is_defaults] = widths_int[is_defaults] * scale
+            else:
+                col_widths[is_defaults] = 0.
 
 
 class PanTableMarkdown(PanTableStr):
