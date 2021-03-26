@@ -21,7 +21,7 @@ package,"
 [![Development Status](https://img.shields.io/pypi/status/pantable.svg)](https://pypi.python.org/pypi/pantable/)
 [![Downloads](https://img.shields.io/pypi/dm/pantable.svg)](https://pypi.python.org/pypi/pantable/)
 
-[![Commits since latest release](https://img.shields.io/github/commits-since/ickc/pantable/v0.13.4.svg)](https://github.com/ickc/pantable/compare/v0.13.4...master)
+[![Commits since latest release](https://img.shields.io/github/commits-since/ickc/pantable/v0.13.5.svg)](https://github.com/ickc/pantable/compare/v0.13.5...master)
 ![License](https://img.shields.io/pypi/l/pantable.svg)
 "
 conda-forge,"

@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pantable"
-version = "0.13.4"
+version = "0.13.5"
 description = "A Python library for writing pandoc filters for tables with batteries included."
 license = "BSD-3-Clause"
 keywords = [
