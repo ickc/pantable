@@ -29,3 +29,4 @@ conda-forge,"
 [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/pantable.svg)](https://anaconda.org/conda-forge/pantable)
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/pantable.svg)](https://anaconda.org/conda-forge/pantable)
 [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/pantable.svg)](https://anaconda.org/conda-forge/pantable)"
+cite,"[![DOI](https://zenodo.org/badge/74008159.svg)](https://zenodo.org/badge/latestdoi/74008159)"
