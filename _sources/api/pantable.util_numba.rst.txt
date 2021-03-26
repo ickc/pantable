@@ -1,7 +1,0 @@
-pantable.util\_numba module
-===========================
-
-.. automodule:: pantable.util_numba
-   :members:
-   :undoc-members:
-   :show-inheritance:

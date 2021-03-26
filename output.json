@@ -7,47 +7,47 @@
 {"filename": "readme.rst", "lineno": 16, "status": "working", "code": 0, "uri": "https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master", "info": ""}
 {"filename": "readme.rst", "lineno": 16, "status": "working", "code": 0, "uri": "https://codecov.io/github/ickc/pantable", "info": ""}
 {"filename": "readme.rst", "lineno": 18, "status": "working", "code": 0, "uri": "https://codeclimate.com/github/ickc/pantable", "info": ""}
+{"filename": "readme.rst", "lineno": 18, "status": "redirected", "code": 302, "uri": "https://codeclimate.com/github/ickc/pantable/badges/gpa.svg", "info": "https://api.codeclimate.com/v1/badges/11fec0905691d79d11ac/maintainability.svg", "text": "with Found"}
 {"filename": "readme.rst", "lineno": 26, "status": "working", "code": 0, "uri": "https://anaconda.org/conda-forge/pantable", "info": ""}
 {"filename": "readme.rst", "lineno": 468, "status": "working", "code": 0, "uri": "https://github.com/baig/pandoc-csv2table", "info": ""}
-{"filename": "readme.rst", "lineno": 18, "status": "redirected", "code": 302, "uri": "https://codeclimate.com/github/ickc/pantable/badges/gpa.svg", "info": "https://api.codeclimate.com/v1/badges/11fec0905691d79d11ac/maintainability.svg", "text": "with Found"}
 {"filename": "contributing.rst", "lineno": 40, "status": "working", "code": 0, "uri": "https://github.com/ickc/pantable", "info": ""}
 {"filename": "readme.rst", "lineno": 14, "status": "working", "code": 0, "uri": "https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg", "info": ""}
+{"filename": "contributing.rst", "lineno": 11, "status": "working", "code": 0, "uri": "https://github.com/ickc/pantable/issues", "info": ""}
 {"filename": "readme.rst", "lineno": 512, "status": "working", "code": 0, "uri": "https://github.com/ickc/pantable/workflows/Python%20package/badge.svg", "info": ""}
 {"filename": "readme.rst", "lineno": 22, "status": "working", "code": 0, "uri": "https://github.com/ickc/pantable/releases", "info": ""}
-{"filename": "contributing.rst", "lineno": 11, "status": "working", "code": 0, "uri": "https://github.com/ickc/pantable/issues", "info": ""}
-{"filename": "readme.rst", "lineno": 24, "status": "working", "code": 0, "uri": "https://github.com/ickc/pantable/compare/v0.13.4...master", "info": ""}
 {"filename": "readme.rst", "lineno": 506, "status": "working", "code": 0, "uri": "https://github.com/jgm/pandoc/blob/master/test/tables/planets.native", "info": ""}
-{"filename": "readme.rst", "lineno": 469, "status": "working", "code": 0, "uri": "https://github.com/mb21/pandoc-placetable", "info": ""}
 {"filename": "readme.rst", "lineno": 93, "status": "working", "code": 0, "uri": "https://github.com/mamba-org/mamba", "info": ""}
+{"filename": "readme.rst", "lineno": 24, "status": "working", "code": 0, "uri": "https://github.com/ickc/pantable/compare/v0.13.4...master", "info": ""}
+{"filename": "readme.rst", "lineno": 469, "status": "working", "code": 0, "uri": "https://github.com/mb21/pandoc-placetable", "info": ""}
 {"filename": "readme.rst", "lineno": 470, "status": "working", "code": 0, "uri": "https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py", "info": ""}
-{"filename": "readme.rst", "lineno": 411, "status": "working", "code": 0, "uri": "https://github.com/jgm/pandoc-types/issues/86", "info": ""}
-{"filename": "readme.rst", "lineno": 14, "status": "working", "code": 0, "uri": "https://ickc.github.io/pantable", "info": ""}
 {"filename": "readme.rst", "lineno": 139, "status": "working", "code": 0, "uri": "https://ickc.github.io/pantable/", "info": ""}
+{"filename": "readme.rst", "lineno": 14, "status": "working", "code": 0, "uri": "https://ickc.github.io/pantable", "info": ""}
+{"filename": "readme.rst", "lineno": 411, "status": "working", "code": 0, "uri": "https://github.com/jgm/pandoc-types/issues/86", "info": ""}
 {"filename": "readme.rst", "lineno": 503, "status": "working", "code": 0, "uri": "https://hackage.haskell.org/package/pandoc", "info": ""}
-{"filename": "readme.rst", "lineno": 26, "status": "working", "code": 0, "uri": "https://img.shields.io/conda/dn/conda-forge/pantable.svg", "info": ""}
-{"filename": "readme.rst", "lineno": 26, "status": "working", "code": 0, "uri": "https://img.shields.io/conda/pn/conda-forge/pantable.svg", "info": ""}
-{"filename": "readme.rst", "lineno": 18, "status": "working", "code": 0, "uri": "https://img.shields.io/codacy/grade/078ebc537c5747f68c1d4ad3d3594bbf.svg", "info": ""}
 {"filename": "readme.rst", "lineno": 26, "status": "working", "code": 0, "uri": "https://img.shields.io/badge/recipe-pantable-green.svg", "info": ""}
 {"filename": "readme.rst", "lineno": 26, "status": "working", "code": 0, "uri": "https://img.shields.io/conda/vn/conda-forge/pantable.svg", "info": ""}
-{"filename": "readme.rst", "lineno": 22, "status": "working", "code": 0, "uri": "https://img.shields.io/pypi/dm/pantable.svg", "info": ""}
-{"filename": "readme.rst", "lineno": 506, "status": "working", "code": 0, "uri": "https://github.com/sergiocorreia/panflute/pull/172#issuecomment-736252008", "info": ""}
+{"filename": "readme.rst", "lineno": 26, "status": "working", "code": 0, "uri": "https://img.shields.io/conda/pn/conda-forge/pantable.svg", "info": ""}
 {"filename": "readme.rst", "lineno": 24, "status": "working", "code": 0, "uri": "https://img.shields.io/github/commits-since/ickc/pantable/v0.13.4.svg", "info": ""}
+{"filename": "readme.rst", "lineno": 506, "status": "working", "code": 0, "uri": "https://github.com/sergiocorreia/panflute/pull/172#issuecomment-736252008", "info": ""}
 {"filename": "readme.rst", "lineno": 20, "status": "working", "code": 0, "uri": "https://img.shields.io/pypi/implementation/pantable.svg", "info": ""}
-{"filename": "readme.rst", "lineno": 20, "status": "working", "code": 0, "uri": "https://img.shields.io/pypi/pyversions/pantable.svg", "info": ""}
 {"filename": "readme.rst", "lineno": 537, "status": "working", "code": 0, "uri": "https://img.shields.io/pypi/l/pantable.svg", "info": ""}
+{"filename": "readme.rst", "lineno": 22, "status": "working", "code": 0, "uri": "https://img.shields.io/pypi/dm/pantable.svg", "info": ""}
+{"filename": "readme.rst", "lineno": 20, "status": "working", "code": 0, "uri": "https://img.shields.io/pypi/pyversions/pantable.svg", "info": ""}
 {"filename": "readme.rst", "lineno": 22, "status": "working", "code": 0, "uri": "https://img.shields.io/pypi/status/pantable.svg", "info": ""}
 {"filename": "readme.rst", "lineno": 22, "status": "working", "code": 0, "uri": "https://img.shields.io/pypi/v/pantable.svg", "info": ""}
 {"filename": "readme.rst", "lineno": 20, "status": "working", "code": 0, "uri": "https://img.shields.io/pypi/wheel/pantable.svg", "info": ""}
-{"filename": "readme.rst", "lineno": 20, "status": "working", "code": 0, "uri": "https://pypi.org/project/pantable", "info": ""}
 {"filename": "readme.rst", "lineno": 14, "status": "working", "code": 0, "uri": "https://pantable.readthedocs.io/en/latest/?badge=latest&style=plastic", "info": ""}
 {"filename": "readme.rst", "lineno": 110, "status": "working", "code": 0, "uri": "https://pvp.haskell.org", "info": ""}
-{"filename": "readme.rst", "lineno": 18, "status": "working", "code": 0, "uri": "https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg", "info": ""}
-{"filename": "readme.rst", "lineno": 14, "status": "working", "code": 0, "uri": "https://readthedocs.org/projects/pantable/badge/?version=latest", "info": ""}
+{"filename": "readme.rst", "lineno": 20, "status": "working", "code": 0, "uri": "https://pypi.org/project/pantable", "info": ""}
 {"filename": "readme.rst", "lineno": 22, "status": "redirected", "code": 301, "uri": "https://pypi.python.org/pypi/pantable/", "info": "https://pypi.org/project/pantable/", "text": "permanently"}
-{"filename": "readme.rst", "lineno": 22, "status": "redirected", "code": 301, "uri": "https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release", "info": "https://img.shields.io/github/v/tag/ickc/pantable.svg?label=github%20release&sort=semver", "text": "permanently"}
+{"filename": "changelog.rst", "lineno": 40, "status": "working", "code": 0, "uri": "https://python3statement.org/practicalities/", "info": ""}
+{"filename": "readme.rst", "lineno": 14, "status": "working", "code": 0, "uri": "https://readthedocs.org/projects/pantable/badge/?version=latest", "info": ""}
+{"filename": "readme.rst", "lineno": 18, "status": "working", "code": 0, "uri": "https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg", "info": ""}
+{"filename": "readme.rst", "lineno": 18, "status": "working", "code": 0, "uri": "https://scrutinizer-ci.com/g/ickc/pantable/", "info": ""}
 {"filename": "api/pantable.util.rst", "lineno": 3, "status": "redirected", "code": 302, "uri": "https://stackoverflow.com/a/50622643", "info": "https://stackoverflow.com/questions/50563546/validating-detailed-types-in-python-dataclasses/50622643#50622643", "text": "with Found"}
 {"filename": "api/pantable.ast.rst", "lineno": 3, "status": "redirected", "code": 302, "uri": "https://stackoverflow.com/a/61480946/5769446", "info": "https://stackoverflow.com/questions/51079503/dataclasses-and-property-decorator/61480946#61480946", "text": "with Found"}
-{"filename": "changelog.rst", "lineno": 40, "status": "working", "code": 0, "uri": "https://python3statement.org/practicalities/", "info": ""}
 {"filename": "contributing.rst", "lineno": 52, "status": "working", "code": 0, "uri": "https://tox.readthedocs.io/en/latest/install.html", "info": ""}
-{"filename": "readme.rst", "lineno": 18, "status": "working", "code": 0, "uri": "https://scrutinizer-ci.com/g/ickc/pantable/", "info": ""}
 {"filename": "readme.rst", "lineno": 18, "status": "redirected", "code": 303, "uri": "https://www.codacy.com/app/ickc/pantable", "info": "https://app.codacy.com/manual/ickc/pantable", "text": "with See Other"}
+{"filename": "readme.rst", "lineno": 18, "status": "working", "code": 0, "uri": "https://img.shields.io/codacy/grade/078ebc537c5747f68c1d4ad3d3594bbf.svg", "info": ""}
+{"filename": "readme.rst", "lineno": 26, "status": "working", "code": 0, "uri": "https://img.shields.io/conda/dn/conda-forge/pantable.svg", "info": ""}
+{"filename": "readme.rst", "lineno": 22, "status": "redirected", "code": 301, "uri": "https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release", "info": "https://img.shields.io/github/v/tag/ickc/pantable.svg?label=github%20release&sort=semver", "text": "permanently"}

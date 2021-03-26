@@ -974,10 +974,7 @@
 
 <div class="viewcode-block" id="Align.default"><a class="viewcode-back" href="../../../api/pantable.ast/#pantable.ast.Align.default">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))</span> <span class="o">-&gt;</span> <span class="n">Align</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">))</span></div>
-
-<div class="viewcode-block" id="Align.transpose"><a class="viewcode-back" href="../../../api/pantable.ast/#pantable.ast.Align.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">))</span></div></div>
 
 
 <div class="viewcode-block" id="Spec"><a class="viewcode-back" href="../../../api/pantable.ast/#pantable.ast.Spec">[docs]</a><span class="nd">@dataclass</span>
@@ -1147,23 +1144,7 @@
                 <span class="k">if</span> <span class="n">width</span><span class="p">:</span>
                     <span class="n">content</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">wrap</span><span class="p">(</span><span class="n">content</span><span class="p">,</span> <span class="n">width</span><span class="p">))</span>
                 <span class="n">res_contents</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">content</span>
-        <span class="k">return</span> <span class="n">res</span></div>
-
-<div class="viewcode-block" id="TableArray.transpose"><a class="viewcode-back" href="../../../api/pantable.ast/#pantable.ast.TableArray.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TableArray</span><span class="p">:</span>
-        <span class="sd">&#39;&#39;&#39;return a transposed version of self</span>
-<span class="sd">        &#39;&#39;&#39;</span>
-
-        <span class="n">geometries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span>
-        <span class="k">if</span> <span class="n">geometries</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">geometries_transposed</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">.util_numba</span> <span class="kn">import</span> <span class="n">transpose</span>
-
-            <span class="n">geometries_transposed</span> <span class="o">=</span> <span class="n">transpose</span><span class="p">(</span><span class="n">geometries</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">TableArray</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="o">.</span><span class="n">transpose</span><span class="p">()),</span>
-            <span class="n">geometries</span><span class="o">=</span><span class="n">geometries_transposed</span><span class="p">,</span>
-        <span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">res</span></div></div>
 
 
 <div class="viewcode-block" id="PanTableAbstract"><a class="viewcode-back" href="../../../api/pantable.ast/#pantable.ast.PanTableAbstract">[docs]</a><span class="nd">@dataclass</span>
@@ -1357,17 +1338,7 @@
 
 <span class="sd">        assume array is iterables of rows</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rowblock_splitting_idxs</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="PanTableAbstract.transpose"><a class="viewcode-back" href="../../../api/pantable.ast/#pantable.ast.PanTableAbstract.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;transpose self in-place&#39;&#39;&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cells</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
-        <span class="c1"># TODO</span>
-        <span class="c1"># self.icas_rowblock = None</span>
-        <span class="c1"># self.icas_row = None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">icas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">icas</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
-        <span class="c1"># self.spec = None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">aligns</span></div></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rowblock_splitting_idxs</span><span class="p">)</span></div></div>
 
 
 <span class="n">PanTableAbstract</span><span class="o">.</span><span class="n">ms</span> <span class="o">=</span> <span class="n">PanTableAbstract</span><span class="o">.</span><span class="n">_ms_</span>
@@ -1864,15 +1835,23 @@
                             <span class="n">temp</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">width_int_resid</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">col_widths</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">override_width</span><span class="p">:</span>
-            <span class="n">scale</span> <span class="o">=</span> <span class="n">table_width</span> <span class="o">/</span> <span class="n">widths_int</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">col_widths</span> <span class="o">=</span> <span class="n">widths_int</span>
+            <span class="n">widths_int_sum</span> <span class="o">=</span> <span class="n">widths_int</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">widths_int_sum</span> <span class="o">&gt;</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="n">scale</span> <span class="o">=</span> <span class="n">table_width</span> <span class="o">/</span> <span class="n">widths_int_sum</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">col_widths</span> <span class="o">=</span> <span class="n">widths_int</span> <span class="o">*</span> <span class="n">scale</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">col_widths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">col_widths</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">is_defaults</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">col_widths</span><span class="p">)</span>
-            <span class="n">table_width_spent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">col_widths</span><span class="p">)</span>
-            <span class="c1"># assume a normalized table</span>
-            <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="n">table_width</span> <span class="o">-</span> <span class="n">table_width_spent</span><span class="p">)</span> <span class="o">/</span> <span class="n">widths_int</span><span class="p">[</span><span class="n">is_defaults</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="c1"># modified in-place</span>
-            <span class="n">col_widths</span><span class="p">[</span><span class="n">is_defaults</span><span class="p">]</span> <span class="o">=</span> <span class="n">widths_int</span><span class="p">[</span><span class="n">is_defaults</span><span class="p">]</span> <span class="o">*</span> <span class="n">scale</span></div></div>
+            <span class="n">widths_int_sum</span> <span class="o">=</span> <span class="n">widths_int</span><span class="p">[</span><span class="n">is_defaults</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">widths_int_sum</span> <span class="o">&gt;</span> <span class="mf">0.</span><span class="p">:</span>
+                <span class="n">table_width_spent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span><span class="n">col_widths</span><span class="p">)</span>
+                <span class="c1"># assume a normalized table</span>
+                <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="n">table_width</span> <span class="o">-</span> <span class="n">table_width_spent</span><span class="p">)</span> <span class="o">/</span> <span class="n">widths_int_sum</span>
+                <span class="c1"># modified in-place</span>
+                <span class="n">col_widths</span><span class="p">[</span><span class="n">is_defaults</span><span class="p">]</span> <span class="o">=</span> <span class="n">widths_int</span><span class="p">[</span><span class="n">is_defaults</span><span class="p">]</span> <span class="o">*</span> <span class="n">scale</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">col_widths</span><span class="p">[</span><span class="n">is_defaults</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span></div></div>
 
 
 <div class="viewcode-block" id="PanTableMarkdown"><a class="viewcode-back" href="../../../api/pantable.ast/#pantable.ast.PanTableMarkdown">[docs]</a><span class="k">class</span> <span class="nc">PanTableMarkdown</span><span class="p">(</span><span class="n">PanTableStr</span><span class="p">):</span>

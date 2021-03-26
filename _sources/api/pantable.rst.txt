@@ -25,4 +25,3 @@ Submodules
    pantable.io
    pantable.table_to_codeblock
    pantable.util
-   pantable.util_numba
