@@ -867,6 +867,9 @@ class Align:
     def default(cls, shape: Union[Tuple[int], Tuple[int, int]] = (1,)) -> Align:
         return cls(np.full(shape, 68, dtype=np.int8))
 
+    def transpose(self):
+        raise NotImplementedError
+
 
 @dataclass
 class Spec:
@@ -1036,6 +1039,22 @@ class TableArray:
                     content = '\n'.join(wrap(content, width))
                 res_contents[i, j] = content
         return res
+
+    def transpose(self) -> TableArray:
+        '''return a transposed version of self
+        '''
+
+        geometries = self.geometries
+        if geometries is None:
+            geometries_transposed = None
+        else:
+            from .util_numba import transpose
+
+            geometries_transposed = transpose(geometries)
+        return TableArray(
+            np.ascontiguousarray(self.contents.transpose()),
+            geometries=geometries_transposed,
+        )
 
 
 @dataclass
@@ -1230,6 +1249,16 @@ class PanTableAbstract:
         assume array is iterables of rows
         '''
         return np.split(array, self.rowblock_splitting_idxs)
+
+    def transpose(self):
+        '''transpose self in-place'''
+        self.cells = self.cells.transpose()
+        # TODO
+        # self.icas_rowblock = None
+        # self.icas_row = None
+        self.icas = self.icas.transpose()
+        # self.spec = None
+        self.aligns
 
 
 PanTableAbstract.ms = PanTableAbstract._ms_
