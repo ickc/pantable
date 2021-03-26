@@ -123,27 +123,27 @@
 <span id="pantable-io-module"></span><h1>pantable.io module<a class="headerlink" href="#module-pantable.io" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="pantable.io.dump_csv">
-<code class="sig-prename descclassname">pantable.io.</code><code class="sig-name descname">dump_csv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">np.ndarray<span class="p">[</span>np.str_<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">options</span><span class="p">:</span> <span class="n">PanTableOption</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../../_modules/pantable/io/#dump_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pantable.io.dump_csv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pantable.io.</span></code><code class="sig-name descname"><span class="pre">dump_csv</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.str_</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PanTableOption</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="../../_modules/pantable/io/#dump_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pantable.io.dump_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>dump data as CSV string</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="pantable.io.dump_csv_io">
-<code class="sig-prename descclassname">pantable.io.</code><code class="sig-name descname">dump_csv_io</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">np.ndarray<span class="p">[</span>np.str_<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">options</span><span class="p">:</span> <span class="n">PanTableOption</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../../_modules/pantable/io/#dump_csv_io"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pantable.io.dump_csv_io" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pantable.io.</span></code><code class="sig-name descname"><span class="pre">dump_csv_io</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.str_</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PanTableOption</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="../../_modules/pantable/io/#dump_csv_io"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pantable.io.dump_csv_io" title="Permalink to this definition">¶</a></dt>
 <dd><p>dump data as CSV</p>
 <p>it will mutate options.include if it is an invalid write path.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="pantable.io.load_csv">
-<code class="sig-prename descclassname">pantable.io.</code><code class="sig-name descname">load_csv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">options</span><span class="p">:</span> <span class="n">PanTableOption</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span><a class="reference internal" href="../../_modules/pantable/io/#load_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pantable.io.load_csv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pantable.io.</span></code><code class="sig-name descname"><span class="pre">load_csv</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PanTableOption</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../../_modules/pantable/io/#load_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pantable.io.load_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>loading CSV table</p>
 <p>Note that this can emit EmptyTableError, FileNotFoundError</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="pantable.io.load_csv_array">
-<code class="sig-prename descclassname">pantable.io.</code><code class="sig-name descname">load_csv_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">options</span><span class="p">:</span> <span class="n">PanTableOption</span></em><span class="sig-paren">)</span> &#x2192; np.ndarray<span class="p">[</span>np.str_<span class="p">]</span><a class="reference internal" href="../../_modules/pantable/io/#load_csv_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pantable.io.load_csv_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pantable.io.</span></code><code class="sig-name descname"><span class="pre">load_csv_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">PanTableOption</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.str_</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../../_modules/pantable/io/#load_csv_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pantable.io.load_csv_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>loading CSV table in <cite>numpy.ndarray</cite></p>
 <p>Note that this can emit EmptyTableError, FileNotFoundError</p>
 </dd></dl>
@@ -163,8 +163,8 @@
     </p>
     <p>
         &copy; Copyright 2016-2020, Kolen Cheung.<br/>
-      Last updated on Jan 27, 2021.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.4.3.<br/>
+      Last updated on Mar 26, 2021.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
     </p>
   </div>
 </footer>
