@@ -62,7 +62,7 @@ numpy = "^1"
 # extras
 coloredlogs = {optional = true, version = ">=14,<16"}
 tabulate = {optional = true, version = "^0.8"}
-yamlloader = {optional = true, version = "^0.5"}
+yamlloader = {optional = true, version = ">=0.5,<2"}
 
 # tests
 coverage = {optional = true, version = "*"}
@@ -73,7 +73,7 @@ pytest-cov = {optional = true, version = "*"}
 pytest-parallel = {optional = true, version = "*"}
 
 # docs: sync this with tox.testenv.docs below
-sphinx = {optional = true, version = "^3.3"}
+sphinx = {optional = true, version = ">=3,<5"}
 sphinx-bootstrap-theme = {optional = true, version = "*"}
 pygments-style-solarized = {optional = true, version = "*"}
 sphinxcontrib-apidoc = {optional = true, version = "*"}
@@ -230,7 +230,7 @@ commands =
 [testenv:docs]
 usedevelop = false
 deps =
-    sphinx >=3.3,<4
+    sphinx >=3.3,<5
     sphinx-bootstrap-theme
     pygments-style-solarized
     sphinxcontrib-apidoc
