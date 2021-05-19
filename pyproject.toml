@@ -62,7 +62,11 @@ numpy = "^1"
 # extras
 coloredlogs = {optional = true, version = ">=14,<16"}
 tabulate = {optional = true, version = "^0.8"}
-yamlloader = {optional = true, version = ">=0.5,<2"}
+# yamlloader 1.0 causes tests/files/native_test.py::test_table_to_codeblock failures
+# probably because panflute reads YAML without this
+# and yamlloader 1.0 now enforces OrderedDict even if dict is ordered in py37+
+# yamlloader = {optional = true, version = ">=0.5,<2"}
+yamlloader = {optional = true, version = "^0.5"}
 
 # tests
 coverage = {optional = true, version = "*"}
