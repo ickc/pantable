@@ -628,10 +628,9 @@ class PanCodeBlock:
                         # TODO: PY37
                         # if body_list and 'body' not in (last_body := body_list[-1]):
                         #     last_body['body'] = temp
-                        if body_list:
-                            last_body = body_list[-1]
-                            if 'body' not in last_body:
-                                last_body['body'] = temp
+                        last_body = body_list[-1] if body_list else None
+                        if body_list and 'body' not in last_body:
+                            last_body['body'] = temp
                         else:
                             body_list.append({'body': temp})
                     # is_body_head
