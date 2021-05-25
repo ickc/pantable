@@ -737,10 +737,9 @@
                         <span class="c1"># TODO: PY37</span>
                         <span class="c1"># if body_list and &#39;body&#39; not in (last_body := body_list[-1]):</span>
                         <span class="c1">#     last_body[&#39;body&#39;] = temp</span>
-                        <span class="k">if</span> <span class="n">body_list</span><span class="p">:</span>
-                            <span class="n">last_body</span> <span class="o">=</span> <span class="n">body_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                            <span class="k">if</span> <span class="s1">&#39;body&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">last_body</span><span class="p">:</span>
-                                <span class="n">last_body</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span>
+                        <span class="n">last_body</span> <span class="o">=</span> <span class="n">body_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">body_list</span> <span class="k">else</span> <span class="kc">None</span>
+                        <span class="k">if</span> <span class="n">body_list</span> <span class="ow">and</span> <span class="s1">&#39;body&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">last_body</span><span class="p">:</span>
+                            <span class="n">last_body</span><span class="p">[</span><span class="s1">&#39;body&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">body_list</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;body&#39;</span><span class="p">:</span> <span class="n">temp</span><span class="p">})</span>
                     <span class="c1"># is_body_head</span>
@@ -2057,8 +2056,8 @@
     </p>
     <p>
         &copy; Copyright 2016-2020, Kolen Cheung.<br/>
-      Last updated on May 19, 2021.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.1.<br/>
+      Last updated on May 25, 2021.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>
