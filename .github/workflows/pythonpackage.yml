@@ -3,7 +3,11 @@
 
 name: Python package
 
-on: [push, pull_request]
+on:
+  - push
+  - pull_request
+  - schedule:
+      - cron: '37 11 * * 5'
 
 jobs:
   build-n-publish:
@@ -39,7 +43,7 @@ jobs:
           # 2.11 has minor breaking change, fixing some quirks in 2.10
           # - 2.11.0.4
           - 2.11.4
-          - 2.12
+          # - 2.12
           - latest
 
     steps:
