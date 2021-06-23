@@ -4,9 +4,9 @@
 name: Python package
 
 on:
-  - push
-  - pull_request
-  - schedule:
+  push
+  pull_request
+  schedule:
       - cron: '37 11 * * 5'
 
 jobs:
