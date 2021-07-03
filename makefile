@@ -113,7 +113,9 @@ editable:
 	mv dist/pantable-0.13.6/setup.py .
 	rm -rf dist/pantable-0.13.6
 	mv pyproject.toml .pyproject.toml
-	$(_python) -m pip install -e .$(EXTRAS); mv .pyproject.toml pyproject.toml
+	$(_python) -m pip install --no-dependencies -e .
+	mv .pyproject.toml pyproject.toml
+	rm -f setup.py
 
 # releasing ####################################################################
 
