@@ -18,7 +18,6 @@ jobs:
       matrix:
         # see setup.py for supported versions
         python-version:
-          # - 3.6
           - 3.7
           - 3.8
           - 3.9
@@ -54,20 +53,21 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies—pip
       run: |
-        # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
+        # TODO cleanup when GitHub Action provides pypy3.7
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           # install our own pypy37
           mkdir -p ~/.local
           wget -qO- https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2 | tar -xjf - -C ~/.local --strip-components=1
           export PATH="$HOME/.local/bin:$PATH"
           pypy -m ensurepip
-          pypy -m pip install -U 'numpy==1.20.0rc1' poetry setuptools
-          make editable EXTRAS=[extras,tests] python=pypy
+          pypy -m pip install -U poetry setuptools
+          pypy -m pip install .[extras,tests]
         else
-          pip install -U poetry setuptools
-          make editable EXTRAS=[extras,tests]
+          python -m pip install -U poetry setuptools
+          python -m pip install .[extras,tests]
         fi
         # make editable generated setup.py, let coverage read this instead of pyproject.toml
+        make setup.py
         mv pyproject.toml .pyproject.toml
     - name: Install dependencies—pandoc
       run: |
@@ -78,14 +78,14 @@ jobs:
         sudo dpkg -i "${downloadUrl##*/}"
     - name: Tests
       run: |
-        # TODO cleanup when pypy 3.7 and numpy for pypy 3.7 stable release
+        # TODO cleanup when GitHub Action provides pypy3.7
         if [[ ${{ matrix.python-version }} == pypy3 ]]; then
           export PATH="$HOME/.local/bin:$PATH"
           make test COVHTML='--cov-report=xml' python=pypy
         else
           # TODO cleanup when pytest-parallel support python 3.9 and runs sucessfully
           [[ ${{ matrix.python-version }} == 3.9 ]] && export PYTESTPARALLEL=
-          make test COVHTML='--cov-report=xml' 
+          make test COVHTML='--cov-report=xml'
         fi
     - name: Coverage—Coveralls
       uses: AndreMiras/coveralls-python-action@develop
