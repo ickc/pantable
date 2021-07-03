@@ -34,8 +34,12 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
     return md_reference, md_out
 
 
-@mark.parametrize('name', (path.stem for path in DIRS[0].glob(f'*.{EXT}')))
-def test_md(name):
+def read_io(name: str):
     paths = [dir_ / f'{name}.{EXT}' for dir_ in DIRS]
-    res = read(*paths)
+    return read(*paths)
+
+
+@mark.parametrize('name', (path.stem for path in DIRS[0].glob(f'*.{EXT}')))
+def test_md(name: str):
+    res = read_io(name)
     assert res[0].strip() == res[1].strip()
