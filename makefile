@@ -104,13 +104,15 @@ dist/epub/pantable.epub: docs
 
 # poetry #######################################################################
 
-# since poetry doesn't support editable, we can build and extract the setup.py,
-# temporary remove pyproject.toml and ask pip to install from setup.py instead.
-editable:
+setup.py:
 	poetry build
 	cd dist; tar -xf pantable-0.13.6.tar.gz pantable-0.13.6/setup.py
 	mv dist/pantable-0.13.6/setup.py .
 	rm -rf dist/pantable-0.13.6
+
+# since poetry doesn't support editable, we can build and extract the setup.py,
+# temporary remove pyproject.toml and ask pip to install from setup.py instead.
+editable: setup.py
 	mv pyproject.toml .pyproject.toml
 	$(_python) -m pip install --no-dependencies -e .
 	mv .pyproject.toml pyproject.toml
