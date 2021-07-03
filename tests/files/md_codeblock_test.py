@@ -36,8 +36,12 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
     return md_reference, md_out
 
 
+def read_io(name: str) -> Tuple[str, str]:
+    paths = [dir_ / f'{name}.{EXT}' for dir_ in DIRS]
+    return read(*paths)
+
+
 @mark.parametrize('name', (path.stem for path in DIRS[0].glob(f'*.{EXT}')))
 def test_md_codeblock(name):
-    paths = [dir_ / f'{name}.{EXT}' for dir_ in DIRS]
-    res = read(*paths)
+    res = read_io(name)
     assert res[0].strip() == res[1].strip()

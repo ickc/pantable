@@ -35,8 +35,12 @@ def read(path: Path) -> Tuple[str, str, str]:
     return text_out, text_idem, text
 
 
+def read_io(name: str) -> Tuple[str, str, str]:
+    path = DIR / f'{name}.{EXT}'
+    return read(path)
+
+
 @mark.parametrize('name', (path.stem for path in DIR.glob(f'*.{EXT}')))
 def test_md_codeblock_idem(name):
-    path = DIR / f'{name}.{EXT}'
-    res = read(path)
+    res = read_io(name)
     assert res[0].strip() == res[1].strip()
