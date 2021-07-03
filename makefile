@@ -37,7 +37,7 @@ dot:
 	cd docs/dot; $(MAKE)
 
 clean:
-	rm -f .coverage* docs/pantable*.rst docs/modules.rst docs/setup.rst
+	rm -f .coverage* docs/pantable*.rst docs/modules.rst docs/setup.rst setup.py
 	rm -rf htmlcov pantable.egg-info .cache .idea dist docs/_build \
 		docs/_static docs/_templates .ipynb_checkpoints .mypy_cache \
 		.pytest_cache .tox
@@ -114,7 +114,6 @@ editable:
 	mv pyproject.toml .pyproject.toml
 	$(_python) -m pip install --no-dependencies -e .
 	mv .pyproject.toml pyproject.toml
-	rm -f setup.py
 
 # releasing ####################################################################
 
