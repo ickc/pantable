@@ -3,7 +3,8 @@ from pathlib import Path
 from typing import Tuple
 
 from panflute import convert_text
-from pytest import mark
+from panflute.tools import pandoc_version
+from pytest import mark, xfail
 
 from pantable.ast import PanTable
 # use the function exactly used by the cli
@@ -35,10 +36,16 @@ def read_table_to_codeblock(path: Path, path_ref: Path) -> Tuple[str, str]:
     return md_reference, md_out
 
 
-@mark.parametrize('name', (path.stem for path in DIRS[0].glob(f'*.{EXTs[0]}')))
-def test_table_to_codeblock(name):
+def read_table_to_codeblock_io(name: str) -> Tuple[str, str]:
     paths = [dir_ / f'{name}.{ext}' for dir_, ext in zip(DIRS, EXTs)]
-    res = read_table_to_codeblock(*paths)
+    return read_table_to_codeblock(*paths)
+
+
+@mark.parametrize('name', (path.stem for path in DIRS[0].glob(f'*.{EXTs[0]}')))
+def test_table_to_codeblock(name: str):
+    if pandoc_version.version < (2, 14) and name == 'planets':
+        xfail("jgm/pandoc#7242 changed code-blocks output that is cosmetically different but semantically the same.")
+    res = read_table_to_codeblock_io(name)
     assert res[0].strip() == res[1].strip()
 
 

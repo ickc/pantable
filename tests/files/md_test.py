@@ -3,7 +3,8 @@ from pathlib import Path
 from typing import Tuple
 
 from panflute import convert_text
-from pytest import mark
+from panflute.tools import pandoc_version
+from pytest import mark, xfail
 
 # use the function exactly used by the cli
 from pantable.table_to_codeblock import table_to_codeblock
@@ -34,12 +35,14 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
     return md_reference, md_out
 
 
-def read_io(name: str):
+def read_io(name: str) -> Tuple[str, str]:
     paths = [dir_ / f'{name}.{EXT}' for dir_ in DIRS]
     return read(*paths)
 
 
 @mark.parametrize('name', (path.stem for path in DIRS[0].glob(f'*.{EXT}')))
 def test_md(name: str):
+    if pandoc_version.version < (2, 14) and name == 'tables':
+        xfail("jgm/pandoc#7242 changed code-blocks output that is cosmetically different but semantically the same.")
     res = read_io(name)
     assert res[0].strip() == res[1].strip()
