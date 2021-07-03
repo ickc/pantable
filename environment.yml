@@ -2,6 +2,7 @@
 # run the following command to create a conda environment that is suitable for testing pantable
 # conda env create -f environment.yml
 # conda activate pantable
+# python -m ipykernel install --user --name pantable --display-name pantable
 # and then run this to install pantable in editable mode
 # make editable
 name: pantable
@@ -37,3 +38,4 @@ dependencies:
   # dev:
   - tox
   - data-science-types
+  - ipykernel
