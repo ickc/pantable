@@ -1,0 +1,39 @@
+# this should be very similar to https://github.com/conda-forge/pantable-feedstock/blob/master/recipe/meta.yaml
+# run the following command to create a conda environment that is suitable for testing pantable
+# conda env create -f environment.yml
+# conda activate pantable
+# and then run this to install pantable in editable mode
+# make editable
+name: pantable
+channels:
+  - conda-forge
+dependencies:
+  # host:
+  - pip
+  - python >=3.8  # for cached property
+  - poetry >=1,<2
+  # run:
+  - numpy >=1,<2
+  - panflute >=2,<3
+  - python >=3.7
+  - pyyaml >=5,<6
+  # run_constrained:
+  - pandoc >=2.11.2,<2.14
+  - coloredlogs >=14,<16
+  - tabulate >=0.8,<0.9
+  - yamlloader >=0.5,<0.6
+  # tests:
+  - coverage
+  - coveralls
+  - flake8
+  - pytest
+  - pytest-cov
+  - pytest-parallel
+  # docs:
+  - sphinx
+  - sphinx_bootstrap_theme
+  - pygments-style-solarized
+  - sphinxcontrib-apidoc
+  # dev:
+  - tox
+  - data-science-types
