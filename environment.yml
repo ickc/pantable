@@ -39,3 +39,5 @@ dependencies:
   - tox
   - data-science-types
   - ipykernel
+  - mypy
+  - bandit

@@ -86,6 +86,8 @@ sphinxcontrib-apidoc = {optional = true, version = "*"}
 tox = "*"
 data-science-types = "*"
 ipykernel = "*"
+mypy = "*"
+bandit = "*"
 
 [tool.poetry.extras]
 extras = [
