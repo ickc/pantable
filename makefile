@@ -6,7 +6,6 @@ _python = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(python)
 pandoc ?= pandoc
 _pandoc = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(pandoc)
 PYTESTPARALLEL ?= --workers auto
-EXTRAS ?=
 COVHTML ?= --cov-report html
 # for bump2version, valid options are: major, minor, patch
 PART ?= patch
