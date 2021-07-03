@@ -60,7 +60,7 @@ jobs:
           wget -qO- https://downloads.python.org/pypy/pypy3.7-v7.3.3-linux64.tar.bz2 | tar -xjf - -C ~/.local --strip-components=1
           export PATH="$HOME/.local/bin:$PATH"
           pypy -m ensurepip
-          pypy -m pip install -U poetry setuptools
+          pypy -m pip install -U 'numpy==1.20.0rc1' poetry setuptools
           pypy -m pip install .[extras,tests]
         else
           python -m pip install -U poetry setuptools
