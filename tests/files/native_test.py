@@ -44,7 +44,7 @@ def read_table_to_codeblock_io(name: str) -> Tuple[str, str]:
 @mark.parametrize('name', (path.stem for path in DIRS[0].glob(f'*.{EXTs[0]}')))
 def test_table_to_codeblock(name: str):
     if pandoc_version.version < (2, 14) and name == 'planets':
-        xfail("jgm/pandoc#7242 changed code-blocks output that is cosmetically different but semantically the same.")
+        xfail("jgm/pandoc#7242 changed code-blocks output that is cosmetically different but semantically the same. Also see commit db7ce7d.")
     res = read_table_to_codeblock_io(name)
     assert res[0].strip() == res[1].strip()
 
