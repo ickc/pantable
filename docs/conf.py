@@ -23,7 +23,7 @@ project = "pantable"
 year = "2016-2020"
 author = "Kolen Cheung"
 copyright = f"{year}, {author}"
-version = release = "0.13.6"
+version = release = "0.14.0"
 
 pygments_style = "solarizedlight"
 html_theme = "bootstrap"

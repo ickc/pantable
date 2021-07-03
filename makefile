@@ -52,7 +52,7 @@ Clean: clean
 # Deploy to PyPI
 ## by CI, properly git tagged
 pypi:
-	git push origin v0.13.6
+	git push origin v0.14.0
 ## Manually
 pypiManual:
 	rm -rf dist
@@ -106,9 +106,9 @@ dist/epub/pantable.epub: docs
 
 setup.py:
 	poetry build
-	cd dist; tar -xf pantable-0.13.6.tar.gz pantable-0.13.6/setup.py
-	mv dist/pantable-0.13.6/setup.py .
-	rm -rf dist/pantable-0.13.6
+	cd dist; tar -xf pantable-0.14.0.tar.gz pantable-0.14.0/setup.py
+	mv dist/pantable-0.14.0/setup.py .
+	rm -rf dist/pantable-0.14.0
 
 # since poetry doesn't support editable, we can build and extract the setup.py,
 # temporary remove pyproject.toml and ask pip to install from setup.py instead.
