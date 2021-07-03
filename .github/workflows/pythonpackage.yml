@@ -84,7 +84,8 @@ jobs:
           make test COVHTML='--cov-report=xml' python=pypy
         else
           # TODO cleanup when pytest-parallel support python 3.9 and runs sucessfully
-          [[ ${{ matrix.python-version }} == 3.9 ]] && make test COVHTML='--cov-report=xml' PYTESTPARALLEL= || make test COVHTML='--cov-report=xml'
+          [[ ${{ matrix.python-version }} == 3.9 ]] && export PYTESTPARALLEL=
+          make test COVHTML='--cov-report=xml' 
         fi
     - name: Coverage—Coveralls
       uses: AndreMiras/coveralls-python-action@develop
