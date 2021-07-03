@@ -1,5 +1,10 @@
 # Revision history for Pantable
 
+- v0.14.0: Support pandoc 2.14
+    - close #61
+    - requires panflute >= 2.1
+    - add `environment.yml` for an example conda environment running pantable
+    - remove `pantable.util.PandocVersion` as it is merged upstream in `panflute.tools.PandocVersion`.
 - v0.13.6: Fix #57; update dependencies.
 - v0.13.5: Fix a division error when all widths are zero.
 - v0.13.4: Fix converting from native table that contains footnotes. See #58.
