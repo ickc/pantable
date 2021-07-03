@@ -21,26 +21,6 @@ if TYPE_CHECKING:
 logger = getLogger('pantable')
 
 
-class PandocVersion:
-    '''get runtime pandoc verison
-
-    use PandocVersion().version for comparing versions
-    '''
-
-    def __init__(self):
-        self._repr: str = run_pandoc(args=['--version'])
-
-    def __str__(self) -> str:
-        return self._repr.splitlines()[0].split(' ')[1]
-
-    def __repr__(self) -> str:
-        return self._repr
-
-    @property
-    def version(self) -> Tuple[int, ...]:
-        return tuple(int(i) for i in str(self).split('.'))
-
-
 class EmptyTableError(Exception):
     pass
 
