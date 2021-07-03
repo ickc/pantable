@@ -1,4 +1,4 @@
-``` {.table}
+``` table
 ---
 caption: Data about the planets of our solar system.
 alignment: CCDRRRRRRRR
