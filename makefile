@@ -5,7 +5,9 @@ python ?= python
 _python = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(python)
 pandoc ?= pandoc
 _pandoc = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(pandoc)
-PYTESTPARALLEL ?= --workers auto
+# use pytest-parallel if python < 3.9 else pytest-xdist
+# as pytest-parallel is faster but doesn't support python 3.9 yet
+PYTESTARGS ?= $(shell python -c 'import sys; print("--workers auto" if sys.version_info < (3, 9) else "-n auto")')
 COVHTML ?= --cov-report html
 # for bump2version, valid options are: major, minor, patch
 PART ?= patch
@@ -22,7 +24,7 @@ all: dot files editable
 	$(MAKE) test docs-all
 
 test:
-	$(_python) -m pytest -vv $(PYTESTPARALLEL) \
+	$(_python) -m pytest -vv $(PYTESTARGS) \
 		--cov=src --cov-report term $(COVHTML) --no-cov-on-fail --cov-branch \
 		tests
 
