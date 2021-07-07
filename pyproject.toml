@@ -75,6 +75,7 @@ flake8 = {optional = true, version = "*"}
 pytest = {optional = true, version = "*"}
 pytest-cov = {optional = true, version = "*"}
 pytest-parallel = {optional = true, version = "*"}
+pytest-xdist = {optional = true, version = "*"}
 
 # docs: sync this with tox.testenv.docs below
 sphinx = {optional = true, version = ">=3,<5"}
@@ -103,6 +104,7 @@ tests = [
     "pytest",
     "pytest-cov",
     "pytest-parallel",
+    "pytest-xdist",
 ]
 docs = [
     "sphinx",

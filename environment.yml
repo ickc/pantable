@@ -5,6 +5,8 @@
 # python -m ipykernel install --user --name pantable --display-name pantable
 # and then run this to install pantable in editable mode
 # make editable
+# update using
+# conda env update --name pantable --file environment.yml  --prune
 name: pantable
 channels:
   - conda-forge
@@ -29,6 +31,7 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-parallel
+  - pytest-xdist
   # docs:
   - sphinx
   - sphinx_bootstrap_theme
