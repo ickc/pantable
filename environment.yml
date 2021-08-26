@@ -6,7 +6,7 @@
 # and then run this to install pantable in editable mode
 # make editable
 # update using
-# conda env update --name pantable --file environment.yml  --prune
+# conda env update --name pantable --file environment.yml --prune
 name: pantable
 channels:
   - conda-forge
@@ -35,7 +35,6 @@ dependencies:
   # docs:
   - sphinx
   - sphinx_bootstrap_theme
-  - pygments-style-solarized
   - sphinxcontrib-apidoc
   # dev:
   - tox

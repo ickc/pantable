@@ -80,7 +80,6 @@ pytest-xdist = {optional = true, version = "*"}
 # docs: sync this with tox.testenv.docs below
 sphinx = {optional = true, version = ">=3,<5"}
 sphinx-bootstrap-theme = {optional = true, version = "*"}
-pygments-style-solarized = {optional = true, version = "*"}
 sphinxcontrib-apidoc = {optional = true, version = "*"}
 
 [tool.poetry.dev-dependencies]
@@ -109,7 +108,6 @@ tests = [
 docs = [
     "sphinx",
     "sphinx-bootstrap-theme",
-    "pygments-style-solarized",
     "sphinxcontrib-apidoc",
 ]
 
@@ -242,7 +240,6 @@ usedevelop = false
 deps =
     sphinx >=3.3,<5
     sphinx-bootstrap-theme
-    pygments-style-solarized
     sphinxcontrib-apidoc
 commands =
     sphinx-build {posargs:-E} -b dirhtml docs dist/docs
