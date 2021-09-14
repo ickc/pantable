@@ -22,9 +22,9 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-1.12.4.min.js "></script>
 <script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
 <script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
 
   </head><body>
@@ -144,7 +144,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.Align.aligns_idx">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">aligns_idx</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray[np.int8]</span></em><a class="headerlink" href="#pantable.ast.Align.aligns_idx" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">aligns_idx</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int8</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.Align.aligns_idx" title="Permalink to this definition">¶</a></dt>
 <dd><p>this is designed such that aligns_text below works</p>
 <p>the last % 4 is to gunrantee garbage input still falls inside the idx range of ALIGN</p>
 </dd></dl>
@@ -158,7 +158,7 @@
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.Align.aligns_text">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">aligns_text</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray[np.str_]</span></em><a class="headerlink" href="#pantable.ast.Align.aligns_text" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">aligns_text</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.str_</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.Align.aligns_text" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -168,7 +168,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pantable.ast.Align.from_aligns_char">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_aligns_char</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aligns_char</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">np.ndarray[np.dtype(‘S1’)]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pantable.ast.Align" title="pantable.ast.Align"><span class="pre">Align</span></a></span></span><a class="reference internal" href="../../_modules/pantable/ast/#Align.from_aligns_char"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pantable.ast.Align.from_aligns_char" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_aligns_char</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aligns_char</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">np.ndarray[np.dtype('S1')]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pantable.ast.Align" title="pantable.ast.Align"><span class="pre">Align</span></a></span></span><a class="reference internal" href="../../_modules/pantable/ast/#Align.from_aligns_char"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pantable.ast.Align.from_aligns_char" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -350,7 +350,7 @@ although not strictly enforced here</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTable.panflute_tablecells">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">panflute_tablecells</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray[TableCell]</span></em><a class="headerlink" href="#pantable.ast.PanTable.panflute_tablecells" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">panflute_tablecells</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">TableCell</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTable.panflute_tablecells" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -390,7 +390,7 @@ although not strictly enforced here</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.body_idxs_row">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">body_idxs_row</span></span><a class="headerlink" href="#pantable.ast.PanTableAbstract.body_idxs_row" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">body_idxs_row</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int64</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.body_idxs_row" title="Permalink to this definition">¶</a></dt>
 <dd><p>calculate the i-th body that each row belongs to</p>
 <p>negative values means the row is not in a body</p>
 </dd></dl>
@@ -407,7 +407,7 @@ although not strictly enforced here</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.contents">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contents</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray[Union[ListContainer,</span> <span class="pre">str]]</span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.contents" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">contents</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">ListContainer</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.contents" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -420,12 +420,12 @@ including PanTableStr, PanTableMarkdown, PanTableText</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.ica_foot">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ica_foot</span></span><em class="property"><span class="pre">:</span> <span class="pre">pantable.ast.Ica</span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.ica_foot" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ica_foot</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#pantable.ast.Ica" title="pantable.ast.Ica"><span class="pre">pantable.ast.Ica</span></a></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.ica_foot" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.ica_head">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ica_head</span></span><em class="property"><span class="pre">:</span> <span class="pre">pantable.ast.Ica</span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.ica_head" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ica_head</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#pantable.ast.Ica" title="pantable.ast.Ica"><span class="pre">pantable.ast.Ica</span></a></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.ica_head" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -440,7 +440,7 @@ including PanTableStr, PanTableMarkdown, PanTableText</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.icas_body">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">icas_body</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray[Ica]</span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.icas_body" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">icas_body</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#pantable.ast.Ica" title="pantable.ast.Ica"><span class="pre">Ica</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.icas_body" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -455,28 +455,28 @@ including PanTableStr, PanTableMarkdown, PanTableText</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.icas_rowblock_idxs_row">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">icas_rowblock_idxs_row</span></span><a class="headerlink" href="#pantable.ast.PanTableAbstract.icas_rowblock_idxs_row" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">icas_rowblock_idxs_row</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int64</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.icas_rowblock_idxs_row" title="Permalink to this definition">¶</a></dt>
 <dd><p>calculate the i-th row-block attrs that each row belongs to</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.is_body_bodies">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_body_bodies</span></span><a class="headerlink" href="#pantable.ast.PanTableAbstract.is_body_bodies" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_body_bodies</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.bool_</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.is_body_bodies" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.is_body_heads">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_body_heads</span></span><a class="headerlink" href="#pantable.ast.PanTableAbstract.is_body_heads" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_body_heads</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.bool_</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.is_body_heads" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.is_foots">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_foots</span></span><a class="headerlink" href="#pantable.ast.PanTableAbstract.is_foots" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_foots</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.bool_</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.is_foots" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.is_heads">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_heads</span></span><a class="headerlink" href="#pantable.ast.PanTableAbstract.is_heads" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">is_heads</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.bool_</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.is_heads" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -488,7 +488,7 @@ including PanTableStr, PanTableMarkdown, PanTableText</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.last_row_of_rowblock_idxs">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">last_row_of_rowblock_idxs</span></span><a class="headerlink" href="#pantable.ast.PanTableAbstract.last_row_of_rowblock_idxs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">last_row_of_rowblock_idxs</span></span><em class="property"><span class="pre">:</span> <span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int64</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.last_row_of_rowblock_idxs" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a set of the indices of the last row per row-block excluding foot</p>
 </dd></dl>
 
@@ -516,7 +516,7 @@ including PanTableStr, PanTableMarkdown, PanTableText</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.ms">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ms</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray[np.int64]</span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.ms" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ms</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int64</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.ms" title="Permalink to this definition">¶</a></dt>
 <dd><p>setter and getter of ms</p>
 <p>quirks of dataclass with property
 see <a class="reference external" href="https://stackoverflow.com/a/61480946/5769446">https://stackoverflow.com/a/61480946/5769446</a></p>
@@ -534,19 +534,19 @@ see <a class="reference external" href="https://stackoverflow.com/a/61480946/576
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.rowblock_idxs_row">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rowblock_idxs_row</span></span><a class="headerlink" href="#pantable.ast.PanTableAbstract.rowblock_idxs_row" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rowblock_idxs_row</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int64</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.rowblock_idxs_row" title="Permalink to this definition">¶</a></dt>
 <dd><p>reverse lookup the index of rowblocks per row</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.rowblock_splitting_idxs">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rowblock_splitting_idxs</span></span><a class="headerlink" href="#pantable.ast.PanTableAbstract.rowblock_splitting_idxs" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">rowblock_splitting_idxs</span></span><em class="property"><span class="pre">:</span> <span class="pre">np.ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">np.int64</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.rowblock_splitting_idxs" title="Permalink to this definition">¶</a></dt>
 <dd><p>applying np.split(array_of_rows, rowblock_splitting_idxs) would break it back into list of head, bodies, foot</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.PanTableAbstract.shape">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="pre">:</span> <span class="pre">Tuple[int,</span> <span class="pre">int]</span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="pre">:</span> <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.PanTableAbstract.shape" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -836,11 +836,11 @@ info.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="pantable.ast.TableArray">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pantable.ast.</span></span><span class="sig-name descname"><span class="pre">TableArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contents</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">np.ndarray[Union[ListContainer,</span> <span class="pre">str]]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometries</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional[np.ndarray[np.int64]]</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pantable/ast/#TableArray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pantable.ast.TableArray" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pantable.ast.</span></span><span class="sig-name descname"><span class="pre">TableArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contents</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">'np.ndarray[Union[ListContainer,</span> <span class="pre">str]]'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometries</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">'Optional[np.ndarray[np.int64]]'</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/pantable/ast/#TableArray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pantable.ast.TableArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.TableArray.cannonical">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cannonical</span></span><em class="property"><span class="pre">:</span> <span class="pre">pantable.ast.TableArray</span></em><a class="headerlink" href="#pantable.ast.TableArray.cannonical" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">cannonical</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="#pantable.ast.TableArray" title="pantable.ast.TableArray"><span class="pre">pantable.ast.TableArray</span></a></em><a class="headerlink" href="#pantable.ast.TableArray.cannonical" title="Permalink to this definition">¶</a></dt>
 <dd><p>return a cell array where spanned cells appeared in cannonical location only</p>
 <p>top-left corner of the grid is the cannonical location of a spanned cell</p>
 </dd></dl>
@@ -878,7 +878,7 @@ info.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pantable.ast.TableArray.shape">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="pre">:</span> <span class="pre">Tuple[int,</span> <span class="pre">int]</span></em><a class="headerlink" href="#pantable.ast.TableArray.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="pre">:</span> <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#pantable.ast.TableArray.shape" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -929,8 +929,8 @@ Else return <cite>elem</cite>.</p>
     </p>
     <p>
         &copy; Copyright 2016-2020, Kolen Cheung.<br/>
-      Last updated on Aug 26, 2021.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+      Last updated on Sep 14, 2021.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br/>
     </p>
   </div>
 </footer>
