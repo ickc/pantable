@@ -56,7 +56,7 @@ include = [
 python = ">=3.7"
 panflute = "^2.1"
 pyyaml = "^5"
-numpy = "^1"
+numpy = "^1.14"
 "backports.cached-property" = {python = "<3.8", version = "^1"}
 
 # extras
@@ -74,7 +74,7 @@ coveralls = {optional = true, version = "*"}
 flake8 = {optional = true, version = "*"}
 pytest = {optional = true, version = "*"}
 pytest-cov = {optional = true, version = "*"}
-pytest-parallel = {optional = true, version = "*"}
+pytest-parallel = {optional = true, version = "^0.1.1"}
 pytest-xdist = {optional = true, version = "*"}
 
 # docs: sync this with tox.testenv.docs below

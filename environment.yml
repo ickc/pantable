@@ -30,7 +30,7 @@ dependencies:
   - flake8
   - pytest
   - pytest-cov
-  - pytest-parallel
+  - pytest-parallel >=0.1.1,<0.2
   - pytest-xdist
   # docs:
   - sphinx

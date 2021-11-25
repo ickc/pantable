@@ -5,9 +5,7 @@ python ?= python
 _python = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(python)
 pandoc ?= pandoc
 _pandoc = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(pandoc)
-# use pytest-parallel if python < 3.9 else pytest-xdist
-# as pytest-parallel is faster but doesn't support python 3.9 yet
-PYTESTARGS ?= $(shell python -c 'import sys; print("--workers auto" if sys.version_info < (3, 9) else "-n auto")')
+PYTESTARGS ?= --workers auto
 COVHTML ?= --cov-report html
 # for bump2version, valid options are: major, minor, patch
 PART ?= patch
