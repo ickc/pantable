@@ -50,8 +50,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies—pip
       run: |
-          python -m pip install -U poetry setuptools "${{ matrix.pyyaml-version }}" "${{ matrix.numpy-version }}"
-          python -m pip install .[extras,tests]
+        python -m pip install -U poetry setuptools "${{ matrix.pyyaml-version }}" "${{ matrix.numpy-version }}"
+        python -m pip install .[extras,tests]
         # let coverage read generated setup.py instead of pyproject.toml
         make setup.py
         mv pyproject.toml .pyproject.toml
