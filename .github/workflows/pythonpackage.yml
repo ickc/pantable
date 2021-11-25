@@ -25,7 +25,7 @@ jobs:
           - python-version: "3.7"
             pandoc-version: "2.11.4"
             pyyaml-version: "pyyaml>=5,<6"
-            numpy-version: "numpy>=1.14.6,<1.15"
+            numpy-version: "numpy>=1.15.4,<1.16"
           - python-version: "pypy-3.7"
             pandoc-version: "2.13"
             pyyaml-version: "pyyaml>=5,<6"
