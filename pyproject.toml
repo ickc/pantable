@@ -56,7 +56,7 @@ include = [
 python = ">=3.7"
 panflute = "^2.1"
 pyyaml = "^5"
-numpy = "^1.15"
+numpy = "^1.16"
 "backports.cached-property" = {python = "<3.8", version = "^1"}
 
 # extras
