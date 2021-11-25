@@ -1,11 +1,11 @@
 ``` table
 ---
-caption: Data about the planets of our solar system.
 alignment: CCDRRRRRRRR
+caption: Data about the planets of our solar system.
+fancy-table: true
+markdown: true
 ns-head:
 - 3
-markdown: true
-fancy-table: true
 ...
 ===,"(1, 2)
 ",,Name,Mass (10\^24kg),Diameter (km),Density (kg/m\^3),Gravity (m/s\^2),Length of day (hours),Distance from Sun (10\^6km),Mean temperature (C),Number of moons,Notes

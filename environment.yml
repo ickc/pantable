@@ -23,7 +23,7 @@ dependencies:
   - pandoc >=2.11.2,<2.15
   - coloredlogs >=14,<16
   - tabulate >=0.8,<0.9
-  - yamlloader >=0.5,<0.6
+  - yamlloader >=1,<2
   # tests:
   - coverage
   - coveralls

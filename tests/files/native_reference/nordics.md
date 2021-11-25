@@ -1,14 +1,10 @@
 ``` {#nordics .table source="wikipedia"}
 ---
-short-caption: Nordic countries
-caption: States belonging to the *Nordics.*
 alignment: CLLL
 alignment-cells: CCCC
-width:
-- 3/10
-- 3/10
-- 1/5
-- 1/5
+caption: States belonging to the *Nordics.*
+fancy-table: true
+markdown: true
 ms:
 - 1
 - 0
@@ -16,8 +12,12 @@ ms:
 - 1
 ns-head:
 - 1
-markdown: true
-fancy-table: true
+short-caption: Nordic countries
+width:
+- 3/10
+- 3/10
+- 1/5
+- 1/5
 ...
 {.simple-head} ===,Name,Capital,"Population\
 (in 2018)","Area\

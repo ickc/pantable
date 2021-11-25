@@ -1,11 +1,10 @@
 ``` {#students .table source="mdn"}
 ---
-caption: List of Students
 alignment: LL
 alignment-cells: CC
-width:
-- 1/2
-- 1/2
+caption: List of Students
+fancy-table: true
+markdown: true
 ms:
 - 1
 - 1
@@ -15,8 +14,9 @@ ms:
 - 1
 - 2
 - 0
-markdown: true
-fancy-table: true
+width:
+- 1/2
+- 1/2
 ...
 ===,Student ID,Name
 {.souvereign-states} ---,"(1, 2)

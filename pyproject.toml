@@ -66,7 +66,7 @@ tabulate = {optional = true, version = "^0.8"}
 # probably because panflute reads YAML without this
 # and yamlloader 1.0 now enforces OrderedDict even if dict is ordered in py37+
 # yamlloader = {optional = true, version = ">=0.5,<2"}
-yamlloader = {optional = true, version = "^0.5"}
+yamlloader = {optional = true, version = "^1"}
 
 # tests
 coverage = {optional = true, version = "*"}

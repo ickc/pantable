@@ -26,22 +26,27 @@ jobs:
             pandoc-version: "2.11.4"
             pyyaml-version: "pyyaml>=5,<6"
             numpy-version: "numpy>=1.16.6,<1.17"
+            yamlloader-version: "yamlloader>=1,<1.1"
           - python-version: "pypy-3.7"
             pandoc-version: "2.13"
             pyyaml-version: "pyyaml>=5,<6"
             numpy-version: "numpy>=1.18.5,<1.19"
+            yamlloader-version: "yamlloader>=1,<1.1"
           - python-version: "3.8"
             pandoc-version: "2.14.2"
             pyyaml-version: "pyyaml>=6,<7"
             numpy-version: "numpy>=1.19.5,<1.20"
+            yamlloader-version: "yamlloader>=1.1,<2"
           - python-version: "3.9"
             pandoc-version: "2.15"
             pyyaml-version: "pyyaml>=6,<7"
             numpy-version: "numpy>=1.20.3,<1.21"
+            yamlloader-version: "yamlloader>=1.1,<2"
           - python-version: "3.10"
             pandoc-version: "latest"
             pyyaml-version: "pyyaml>=6,<7"
             numpy-version: "numpy>=1.21.4,<1.22"
+            yamlloader-version: "yamlloader>=1.1,<2"
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -50,7 +55,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies—pip
       run: |
-        python -m pip install -U poetry setuptools "${{ matrix.pyyaml-version }}" "${{ matrix.numpy-version }}"
+        python -m pip install -U poetry setuptools "${{ matrix.pyyaml-version }}" "${{ matrix.numpy-version }}" "${{ matrix.yamlloader-version }}"
         python -m pip install .[extras,tests]
         # let coverage read generated setup.py instead of pyproject.toml
         make setup.py
