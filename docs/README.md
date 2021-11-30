@@ -85,12 +85,13 @@ Check the badge above or `setup.py` for supported Python versions, `setup.py` fu
 
 pandoc versioning semantics is [MAJOR.MAJOR.MINOR.PATCH](https://pvp.haskell.org) and panflute's is MAJOR.MINOR.PATCH. Below we shows matching versions of pandoc that panflute supports, in descending order. Only major version is shown as long as the minor versions doesn't matter.
 
-| pantable | panflute version  | supported pandoc versions | supported pandoc API versions |
-| --- | ---   | ---   |  ---  |
-| 0.14 | 2.1 | 2.11.0.4—2.14.x  | 1.22    |
-| 0.13 | 2.0 | 2.11.0.4—2.11.x  | 1.22    |
-| - | not supported | 2.10  | 1.21  |
-| 0.12 | 1.12 | 2.7-2.9 | 1.17.5–1.20  |
+| pantable | panflute version | supported pandoc versions | supported pandoc API versions |
+| -------- | ---------------- | ------------------------- | ----------------------------- |
+| 0.14.1   | 2.1.3            | 2.11.0.4–2.16.x           | 1.22–1.22.1                   |
+| 0.14     | 2.1              | 2.11.0.4—2.14.x           | 1.22                          |
+| 0.13     | 2.0              | 2.11.0.4—2.11.x           | 1.22                          |
+| -        | not supported    | 2.10                      | 1.21                          |
+| 0.12     | 1.12             | 2.7-2.9                   | 1.17.5–1.20                   |
 
 : Version Matching^[For pandoc API verion, check https://hackage.haskell.org/package/pandoc for pandoc-types, which is the same thing.]
 
