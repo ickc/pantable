@@ -1,5 +1,8 @@
 # Revision history for Pantable
 
+- v0.14.1: Support pandoc 2.15–16
+    - improve test matrix in GitHub Actions
+    - update dependency constraints
 - v0.14.0: Support pandoc 2.14
     - close #61
     - requires panflute >= 2.1
