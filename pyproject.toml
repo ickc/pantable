@@ -54,18 +54,14 @@ include = [
 
 [tool.poetry.dependencies]
 python = ">=3.7"
-panflute = "^2.1"
-pyyaml = "^5"
+panflute = "^2.1.3"
+pyyaml = ">=5,<7"
 numpy = "^1.16"
 "backports.cached-property" = {python = "<3.8", version = "^1"}
 
 # extras
 coloredlogs = {optional = true, version = ">=14,<16"}
 tabulate = {optional = true, version = "^0.8"}
-# yamlloader 1.0 causes tests/files/native_test.py::test_table_to_codeblock failures
-# probably because panflute reads YAML without this
-# and yamlloader 1.0 now enforces OrderedDict even if dict is ordered in py37+
-# yamlloader = {optional = true, version = ">=0.5,<2"}
 yamlloader = {optional = true, version = "^1"}
 
 # tests
