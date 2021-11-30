@@ -538,8 +538,8 @@ The followings are pandoc filters written in Haskell that provide similar functi
    :target: https://pypi.python.org/pypi/pantable/
 .. |Downloads| image:: https://img.shields.io/pypi/dm/pantable.svg
    :target: https://pypi.python.org/pypi/pantable/
-.. |Commits since latest release| image:: https://img.shields.io/github/commits-since/ickc/pantable/v0.14.1.svg
-   :target: https://github.com/ickc/pantable/compare/v0.14.1...master
+.. |Commits since latest release| image:: https://img.shields.io/github/commits-since/ickc/pantable/v0.14.2.svg
+   :target: https://github.com/ickc/pantable/compare/v0.14.2...master
 .. |License| image:: https://img.shields.io/pypi/l/pantable.svg
 .. |Conda Recipe| image:: https://img.shields.io/badge/recipe-pantable-green.svg
    :target: https://anaconda.org/conda-forge/pantable
