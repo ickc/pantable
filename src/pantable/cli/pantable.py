@@ -9,10 +9,14 @@ from panflute.tools import yaml_filter
 from ..codeblock_to_table import codeblock_to_table
 
 if TYPE_CHECKING:
-    from panflute.elements import Doc
+    from typing import Callable, Union
+
+    from panflute.elements import Doc, Element
+
+    PANFLUTE_ACTION = Callable[[Element, Doc], Union[None, Element, list[Element]]]
 
 #: Equiv. to the pantable cli, but provided as a Python interface.
-FILTER = partial(
+FILTER: PANFLUTE_ACTION = partial(
     yaml_filter,
     tag="table",
     function=codeblock_to_table,
