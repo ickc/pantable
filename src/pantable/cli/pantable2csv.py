@@ -9,9 +9,6 @@ from ..table_to_codeblock import table_to_codeblock
 if TYPE_CHECKING:
     from panflute.elements import Doc
 
-#: Equiv. to the pantable2csv cli, but provided as a Python interface.
-FILTER = table_to_codeblock
-
 
 def main(doc: Doc | None = None):
     """Covert all tables to CSV table format defined in pantable
@@ -20,7 +17,7 @@ def main(doc: Doc | None = None):
     - metadata in YAML
     - table in CSV
     """
-    return run_filter(FILTER, doc=doc)
+    return run_filter(table_to_codeblock, doc=doc)
 
 
 if __name__ == "__main__":

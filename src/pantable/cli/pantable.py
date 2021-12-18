@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from functools import partial
 from typing import TYPE_CHECKING
 
 from panflute.io import run_filter
@@ -9,19 +8,7 @@ from panflute.tools import yaml_filter
 from ..codeblock_to_table import codeblock_to_table
 
 if TYPE_CHECKING:
-    from typing import Callable, Union
-
-    from panflute.elements import Doc, Element
-
-    PANFLUTE_ACTION = Callable[[Element, Doc], Union[None, Element, list[Element]]]
-
-#: Equiv. to the pantable cli, but provided as a Python interface.
-FILTER: PANFLUTE_ACTION = partial(
-    yaml_filter,
-    tag="table",
-    function=codeblock_to_table,
-    strict_yaml=True,
-)
+    from panflute.elements import Doc
 
 
 def main(doc: Doc | None = None):
@@ -31,7 +18,13 @@ def main(doc: Doc | None = None):
     panflute.yaml_filter with the fuction
     :func:`pantable.codeblock_to_table.codeblock_to_table`
     """
-    return run_filter(FILTER, doc=doc)
+    return run_filter(
+        yaml_filter,
+        doc=doc,
+        tag="table",
+        function=codeblock_to_table,
+        strict_yaml=True,
+    )
 
 
 if __name__ == "__main__":
