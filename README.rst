@@ -4,29 +4,21 @@
 Pantable—A Python library for writing pandoc filters for tables with batteries included.
 ========================================================================================
 
-:Date:   November 30, 2021
+:Date:   January 25, 2022
 
 .. contents::
    :depth: 3
 ..
 
-+-------------+----------------------------------------------------------------------------------+
-| docs        | |Documentation Status| |image2|                                                  |
-+=============+==================================================================================+
-| tests       | |GitHub Actions| |Coverage Status|                                               |
-|             |                                                                                  |
-|             | |Codacy Code Quality Status| |Scrutinizer Status| |CodeClimate Quality Status|   |
-+-------------+----------------------------------------------------------------------------------+
-| package     | |Supported versions| |Supported implementations| |PyPI Wheel|                    |
-|             |                                                                                  |
-|             | |PyPI Package latest release| |GitHub Releases| |Development Status| |Downloads| |
-|             |                                                                                  |
-|             | |Commits since latest release| |License|                                         |
-+-------------+----------------------------------------------------------------------------------+
-| conda-forge | |Conda Recipe| |Conda Downloads| |Conda Version| |Conda Platforms|               |
-+-------------+----------------------------------------------------------------------------------+
-| cite        | |DOI|                                                                            |
-+-------------+----------------------------------------------------------------------------------+
+|Documentation Status| |image1|
+
+|GitHub Actions| |Coverage Status| |image2| |Codacy Badge| |Scrutinizer Status| |CodeClimate Quality Status|
+
+|Supported versions| |Supported implementations| |PyPI Wheel| |PyPI Package latest release| |GitHub Releases| |Development Status| |Downloads| |Commits since latest release| |License|
+
+|Conda Recipe| |Conda Downloads| |Conda Version| |Conda Platforms|
+
+|DOI|
 
 Introduction
 ============
@@ -518,8 +510,10 @@ The followings are pandoc filters written in Haskell that provide similar functi
 .. |GitHub Actions| image:: https://github.com/ickc/pantable/workflows/Python%20package/badge.svg
 .. |Coverage Status| image:: https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master
    :target: https://codecov.io/github/ickc/pantable
-.. |Codacy Code Quality Status| image:: https://img.shields.io/codacy/grade/078ebc537c5747f68c1d4ad3d3594bbf.svg
-   :target: https://www.codacy.com/app/ickc/pantable
+.. |image2| image:: https://coveralls.io/repos/ickc/pantable/badge.svg?branch=master&service=github
+   :target: https://coveralls.io/r/ickc/pantable
+.. |Codacy Badge| image:: https://app.codacy.com/project/badge/Grade/078ebc537c5747f68c1d4ad3d3594bbf
+   :target: https://www.codacy.com/gh/ickc/pantable/dashboard?utm_source=github.com&utm_medium=referral&utm_content=ickc/pantable&utm_campaign=Badge_Grade
 .. |Scrutinizer Status| image:: https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg
    :target: https://scrutinizer-ci.com/g/ickc/pantable/
 .. |CodeClimate Quality Status| image:: https://codeclimate.com/github/ickc/pantable/badges/gpa.svg
@@ -551,5 +545,3 @@ The followings are pandoc filters written in Haskell that provide similar functi
    :target: https://anaconda.org/conda-forge/pantable
 .. |DOI| image:: https://zenodo.org/badge/74008159.svg
    :target: https://zenodo.org/badge/latestdoi/74008159
-.. |image2| image:: https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg
-   :target: https://ickc.github.io/pantable
