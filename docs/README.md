@@ -12,7 +12,7 @@ title:	Pantable—A Python library for writing pandoc filters for tables with ba
 
 ![GitHub Actions](https://github.com/ickc/pantable/workflows/Python%20package/badge.svg)
 [![Coverage Status](https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/ickc/pantable)
-[![Coverage Status](https://coveralls.io/repos/ickc/pantable/badge.svg?branch=master&service=github)](https://coveralls.io/r/ickc/pantable)
+[![Coverage Status](https://coveralls.io/repos/github/ickc/pantable/badge.svg?branch=master)](https://coveralls.io/github/ickc/pantable?branch=master)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/078ebc537c5747f68c1d4ad3d3594bbf)](https://www.codacy.com/gh/ickc/pantable/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ickc/pantable&amp;utm_campaign=Badge_Grade)
 [![Scrutinizer Status](https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg)](https://scrutinizer-ci.com/g/ickc/pantable/)
 [![CodeClimate Quality Status](https://codeclimate.com/github/ickc/pantable/badges/gpa.svg)](https://codeclimate.com/github/ickc/pantable)
