@@ -70,6 +70,7 @@ jobs:
     - name: Tests
       run: |
         make test
+        coverage combine
         coverage xml
     - name: Coverage—Coveralls
       uses: AndreMiras/coveralls-python-action@develop

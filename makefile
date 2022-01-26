@@ -23,9 +23,10 @@ all: dot files editable
 # --cov-report term --cov-report html
 test:
 	$(_python) \
-		-m coverage run --branch --parallel-mode \
+		-m coverage run \
 		-m pytest -vv $(PYTESTARGS) tests
 coverage: test
+	coverage combine
 	coverage report
 	coverage html
 
