@@ -25,7 +25,7 @@ dependencies:
   - tabulate >=0.8,<0.9
   - yamlloader >=1,<2
   # tests:
-  - coverage
+  - coverage>=6.3,<7
   - coveralls
   - flake8
   - pytest

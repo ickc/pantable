@@ -73,11 +73,14 @@ jobs:
         coverage combine || true
         coverage report
         coverage xml
-    - name: Coverage—Coveralls
-      uses: AndreMiras/coveralls-python-action@develop
+        coverage lcov
+    - name: Coveralls Parallel
+      uses: coverallsapp/github-action@master
       with:
+        github-token: ${{ secrets.github_token }}
+        flag-name: run-${{ matrix.test_number }}
         parallel: true
-        flag-name: python-${{ matrix.python-version }}_pandoc-${{ matrix.pandoc-version }}_pyyaml-${{ matrix.pyyaml-version }}_numpy-${{ matrix.numpy-version }}_yamlloader-${{ matrix.yamlloader-version }}
+        path-to-lcov: ./coverage.lcov
     - name: Coverage—Codecov
       uses: codecov/codecov-action@v1
       with:
@@ -99,7 +102,8 @@ jobs:
     needs: build-n-publish
     runs-on: ubuntu-latest
     steps:
-    - name: Coverage—Coveralls finishing
-      uses: AndreMiras/coveralls-python-action@develop
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
       with:
+        github-token: ${{ secrets.github_token }}
         parallel-finished: true

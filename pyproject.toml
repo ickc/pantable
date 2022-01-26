@@ -65,7 +65,7 @@ tabulate = {optional = true, version = "^0.8"}
 yamlloader = {optional = true, version = "^1"}
 
 # tests
-coverage = {optional = true, version = "*"}
+coverage = { optional = true, version = "^6.3" }
 coveralls = {optional = true, version = "*"}
 flake8 = {optional = true, version = "*"}
 pytest = {optional = true, version = "*"}
