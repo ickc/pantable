@@ -68,7 +68,9 @@ jobs:
         wget --quiet "$downloadUrl"
         sudo dpkg -i "${downloadUrl##*/}"
     - name: Tests
-      run: make test COVHTML='--cov-report=xml'
+      run:
+        - make test
+        - coverage xml
     - name: Coverage—Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:

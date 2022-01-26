@@ -6,7 +6,6 @@ _python = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(python)
 pandoc ?= pandoc
 _pandoc = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(pandoc)
 PYTESTARGS ?= --workers auto
-COVHTML ?= --cov-report html
 # for bump2version, valid options are: major, minor, patch
 PART ?= patch
 
@@ -21,10 +20,14 @@ RSTs = CHANGELOG.rst README.rst
 all: dot files editable
 	$(MAKE) test docs-all
 
+# --cov-report term --cov-report html
 test:
-	$(_python) -m pytest -vv $(PYTESTARGS) \
-		--cov=src --cov-report term $(COVHTML) --no-cov-on-fail --cov-branch \
-		tests
+	$(_python) \
+		-m coverage run --branch --parallel-mode \
+		-m pytest -vv $(PYTESTARGS) tests
+coverage: test
+	coverage report
+	coverage html
 
 docs-all: docs html epub
 docs: $(RSTs)
