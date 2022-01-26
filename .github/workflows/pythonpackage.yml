@@ -76,7 +76,7 @@ jobs:
       uses: AndreMiras/coveralls-python-action@develop
       with:
         parallel: true
-        flag-name: python-${{ matrix.python-version }}_pandoc-${{ matrix.pandoc-version }}_pyyaml-${{ matrix.pyyaml-version }}_numpy-${{ matrix.numpy-version }}
+        flag-name: python-${{ matrix.python-version }}_pandoc-${{ matrix.pandoc-version }}_pyyaml-${{ matrix.pyyaml-version }}_numpy-${{ matrix.numpy-version }}_yamlloader-${{ matrix.yamlloader-version }}
     - name: Coverage—Codecov
       uses: codecov/codecov-action@v1
       with:
