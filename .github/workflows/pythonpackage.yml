@@ -70,8 +70,8 @@ jobs:
     - name: Tests
       run: |
         make test
-        ls -algh
-        coverage combine; coverage xml
+        coverage combine || true
+        coverage xml
     - name: Coverage—Coveralls
       uses: AndreMiras/coveralls-python-action@develop
       with:
