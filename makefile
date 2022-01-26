@@ -20,7 +20,6 @@ RSTs = CHANGELOG.rst README.rst
 all: dot files editable
 	$(MAKE) test docs-all
 
-# --cov-report term --cov-report html
 test:
 	$(_python) \
 		-m coverage run \
