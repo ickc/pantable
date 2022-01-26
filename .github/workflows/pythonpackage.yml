@@ -71,6 +71,7 @@ jobs:
       run: |
         make test
         coverage combine || true
+        coverage report
         coverage xml
     - name: Coverage—Coveralls
       uses: AndreMiras/coveralls-python-action@develop
