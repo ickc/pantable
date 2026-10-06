@@ -1,0 +1,24 @@
+/*-- scss:defaults --*/
+
+// The @font-face rules come from font.kolen.dev, linked in _quarto.yml
+$font-family-base: 'TeX Gyre Schola', Georgia, 'Times New Roman', serif;
+$headings-font-family: $font-family-base;
+$font-family-monospace: 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, monospace;
+$line-height-base: 1.45;
+$font-size-base: 1.0625rem;
+
+/*-- scss:rules --*/
+
+// Keep line length readable
+.page-columns .column-body,
+#quarto-content article {
+  max-width: 72ch;
+}
+
+p {
+  hyphens: auto;
+}
+
+code {
+  font-size: 0.9em;
+}

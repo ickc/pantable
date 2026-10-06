@@ -80,3 +80,6 @@ docs/_build
 
 # Mypy Cache
 .mypy_cache/
+
+# Quarto (it also writes docs/.gitignore)
+docs/_site/
