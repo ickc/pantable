@@ -7,8 +7,6 @@ from .ast import PanCodeBlock
 from .util import EmptyTableError
 
 if TYPE_CHECKING:
-    from typing import Optional, Union
-
     from panflute.elements import CodeBlock, Doc
     from panflute.table_elements import Table
 
@@ -16,11 +14,11 @@ logger = getLogger("pantable")
 
 
 def codeblock_to_table(
-    options: Optional[dict] = None,
+    options: dict | None = None,
     data: str = "",
-    element: Optional[CodeBlock] = None,
-    doc: Optional[Doc] = None,
-) -> Union[Table, list, None]:
+    element: CodeBlock | None = None,
+    doc: Doc | None = None,
+) -> Table | list | None:
     try:
         pan_table_str = PanCodeBlock.from_yaml_filter(
             options=options, data=data, element=element, doc=doc

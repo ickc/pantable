@@ -1,6 +1,5 @@
 from logging import getLogger
 from pathlib import Path
-from typing import Tuple
 
 from panflute import convert_text
 from pytest import mark
@@ -22,10 +21,10 @@ def round_trip(text: str) -> str:
     return convert_text(doc, input_format="panflute", output_format="markdown")
 
 
-def read(path: Path) -> Tuple[str, str, str]:
+def read(path: Path) -> tuple[str, str, str]:
     """test parsing markdown codeblock to PanCodeBlock"""
     logger.info(f"Testing idempotence with {path}...")
-    with open(path, "r") as f:
+    with open(path) as f:
         text = f.read()
 
     text_out = round_trip(text)
@@ -34,7 +33,7 @@ def read(path: Path) -> Tuple[str, str, str]:
     return text_out, text_idem, text
 
 
-def read_io(name: str) -> Tuple[str, str, str]:
+def read_io(name: str) -> tuple[str, str, str]:
     path = DIR / f"{name}.{EXT}"
     return read(path)
 

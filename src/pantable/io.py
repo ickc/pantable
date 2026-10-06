@@ -11,8 +11,6 @@ import numpy as np
 from .util import EmptyTableError
 
 if TYPE_CHECKING:
-    from typing import List
-
     from .ast import PanTableOption
 
 logger = getLogger("pantable")
@@ -21,7 +19,7 @@ logger = getLogger("pantable")
 def load_csv(
     data: str,
     options: PanTableOption,
-) -> List[List[str]]:
+) -> list[list[str]]:
     """loading CSV table
 
     Note that this can emit EmptyTableError, FileNotFoundError

@@ -7,13 +7,12 @@ from functools import cached_property
 from itertools import chain, repeat
 from logging import getLogger
 from textwrap import wrap
-from typing import TYPE_CHECKING, ClassVar, List, Optional, Union
-
+from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
-    from typing import Tuple, Dict, Iterator, Set, Callable
+    from collections.abc import Callable, Iterator
 
-    from panflute.base import Inline, Block
+    from panflute.base import Block, Inline
     from panflute.elements import Doc
 
 import numpy as np
@@ -62,8 +61,8 @@ class Ica:
     """a class of identifier, classes, and attributes"""
 
     identifier: str = ""
-    classes: List[str] = field(default_factory=list)
-    attributes: Dict[str, str] = field(default_factory=dict)
+    classes: list[str] = field(default_factory=list)
+    attributes: dict[str, str] = field(default_factory=dict)
 
     def to_panflute_ast(self) -> ListContainer[Plain]:
         """to panflute AST element
@@ -108,11 +107,11 @@ class PanTableOption:
     caption: str = ""
     alignment: str = ""
     alignment_cells: str = ""
-    width: Optional[List[Union[float, str]]] = None
-    table_width: Optional[float] = None
+    width: list[float | str] | None = None
+    table_width: float | None = None
     header: bool = True
-    ms: Optional[List[int]] = None
-    ns_head: Optional[List[int]] = None
+    ms: list[int] | None = None
+    ns_head: list[int] | None = None
     markdown: bool = False
     fancy_table: bool = False
     include: str = ""
@@ -162,7 +161,7 @@ class PanTableOption:
                     )
                     setattr(self, key, None)
 
-    def normalize(self, shape: Tuple[int, int]):
+    def normalize(self, shape: tuple[int, int]):
         """normalize
 
         assume the types are correct. Normalize what's beyond type-correctness.
@@ -175,7 +174,7 @@ class PanTableOption:
         sum_ = 0.0
         width = self.width
         if width is not None:
-            widths: List[Union[float, str]] = ["D"] * n
+            widths: list[float | str] = ["D"] * n
             for i, width_ in enumerate(width):
                 if i >= n:
                     break
@@ -388,9 +387,9 @@ class PanCodeBlock:
     def from_yaml_filter(
         cls,
         data: str = "",
-        options: Optional[dict] = None,
-        element: Optional[CodeBlock] = None,
-        doc: Optional[Doc] = None,
+        options: dict | None = None,
+        element: CodeBlock | None = None,
+        doc: Doc | None = None,
     ) -> PanCodeBlock:
         """
         these args are those passed from within yaml_filter
@@ -443,8 +442,8 @@ class PanCodeBlock:
     def from_data_format(
         cls,
         data: np.ndarray[np.str_],
-        options: Optional[PanTableOption] = None,
-        ica: Optional[Ica] = None,
+        options: PanTableOption | None = None,
+        ica: Ica | None = None,
     ) -> PanCodeBlock:
         """construct from different data formats
 
@@ -469,14 +468,14 @@ class PanCodeBlock:
 
     def parse_options(
         self,
-        shape: Tuple[int, int],
-    ) -> Tuple[
+        shape: tuple[int, int],
+    ) -> tuple[
         str,
         str,
         Spec,
         Align,
-        Optional[np.ndarray[np.int64]],
-        Optional[np.ndarray[np.int64]],
+        np.ndarray[np.int64] | None,
+        np.ndarray[np.int64] | None,
     ]:
         """parsing PanTableOption to whatever PanTableStr.__init__ needed
 
@@ -498,7 +497,7 @@ class PanCodeBlock:
 
         # ms
         _ms = options.ms
-        ms: Optional[np.ndarray[np.int64]] = None if _ms is None else np.array(_ms, dtype=np.int64)
+        ms: np.ndarray[np.int64] | None = None if _ms is None else np.array(_ms, dtype=np.int64)
 
         # ns_head
         _ns_head = options.ns_head
@@ -511,9 +510,9 @@ class PanCodeBlock:
         fancy_table: bool = False,
         ica_cell_pat=re.compile(r"^(\([0-9, ]+\))?({[^{}]*})?$"),
         fancy_table_pat=re.compile(r"^({[^{}]*})?? ?(---|===|___)? ?({[^{}]*})?$"),
-    ) -> Tuple[
-        Optional[np.ndarray[np.int64]],
-        Optional[np.ndarray[np.str_]],
+    ) -> tuple[
+        np.ndarray[np.int64] | None,
+        np.ndarray[np.str_] | None,
         np.ndarray[np.str_],
         np.ndarray[np.str_],
         TableArray,
@@ -576,12 +575,12 @@ class PanCodeBlock:
 
         # ms, icas_rowblock, icas_row
         ms = None
-        icas_rowblock: Optional[np.ndarray[np.str_]] = None
+        icas_rowblock: np.ndarray[np.str_] | None = None
         icas_row: np.ndarray[np.str_] = np.full(m, "", dtype=np.object_)
         if fancy_table:
             temp_markers = []
             temp_icas = []
-            temp_idxs: Union[List[int], np.ndarray[np.int64]] = []
+            temp_idxs: list[int] | np.ndarray[np.int64] = []
             # icas_row
             for i in range(m):
                 string = str_array[i, 0]
@@ -620,7 +619,7 @@ class PanCodeBlock:
 
                 # put in a temporary structure first
                 # because we don't know if body-head or body-body exists in each body
-                body_list: List[Dict[str, Tuple[int, str]]] = []
+                body_list: list[dict[str, tuple[int, str]]] = []
                 for i in range(i_start, i_end):
                     marker = temp_markers[i]
                     temp = (
@@ -645,7 +644,7 @@ class PanCodeBlock:
                             f"Cannot determine the following fancy-table row as head or foot, ignoring...: {str_array[temp_idxs[i], 0]}"
                         )
 
-                ms_list: List[int] = []
+                ms_list: list[int] = []
                 icas_rowblock_list = []
                 if has_head:
                     ms_list.append(ms_excluding_empty_rowblocks[0])
@@ -702,10 +701,10 @@ class PanCodeBlock:
         except KeyError:
             raise ValueError(f"Unknown format: {options.format}")
 
-        ms: Optional[np.ndarray[np.int64]]
-        icas_rowblock: Optional[np.ndarray[np.str_]]
-        icas_row: Optional[np.ndarray[np.str_]]
-        icas: Optional[np.ndarray[np.str_]]
+        ms: np.ndarray[np.int64] | None
+        icas_rowblock: np.ndarray[np.str_] | None
+        icas_row: np.ndarray[np.str_] | None
+        icas: np.ndarray[np.str_] | None
 
         if options.markdown:
             ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(
@@ -805,7 +804,7 @@ class Align:
         return cls(aligns_char.view(np.int8))
 
     @classmethod
-    def from_aligns_text(cls, aligns_text: np.ndarray[Optional[np.str_]]) -> Align:
+    def from_aligns_text(cls, aligns_text: np.ndarray[np.str_ | None]) -> Align:
         aligns_char = np.empty_like(aligns_text, dtype="S1")
         # ravel to handle arbitrary dimenions
         aligns_char_ravel = np.ravel(aligns_char)
@@ -836,7 +835,7 @@ class Align:
         return aligns
 
     @classmethod
-    def from_aligns_string_2d(cls, alignment_cells: str, shape: Tuple[int, int]) -> Align:
+    def from_aligns_string_2d(cls, alignment_cells: str, shape: tuple[int, int]) -> Align:
         """create Align from aligns_string, 2-dimensional
 
         should be used by data created by users
@@ -872,7 +871,7 @@ class Align:
             return Align.from_aligns_string_2d(alignment_norm, (m, n))
 
     @classmethod
-    def default(cls, shape: Union[Tuple[int], Tuple[int, int]] = (1,)) -> Align:
+    def default(cls, shape: tuple[int] | tuple[int, int] = (1,)) -> Align:
         return cls(np.full(shape, 68, dtype=np.int8))
 
 
@@ -881,7 +880,7 @@ class Spec:
     """a class of spec of PanTable"""
 
     aligns: Align
-    col_widths: Optional[np.ndarray[np.float64]] = None
+    col_widths: np.ndarray[np.float64] | None = None
 
     def __post_init__(self):
         if self.col_widths is None:
@@ -912,7 +911,7 @@ class Spec:
             col_widths,
         )
 
-    def to_panflute_ast(self) -> List[Tuple]:
+    def to_panflute_ast(self) -> list[tuple]:
         return (
             [(align, COLWIDTHDEFAULT) for align in self.aligns.aligns_text]
             if self.col_widths is None
@@ -929,15 +928,15 @@ class Spec:
 
 @dataclass
 class TableArray:
-    contents: np.ndarray[Union[ListContainer, str]]
+    contents: np.ndarray[ListContainer | str]
     # 4d-array: [i, j, 0, :] is shape; [i, j, 1, :] is idxs
     # shape must be >= 1, idxs will either be [i, j] or [-1, -1]
     # where -1 indicating default values
-    geometries: Optional[np.ndarray[np.int64]] = None
+    geometries: np.ndarray[np.int64] | None = None
 
     @classmethod
-    def default(cls, shape: Tuple[int, int], has_geometries=False) -> TableArray:
-        geometries: Optional[np.ndarray[np.int64]]
+    def default(cls, shape: tuple[int, int], has_geometries=False) -> TableArray:
+        geometries: np.ndarray[np.int64] | None
         if has_geometries:
             m, n = shape
             geometries = np.empty((m, n, 2, 2), dtype=np.int64)
@@ -951,7 +950,7 @@ class TableArray:
         )
 
     @property
-    def shape(self) -> Tuple[int, int]:
+    def shape(self) -> tuple[int, int]:
         return self.contents.shape
 
     def is_at(self, i: int, j: int) -> bool:
@@ -964,7 +963,7 @@ class TableArray:
         else:
             return False
 
-    def shape_at(self, i: int, j: int) -> Tuple[int, int]:
+    def shape_at(self, i: int, j: int) -> tuple[int, int]:
         return (1, 1) if self.geometries is None else self.geometries[i, j, 0]
 
     def is_block(self, i: int, j: int) -> bool:
@@ -972,7 +971,7 @@ class TableArray:
 
     def put(
         self,
-        content: Union[ListContainer, str],
+        content: ListContainer | str,
         row_span: int,
         col_span: int,
         i: int,
@@ -1052,23 +1051,23 @@ class TableArray:
 class PanTableAbstract:
     """an abstract class of PanTables"""
 
-    cells: Union[TableArray, np.ndarray[Union[ListContainer, str]]]
-    caption: Union[ListContainer[Block], str]
+    cells: TableArray | np.ndarray[ListContainer | str]
+    caption: ListContainer[Block] | str
     icas_rowblock: np.ndarray
     icas_row: np.ndarray
     icas: np.ndarray
-    short_caption: Optional[Union[ListContainer[Inline], str]] = None
+    short_caption: ListContainer[Inline] | str | None = None
     ica_table: Ica = field(default_factory=Ica)
     # __post_init__
-    spec: Optional[Spec] = None
-    aligns: Optional[Align] = None
-    ms: Optional[np.ndarray[np.int64]] = None
-    ns_head: Optional[np.ndarray[np.int64]] = None
+    spec: Spec | None = None
+    aligns: Align | None = None
+    ms: np.ndarray[np.int64] | None = None
+    ns_head: np.ndarray[np.int64] | None = None
 
     def __post_init__(self):
         if type(self.cells) is not TableArray:
             self.cells: TableArray = TableArray(self.cells)
-        shape: Tuple[int, int] = self.cells.contents.shape
+        shape: tuple[int, int] = self.cells.contents.shape
         m, n = shape
 
         if self.spec is None:
@@ -1103,7 +1102,7 @@ class PanTableAbstract:
             return self.__repr__()
 
     @classmethod
-    def default(cls, shape: Tuple[int, int], has_geometries=False):
+    def default(cls, shape: tuple[int, int], has_geometries=False):
         """return a default object given shape, etc
 
         This won't work in PanTableAbstract itself but all derived classes
@@ -1112,7 +1111,7 @@ class PanTableAbstract:
         return cls(TableArray.default(shape=shape, has_geometries=has_geometries))
 
     @property
-    def contents(self) -> np.ndarray[Union[ListContainer, str]]:
+    def contents(self) -> np.ndarray[ListContainer | str]:
         return self.cells.contents
 
     @property
@@ -1124,7 +1123,7 @@ class PanTableAbstract:
         return self.spec.size
 
     @property
-    def shape(self) -> Tuple[int, int]:
+    def shape(self) -> tuple[int, int]:
         return (self.m, self.n)
 
     @property
@@ -1226,11 +1225,11 @@ class PanTableAbstract:
         return np.cumsum(self._ms)[:-1]
 
     @cached_property
-    def last_row_of_rowblock_idxs(self) -> Set[np.int64]:
+    def last_row_of_rowblock_idxs(self) -> set[np.int64]:
         """return a set of the indices of the last row per row-block excluding foot"""
         return set(np.cumsum(self._ms) - 1)
 
-    def iter_rowblocks(self, array: np.ndarray) -> List[np.ndarray]:
+    def iter_rowblocks(self, array: np.ndarray) -> list[np.ndarray]:
         """break array into list of head, bodies, foot
 
         assume array is iterables of rows
@@ -1250,10 +1249,10 @@ class PanTable(PanTableAbstract):
     """
 
     caption: ListContainer[Block] = field(default_factory=ListContainer)
-    icas_rowblock: Optional[np.ndarray[Ica]] = None
-    icas_row: Optional[np.ndarray[Ica]] = None
-    icas: Optional[np.ndarray[Ica]] = None
-    short_caption: Optional[ListContainer[Inline]] = None
+    icas_rowblock: np.ndarray[Ica] | None = None
+    icas_row: np.ndarray[Ica] | None = None
+    icas: np.ndarray[Ica] | None = None
+    short_caption: ListContainer[Inline] | None = None
 
     def __post_init__(self):
         super().__post_init__()
@@ -1471,9 +1470,9 @@ class PanTable(PanTableAbstract):
     def to_pantablemarkdown(self) -> PanTableMarkdown:
         """return a PanTableMarkdown representation of self"""
         # * 1st pass: assemble the caches
-        cache_elems: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], ListContainer] = {}
+        cache_elems: dict[str | tuple[str, int] | tuple[str, int, int], ListContainer] = {}
         # for holding the value as None cases
-        cache_none: List[Union[str, Tuple[str, int, int]]] = []
+        cache_none: list[str | tuple[str, int, int]] = []
         # caption
         cache_elems["caption"] = self.caption
         # short_caption
@@ -1511,7 +1510,7 @@ class PanTable(PanTableAbstract):
 
         # * batch convert to markdown
         # the bottle neck is calling pandoc so we batch them and call it once only
-        cache_texts: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], Optional[str]] = {
+        cache_texts: dict[str | tuple[str, int] | tuple[str, int, int], str | None] = {
             key: value
             for key, value in chain(
                 zip(
@@ -1593,11 +1592,11 @@ class PanTableStr(PanTableAbstract):
     """
 
     caption: str = ""
-    icas_rowblock: Optional[np.ndarray[np.str_]] = None
-    icas_row: Optional[np.ndarray[np.str_]] = None
-    icas: Optional[np.ndarray[np.str_]] = None
-    short_caption: Optional[str] = None
-    table_width: Optional[float] = None
+    icas_rowblock: np.ndarray[np.str_] | None = None
+    icas_row: np.ndarray[np.str_] | None = None
+    icas: np.ndarray[np.str_] | None = None
+    short_caption: str | None = None
+    table_width: float | None = None
 
     def __post_init__(self):
         super().__post_init__()
@@ -1622,7 +1621,7 @@ class PanTableStr(PanTableAbstract):
         format: str = "csv",
         fancy_table: bool = False,
         include: str = "",
-        csv_kwargs: Optional[dict] = None,
+        csv_kwargs: dict | None = None,
     ) -> PanTableOption:
         short_caption = self.short_caption
         spec = self.spec
@@ -1654,7 +1653,7 @@ class PanTableStr(PanTableAbstract):
         self,
         format: str = "csv",
         include: str = "",
-        csv_kwargs: Optional[dict] = None,
+        csv_kwargs: dict | None = None,
     ) -> PanCodeBlock:
         """to PanCodeBlock object
 
@@ -1701,7 +1700,7 @@ class PanTableStr(PanTableAbstract):
     def auto_width(
         self,
         override_width: bool = False,
-        cell_width_func: Optional[Callable[[str], int]] = cell_width_func,
+        cell_width_func: Callable[[str], int] | None = cell_width_func,
     ):
         """calculate column widths
 
@@ -1713,7 +1712,7 @@ class PanTableStr(PanTableAbstract):
         n = self.n
         col_widths = self.spec.col_widths
 
-        temp: List[List[Union[int, Tuple[int, int]]]] = [[]] * n
+        temp: list[list[int | tuple[int, int]]] = [[]] * n
         for i in range(self.m):
             for j in range(n):
                 if cells.is_at(i, j):
@@ -1767,9 +1766,9 @@ class PanTableMarkdown(PanTableStr):
     def to_pantable(self) -> PanTable:
         """return a PanTable representation of self"""
         # * 1st pass: assemble the caches
-        cache_texts: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], str] = {}
+        cache_texts: dict[str | tuple[str, int] | tuple[str, int, int], str] = {}
         # for holding the value as None cases
-        cache_none: List[Union[str, Tuple[str, int, int]]] = []
+        cache_none: list[str | tuple[str, int, int]] = []
         # caption
         cache_texts["caption"] = self.caption
         # short_caption
@@ -1806,7 +1805,7 @@ class PanTableMarkdown(PanTableStr):
 
         # * batch convert to markdown
         # the bottle neck is calling pandoc so we batch them and call it once only
-        cache_elems: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], Optional[ListContainer]] = {
+        cache_elems: dict[str | tuple[str, int] | tuple[str, int, int], ListContainer | None] = {
             key: value
             for key, value in chain(
                 zip(
@@ -1925,7 +1924,7 @@ class PanTableMarkdown(PanTableStr):
         format: str = "csv",
         fancy_table: bool = False,
         include: str = "",
-        csv_kwargs: Optional[dict] = None,
+        csv_kwargs: dict | None = None,
     ) -> PanCodeBlock:
         return PanCodeBlock.from_data_format(
             self.to_str_array(fancy_table=fancy_table),

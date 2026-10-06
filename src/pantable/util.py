@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING, Any, Union, _SpecialForm, get_args, get_origin
 
 import numpy as np
 from panflute.elements import ListContainer, Para, Str
-from panflute.tools import convert_text, run_pandoc, yaml_filter
+from panflute.tools import convert_text, yaml_filter
 
 if TYPE_CHECKING:
-    from typing import Callable, Dict, Generator, Iterable, Iterator, List, Optional, Tuple
+    from collections.abc import Callable, Generator, Iterable, Iterator
 
     from panflute.elements import Element
 
@@ -26,8 +26,8 @@ def convert_texts(
     input_format: str = "markdown",
     output_format: str = "panflute",
     standalone: bool = False,
-    extra_args: Optional[List[str]] = None,
-) -> List[list]:
+    extra_args: list[str] | None = None,
+) -> list[list]:
     """run convert_text on list of text"""
     try:
         from map_parallel import map_parallel
@@ -51,19 +51,17 @@ def convert_texts(
 
 def iter_convert_texts_markdown_to_panflute(
     texts: Iterable[str],
-    extra_args: Optional[List[str]] = None,
+    extra_args: list[str] | None = None,
 ) -> Iterator[ListContainer]:
     """a faster, specialized convert_texts"""
     # put each text in a Div together
     text = "\n\n".join(
-        (
-            f"""::: PanTableDiv :::
+        f"""::: PanTableDiv :::
 
 {text}
 
 :::"""
-            for text in texts
-        )
+        for text in texts
     )
     pf = convert_text(text, input_format="markdown", output_format="panflute", extra_args=extra_args)
     return (elem.content for elem in pf)
@@ -71,7 +69,7 @@ def iter_convert_texts_markdown_to_panflute(
 
 def iter_convert_texts_panflute_to_markdown(
     elems: Iterable[ListContainer],
-    extra_args: Optional[List[str]] = None,
+    extra_args: list[str] | None = None,
     seperator: str = np.random.randint(65, 91, size=256, dtype=np.uint8).view("S256")[0].decode(),
 ) -> Iterator[str]:
     """a faster, specialized convert_texts
@@ -81,7 +79,7 @@ def iter_convert_texts_panflute_to_markdown(
     :param str seperator: a string for seperator in the temporary markdown output
     """
 
-    def iter_seperator(elems: List[ListContainer], inserter: Para):
+    def iter_seperator(elems: list[ListContainer], inserter: Para):
         """insert between every element in a ListContainer"""
         for elem in elems:
             for i in elem:
@@ -110,7 +108,7 @@ def iter_convert_texts_panflute_to_markdown(
     return iter_split_by_seperator(texts_converted, seperator)
 
 
-convert_texts_func: Dict[Tuple[str, str], Callable[[Iterable, Optional[List[str]]], Iterator]] = {
+convert_texts_func: dict[tuple[str, str], Callable[[Iterable, list[str] | None], Iterator]] = {
     ("markdown", "panflute"): (
         lambda *args, **kwargs: (
             # this is just to convert returned value from
@@ -127,8 +125,8 @@ def convert_texts_fast(
     texts: Iterable,
     input_format: str = "markdown",
     output_format: str = "panflute",
-    extra_args: Optional[List[str]] = None,
-) -> List[list]:
+    extra_args: list[str] | None = None,
+) -> list[list]:
     """a faster, specialized convert_texts
 
     should have identical result from convert_texts
@@ -154,7 +152,7 @@ def eq_panflute_elem(elem1: Element, elem2: Element) -> bool:
     return repr(elem1) == repr(elem2)
 
 
-def eq_panflute_elems(elems1: List[Element], elems2: List[Element]) -> bool:
+def eq_panflute_elems(elems1: list[Element], elems2: list[Element]) -> bool:
     if not len(elems1) == len(elems2):
         return False
     for elem1, elem2 in zip(elems1, elems2):
@@ -199,7 +197,7 @@ def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
         yield actual_type
 
 
-def get_types(cls: Any) -> Dict[str, tuple]:
+def get_types(cls: Any) -> dict[str, tuple]:
     """returns all type hints in a Union
 
     c.f. https://stackoverflow.com/a/50622643

@@ -1,6 +1,5 @@
 from logging import getLogger
 from pathlib import Path
-from typing import Tuple
 
 from panflute import convert_text
 from pytest import mark
@@ -14,10 +13,10 @@ EXT = "native"
 DIR = Path(__file__).parent / EXT
 
 
-def read(path: Path) -> Tuple[str, str, str, str, str]:
+def read(path: Path) -> tuple[str, str, str, str, str]:
     """test parsing native table into Pantable"""
     logger.info(f"Testing case {path}...")
-    with open(path, "r") as f:
+    with open(path) as f:
         native = f.read()
     doc = convert_text(native, input_format="native")
     # input files should only have 1 single outter block
@@ -51,7 +50,7 @@ def read(path: Path) -> Tuple[str, str, str, str, str]:
     return native_orig, native_idem, native_idem2, native_idem3, native_idem4
 
 
-def read_io(name: str) -> Tuple[str, str, str, str, str]:
+def read_io(name: str) -> tuple[str, str, str, str, str]:
     path = DIR / f"{name}.{EXT}"
     return read(path)
 

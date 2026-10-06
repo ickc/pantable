@@ -1,6 +1,5 @@
 from logging import getLogger
 from pathlib import Path
-from typing import Tuple
 
 from panflute import convert_text
 from pytest import mark
@@ -16,12 +15,12 @@ PWD = Path(__file__).parent
 DIRS = (PWD / "md_codeblock", PWD / "md_codeblock_reference")
 
 
-def read(path: Path, path_ref: Path) -> Tuple[str, str]:
+def read(path: Path, path_ref: Path) -> tuple[str, str]:
     """test parsing markdown codeblock"""
     logger.info(f"Comparing {path} and {path_ref}...")
-    with open(path, "r") as f:
+    with open(path) as f:
         text = f.read()
-    with open(path_ref, "r") as f:
+    with open(path_ref) as f:
         md_reference = f.read()
 
     try:
@@ -36,7 +35,7 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
     return md_reference, md_out
 
 
-def read_io(name: str) -> Tuple[str, str]:
+def read_io(name: str) -> tuple[str, str]:
     paths = [dir_ / f"{name}.{EXT}" for dir_ in DIRS]
     return read(*paths)
 

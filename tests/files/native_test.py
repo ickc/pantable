@@ -1,6 +1,5 @@
 from logging import getLogger
 from pathlib import Path
-from typing import Tuple
 
 from panflute import convert_text
 from panflute.tools import pandoc_version
@@ -18,12 +17,12 @@ PWD = Path(__file__).parent
 DIRS = (PWD / "native", PWD / "native_reference")
 
 
-def read_table_to_codeblock(path: Path, path_ref: Path) -> Tuple[str, str]:
+def read_table_to_codeblock(path: Path, path_ref: Path) -> tuple[str, str]:
     """test parsing native to markdown codeblock with fancy-table"""
     logger.info(f"Comparing {path} and {path_ref}...")
-    with open(path, "r") as f:
+    with open(path) as f:
         text = f.read()
-    with open(path_ref, "r") as f:
+    with open(path_ref) as f:
         md_reference = f.read()
 
     doc = convert_text(text, input_format="native")
@@ -36,7 +35,7 @@ def read_table_to_codeblock(path: Path, path_ref: Path) -> Tuple[str, str]:
     return md_reference, md_out
 
 
-def read_table_to_codeblock_io(name: str) -> Tuple[str, str]:
+def read_table_to_codeblock_io(name: str) -> tuple[str, str]:
     paths = [dir_ / f"{name}.{ext}" for dir_, ext in zip(DIRS, EXTs)]
     return read_table_to_codeblock(*paths)
 
@@ -57,7 +56,7 @@ def read_table_to_codeblock_not_fancy(path: Path):
     This is lossy so we only check it runs
     """
     logger.info(f"Loading {path}...")
-    with open(path, "r") as f:
+    with open(path) as f:
         text = f.read()
 
     doc = convert_text(text, input_format="native")
@@ -79,7 +78,7 @@ def read_table_to_codeblock_str(path: Path):
     This is lossy so we only check it runs
     """
     logger.info(f"Loading {path}...")
-    with open(path, "r") as f:
+    with open(path) as f:
         text = f.read()
 
     doc = convert_text(text, input_format="native")
