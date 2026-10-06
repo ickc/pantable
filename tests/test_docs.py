@@ -13,7 +13,7 @@ import pytest
 from .conftest import ROOT, pandoc
 
 DOCS = ROOT / "docs"
-# README.md is rendered as docs/index.qmd
+# README.md is rendered as docs/index.md
 PAGES = [*sorted((DOCS / "examples").glob("*.md")), ROOT / "README.md"]
 CWD = {ROOT / "README.md": DOCS}
 

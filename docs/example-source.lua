@@ -39,8 +39,6 @@ end
 function Pandoc(doc)
   if not quarto.doc.is_format("html") then return nil end
   local input = quarto.doc.input_file
-  -- The examples are .md; the overview page is not one.
-  if not input:match("%.md$") then return nil end
 
   local tabs = pandoc.Blocks({})
   tab(tabs, "Markdown", read(input))

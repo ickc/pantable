@@ -11,11 +11,11 @@ website:
   open-graph: true
   navbar:
     left:
-      - href: index.qmd
+      - href: index.md
         text: Home
       - text: Examples
         menu:
-          - href: examples.qmd
+          - href: examples.md
             text: Overview
           - href: examples/basics.md
             text: Basics
@@ -29,9 +29,9 @@ website:
             text: Fancy tables
           - href: examples/to-csv.md
             text: Tables to CSV
-      - href: library.qmd
+      - href: library.md
         text: Library
-      - href: changelog.qmd
+      - href: changelog.md
         text: Changelog
     right:
       - icon: github
