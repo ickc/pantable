@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import types
 from functools import partial
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, _SpecialForm, get_type_hints
+from typing import TYPE_CHECKING, Any, Union, _SpecialForm, get_type_hints
 
 from . import PY37
 
@@ -183,6 +184,9 @@ def parse_markdown_codeblock(text: str) -> dict:
     return yaml_filter(doc.content[0], doc, tag='table', function=function, strict_yaml=True)
 
 
+# typing.Union, and X | Y since Python 3.10
+_UNION_TYPES = (Union, getattr(types, 'UnionType', Union))
+
 if PY37:
     def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
         if isinstance(type_hint, _SpecialForm):
@@ -209,7 +213,8 @@ else:
             yield Any
             return
         actual_type = get_origin(type_hint) or type_hint
-        if isinstance(actual_type, _SpecialForm):
+        # since Python 3.14, Union is a class rather than a _SpecialForm
+        if isinstance(actual_type, _SpecialForm) or actual_type in _UNION_TYPES:
             # case of Union[…] or ClassVar[…] or …
             for origins in map(_find_type_origin, get_args(type_hint)):
                 yield from origins
