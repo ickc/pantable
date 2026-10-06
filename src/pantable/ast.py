@@ -24,20 +24,24 @@ from panflute.table_elements import Caption, Table, TableBody, TableCell, TableF
 from panflute.tools import convert_text, stringify
 
 from .io import dump_csv_io, load_csv_array
-from .util import (get_types, get_yaml_dumper, iter_convert_texts_markdown_to_panflute,
-                   iter_convert_texts_panflute_to_markdown)
+from .util import (
+    get_types,
+    get_yaml_dumper,
+    iter_convert_texts_markdown_to_panflute,
+    iter_convert_texts_panflute_to_markdown,
+)
 
-COLWIDTHDEFAULT = 'ColWidthDefault'
+COLWIDTHDEFAULT = "ColWidthDefault"
 
-logger = getLogger('pantable')
+logger = getLogger("pantable")
 
 
 def single_para_to_plain(elem: ListContainer) -> ListContainer:
-    '''convert single element to Plain
+    """convert single element to Plain
 
     if `elem` is a ListContainer of a single Para, then convert it to a ListContainer of Plain and return that.
     Else return `elem`.
-    '''
+    """
     if len(elem) == 1 and type(elem[0]) is Para:
         return ListContainer(Plain(*elem[0].content))
     else:
@@ -45,10 +49,10 @@ def single_para_to_plain(elem: ListContainer) -> ListContainer:
 
 
 def cell_width_func(string: str, offset: int = 3) -> int:
-    '''return max no. of characters +3 among lines in the cell
+    """return max no. of characters +3 among lines in the cell
 
     The +3 match the way pandoc handle width, see jgm/pandoc commit 0dfceda
-    '''
+    """
     lines = string.splitlines()
     return max(map(len, lines)) + offset if lines else offset
 
@@ -56,20 +60,25 @@ def cell_width_func(string: str, offset: int = 3) -> int:
 @dataclass
 class Ica:
     """a class of identifier, classes, and attributes"""
-    identifier: str = ''
+
+    identifier: str = ""
     classes: List[str] = field(default_factory=list)
     attributes: Dict[str, str] = field(default_factory=dict)
 
     def to_panflute_ast(self) -> ListContainer[Plain]:
-        '''to panflute AST element
+        """to panflute AST element
 
         we choose a ListContainer-Plain-Span here as it is simplest to capture the Ica
-        '''
-        return ListContainer(Plain(Span(
-            identifier=self.identifier,
-            classes=self.classes,
-            attributes=self.attributes,
-        )))
+        """
+        return ListContainer(
+            Plain(
+                Span(
+                    identifier=self.identifier,
+                    classes=self.classes,
+                    attributes=self.attributes,
+                )
+            )
+        )
 
     @classmethod
     def from_panflute_ast(cls, elem: ListContainer[Block]) -> Ica:
@@ -78,7 +87,7 @@ class Ica:
                 span = elem[0].content[0]
                 return cls(identifier=span.identifier, classes=span.classes, attributes=span.attributes)
             except AttributeError:
-                logger.error(f'Cannot parse element {elem}, setting to default.')
+                logger.error(f"Cannot parse element {elem}, setting to default.")
                 return cls()
         else:
             return cls()
@@ -89,15 +98,16 @@ class Ica:
 
 @dataclass
 class PanTableOption:
-    '''options in CodeBlock table
+    """options in CodeBlock table
 
     remember that the keys in YAML sometimes uses hyphen/underscore
     and here uses underscore
-    '''
-    short_caption: str = ''
-    caption: str = ''
-    alignment: str = ''
-    alignment_cells: str = ''
+    """
+
+    short_caption: str = ""
+    caption: str = ""
+    alignment: str = ""
+    alignment_cells: str = ""
     width: Optional[List[Union[float, str]]] = None
     table_width: Optional[float] = None
     header: bool = True
@@ -105,69 +115,73 @@ class PanTableOption:
     ns_head: Optional[List[int]] = None
     markdown: bool = False
     fancy_table: bool = False
-    include: str = ''
-    include_encoding: str = ''
-    format: str = 'csv'
+    include: str = ""
+    include_encoding: str = ""
+    format: str = "csv"
     csv_kwargs: dict = field(default_factory=dict)
 
     def __post_init__(self):
-        '''fall back to default if invalid type
+        """fall back to default if invalid type
 
         Only check for type here. e.g. positivity of width and table_width are not checked at this point.
-        '''
+        """
         types_dict = get_types(self.__class__)
         for field_ in fields(self):
             key = field_.name
             value = getattr(self, key)
             types = types_dict[key]
             # special case: default factory
-            default = dict() if key == 'csv_kwargs' else field_.default
+            default = dict() if key == "csv_kwargs" else field_.default
             # wrong type and not default
             if not (value == default or isinstance(value, types)):
                 # special case: Fraction/int
                 try:
-                    if key == 'table_width':
+                    if key == "table_width":
                         value = float(Fraction(value))
                         self.table_width = value
                     else:
                         # cast it into first type
                         setattr(self, key, types[0](value))
                 except (ValueError, TypeError):
-                    logger.error(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: {default}")
+                    logger.error(
+                        f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: {default}"
+                    )
                     setattr(self, key, default)
         # width: Optional[List[Union[float, str]]] is not checked here
         # * i.e. we only guarantee width is Optional[list] so far
         # see normalize
         # check Optional[List[int]]
-        for key in ('ms', 'ns_head'):
+        for key in ("ms", "ns_head"):
             value = getattr(self, key)
             if value is not None:
                 try:
                     setattr(self, key, [int(x) for x in value])
                 except (ValueError, TypeError):
-                    logger.error(f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: None")
+                    logger.error(
+                        f"Option {key.replace('_', '-')} with value {value} has invalid type and set to default: None"
+                    )
                     setattr(self, key, None)
 
     def normalize(self, shape: Tuple[int, int]):
-        '''normalize
+        """normalize
 
         assume the types are correct. Normalize what's beyond type-correctness.
 
         e.g. from PanCodeBlock to PanTableStr should uses this
-        '''
+        """
         m, n = shape
 
         # set all str or negative width to default
-        sum_ = 0.
+        sum_ = 0.0
         width = self.width
         if width is not None:
-            widths: List[Union[float, str]] = ['D'] * n
+            widths: List[Union[float, str]] = ["D"] * n
             for i, width_ in enumerate(width):
                 if i >= n:
                     break
                 try:
                     temp = float(Fraction(width_))
-                    if temp >= 0.:
+                    if temp >= 0.0:
                         widths[i] = temp
                         sum_ += temp
                 except (ValueError, TypeError):
@@ -177,7 +191,7 @@ class PanTableOption:
         table_width = self.table_width
         # set table_width to default if smaller than sum of positive width
         if table_width is not None and table_width < sum_:
-            logger.error(f'table-width smaller than sum of width: {sum_}. Set to default.')
+            logger.error(f"table-width smaller than sum of width: {sum_}. Set to default.")
             self.table_width = None
 
         ms = self.ms
@@ -186,16 +200,16 @@ class PanTableOption:
             try:
                 l_ms = len(ms)
                 if l_ms < 4:
-                    raise ValueError(f'ms is too short, set to default: {ms}')
+                    raise ValueError(f"ms is too short, set to default: {ms}")
                 if l_ms % 2 != 0:
-                    raise ValueError(f'ms is not of even length, set to default: {ms}')
+                    raise ValueError(f"ms is not of even length, set to default: {ms}")
                 for m_ in ms:
                     if m_ >= 0:
                         ms_sum += m_
                     else:
-                        raise ValueError(f'ms cannot be negative, set to default: {ms}')
+                        raise ValueError(f"ms cannot be negative, set to default: {ms}")
                 if ms_sum != m:
-                    raise ValueError(f'Sum of ms {ms} does not equal no of rows {m}, set to default.')
+                    raise ValueError(f"Sum of ms {ms} does not equal no of rows {m}, set to default.")
             except ValueError as e:
                 logger.error(e)
                 self.ms = None
@@ -206,26 +220,28 @@ class PanTableOption:
         if ns_head is not None:
             try:
                 if len(ns_head) != m_body:
-                    raise ValueError(f'ns_head {ns_head} should be of length as no. of bodies {m_body}, set to default.')
+                    raise ValueError(
+                        f"ns_head {ns_head} should be of length as no. of bodies {m_body}, set to default."
+                    )
                 for n_ in ns_head:
                     if n_ > n:
-                        raise ValueError(f'ns_head {ns_head} cannot be larger than no. of columns {n}, set to default.')
+                        raise ValueError(f"ns_head {ns_head} cannot be larger than no. of columns {n}, set to default.")
             except ValueError as e:
                 logger.error(e)
                 self.ns_head = None
 
     def simplify(self):
-        '''Reduced equivalent attrs to simplest form
+        """Reduced equivalent attrs to simplest form
 
         e.g. from PanTableStr to PanCodeBlock should uses this
-        '''
+        """
         # alignment: simplify LRCD...D to LRC
         alignment = self.alignment
         last_idx = -1
         for i, char in enumerate(alignment):
-            if char != 'D':
+            if char != "D":
                 last_idx = i
-        self.alignment = alignment[:last_idx + 1]
+        self.alignment = alignment[: last_idx + 1]
 
         # alignment_cells
         align_list = self.alignment_cells.splitlines()
@@ -233,17 +249,17 @@ class PanTableOption:
         last_idy = -1
         for i, alignment in enumerate(align_list):
             for j, char in enumerate(alignment):
-                if char != 'D':
+                if char != "D":
                     last_idx = i
                     last_idy = j
-        self.alignment_cells = '\n'.join(line[:last_idy + 1] for line in align_list[:last_idx + 1])
+        self.alignment_cells = "\n".join(line[: last_idy + 1] for line in align_list[: last_idx + 1])
 
         # width
         widths = self.width
         if widths is not None:
             default = True
             for width in widths:
-                if width != 'D':
+                if width != "D":
                     default = False
                     break
             if default:
@@ -288,24 +304,20 @@ class PanTableOption:
         #     for key, value in kwargs.items()
         #     if (key_underscored := str(key).replace('-', '_')) in cls.__annotations__
         # })
-        return cls(**{
-            key: value
-            for key, value in (
-                (
-                    str(key).replace('-', '_'),
-                    value
-                )
-                for key, value in kwargs.items()
-            )
-            if key in cls.__annotations__
-        })
+        return cls(
+            **{
+                key: value
+                for key, value in ((str(key).replace("-", "_"), value) for key, value in kwargs.items())
+                if key in cls.__annotations__
+            }
+        )
 
     @property
     def kwargs(self) -> dict:
-        '''to dict without the defaults
+        """to dict without the defaults
 
         expect `self.from_kwargs(**self.kwargs) == self`
-        '''
+        """
         # TODO: PY37
         # return {
         #     key.replace('_', '-'): value
@@ -321,13 +333,9 @@ class PanTableOption:
         #     )
         # }
         return {
-            key.replace('_', '-'): value
+            key.replace("_", "-"): value
             for key, value, default in (
-                (
-                    key,
-                    getattr(self, key),
-                    default
-                )
+                (key, getattr(self, key), default)
                 for key, default in (
                     (
                         field_.name,
@@ -336,14 +344,14 @@ class PanTableOption:
                     for field_ in fields(self)
                 )
             )
-            if value != (dict() if key == 'csv_kwargs' else default)
+            if value != (dict() if key == "csv_kwargs" else default)
         }
 
     def to_spec(self, size: int) -> Spec:
-        '''to Spec
+        """to Spec
 
         assume normalized self.
-        '''
+        """
         width = self.width
 
         if width is None:
@@ -354,16 +362,12 @@ class PanTableOption:
                 temp = width[i]
                 if type(temp) is not str:
                     col_widths[i] = temp
-        return Spec(
-            Align.from_aligns_string_1d(self.alignment, size),
-            col_widths=col_widths
-        )
+        return Spec(Align.from_aligns_string_1d(self.alignment, size), col_widths=col_widths)
 
 
 @dataclass
 class PanCodeBlock:
-
-    '''A PanTable representation of CodeBlock
+    """A PanTable representation of CodeBlock
 
     it handles the transition between panflute CodeBlock and PanTable
 
@@ -374,29 +378,33 @@ class PanCodeBlock:
     `__init__` to be from `panflute.yaml_filter` directly.
 
     c.f. `.util.parse_markdown_codeblock` for testing purposes
-    '''
+    """
 
-    data: str = ''
+    data: str = ""
     options: PanTableOption = field(default_factory=PanTableOption)
     ica: Ica = field(default_factory=Ica)
 
     @classmethod
     def from_yaml_filter(
         cls,
-        data: str = '',
+        data: str = "",
         options: Optional[dict] = None,
         element: Optional[CodeBlock] = None,
         doc: Optional[Doc] = None,
     ) -> PanCodeBlock:
-        '''
+        """
         these args are those passed from within yaml_filter
-        '''
+        """
         # MISSING -> default_factory above
         options_res: PanTableOption = MISSING if options is None else PanTableOption.from_kwargs(**options)
-        ica: Ica = MISSING if element is None else Ica(
-            identifier=element.identifier,
-            classes=[cls_ for cls_ in element.classes if cls_ != 'table'],
-            attributes=element.attributes,
+        ica: Ica = (
+            MISSING
+            if element is None
+            else Ica(
+                identifier=element.identifier,
+                classes=[cls_ for cls_ in element.classes if cls_ != "table"],
+                attributes=element.attributes,
+            )
         )
         return cls(
             data,
@@ -405,25 +413,25 @@ class PanCodeBlock:
         )
 
     def to_panflute_ast(self) -> CodeBlock:
-        '''return a panflute AST representation
+        """return a panflute AST representation
 
         TODO: handle differently if include exists and writable
         need to be able to configure pantable2csv on write location
-        '''
+        """
         options_dict = self.options.kwargs
         data = self.data
         if options_dict:
             options_yaml = yaml.dump(options_dict, Dumper=get_yaml_dumper(), default_flow_style=False)
             if data:
-                code_block = f'---\n{options_yaml}...\n{data}'
+                code_block = f"---\n{options_yaml}...\n{data}"
             else:
                 code_block = f"---\n{options_yaml}"
         else:
             code_block = data
         classes = self.ica.classes
-        if 'table' not in classes:
+        if "table" not in classes:
             # don't mutate it
-            classes = ['table'] + classes
+            classes = ["table"] + classes
         return CodeBlock(
             code_block,
             identifier=self.ica.identifier,
@@ -438,15 +446,15 @@ class PanCodeBlock:
         options: Optional[PanTableOption] = None,
         ica: Optional[Ica] = None,
     ) -> PanCodeBlock:
-        '''construct from different data formats
+        """construct from different data formats
 
         TODO: should io be done by PanCodeBLock.to_panflute_ast or other places?
         seems wrong to be here
 
         but it may actually belongs to here because where else for binary data?
-        '''
+        """
         dump_func = {
-            'csv': dump_csv_io,
+            "csv": dump_csv_io,
         }
         try:
             options = PanTableOption() if options is None else options
@@ -457,7 +465,7 @@ class PanCodeBlock:
                 ica=MISSING if ica is None else ica,
             )
         except KeyError:
-            raise ValueError(f'Unspported format {options.format}.')
+            raise ValueError(f"Unspported format {options.format}.")
 
     def parse_options(
         self,
@@ -470,12 +478,12 @@ class PanCodeBlock:
         Optional[np.ndarray[np.int64]],
         Optional[np.ndarray[np.int64]],
     ]:
-        '''parsing PanTableOption to whatever PanTableStr.__init__ needed
+        """parsing PanTableOption to whatever PanTableStr.__init__ needed
 
         This is the point where correctness is checked most aggressively.
         Here we assumed the types are already correct, so we are checking
         things beyond types such as Optional, shape, positivity, etc.
-        '''
+        """
         n = shape[1]
         options = self.options
         options.normalize(shape=shape)
@@ -501,8 +509,8 @@ class PanCodeBlock:
     def parse_data_markdown(
         str_array: np.ndarray[np.str_],
         fancy_table: bool = False,
-        ica_cell_pat=re.compile(r'^(\([0-9, ]+\))?({[^{}]*})?$'),
-        fancy_table_pat=re.compile(r'^({[^{}]*})?? ?(---|===|___)? ?({[^{}]*})?$'),
+        ica_cell_pat=re.compile(r"^(\([0-9, ]+\))?({[^{}]*})?$"),
+        fancy_table_pat=re.compile(r"^({[^{}]*})?? ?(---|===|___)? ?({[^{}]*})?$"),
     ) -> Tuple[
         Optional[np.ndarray[np.int64]],
         Optional[np.ndarray[np.str_]],
@@ -510,10 +518,10 @@ class PanCodeBlock:
         np.ndarray[np.str_],
         TableArray,
     ]:
-        '''parse markdown in string array
+        """parse markdown in string array
 
         c.f. PanTableMarkdown.to_str_array
-        '''
+        """
         m, n = str_array.shape
         offset = int(fancy_table)
         n -= offset
@@ -537,25 +545,29 @@ class PanCodeBlock:
                             found = founds[0]
                             has_ica = True
                             ica_temp = found[1]
-                            ica = f'[]{ica_temp}' if ica_temp else ''
+                            ica = f"[]{ica_temp}" if ica_temp else ""
                             shape_temp = found[0]
                             try:
-                                shape = tuple(int(i.strip()) for i in shape_temp[1:-1].split(',')) if shape_temp else (1, 1)
+                                shape = (
+                                    tuple(int(i.strip()) for i in shape_temp[1:-1].split(",")) if shape_temp else (1, 1)
+                                )
                                 if len(shape) != 2 or shape[0] <= 0 or shape[1] <= 0:
-                                    logger.error(f'Invalid cell shape {shape}, ignoring...')
+                                    logger.error(f"Invalid cell shape {shape}, ignoring...")
                                     has_ica = False
                                 # TODO: get smarter to enlarge the box?
                                 # Or expect a normalization later and modified TableArray.put to never write beyond boundary?
                                 elif (shape[0] + i > m) or (shape[1] + j > n):
-                                    logger.error(f'The following cell overflow the table, ignoring the attributes: {string}')
+                                    logger.error(
+                                        f"The following cell overflow the table, ignoring the attributes: {string}"
+                                    )
                                     has_ica = False
                             except ValueError:
-                                logger.error(f'Invalid cell shape {shape}, ignoring...')
+                                logger.error(f"Invalid cell shape {shape}, ignoring...")
                                 has_ica = False
                     if has_ica:
-                        content = '\n'.join(lines[1:])
+                        content = "\n".join(lines[1:])
                     else:
-                        ica = ''
+                        ica = ""
                         shape = (1, 1)
                         content = string
                     icas[i, j] = ica
@@ -565,7 +577,7 @@ class PanCodeBlock:
         # ms, icas_rowblock, icas_row
         ms = None
         icas_rowblock: Optional[np.ndarray[np.str_]] = None
-        icas_row: np.ndarray[np.str_] = np.full(m, '', dtype=np.object_)
+        icas_row: np.ndarray[np.str_] = np.full(m, "", dtype=np.object_)
         if fancy_table:
             temp_markers = []
             temp_icas = []
@@ -586,9 +598,9 @@ class PanCodeBlock:
                         # * ignore the case that somone might put 2 attrs side-by-side
                         ica_row = found[2]
                         if ica_row:
-                            icas_row[i] = f'[]{ica_row}'
+                            icas_row[i] = f"[]{ica_row}"
                     else:
-                        logger.error(f'Cannot parse the fancy table cell {string}, ignroing...')
+                        logger.error(f"Cannot parse the fancy table cell {string}, ignroing...")
             # only if markers found, determine ms, icas_rowblock
             if temp_idxs:
                 temp_idxs = np.array(temp_idxs, dtype=np.int64)
@@ -599,10 +611,10 @@ class PanCodeBlock:
                 has_foot = False
                 i_start = 0
                 i_end = size
-                if temp_markers[0] == '===':
+                if temp_markers[0] == "===":
                     has_head = True
                     i_start = 1
-                if size > 1 and temp_markers[-1] == '===':
+                if size > 1 and temp_markers[-1] == "===":
                     has_foot = True
                     i_end = size - 1
 
@@ -616,77 +628,79 @@ class PanCodeBlock:
                         temp_icas[i],
                     )
                     # is_body_body
-                    if marker == '___':
+                    if marker == "___":
                         # TODO: PY37
                         # if body_list and 'body' not in (last_body := body_list[-1]):
                         #     last_body['body'] = temp
                         last_body = body_list[-1] if body_list else None
-                        if body_list and 'body' not in last_body:
-                            last_body['body'] = temp
+                        if body_list and "body" not in last_body:
+                            last_body["body"] = temp
                         else:
-                            body_list.append({'body': temp})
+                            body_list.append({"body": temp})
                     # is_body_head
-                    elif marker == '---':
-                        body_list.append({'head': temp})
+                    elif marker == "---":
+                        body_list.append({"head": temp})
                     else:
-                        logger.error(f'Cannot determine the following fancy-table row as head or foot, ignoring...: {str_array[temp_idxs[i], 0]}')
+                        logger.error(
+                            f"Cannot determine the following fancy-table row as head or foot, ignoring...: {str_array[temp_idxs[i], 0]}"
+                        )
 
                 ms_list: List[int] = []
                 icas_rowblock_list = []
                 if has_head:
                     ms_list.append(ms_excluding_empty_rowblocks[0])
                     ica = temp_icas[0]
-                    icas_rowblock_list.append(f'[]{ica}' if ica else '')
+                    icas_rowblock_list.append(f"[]{ica}" if ica else "")
                 else:
                     ms_list.append(0)
-                    icas_rowblock_list.append('')
+                    icas_rowblock_list.append("")
                 for body in body_list:
-                    ica = ''
-                    if 'head' in body:
-                        m_, ica_ = body['head']
+                    ica = ""
+                    if "head" in body:
+                        m_, ica_ = body["head"]
                         ms_list.append(m_)
                         if ica_:
                             ica = ica_
                     else:
                         ms_list.append(0)
                     # * ica of body-body will overwrite that of body-head
-                    if 'body' in body:
-                        m_, ica_ = body['body']
+                    if "body" in body:
+                        m_, ica_ = body["body"]
                         ms_list.append(m_)
                         if ica_:
                             ica = ica_
                     else:
                         ms_list.append(0)
-                    icas_rowblock_list.append(f'[]{ica}' if ica else '')
+                    icas_rowblock_list.append(f"[]{ica}" if ica else "")
                 if has_foot:
                     i = size - 1
                     ms_list.append(ms_excluding_empty_rowblocks[i])
                     ica = temp_icas[i]
-                    icas_rowblock_list.append(f'[]{ica}' if ica else '')
+                    icas_rowblock_list.append(f"[]{ica}" if ica else "")
                 else:
                     ms_list.append(0)
-                    icas_rowblock_list.append('')
+                    icas_rowblock_list.append("")
                 ms = np.array(ms_list, dtype=np.int64)
                 icas_rowblock = np.array(icas_rowblock_list, dtype=np.object_)
 
         return ms, icas_rowblock, icas_row, icas, cells
 
     def to_pantablestr(self) -> PanTableStr:
-        '''parse data and return a PanTableStr
+        """parse data and return a PanTableStr
 
         Exceptions might be raised here
 
         c.f. to_pancodeblock
-        '''
+        """
         load_func = {
-            'csv': load_csv_array,
+            "csv": load_csv_array,
         }
         options = self.options
         # c.f. PanTable(Str|Markdown).to_str_array
         try:
             str_array = load_func[options.format](self.data, options)
         except KeyError:
-            raise ValueError(f'Unknown format: {options.format}')
+            raise ValueError(f"Unknown format: {options.format}")
 
         ms: Optional[np.ndarray[np.int64]]
         icas_rowblock: Optional[np.ndarray[np.str_]]
@@ -694,7 +708,9 @@ class PanCodeBlock:
         icas: Optional[np.ndarray[np.str_]]
 
         if options.markdown:
-            ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(str_array, fancy_table=options.fancy_table)
+            ms, icas_rowblock, icas_row, icas, cells = self.parse_data_markdown(
+                str_array, fancy_table=options.fancy_table
+            )
             short_caption, caption, spec, aligns, _ms, ns_head = self.parse_options(cells.contents.shape)
             if ms is None:
                 ms = _ms
@@ -732,34 +748,35 @@ class PanCodeBlock:
 
 @dataclass
 class Align:
-    '''Alignment class
-    '''
+    """Alignment class"""
 
     aligns: np.ndarray[np.int8]
-    ALIGN: ClassVar = np.array([
-        "AlignDefault",
-        "AlignLeft",
-        "AlignRight",
-        "AlignCenter",
-    ])
+    ALIGN: ClassVar = np.array(
+        [
+            "AlignDefault",
+            "AlignLeft",
+            "AlignRight",
+            "AlignCenter",
+        ]
+    )
 
     def __repr__(self) -> str:
-        return f'Align.from_aligns_string({repr(self.aligns_string)})'
+        return f"Align.from_aligns_string({repr(self.aligns_string)})"
 
     def __eq__(self, others) -> bool:
         return np.array_equal(self.aligns, others.aligns)
 
     @property
     def aligns_char(self):
-        return self.aligns.view('S1')
+        return self.aligns.view("S1")
 
     @property
     def aligns_idx(self) -> np.ndarray[np.int8]:
-        '''
+        """
         this is designed such that aligns_text below works
 
         the last % 4 is to gunrantee garbage input still falls inside the idx range of ALIGN
-        '''
+        """
         return (self.aligns - 3) % 11 % 6 % 4
 
     @property
@@ -768,45 +785,45 @@ class Align:
 
     @property
     def aligns_string(self) -> str:
-        '''the aligns string used in pantable codeblock
+        """the aligns string used in pantable codeblock
 
         such as LDRC...
-        '''
+        """
         ndim = self.aligns.ndim
         if ndim == 2:
             n = self.aligns.shape[1]
-            temp = self.aligns.astype(np.uint32).view(f'U{n}')
-            return '\n'.join(np.ravel(temp))
+            temp = self.aligns.astype(np.uint32).view(f"U{n}")
+            return "\n".join(np.ravel(temp))
         elif ndim == 1:
             n = self.aligns.size
-            return self.aligns.view(f'S{n}')[0].decode()
+            return self.aligns.view(f"S{n}")[0].decode()
         else:
-            raise TypeError(f'The Align {self.aligns_char} has unexpected no. of dim.: {ndim}')
+            raise TypeError(f"The Align {self.aligns_char} has unexpected no. of dim.: {ndim}")
 
     @classmethod
-    def from_aligns_char(cls, aligns_char: np.ndarray[np.dtype('S1')]) -> Align:
+    def from_aligns_char(cls, aligns_char: np.ndarray[np.dtype("S1")]) -> Align:
         return cls(aligns_char.view(np.int8))
 
     @classmethod
     def from_aligns_text(cls, aligns_text: np.ndarray[Optional[np.str_]]) -> Align:
-        aligns_char = np.empty_like(aligns_text, dtype='S1')
+        aligns_char = np.empty_like(aligns_text, dtype="S1")
         # ravel to handle arbitrary dimenions
         aligns_char_ravel = np.ravel(aligns_char)
         aligns_text_ravel = np.ravel(aligns_text)
         for i in range(aligns_text_ravel.size):
             align_text = aligns_text_ravel[i]
-            aligns_char_ravel[i] = 'D' if align_text is None else align_text[5]
+            aligns_char_ravel[i] = "D" if align_text is None else align_text[5]
         return cls.from_aligns_char(aligns_char)
 
     @classmethod
     def from_aligns_string_1d(cls, alignment: str, size: int) -> Align:
-        '''create Align from aligns_string, 1-dimensional
+        """create Align from aligns_string, 1-dimensional
 
         should be used by data created by users
-        '''
+        """
         alignment_norm = alignment.strip().upper()
         try:
-            aligns_char = np.fromiter(alignment_norm, dtype='S1')
+            aligns_char = np.fromiter(alignment_norm, dtype="S1")
             aligns_char_size = aligns_char.size
             if aligns_char_size >= size:
                 aligns = cls.from_aligns_char(aligns_char[:size])
@@ -814,16 +831,16 @@ class Align:
                 aligns = cls.default(shape=(size,))
                 aligns.aligns[:aligns_char_size] = cls.from_aligns_char(aligns_char).aligns
         except UnicodeEncodeError:
-            logger.error(f'Non-ASCII character detected in {alignment}, ignoring and set to default.')
+            logger.error(f"Non-ASCII character detected in {alignment}, ignoring and set to default.")
             aligns = cls.default(shape=(size,))
         return aligns
 
     @classmethod
     def from_aligns_string_2d(cls, alignment_cells: str, shape: Tuple[int, int]) -> Align:
-        '''create Align from aligns_string, 2-dimensional
+        """create Align from aligns_string, 2-dimensional
 
         should be used by data created by users
-        '''
+        """
         m, n = shape
         res = cls.default(shape)
         aligns = res.aligns
@@ -836,7 +853,7 @@ class Align:
 
     @classmethod
     def from_aligns_string(_, alignment: str) -> Align:
-        '''create Align from aligns_string
+        """create Align from aligns_string
 
         used in __repr__
 
@@ -844,7 +861,7 @@ class Align:
 
         should satisfies
         `Align.from_aligns_string(align.aligns_string) == align`
-        '''
+        """
         alignment_norm = alignment.strip().upper()
         alignment_list = alignment_norm.splitlines()
         m = len(alignment_list)
@@ -861,8 +878,7 @@ class Align:
 
 @dataclass
 class Spec:
-    '''a class of spec of PanTable
-    '''
+    """a class of spec of PanTable"""
 
     aligns: Align
     col_widths: Optional[np.ndarray[np.float64]] = None
@@ -889,7 +905,7 @@ class Spec:
                 col_widths[i] = np.nan if width == COLWIDTHDEFAULT else width
             aligns = Align.from_aligns_text(np.array(aligns_list))
         except ValueError:
-            raise TypeError(f'pantable: cannot parse table spec {spec}')
+            raise TypeError(f"pantable: cannot parse table spec {spec}")
 
         return cls(
             aligns,
@@ -897,13 +913,14 @@ class Spec:
         )
 
     def to_panflute_ast(self) -> List[Tuple]:
-        return [
-            (align, COLWIDTHDEFAULT)
-            for align in self.aligns.aligns_text
-        ] if self.col_widths is None else [
-            (align, COLWIDTHDEFAULT if np.isnan(width) else width)
-            for align, width in zip(self.aligns.aligns_text, self.col_widths)
-        ]
+        return (
+            [(align, COLWIDTHDEFAULT) for align in self.aligns.aligns_text]
+            if self.col_widths is None
+            else [
+                (align, COLWIDTHDEFAULT if np.isnan(width) else width)
+                for align, width in zip(self.aligns.aligns_text, self.col_widths)
+            ]
+        )
 
     @classmethod
     def default(cls, n_col: int = 1) -> Spec:
@@ -912,7 +929,6 @@ class Spec:
 
 @dataclass
 class TableArray:
-
     contents: np.ndarray[Union[ListContainer, str]]
     # 4d-array: [i, j, 0, :] is shape; [i, j, 1, :] is idxs
     # shape must be >= 1, idxs will either be [i, j] or [-1, -1]
@@ -963,8 +979,7 @@ class TableArray:
         j: int,
         overwrite: bool = False,
     ):
-        '''put content in self
-        '''
+        """put content in self"""
         if row_span == 1 and col_span == 1:
             self.contents[i, j] = content
         else:
@@ -980,19 +995,23 @@ class TableArray:
                             geometries[i_, j_, 1, 0] = i
                             geometries[i_, j_, 1, 1] = j
                         else:
-                            raise ValueError(f"At location {i, j} there's not enough empty cells for a block of size {row_span, col_span} in the given array.")
+                            raise ValueError(
+                                f"At location {i, j} there's not enough empty cells for a block of size {row_span, col_span} in the given array."
+                            )
             except TypeError as e:
                 if self.geometries is None:
-                    raise ValueError("You're trying to put a cell-block in a TableArray object with geometries as None.")
+                    raise ValueError(
+                        "You're trying to put a cell-block in a TableArray object with geometries as None."
+                    )
                 else:
                     raise e
 
     @property
     def cannonical(self) -> TableArray:
-        '''return a cell array where spanned cells appeared in cannonical location only
+        """return a cell array where spanned cells appeared in cannonical location only
 
         top-left corner of the grid is the cannonical location of a spanned cell
-        '''
+        """
         contents = self.contents
         shape = contents.shape
         m, n = shape
@@ -1004,10 +1023,10 @@ class TableArray:
         return res
 
     def stringified(self, width: int = 15, cannonical=True) -> TableArray:
-        '''return stringified TableArray
+        """return stringified TableArray
 
         :param int width: width per column
-        '''
+        """
         shape = self.shape
         m, n = shape
         res = TableArray.default(shape)
@@ -1017,22 +1036,21 @@ class TableArray:
         contents = self.contents
         for i in range(m):
             for j in range(n):
-                content = '' if cannonical and not self.is_at(i, j) else contents[i, j]
+                content = "" if cannonical and not self.is_at(i, j) else contents[i, j]
                 type_ = type(content)
                 if type_ == ListContainer:
                     content = stringify(TableCell(*content))
                 elif type_ != str:
                     content = str(content)
                 if width:
-                    content = '\n'.join(wrap(content, width))
+                    content = "\n".join(wrap(content, width))
                 res_contents[i, j] = content
         return res
 
 
 @dataclass
 class PanTableAbstract:
-    '''an abstract class of PanTables
-    '''
+    """an abstract class of PanTables"""
 
     cells: Union[TableArray, np.ndarray[Union[ListContainer, str]]]
     caption: Union[ListContainer[Block], str]
@@ -1066,12 +1084,12 @@ class PanTableAbstract:
         if self.ns_head is None:
             self.ns_head: np.ndarray[np.int64] = np.zeros(m_bodies, dtype=np.int64)
 
-    def __str__(self, width: int = 15, cannonical=True, tablefmt='grid') -> str:
-        '''print the table as ascii table
+    def __str__(self, width: int = 15, cannonical=True, tablefmt="grid") -> str:
+        """print the table as ascii table
 
         :param int width: width per column
         :param str tablefmt: in ('plain', 'simple', 'grid', 'fancy_grid', 'pipe', 'orgtbl', 'rst', 'mediawiki', 'html', 'latex', 'latex_raw', 'latex_booktabs', 'tsv')
-        '''
+        """
         try:
             from tabulate import tabulate
 
@@ -1081,16 +1099,16 @@ class PanTableAbstract:
                 headers=() if self.ms[0] == 0 else "firstrow",
             )
         except ImportError:
-            logger.warning('Consider having a better str by `pip install tabulate` or `conda install tabulate`.')
+            logger.warning("Consider having a better str by `pip install tabulate` or `conda install tabulate`.")
             return self.__repr__()
 
     @classmethod
     def default(cls, shape: Tuple[int, int], has_geometries=False):
-        '''return a default object given shape, etc
+        """return a default object given shape, etc
 
         This won't work in PanTableAbstract itself but all derived classes
         including PanTableStr, PanTableMarkdown, PanTableText
-        '''
+        """
         return cls(TableArray.default(shape=shape, has_geometries=has_geometries))
 
     @property
@@ -1115,16 +1133,16 @@ class PanTableAbstract:
 
     @property
     def m_icas_rowblock(self) -> int:
-        '''
+        """
         only one ica per body
-        '''
+        """
         return self.icas_rowblock.size
 
     @property
     def m_rowblocks(self) -> int:
-        '''
+        """
         2 rowblocks per body
-        '''
+        """
         return self._ms.size
 
     @property
@@ -1141,11 +1159,11 @@ class PanTableAbstract:
 
     @property
     def _ms_(self) -> np.ndarray[np.int64]:
-        '''setter and getter of ms
+        """setter and getter of ms
 
         quirks of dataclass with property
         see https://stackoverflow.com/a/61480946/5769446
-        '''
+        """
         return self._ms
 
     @_ms_.setter
@@ -1167,8 +1185,7 @@ class PanTableAbstract:
 
     @cached_property
     def rowblock_idxs_row(self) -> np.ndarray[np.int64]:
-        '''reverse lookup the index of rowblocks per row
-        '''
+        """reverse lookup the index of rowblocks per row"""
         return np.digitize(np.arange(self.shape[0]), np.cumsum(self._ms))
 
     @cached_property
@@ -1190,36 +1207,34 @@ class PanTableAbstract:
 
     @cached_property
     def body_idxs_row(self) -> np.ndarray[np.int64]:
-        '''calculate the i-th body that each row belongs to
+        """calculate the i-th body that each row belongs to
 
         negative values means the row is not in a body
-        '''
+        """
         body_idxs_row = (self.rowblock_idxs_row - 1) // 2
         body_idxs_row[self.is_foots] = -1
         return body_idxs_row
 
     @cached_property
     def icas_rowblock_idxs_row(self) -> np.ndarray[np.int64]:
-        '''calculate the i-th row-block attrs that each row belongs to'''
+        """calculate the i-th row-block attrs that each row belongs to"""
         return (self.rowblock_idxs_row + 1) // 2
 
     @cached_property
     def rowblock_splitting_idxs(self) -> np.ndarray[np.int64]:
-        '''applying np.split(array_of_rows, rowblock_splitting_idxs) would break it back into list of head, bodies, foot
-        '''
+        """applying np.split(array_of_rows, rowblock_splitting_idxs) would break it back into list of head, bodies, foot"""
         return np.cumsum(self._ms)[:-1]
 
     @cached_property
     def last_row_of_rowblock_idxs(self) -> Set[np.int64]:
-        '''return a set of the indices of the last row per row-block excluding foot
-        '''
+        """return a set of the indices of the last row per row-block excluding foot"""
         return set(np.cumsum(self._ms) - 1)
 
     def iter_rowblocks(self, array: np.ndarray) -> List[np.ndarray]:
-        '''break array into list of head, bodies, foot
+        """break array into list of head, bodies, foot
 
         assume array is iterables of rows
-        '''
+        """
         return np.split(array, self.rowblock_splitting_idxs)
 
 
@@ -1228,11 +1243,11 @@ PanTableAbstract.ms = PanTableAbstract._ms_
 
 @dataclass
 class PanTable(PanTableAbstract):
-    '''a representation of panflute Table
+    """a representation of panflute Table
 
     TableArray should have content type as ListContainer
     although not strictly enforced here
-    '''
+    """
 
     caption: ListContainer[Block] = field(default_factory=ListContainer)
     icas_rowblock: Optional[np.ndarray[Ica]] = None
@@ -1267,11 +1282,11 @@ class PanTable(PanTableAbstract):
 
     def _repr_html_(self) -> str:
         try:
-            return convert_text(self.to_panflute_ast(), input_format='panflute', output_format='html')
+            return convert_text(self.to_panflute_ast(), input_format="panflute", output_format="html")
         # in case of an invalid panflute AST and still want to show something
         except Exception:
-            logger.critical('Invalid AST.')
-            return self.__str__(tablefmt='html')
+            logger.critical("Invalid AST.")
+            return self.__str__(tablefmt="html")
 
     @staticmethod
     def iter_tablerows(
@@ -1283,7 +1298,7 @@ class PanTable(PanTableAbstract):
                 *(i for i in pf_row_array if i is not None),
                 identifier=ica.identifier,
                 classes=ica.classes,
-                attributes=ica.attributes
+                attributes=ica.attributes,
             )
             for ica, pf_row_array in zip(icas_row, pf_cells)
         )
@@ -1359,11 +1374,13 @@ class PanTable(PanTableAbstract):
         aligns_text = np.empty(shape, dtype=np.object_)
         cells = TableArray.default(shape, has_geometries=True)
         contents = cells.contents
-        for i, row in enumerate(chain(
-            head.content,
-            *sum(([body.head, body.content] for body in bodies), []),
-            foot.content,
-        )):
+        for i, row in enumerate(
+            chain(
+                head.content,
+                *sum(([body.head, body.content] for body in bodies), []),
+                foot.content,
+            )
+        ):
             icas_row[i] = Ica(row.identifier, row.classes, row.attributes)
             j = 0
             for cell in row.content:
@@ -1403,7 +1420,9 @@ class PanTable(PanTableAbstract):
         icas_rowblock = icas_row_by_blocks[0]
         pf_cells_block = pf_cells_by_blocks[0]
         content = self.iter_tablerows(icas_rowblock, pf_cells_block)
-        head = TableHead(*content, identifier=ica_block.identifier, classes=ica_block.classes, attributes=ica_block.attributes)
+        head = TableHead(
+            *content, identifier=ica_block.identifier, classes=ica_block.classes, attributes=ica_block.attributes
+        )
         # bodies
         bodies = []
         for i in range(self.m_bodies):
@@ -1419,20 +1438,24 @@ class PanTable(PanTableAbstract):
                 icas_rowblock = icas_row_by_blocks[idx_body]
                 pf_cells_block = pf_cells_by_blocks[idx_body]
                 temp.append(self.iter_tablerows(icas_rowblock, pf_cells_block))
-            bodies.append(TableBody(
-                *temp[1],
-                head=temp[0],
-                row_head_columns=row_head_columns,
-                identifier=ica_block.identifier,
-                classes=ica_block.classes,
-                attributes=ica_block.attributes,
-            ))
+            bodies.append(
+                TableBody(
+                    *temp[1],
+                    head=temp[0],
+                    row_head_columns=row_head_columns,
+                    identifier=ica_block.identifier,
+                    classes=ica_block.classes,
+                    attributes=ica_block.attributes,
+                )
+            )
         # foot
         ica_block = self.icas_rowblock[-1]
         icas_rowblock = icas_row_by_blocks[-1]
         pf_cells_block = pf_cells_by_blocks[-1]
         content = self.iter_tablerows(icas_rowblock, pf_cells_block)
-        foot = TableFoot(*content, identifier=ica_block.identifier, classes=ica_block.classes, attributes=ica_block.attributes)
+        foot = TableFoot(
+            *content, identifier=ica_block.identifier, classes=ica_block.classes, attributes=ica_block.attributes
+        )
 
         return Table(
             *bodies,
@@ -1446,21 +1469,20 @@ class PanTable(PanTableAbstract):
         )
 
     def to_pantablemarkdown(self) -> PanTableMarkdown:
-        '''return a PanTableMarkdown representation of self
-        '''
+        """return a PanTableMarkdown representation of self"""
         # * 1st pass: assemble the caches
         cache_elems: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], ListContainer] = {}
         # for holding the value as None cases
         cache_none: List[Union[str, Tuple[str, int, int]]] = []
         # caption
-        cache_elems['caption'] = self.caption
+        cache_elems["caption"] = self.caption
         # short_caption
         short_caption = self.short_caption
         if short_caption is None:
-            cache_none.append('short_caption')
+            cache_none.append("short_caption")
         else:
             # iter_convert_texts_panflute_to_markdown accept ListContainer of Block only
-            cache_elems['short_caption'] = ListContainer(Plain(*short_caption))
+            cache_elems["short_caption"] = ListContainer(Plain(*short_caption))
         # cells and icas
         m = self.m
         n = self.n
@@ -1471,21 +1493,21 @@ class PanTable(PanTableAbstract):
             for j in range(n):
                 # don't repeat cell-blocks
                 if cells.is_at(i, j):
-                    cache_elems[('cells', i, j)] = contents[i, j]
-                    cache_elems[('icas', i, j)] = icas[i, j].to_panflute_ast()
+                    cache_elems[("cells", i, j)] = contents[i, j]
+                    cache_elems[("icas", i, j)] = icas[i, j].to_panflute_ast()
                 else:
-                    cache_none.append(('cells', i, j))
+                    cache_none.append(("cells", i, j))
                     # don't need this below because checking is_at by cell only
                     # cache_none.append(('icas', i, j))
         # icas_row
         icas_row = self.icas_row
         for i in range(m):
-            cache_elems[('icas_row', i)] = icas_row[i].to_panflute_ast()
+            cache_elems[("icas_row", i)] = icas_row[i].to_panflute_ast()
         # icas_rowblock
         m_rowblocks = self.m_icas_rowblock
         icas_rowblock = self.icas_rowblock
         for i in range(m_rowblocks):
-            cache_elems[('icas_rowblock', i)] = icas_rowblock[i].to_panflute_ast()
+            cache_elems[("icas_rowblock", i)] = icas_rowblock[i].to_panflute_ast()
 
         # * batch convert to markdown
         # the bottle neck is calling pandoc so we batch them and call it once only
@@ -1496,7 +1518,7 @@ class PanTable(PanTableAbstract):
                     cache_elems.keys(),
                     iter_convert_texts_panflute_to_markdown(cache_elems.values()),
                 ),
-                zip(cache_none, repeat(None))
+                zip(cache_none, repeat(None)),
             )
         }
 
@@ -1508,28 +1530,30 @@ class PanTable(PanTableAbstract):
         icas_res = np.empty((m, n), dtype=np.object_)
         for i in range(m):
             for j in range(n):
-                content = cache_texts[('cells', i, j)]
+                content = cache_texts[("cells", i, j)]
                 if content is not None:
                     # overwrite as cells is already valid so it is impossible to have
                     # colliding cells to be overwritten
                     cell_shape = cells.shape_at(i, j)
                     cells_res.put(content, cell_shape[0], cell_shape[1], i, j, overwrite=True)
-                    icas_res[i, j] = cache_texts[('icas', i, j)]
+                    icas_res[i, j] = cache_texts[("icas", i, j)]
         # icas_row
         icas_row_res = np.empty(m, dtype=np.object_)
         for i in range(m):
-            icas_row_res[i] = cache_texts[('icas_row', i)]
+            icas_row_res[i] = cache_texts[("icas_row", i)]
         # icas_rowblock
         icas_rowblock_res = np.empty(m_rowblocks, dtype=np.object_)
         for i in range(m_rowblocks):
-            icas_rowblock_res[i] = cache_texts[('icas_rowblock', i)]
+            icas_rowblock_res[i] = cache_texts[("icas_rowblock", i)]
 
         return PanTableMarkdown(
             cells_res,
             ica_table=self.ica_table,
-            short_caption=cache_texts['short_caption'], caption=cache_texts['caption'],
+            short_caption=cache_texts["short_caption"],
+            caption=cache_texts["caption"],
             spec=self.spec,
-            ms=self._ms, ns_head=self.ns_head,
+            ms=self._ms,
+            ns_head=self.ns_head,
             icas_rowblock=icas_rowblock_res,
             icas_row=icas_row_res,
             icas=icas_res,
@@ -1537,10 +1561,10 @@ class PanTable(PanTableAbstract):
         )
 
     def to_pantablestr(self) -> PanTableStr:
-        '''return a PanTableStr representation of self
+        """return a PanTableStr representation of self
 
         All contents are stringified so it is lossy.
-        '''
+        """
         cells = self.cells
         short_caption = None if self.short_caption is None else stringify(Plain(*self.short_caption))
         caption = stringify(Caption(*self.caption))
@@ -1558,7 +1582,7 @@ class PanTable(PanTableAbstract):
 
 @dataclass
 class PanTableStr(PanTableAbstract):
-    '''similar to PanTable, but with panflute ASTs as str
+    """similar to PanTable, but with panflute ASTs as str
 
     TableArray should have content type as str
     although not strictly enforced here
@@ -1566,9 +1590,9 @@ class PanTableStr(PanTableAbstract):
     TODO: check that icas* are always empty and remove them
 
     TODO: implement auto_width
-    '''
+    """
 
-    caption: str = ''
+    caption: str = ""
     icas_rowblock: Optional[np.ndarray[np.str_]] = None
     icas_row: Optional[np.ndarray[np.str_]] = None
     icas: Optional[np.ndarray[np.str_]] = None
@@ -1580,24 +1604,24 @@ class PanTableStr(PanTableAbstract):
 
         m_icas_rowblock = self._ms.size // 2 + 1
         if self.icas_rowblock is None:
-            self.icas_rowblock: np.ndarray[np.str_] = np.full(m_icas_rowblock, '', dtype=np.object_)
+            self.icas_rowblock: np.ndarray[np.str_] = np.full(m_icas_rowblock, "", dtype=np.object_)
         if self.icas_row is None:
-            self.icas_row: np.ndarray[np.str_] = np.full(self.m, '', dtype=np.object_)
+            self.icas_row: np.ndarray[np.str_] = np.full(self.m, "", dtype=np.object_)
         if self.icas is None:
-            self.icas: np.ndarray[np.str_] = np.full(self.shape, '', dtype=np.object_)
+            self.icas: np.ndarray[np.str_] = np.full(self.shape, "", dtype=np.object_)
 
     def _repr_html_(self) -> str:
         try:
             return self.to_pantable()._repr_html_()
         except Exception:
-            logger.critical('Invalid table.')
-            return self.__str__(tablefmt='html')
+            logger.critical("Invalid table.")
+            return self.__str__(tablefmt="html")
 
     def to_pantableoption(
         self,
-        format: str = 'csv',
+        format: str = "csv",
         fancy_table: bool = False,
-        include: str = '',
+        include: str = "",
         csv_kwargs: Optional[dict] = None,
     ) -> PanTableOption:
         short_caption = self.short_caption
@@ -1605,10 +1629,10 @@ class PanTableStr(PanTableAbstract):
         col_widths = spec.col_widths
 
         # col_width
-        col_widths_list = ['D' if np.isnan(i) else float(i) for i in col_widths]
+        col_widths_list = ["D" if np.isnan(i) else float(i) for i in col_widths]
 
         options = PanTableOption(
-            short_caption='' if short_caption is None else short_caption,
+            short_caption="" if short_caption is None else short_caption,
             caption=self.caption,
             alignment=spec.aligns.aligns_string,
             alignment_cells=self.aligns.aligns_string,
@@ -1628,16 +1652,16 @@ class PanTableStr(PanTableAbstract):
 
     def to_pancodeblock(
         self,
-        format: str = 'csv',
-        include: str = '',
+        format: str = "csv",
+        include: str = "",
         csv_kwargs: Optional[dict] = None,
     ) -> PanCodeBlock:
-        '''to PanCodeBlock object
+        """to PanCodeBlock object
 
         This is lossy as there's no way to encode the geometries of `self.cells`
         in PanCodeBlock. Use PanTableMarkdown instead if you want to preserve that
         info.
-        '''
+        """
         return PanCodeBlock.from_data_format(
             self.cells.cannonical.contents,
             options=self.to_pantableoption(format=format, include=include, csv_kwargs=csv_kwargs),
@@ -1645,8 +1669,7 @@ class PanTableStr(PanTableAbstract):
         )
 
     def to_pantable(self) -> PanTable:
-        '''return a PanTable representation of self
-        '''
+        """return a PanTable representation of self"""
         cells = self.cells
         contents = cells.contents
         shape = contents.shape
@@ -1658,7 +1681,9 @@ class PanTableStr(PanTableAbstract):
             for j in range(n):
                 if cells.is_at(i, j):
                     cell_shape = cells.shape_at(i, j)
-                    res.put(ListContainer(Plain(Str(contents[i, j]))), cell_shape[0], cell_shape[1], i, j, overwrite=True)
+                    res.put(
+                        ListContainer(Plain(Str(contents[i, j]))), cell_shape[0], cell_shape[1], i, j, overwrite=True
+                    )
         short_caption = None if self.short_caption is None else ListContainer(Str(self.short_caption))
         caption = ListContainer(Para(Str(self.caption)))
 
@@ -1678,11 +1703,11 @@ class PanTableStr(PanTableAbstract):
         override_width: bool = False,
         cell_width_func: Optional[Callable[[str], int]] = cell_width_func,
     ):
-        '''calculate column widths
+        """calculate column widths
 
         assume a normalized table
-        '''
-        table_width: float = 1. if self.table_width is None else self.table_width
+        """
+        table_width: float = 1.0 if self.table_width is None else self.table_width
         cells = self.cells
         contents = cells.contents
         n = self.n
@@ -1718,7 +1743,7 @@ class PanTableStr(PanTableAbstract):
 
         if col_widths is None or override_width:
             widths_int_sum = widths_int.sum()
-            if widths_int_sum > 0.:
+            if widths_int_sum > 0.0:
                 scale = table_width / widths_int_sum
                 self.spec.col_widths = widths_int * scale
             else:
@@ -1726,35 +1751,33 @@ class PanTableStr(PanTableAbstract):
         else:
             is_defaults = np.isnan(col_widths)
             widths_int_sum = widths_int[is_defaults].sum()
-            if widths_int_sum > 0.:
+            if widths_int_sum > 0.0:
                 table_width_spent = np.nansum(col_widths)
                 # assume a normalized table
                 scale = (table_width - table_width_spent) / widths_int_sum
                 # modified in-place
                 col_widths[is_defaults] = widths_int[is_defaults] * scale
             else:
-                col_widths[is_defaults] = 0.
+                col_widths[is_defaults] = 0.0
 
 
 class PanTableMarkdown(PanTableStr):
-    '''similar to PanTableStr, but with all str assumed to be in markdown
-    '''
+    """similar to PanTableStr, but with all str assumed to be in markdown"""
 
     def to_pantable(self) -> PanTable:
-        '''return a PanTable representation of self
-        '''
+        """return a PanTable representation of self"""
         # * 1st pass: assemble the caches
         cache_texts: Dict[Union[str, Tuple[str, int], Tuple[str, int, int]], str] = {}
         # for holding the value as None cases
         cache_none: List[Union[str, Tuple[str, int, int]]] = []
         # caption
-        cache_texts['caption'] = self.caption
+        cache_texts["caption"] = self.caption
         # short_caption
         short_caption = self.short_caption
         if short_caption is None:
-            cache_none.append('short_caption')
+            cache_none.append("short_caption")
         else:
-            cache_texts['short_caption'] = short_caption
+            cache_texts["short_caption"] = short_caption
         # cells and icas
         m = self.m
         n = self.n
@@ -1765,21 +1788,21 @@ class PanTableMarkdown(PanTableStr):
             for j in range(n):
                 # don't repeat cell-block
                 if cells.is_at(i, j):
-                    cache_texts[('cells', i, j)] = contents[i, j]
-                    cache_texts[('icas', i, j)] = icas[i, j]
+                    cache_texts[("cells", i, j)] = contents[i, j]
+                    cache_texts[("icas", i, j)] = icas[i, j]
                 else:
-                    cache_none.append(('cells', i, j))
+                    cache_none.append(("cells", i, j))
                     # don't need this below because checking is_at by cell only
                     # cache_none.append(('icas', i, j))
         # icas_row
         icas_row = self.icas_row
         for i in range(m):
-            cache_texts[('icas_row', i)] = icas_row[i]
+            cache_texts[("icas_row", i)] = icas_row[i]
         # icas_rowblock
         m_rowblocks = self.m_icas_rowblock
         icas_rowblock = self.icas_rowblock
         for i in range(m_rowblocks):
-            cache_texts[('icas_rowblock', i)] = icas_rowblock[i]
+            cache_texts[("icas_rowblock", i)] = icas_rowblock[i]
 
         # * batch convert to markdown
         # the bottle neck is calling pandoc so we batch them and call it once only
@@ -1790,13 +1813,13 @@ class PanTableMarkdown(PanTableStr):
                     cache_texts.keys(),
                     iter_convert_texts_markdown_to_panflute(cache_texts.values()),
                 ),
-                zip(cache_none, repeat(None))
+                zip(cache_none, repeat(None)),
             )
         }
 
         # * 2nd pass: get output from cache
         # short_caption
-        temp = cache_elems['short_caption']
+        temp = cache_elems["short_caption"]
         short_caption_res = temp[0].content if temp else None
         # cells and icas
         res = TableArray.default((m, n))
@@ -1805,25 +1828,25 @@ class PanTableMarkdown(PanTableStr):
         icas_res = np.empty((m, n), dtype=np.object_)
         for i in range(m):
             for j in range(n):
-                content = cache_elems[('cells', i, j)]
+                content = cache_elems[("cells", i, j)]
                 if content is not None:
                     # overwrite as cells is already valid so it is impossible to have
                     # colliding cells to be overwritten
                     cell_shape = cells.shape_at(i, j)
                     res.put(single_para_to_plain(content), cell_shape[0], cell_shape[1], i, j, overwrite=True)
-                    icas_res[i, j] = Ica.from_panflute_ast(cache_elems[('icas', i, j)])
+                    icas_res[i, j] = Ica.from_panflute_ast(cache_elems[("icas", i, j)])
         # icas_row
         icas_row_res = np.empty(m, dtype=np.object_)
         for i in range(m):
-            icas_row_res[i] = Ica.from_panflute_ast(cache_elems[('icas_row', i)])
+            icas_row_res[i] = Ica.from_panflute_ast(cache_elems[("icas_row", i)])
         # icas_rowblock
         icas_rowblock_res = np.empty(m_rowblocks, dtype=np.object_)
         for i in range(m_rowblocks):
-            icas_rowblock_res[i] = Ica.from_panflute_ast(cache_elems[('icas_rowblock', i)])
+            icas_rowblock_res[i] = Ica.from_panflute_ast(cache_elems[("icas_rowblock", i)])
 
         return PanTable(
             res,
-            caption=cache_elems['caption'],
+            caption=cache_elems["caption"],
             icas_rowblock=icas_rowblock_res,
             icas_row=icas_row_res,
             icas=icas_res,
@@ -1836,14 +1859,13 @@ class PanTableMarkdown(PanTableStr):
         )
 
     def to_str_array(self, fancy_table: bool = False) -> np.ndarray[np.str_]:
-        '''construct a table with both content and ica together
-        '''
+        """construct a table with both content and ica together"""
         # prepend a column if fancy-table
         offset = int(fancy_table)
         m = self.m
         n = self.n
 
-        res = np.full((m, n + offset), '', dtype=np.object_)
+        res = np.full((m, n + offset), "", dtype=np.object_)
         cells = self.cells
         contents = cells.contents
         geometries = cells.geometries
@@ -1856,15 +1878,15 @@ class PanTableMarkdown(PanTableStr):
                     cell_res = []
                     if cells.is_block(i, j):
                         shape = geometries[i, j, 0]
-                        cell_res.append(f'({shape[0]}, {shape[1]})')
+                        cell_res.append(f"({shape[0]}, {shape[1]})")
                     if ica:
                         # discard first 2 char which is `[]`
                         cell_res.append(ica[2:])
                     # if cell_res has content so far that means we have first row for cell attributes
                     if cell_res:
-                        cell_res.append('\n')
+                        cell_res.append("\n")
                     cell_res.append(contents[i, j])
-                    res[i, j + offset] = ''.join(cell_res)
+                    res[i, j + offset] = "".join(cell_res)
         # icas_rowblock, icas_row
         if fancy_table:
             icas_rowblock = self.icas_rowblock
@@ -1886,38 +1908,40 @@ class PanTableMarkdown(PanTableStr):
                     if ica_rowblock:
                         temp_list.append(ica_rowblock[2:])
                     if is_body_bodies[i]:
-                        temp_list.append('___')
+                        temp_list.append("___")
                     elif is_body_head:
-                        temp_list.append('---')
+                        temp_list.append("---")
                     elif is_heads[i] or is_foots[i]:
-                        temp_list.append('===')
+                        temp_list.append("===")
                     if ica_row:
                         temp_list.append(ica_row[2:])
-                    res[i, 0] = ' '.join(temp_list)
+                    res[i, 0] = " ".join(temp_list)
                 else:
                     res[i, 0] = ica_row[2:]
         return res
 
     def to_pancodeblock(
         self,
-        format: str = 'csv',
+        format: str = "csv",
         fancy_table: bool = False,
-        include: str = '',
+        include: str = "",
         csv_kwargs: Optional[dict] = None,
     ) -> PanCodeBlock:
         return PanCodeBlock.from_data_format(
             self.to_str_array(fancy_table=fancy_table),
-            options=self.to_pantableoption(format=format, fancy_table=fancy_table, include=include, csv_kwargs=csv_kwargs),
+            options=self.to_pantableoption(
+                format=format, fancy_table=fancy_table, include=include, csv_kwargs=csv_kwargs
+            ),
             ica=self.ica_table,
         )
 
 
 @dataclass
 class PanTableText(PanTableStr):
-    '''a quick and dirty PanTableStr without Ica
+    """a quick and dirty PanTableStr without Ica
 
     Except for ica_table, If you try to access icas* and any methods that use them, it will errs.
-    '''
+    """
 
     icas_rowblock: ClassVar = None
     icas_row: ClassVar = None

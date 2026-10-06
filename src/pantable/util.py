@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
     from panflute.elements import Element
 
-logger = getLogger('pantable')
+logger = getLogger("pantable")
 
 
 class EmptyTableError(Exception):
@@ -23,18 +23,18 @@ class EmptyTableError(Exception):
 
 def convert_texts(
     texts: Iterable,
-    input_format: str = 'markdown',
-    output_format: str = 'panflute',
+    input_format: str = "markdown",
+    output_format: str = "panflute",
     standalone: bool = False,
     extra_args: Optional[List[str]] = None,
 ) -> List[list]:
-    '''run convert_text on list of text'''
+    """run convert_text on list of text"""
     try:
         from map_parallel import map_parallel
 
-        _map_parallel = partial(map_parallel, mode='multithreading')
+        _map_parallel = partial(map_parallel, mode="multithreading")
     except ImportError:
-        logger.warning('Consider `pip install map_parallel` to speed up `convert_texts`.')
+        logger.warning("Consider `pip install map_parallel` to speed up `convert_texts`.")
 
         def _map_parallel(f, arg):
             return list(map(f, arg))
@@ -53,50 +53,49 @@ def iter_convert_texts_markdown_to_panflute(
     texts: Iterable[str],
     extra_args: Optional[List[str]] = None,
 ) -> Iterator[ListContainer]:
-    '''a faster, specialized convert_texts
-    '''
+    """a faster, specialized convert_texts"""
     # put each text in a Div together
-    text = '\n\n'.join(
+    text = "\n\n".join(
         (
-            f'''::: PanTableDiv :::
+            f"""::: PanTableDiv :::
 
 {text}
 
-:::'''
+:::"""
             for text in texts
         )
     )
-    pf = convert_text(text, input_format='markdown', output_format='panflute', extra_args=extra_args)
+    pf = convert_text(text, input_format="markdown", output_format="panflute", extra_args=extra_args)
     return (elem.content for elem in pf)
 
 
 def iter_convert_texts_panflute_to_markdown(
     elems: Iterable[ListContainer],
     extra_args: Optional[List[str]] = None,
-    seperator: str = np.random.randint(65, 91, size=256, dtype=np.uint8).view('S256')[0].decode(),
+    seperator: str = np.random.randint(65, 91, size=256, dtype=np.uint8).view("S256")[0].decode(),
 ) -> Iterator[str]:
-    '''a faster, specialized convert_texts
+    """a faster, specialized convert_texts
 
     :param list elems: must be list of ListContainer of Block.
         This is more restrictive than convert_texts which can also accept list of Block
     :param str seperator: a string for seperator in the temporary markdown output
-    '''
+    """
+
     def iter_seperator(elems: List[ListContainer], inserter: Para):
-        '''insert between every element in a ListContainer'''
+        """insert between every element in a ListContainer"""
         for elem in elems:
             for i in elem:
                 yield i
             yield inserter
 
     def iter_split_by_seperator(text: str, seperator: str) -> Iterator[str]:
-        '''split the text into list by the seperator
-        '''
+        """split the text into list by the seperator"""
         temp = []
         for line in text.splitlines():
             if line != seperator:
                 temp.append(line)
             else:
-                res = '\n'.join(temp).strip()
+                res = "\n".join(temp).strip()
                 # reset for next yield
                 temp = []
                 yield res
@@ -105,43 +104,44 @@ def iter_convert_texts_panflute_to_markdown(
 
     elems_inserted = ListContainer(*iter_seperator(elems, inserter))
     # reference-location=block for footnotes, see issue #58
-    texts_converted = convert_text(elems_inserted, input_format='panflute', output_format='markdown', extra_args=['--reference-location=block'])
+    texts_converted = convert_text(
+        elems_inserted, input_format="panflute", output_format="markdown", extra_args=["--reference-location=block"]
+    )
     return iter_split_by_seperator(texts_converted, seperator)
 
 
 convert_texts_func: Dict[Tuple[str, str], Callable[[Iterable, Optional[List[str]]], Iterator]] = {
-    ('markdown', 'panflute'): (
-        lambda *args, **kwargs:
-        # this is just to convert returned value from
-        # Iterator[ListContainer] to Iterator[list]
-        # which is what convert_texts does
-        map(list, iter_convert_texts_markdown_to_panflute(*args, **kwargs))
+    ("markdown", "panflute"): (
+        lambda *args, **kwargs: (
+            # this is just to convert returned value from
+            # Iterator[ListContainer] to Iterator[list]
+            # which is what convert_texts does
+            map(list, iter_convert_texts_markdown_to_panflute(*args, **kwargs))
+        )
     ),
-    ('panflute', 'markdown'): iter_convert_texts_panflute_to_markdown,
+    ("panflute", "markdown"): iter_convert_texts_panflute_to_markdown,
 }
 
 
 def convert_texts_fast(
     texts: Iterable,
-    input_format: str = 'markdown',
-    output_format: str = 'panflute',
+    input_format: str = "markdown",
+    output_format: str = "panflute",
     extra_args: Optional[List[str]] = None,
 ) -> List[list]:
-    '''a faster, specialized convert_texts
+    """a faster, specialized convert_texts
 
     should have identical result from convert_texts
-    '''
+    """
     try:
         return list(
-            convert_texts_func[
-                (input_format, output_format)
-            ](
+            convert_texts_func[(input_format, output_format)](
                 texts,
                 extra_args,
             )
         )
     except KeyError:
-        logger.warning(f'Unsupported input/output format pair: {input_format}, {output_format}. Doing it slowly...')
+        logger.warning(f"Unsupported input/output format pair: {input_format}, {output_format}. Doing it slowly...")
         return convert_texts(
             texts,
             input_format,
@@ -164,23 +164,23 @@ def eq_panflute_elems(elems1: List[Element], elems2: List[Element]) -> bool:
 
 
 def parse_markdown_codeblock(text: str) -> dict:
-    '''parse markdown CodeBlock just as `panflute.yaml_filter` would
+    """parse markdown CodeBlock just as `panflute.yaml_filter` would
 
     useful for development to obtain the objects that the filter
     would see after passed to `panflute.yaml_filter`
 
     :param str text: must be a single codeblock of class table in markdown
-    '''
+    """
 
     def function(**kwargs):
         return kwargs
 
     doc = convert_text(text, standalone=True)
-    return yaml_filter(doc.content[0], doc, tag='table', function=function, strict_yaml=True)
+    return yaml_filter(doc.content[0], doc, tag="table", function=function, strict_yaml=True)
 
 
 # typing.Union, and X | Y since Python 3.10
-_UNION_TYPES = (Union, getattr(types, 'UnionType', Union))
+_UNION_TYPES = (Union, getattr(types, "UnionType", Union))
 
 
 def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
@@ -200,16 +200,12 @@ def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
 
 
 def get_types(cls: Any) -> Dict[str, tuple]:
-    '''returns all type hints in a Union
+    """returns all type hints in a Union
 
     c.f. https://stackoverflow.com/a/50622643
-    '''
+    """
     return {
-        name: tuple(
-            origin
-            for origin in _find_type_origin(type_hint)
-            if origin is not Any
-        )
+        name: tuple(origin for origin in _find_type_origin(type_hint) if origin is not Any)
         for name, type_hint in get_type_hints(cls).items()
     }
 
@@ -221,7 +217,9 @@ def get_yaml_dumper():
         try:
             from yamlloader.ordereddict.dumpers import SafeDumper as Dumper
         except ImportError:
-            logger.warning('Try `pip install yamlloader` or `conda install yamlloader -c conda-forge` to preserve yaml dict ordering.')
+            logger.warning(
+                "Try `pip install yamlloader` or `conda install yamlloader -c conda-forge` to preserve yaml dict ordering."
+            )
             try:
                 from yaml.cyaml import CSafeDumper as Dumper
             except ImportError:
