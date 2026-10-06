@@ -7,6 +7,8 @@ website:
   site-url: "https://ickc.github.io/pantable"
   description: "CSV tables in pandoc's Markdown, and back"
   repo-url: https://github.com/ickc/pantable
+  repo-subdir: docs
+  repo-branch: main
   repo-actions: [source, issue]
   open-graph: true
   navbar:
