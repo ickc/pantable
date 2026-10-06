@@ -6,7 +6,7 @@ _python = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(python)
 pandoc ?= pandoc
 _pandoc = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(pandoc)
 PYTESTARGS ?= -n auto
-# for bump2version, valid options are: major, minor, patch
+# for `uv version --bump`, valid options are: major, minor, patch
 PART ?= patch
 
 pandocArgs = --toc -M date="`date "+%B %e, %Y"`" --filter=pantable --wrap=none
@@ -17,13 +17,12 @@ RSTs = CHANGELOG.rst README.rst
 
 .PHONY: test docs-all docs html epub files dot clean Clean
 
-all: dot files editable
+all: dot files
 	$(MAKE) test docs-all
 
 test:
-	$(_python) \
-		-m coverage run \
-		-m pytest -vv $(PYTESTARGS) tests
+	rm -f .coverage*
+	$(_python) -m coverage run -m pytest -vv $(PYTESTARGS) tests
 coverage: test
 	coverage combine
 	coverage report
@@ -51,25 +50,10 @@ Clean: clean
 
 # maintenance ##################################################################
 
-.PHONY: pypi pypiManual pep8 flake8 pylint
-# Deploy to PyPI
-## by CI, properly git tagged
-pypi:
-	git push origin v0.14.2
-## Manually
-pypiManual:
+.PHONY: build bump
+build:
 	rm -rf dist
-	tox -e check
-	poetry build
-	twine upload dist/*
-
-# check python styles
-pep8:
-	pycodestyle . --ignore=E501
-flake8:
-	flake8 . --ignore=E501
-pylint:
-	pylint pantable
+	uv build
 
 print-%:
 	$(info $* = $($*))
@@ -93,7 +77,7 @@ README.rst: docs/README.md
 	$(_pandoc) $(pandocArgs) $< -s -t rst >> $@
 
 dist/docs/:
-	tox -e docs
+	sphinx-build -E -b dirhtml docs dist/docs
 # depends on docs as the api doc is built there
 # didn't put this in tox as we should build this once every release
 # TODO: consider put this in tox and automate it in GH Actions
@@ -105,23 +89,11 @@ dist/epub/pantable.epub: docs
 # 	cd dist/pdf; make
 # 	mv dist/pdf/pantable.pdf dist
 
-# poetry #######################################################################
-
-setup.py:
-	poetry build
-	cd dist; tar -xf pantable-0.14.2.tar.gz pantable-0.14.2/setup.py
-	mv dist/pantable-0.14.2/setup.py .
-	rm -rf dist/pantable-0.14.2
-
-# since poetry doesn't support editable, we can build and extract the setup.py,
-# temporary remove pyproject.toml and ask pip to install from setup.py instead.
-editable: setup.py
-	mv pyproject.toml .pyproject.toml
-	$(_python) -m pip install --no-dependencies -e .
-	mv .pyproject.toml pyproject.toml
-
 # releasing ####################################################################
 
+# bump version, commit, tag, and push; pushing the tag triggers the release workflow
 bump:
-	bump2version $(PART)
+	uv version --bump $(PART) --frozen
+	git commit -am "Bump version: $$(uv version --short)"
+	git tag -a "v$$(uv version --short)" -m "v$$(uv version --short)"
 	git push --follow-tags

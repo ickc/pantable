@@ -1,3 +1,5 @@
+from importlib import metadata
+
 import sphinx_bootstrap_theme
 
 html_css_files = [
@@ -23,7 +25,7 @@ project = "pantable"
 year = "2016-2020"
 author = "Kolen Cheung"
 copyright = f"{year}, {author}"
-version = release = "0.14.2"
+version = release = metadata.version("pantable")
 
 pygments_style = "solarized-light"
 html_theme = "bootstrap"

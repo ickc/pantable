@@ -1,14 +1,13 @@
 import logging
 import os
-import sys
+from importlib.metadata import version
 
 try:
     from coloredlogs import ColoredFormatter as Formatter
 except ImportError:
     from logging import Formatter
 
-__version__ = '0.14.2'
-PY37 = sys.version_info.minor == 7
+__version__: str = version('pantable')
 
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
