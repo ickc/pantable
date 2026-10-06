@@ -13,7 +13,7 @@
     - development with pixi, which provides pandoc from conda-forge, replacing tox, the makefile and `environment.yml`
     - releases are published to PyPI by GitHub Actions with trusted publishing
     - the tests run the filters as pandoc runs them, on the files in `tests/golden/`; only `tests/test_library.py` uses the Python API
-    - documentation: `README.md` is the single source of the README; the site is built with Quarto, with an example per topic, and replaces the Sphinx site and Read the Docs
+    - documentation: `README.md` is the single source of the README; the site is built with Quarto, with an example per topic, and replaces the Sphinx site; it is served on GitHub Pages and on Read the Docs
 - v0.14.2: Support pandoc 2.15–16
     - improve test matrix in GitHub Actions
     - update dependency constraints
