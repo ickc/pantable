@@ -11,9 +11,6 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write # for Codecov OIDC upload
     strategy:
       fail-fast: false
       matrix:
@@ -36,15 +33,6 @@ jobs:
           pixi run -e ${{ matrix.environment }} python -c 'import numpy, pantable; print(pantable.__version__, numpy.__version__)'
       - name: Tests
         run: pixi run -e ${{ matrix.environment }} coverage
-      - name: Coverage—Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/codecov-action@v7
-        with:
-          files: ./coverage.xml
-          disable_search: true
-          flags: ${{ matrix.environment }}
-          use_oidc: true
-          fail_ci_if_error: false
 
   lint:
     runs-on: ubuntu-latest

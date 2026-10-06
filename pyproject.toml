@@ -142,7 +142,7 @@ test-py314 = ["test", "py314"]
 
 [tool.pixi.tasks]
 test = "coverage run -m pytest -vv -n auto"
-coverage = { cmd = "coverage combine && coverage report && coverage xml", depends-on = ["test"] }
+coverage = { cmd = "coverage combine && coverage report", depends-on = ["test"] }
 gen-golden = { cmd = "pytest tests/test_golden.py --update-golden", description = "Regenerate tests/golden/*/expected/ from the filters' output" }
 build = "uv build"
 bump = { cmd = "tools/bump.sh", description = "Bump the version, commit, tag and push, which releases: pixi run bump [major|minor|patch]" }
