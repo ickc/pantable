@@ -2,10 +2,11 @@
 
 [![Test](https://github.com/ickc/pantable/actions/workflows/test.yml/badge.svg)](https://github.com/ickc/pantable/actions/workflows/test.yml)
 [![Documentation](https://github.com/ickc/pantable/actions/workflows/pages.yml/badge.svg)](https://ickc.github.io/pantable)
+[![Read the Docs](https://readthedocs.org/projects/pantable/badge/?version=latest)](https://pantable.readthedocs.io/en/latest/)
 [![PyPI](https://img.shields.io/pypi/v/pantable.svg)](https://pypi.org/project/pantable)
 [![Supported versions](https://img.shields.io/pypi/pyversions/pantable.svg)](https://pypi.org/project/pantable)
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/pantable.svg)](https://anaconda.org/conda-forge/pantable)
-[![License](https://img.shields.io/pypi/l/pantable.svg)](https://github.com/ickc/pantable/blob/master/LICENSE)
+[![License](https://img.shields.io/pypi/l/pantable.svg)](https://github.com/ickc/pantable/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/74008159.svg)](https://zenodo.org/badge/latestdoi/74008159)
 
 ## Introduction
@@ -62,7 +63,7 @@ conda install -c conda-forge pantable
 pixi global install pantable
 ```
 
-To install the in-development version: `pip install https://github.com/ickc/pantable/archive/master.zip`.
+To install the in-development version: `pip install https://github.com/ickc/pantable/archive/main.zip`.
 
 ### Supported pandoc versions
 
@@ -70,7 +71,7 @@ pantable reads and writes pandoc's document AST through [panflute](https://githu
 
 | pantable | panflute | pandoc               | pandoc-types |
 | -------- | -------- | -------------------- | ------------ |
-| 0.15     | 2.3+     | 3.7.0.2–3.12, tested | 1.23         |
+| 0.15     | 2.3      | 3.7.0.2–3.12, tested | 1.23         |
 | 0.14.1-2 | 2.1.3    | 2.11.0.4–2.17.x      | 1.22–1.22.1  |
 | 0.14     | 2.1      | 2.11.0.4–2.14.x      | 1.22         |
 | 0.13     | 2.0      | 2.11.0.4–2.11.x      | 1.22         |

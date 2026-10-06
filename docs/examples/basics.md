@@ -39,6 +39,15 @@ Mercury,0
 Venus,0
 ```
 
+A cell with a comma, a quote or a line break is quoted with double
+quotes, and a double quote inside it is doubled:
+
+```table
+Planet,Note
+Earth,"Third from the Sun, and has ""Moon"" for a moon"
+Mars,"Named after the god of war"
+```
+
 `alignment-cells` aligns cells one by one, a line per row, and again
 what is left out is default:
 
