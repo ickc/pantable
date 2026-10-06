@@ -30,9 +30,11 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Topic :: Utilities",
@@ -56,7 +58,7 @@ include = [
 python = ">=3.7"
 panflute = "^2.1.3"
 pyyaml = ">=5,<7"
-numpy = "^1.16"
+numpy = ">=1.16,<3"
 "backports.cached-property" = {python = "<3.8", version = "^1"}
 
 # extras
@@ -65,11 +67,11 @@ tabulate = {optional = true, version = "^0.8"}
 yamlloader = {optional = true, version = "^1"}
 
 # tests
-coverage = { optional = true, version = "^6.3" }
+coverage = { optional = true, version = ">=6.3" }
 coveralls = {optional = true, version = "*"}
 flake8 = {optional = true, version = "*"}
 pytest = {optional = true, version = "*"}
-pytest-parallel = {optional = true, version = "^0.1.1"}
+pytest-xdist = {optional = true, version = "*"}
 
 # docs: sync this with tox.testenv.docs below
 sphinx = {optional = true, version = ">=3,<5"}
@@ -95,7 +97,7 @@ tests = [
     "coveralls",
     "flake8",
     "pytest",
-    "pytest-parallel",
+    "pytest-xdist",
 ]
 docs = [
     "sphinx",

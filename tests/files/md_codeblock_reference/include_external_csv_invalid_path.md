@@ -1,4 +1,4 @@
-``` {.table}
+``` table
 ---
 caption: "*Great* Title"
 header: True

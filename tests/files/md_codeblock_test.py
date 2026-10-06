@@ -31,7 +31,8 @@ def read(path: Path, path_ref: Path) -> Tuple[str, str]:
         md_out = convert_text(doc, input_format='panflute', output_format='markdown')
     except TypeError:
         logger.error('Cannot parse input codeblock, leaving as is.')
-        md_out = text
+        # as is, but written by pandoc, as the reference is
+        md_out = convert_text(text, output_format='markdown')
 
     return md_reference, md_out
 
