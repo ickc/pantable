@@ -1,40 +1,15 @@
----
-fontsize:	11pt
-documentclass:	memoir
-classoption: article
-geometry:	inner=1in, outer=1in, top=1in, bottom=1.25in
-title:	Pantable—A Python library for writing pandoc filters for tables with batteries included.
-...
+# pantable
 
-
-[![Documentation Status](https://readthedocs.org/projects/pantable/badge/?version=latest)](https://pantable.readthedocs.io/en/latest/?badge=latest&style=plastic)
-[![Documentation Status](https://github.com/ickc/pantable/workflows/GitHub%20Pages/badge.svg)](https://ickc.github.io/pantable)
-
-![GitHub Actions](https://github.com/ickc/pantable/workflows/Python%20package/badge.svg)
-[![Coverage Status](https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/ickc/pantable)
-[![Coverage Status](https://coveralls.io/repos/github/ickc/pantable/badge.svg?branch=master)](https://coveralls.io/github/ickc/pantable?branch=master)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/078ebc537c5747f68c1d4ad3d3594bbf)](https://www.codacy.com/gh/ickc/pantable/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ickc/pantable&amp;utm_campaign=Badge_Grade)
-[![Scrutinizer Status](https://img.shields.io/scrutinizer/quality/g/ickc/pantable/master.svg)](https://scrutinizer-ci.com/g/ickc/pantable/)
-[![CodeClimate Quality Status](https://codeclimate.com/github/ickc/pantable/badges/gpa.svg)](https://codeclimate.com/github/ickc/pantable)
-
+[![Test](https://github.com/ickc/pantable/actions/workflows/test.yml/badge.svg)](https://github.com/ickc/pantable/actions/workflows/test.yml)
+[![Documentation](https://github.com/ickc/pantable/actions/workflows/pages.yml/badge.svg)](https://ickc.github.io/pantable)
+[![Coverage](https://codecov.io/gh/ickc/pantable/branch/master/graphs/badge.svg?branch=master)](https://codecov.io/github/ickc/pantable)
+[![PyPI](https://img.shields.io/pypi/v/pantable.svg)](https://pypi.org/project/pantable)
 [![Supported versions](https://img.shields.io/pypi/pyversions/pantable.svg)](https://pypi.org/project/pantable)
-[![Supported implementations](https://img.shields.io/pypi/implementation/pantable.svg)](https://pypi.org/project/pantable)
-[![PyPI Wheel](https://img.shields.io/pypi/wheel/pantable.svg)](https://pypi.org/project/pantable)
-[![PyPI Package latest release](https://img.shields.io/pypi/v/pantable.svg)](https://pypi.org/project/pantable)
-[![GitHub Releases](https://img.shields.io/github/tag/ickc/pantable.svg?label=github+release)](https://github.com/ickc/pantable/releases)
-[![Development Status](https://img.shields.io/pypi/status/pantable.svg)](https://pypi.python.org/pypi/pantable/)
-[![Downloads](https://img.shields.io/pypi/dm/pantable.svg)](https://pypi.python.org/pypi/pantable/)
-[![Commits since latest release](https://img.shields.io/github/commits-since/ickc/pantable/v0.14.2.svg)](https://github.com/ickc/pantable/compare/v0.14.2...master)
-![License](https://img.shields.io/pypi/l/pantable.svg)
-
-[![Conda Recipe](https://img.shields.io/badge/recipe-pantable-green.svg)](https://anaconda.org/conda-forge/pantable)
-[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/pantable.svg)](https://anaconda.org/conda-forge/pantable)
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/pantable.svg)](https://anaconda.org/conda-forge/pantable)
-[![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/pantable.svg)](https://anaconda.org/conda-forge/pantable)
-
+[![License](https://img.shields.io/pypi/l/pantable.svg)](https://github.com/ickc/pantable/blob/master/LICENSE)
 [![DOI](https://zenodo.org/badge/74008159.svg)](https://zenodo.org/badge/latestdoi/74008159)
 
-# Introduction
+## Introduction
 
 Pantable is a Python library that maps the pandoc Table AST to an internal structure losslessly. This enables writing pandoc filters specifically manipulating tables in pandoc.
 
@@ -56,7 +31,7 @@ Some example uses are:
 
 4. You want to use all table features supported by the pandoc's internal AST table format, which is not possible in markdown for pandoc (as of writing.)
 
-## A word on support
+### A word on support
 
 Note that the above is exactly how I use pantable personally. So you can count on the round-trip losslessness. `pantable` and `pantable2csv` should have robust support since it has been used for years. But since pandoc 2.11 the table AST has been majorly revised. Pantable 0.13 added support for this new AST by completely rewriting pantable, at the same time addresses some of the shortcoming of the original design. Part of the new design is to enable pantable as a library (see [Pantable as a library] below) so that its functionality can be extended, similar to how to write a pandoc filter to intercept the AST and modify it, you can intercept the internal structure of PanTable and modify it.
 
@@ -68,66 +43,52 @@ However, since this library is completely rewritten as of v0.13,
 - `pantable2csvx` as pandoc filter is experimental. API here might change in the future or may be dropped completed (e.g. replaces by something even more general)
 - Pantable as a library also is experimental, meaning that the API might be changed in the future.
 
-# Installation
+## Installation
 
-## Pip
+pantable needs [pandoc](https://pandoc.org/installing.html), version 3.7.0.2 or later (see [Supported pandoc versions]).
 
-To manage pantable using pip, open the command line and run
+With pip, or [uv](https://docs.astral.sh/uv/):
 
-- `pip install pantable` to install
-    - `pip install https://github.com/ickc/pantable/archive/master.zip` to install the in-development version
-- `pip install -U pantable` to upgrade
-- `pip uninstall pantable` to remove
+```sh
+pip install pantable
+# or, as a command-line tool of its own
+uv tool install pantable
+```
 
-You need a matching pandoc version for pantable to work flawlessly. See [Supported pandoc versions] for details. Or, use the [Conda] method to install below to have the pandoc version automatically managed for you.
+With [conda](https://anaconda.org/conda-forge/pantable), or [pixi](https://pixi.sh), which also install a matching pandoc:
 
-## Conda
+```sh
+conda install -c conda-forge pantable
+# or
+pixi global install pantable
+```
 
-To manage pantable **with a matching pandoc version**, open the command line and run
+To install the in-development version: `pip install https://github.com/ickc/pantable/archive/master.zip`.
 
-- `conda install -c conda-forge pantable` to install
-- `conda update pantable` to upgrade
-- `conda remove pantable` to remove
+### Supported pandoc versions
 
-You may also replace `conda` by `mamba`, which is basically a drop-in replacement of the conda package manager. See [mamba-org/mamba: The Fast Cross-Platform Package Manager](https://github.com/mamba-org/mamba) for details.
+pantable reads and writes pandoc's document AST through [panflute](https://github.com/sergiocorreia/panflute), which follows the AST's version, [pandoc-types](https://hackage.haskell.org/package/pandoc-types):
 
-## Note on versions
-
-### Supported Python versions
-
-pantable v0.12 drop Python 2 support. You need to `pip install pantable<0.12` if you need to run it on Python 2.
-
-To enforce using Python 3, depending on your system, you may need to specify `python3` and `pip3` explicitly.
-
-Check the badge above or `setup.py` for supported Python versions, `setup.py` further indicates support of pypy in additional of CPython.
-
-#### Supported pandoc versions
-
-pandoc versioning semantics is [MAJOR.MAJOR.MINOR.PATCH](https://pvp.haskell.org) and panflute's is MAJOR.MINOR.PATCH. Below we shows matching versions of pandoc that panflute supports, in descending order. Only major version is shown as long as the minor versions doesn't matter.
-
-| pantable | panflute version | supported pandoc versions | supported pandoc API versions |
-| -------- | ---------------- | ------------------------- | ----------------------------- |
-| 0.14.1-2 | 2.1.3            | 2.11.0.4–2.17.x           | 1.22–1.22.1                   |
-| 0.14     | 2.1              | 2.11.0.4—2.14.x           | 1.22                          |
-| 0.13     | 2.0              | 2.11.0.4—2.11.x           | 1.22                          |
-| -        | not supported    | 2.10                      | 1.21                          |
-| 0.12     | 1.12             | 2.7-2.9                   | 1.17.5–1.20                   |
-
-: Version Matching^[For pandoc API verion, check https://hackage.haskell.org/package/pandoc for pandoc-types, which is the same thing.]
-
-Note: pandoc 2.10 is short lived and 2.11 has minor API changes comparing to that, mainly for fixing its shortcomings. Please avoid using pandoc 2.10.
+| pantable | panflute | pandoc               | pandoc-types |
+| -------- | -------- | -------------------- | ------------ |
+| 0.15     | 2.3      | 3.7.0.2–3.12, tested | 1.23         |
+| 0.14.1-2 | 2.1.3    | 2.11.0.4–2.17.x      | 1.22–1.22.1  |
+| 0.14     | 2.1      | 2.11.0.4–2.14.x      | 1.22         |
+| 0.13     | 2.0      | 2.11.0.4–2.11.x      | 1.22         |
+| -        | -        | 2.10                 | 1.21         |
+| 0.12     | 1.12     | 2.7–2.9              | 1.17.5–1.20  |
 
 To use pantable with pandoc < 2.10, install pantable 0.12 explicitly by `pip install pantable~=0.12.4`.
 
-# Pantable as pandoc filters
+pantable 0.15 needs Python 3.10 or later; pantable < 0.12 supports Python 2.
 
-## `pantable`
+## Pantable as pandoc filters
+
+### `pantable`
 
 This allows CSV tables, optionally containing markdown syntax (disabled by default), to be put in markdown as a fenced code blocks.
 
-## Example
-
-Also see the README in [GitHub Pages](https://ickc.github.io/pantable/).
+### Example
 
 ~~~
 ```table
@@ -146,32 +107,15 @@ First row,defaulted to be header row,can be disabled
 ```
 ~~~
 
-becomes
+becomes a table: see the [examples](https://ickc.github.io/pantable/examples.html), each shown with its source.
 
-```table
----
-caption: '*Awesome* **Markdown** Table'
-alignment: RC
-table-width: 2/3
-markdown: True
----
-First row,defaulted to be header row,can be disabled
-1,cell can contain **markdown**,"It can be aribrary block element:
-
-- following standard markdown syntax
-- like this"
-2,"Any markdown syntax, e.g.",E = mc^2^
-```
-
-(The equation might not work if you view this on PyPI.)
-
-## Usage
+### Usage
 
 ```bash
 pandoc -F pantable -o README.html README.md
 ```
 
-## Syntax
+### Syntax
 
 Fenced code blocks is used, with a class `table`. See [Example].
 
@@ -339,7 +283,7 @@ auto-width will be performed such that the sum of `width` equals this number.
 
     Default: None
 
-## `pantable2csv`
+### `pantable2csv`
 
 This one is the inverse of `pantable`, a panflute filter to convert any native pandoc tables into the CSV table format used by pantable.
 
@@ -388,7 +332,7 @@ First row,defaulted to be header row,can be disabled
 ```
 ~~~
 
-## `pantable2csvx`
+### `pantable2csvx`
 
 (experimental, may drop in the future)
 
@@ -398,7 +342,7 @@ is in principle losslessly converted to a markdown-ish syntax in a CSV represent
 e.g.
 
 ```sh
-pandoc -F pantable2csvx -o tests/files/native_reference/planets.md tests/files/native/planets.native
+pandoc -F pantable2csvx -o planets.md tests/golden/pantable2csvx/planets.native
 ```
 
 would turn the native Table from `platnets.native`^[copied from pandoc from [here](https://github.com/jgm/pandoc/blob/master/test/tables/planets.native), which was dual licensed as CC0 [here](https://github.com/sergiocorreia/panflute/pull/172#issuecomment-736252008)] to
@@ -432,54 +376,33 @@ Dwarf planets",,Pluto,0.0146,"2,370",2095,0.7,153.3,5906.4,-225,5,Declassified a
 ```
 ~~~
 
-# Pantable as a library
+## Pantable as a library
 
 (experimental, API may change in the future)
 
-Documentation here is sparse, partly because the upstream (pandoc) may change the table AST again. See [Crazy ideas: table structure from upstream GitHub](https://github.com/jgm/pandoc-types/issues/86).
+pantable maps pandoc's Table to its own representations, losslessly, so
+that a filter can work on a table as a whole. See
+[pantable as a library](https://ickc.github.io/pantable/library.html) for
+the representations and the conversions between them.
 
-See the API docs in <https://ickc.github.io/pantable/>.
+## Development
 
-For example, looking at the source of `pantable` as a pandoc filter, in `codeblock_to_table.py`, you will see the main function doing the work is now
+The development environments are managed by [pixi](https://pixi.sh), with
+pandoc from conda-forge:
 
-```python
-pan_table_str = (
-    PanCodeBlock
-    .from_yaml_filter(options=options, data=data, element=element, doc=doc)
-    .to_pantablestr()
-)
-if pan_table_str.table_width is not None:
-    pan_table_str.auto_width()
-return (
-    pan_table_str
-    .to_pantable()
-    .to_panflute_ast()
-)
+```sh
+pixi run test        # the test suite, with the latest Python and pandoc
+pixi run -e test-py310 test   # the oldest supported Python and pandoc
+pixi run -e lint lint
+pixi run gen-golden  # regenerate tests/golden/*/expected/
+pixi run -e docs docs-preview
 ```
 
-You can see another example from `table_to_codeblock.py` which is what `pantable2csv` and `pantable2csvx` called.
+The tests in `tests/test_golden.py` and `tests/test_roundtrip.py` run the
+filters as pandoc runs them, on the files in `tests/golden/`; only
+`tests/test_library.py` uses pantable's Python API.
 
-Below is a diagram illustrating the API:
-
-![Overview](docs/dot/pipeline-simple.svg)
-
-Solid arrows are lossless conversions. Dashed arrows are lossy.
-
-You can see the pantable internal structure, `PanTable` is one-one correspondence to the pandoc Table AST. Similarly for `PanCodeBlock`.
-
-It can then losslessly converts between PanTable and PanTableMarkdown, where everything in PanTableMarkdown is now markdown strings (whereas those in PanTable are panflute or panflute-like AST objects.)
-
-Lastly, it defines a one-one correspondence to PanCodeBlock with `fancy_table` syntax mentioned earlier.
-
-Below is the same diagram with the method names. You'd probably want to zoom into it to see it clearly.
-
-![Detailed w/ methods](docs/dot/pipeline.svg)
-
-# Development
-
-To run all the tests run `tox`. GitHub Actions is used for CI too so if you fork this you can check if your commits passes there.
-
-# Related Filters
+## Related Filters
 
 (The table here is created in the beginning of pantable, which has since added more features. This is left here for historical reason and also as a credit to those before this.)
 
