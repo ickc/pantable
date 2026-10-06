@@ -6,6 +6,14 @@
     - fix option type checking on Python 3.14, where `typing.Union` is a class
     - tests use pytest-xdist instead of the unmaintained pytest-parallel
     - test matrix: Python 3.10–3.14, pandoc 3.7.0.2–3.12, numpy 1.26 and 2; the reference outputs need pandoc 3.7.0.2 or later
+    - requires Python 3.10 or later, and panflute 2.3 (`panflute>=2.3.1,<2.4`)
+    - fix `table-width`: columns without a `width` are sized by their content, rather than all equally
+    - fix `pantable2csvx` on a table without a body, and on a table with some column widths default
+    - packaging: PEP 621 metadata built with uv instead of Poetry; the version is single-sourced from `pyproject.toml`
+    - development with pixi, which provides pandoc from conda-forge, replacing tox, the makefile and `environment.yml`
+    - releases are published to PyPI by GitHub Actions with trusted publishing
+    - the tests run the filters as pandoc runs them, on the files in `tests/golden/`; only `tests/test_library.py` uses the Python API
+    - documentation: `README.md` is the single source of the README; the site is built with Quarto, with an example per topic, and replaces the Sphinx site and Read the Docs
 - v0.14.2: Support pandoc 2.15–16
     - improve test matrix in GitHub Actions
     - update dependency constraints
