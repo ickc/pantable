@@ -2,7 +2,6 @@
 
 [![Test](https://github.com/ickc/pantable/actions/workflows/test.yml/badge.svg)](https://github.com/ickc/pantable/actions/workflows/test.yml)
 [![Documentation](https://github.com/ickc/pantable/actions/workflows/pages.yml/badge.svg)](https://ickc.github.io/pantable)
-[![Read the Docs](https://readthedocs.org/projects/pantable/badge/?version=latest)](https://pantable.readthedocs.io/en/latest/)
 [![PyPI](https://img.shields.io/pypi/v/pantable.svg)](https://pypi.org/project/pantable)
 [![Supported versions](https://img.shields.io/pypi/pyversions/pantable.svg)](https://pypi.org/project/pantable)
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/pantable.svg)](https://anaconda.org/conda-forge/pantable)
