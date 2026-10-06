@@ -5,7 +5,7 @@ python ?= python
 _python = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(python)
 pandoc ?= pandoc
 _pandoc = PANTABLELOGLEVEL=$(PANTABLELOGLEVEL) $(pandoc)
-PYTESTARGS ?= --workers auto
+PYTESTARGS ?= -n auto
 # for bump2version, valid options are: major, minor, patch
 PART ?= patch
 

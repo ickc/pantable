@@ -22,51 +22,37 @@ jobs:
         # make sure the versions are monotmonic increasing w.r.t. each other
         # other wise e.g. an older version of a dependency may not work well with a newer version of Python
         include:
-          - python-version: "3.7"
-            pandoc-version: "2.11.4"
-            pyyaml-version: "pyyaml>=5,<6"
-            numpy-version: "numpy>=1.16.6,<1.17"
-            yamlloader-version: "yamlloader>=1,<1.1"
-          - python-version: "pypy-3.7"
-            pandoc-version: "2.13"
-            pyyaml-version: "pyyaml>=5,<6"
-            numpy-version: "numpy>=1.18.5,<1.19"
-            yamlloader-version: "yamlloader>=1,<1.1"
-          - python-version: "3.8"
-            pandoc-version: "2.15"
-            pyyaml-version: "pyyaml>=6,<7"
-            numpy-version: "numpy>=1.20.3,<1.21"
-            yamlloader-version: "yamlloader>=1.1,<2"
-          - python-version: "3.9"
-            pandoc-version: "2.16.2"
-            pyyaml-version: "pyyaml>=6,<7"
-            numpy-version: "numpy>=1.21.4,<1.22"
-            yamlloader-version: "yamlloader>=1.1,<2"
           - python-version: "3.10"
-            pandoc-version: "latest"
-            pyyaml-version: "pyyaml>=6,<7"
-            numpy-version: "numpy>=1.22,<1.23"
-            yamlloader-version: "yamlloader>=1.1,<2"
+            pandoc-version: "3.7.0.2"
+            numpy-version: "numpy>=1.26,<2"
+          - python-version: "3.11"
+            pandoc-version: "3.8.3"
+            numpy-version: "numpy>=2.0,<2.1"
+          - python-version: "3.12"
+            pandoc-version: "3.9"
+            numpy-version: "numpy>=2.1,<2.2"
+          - python-version: "3.13"
+            pandoc-version: "3.11"
+            numpy-version: "numpy>=2.2,<2.3"
+          - python-version: "3.14"
+            pandoc-version: "3.12"
+            numpy-version: "numpy>=2.3"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v5
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies—pip
       run: |
-        python -m pip install -U poetry setuptools "${{ matrix.pyyaml-version }}" "${{ matrix.numpy-version }}" "${{ matrix.yamlloader-version }}"
+        python -m pip install -U pip "${{ matrix.numpy-version }}"
         python -m pip install .[extras,tests]
-        # let coverage read generated setup.py instead of pyproject.toml
-        make setup.py
-        mv pyproject.toml .pyproject.toml
     - name: Install dependencies—pandoc
       run: |
-        # pandoc
-        [[ ${{ matrix.pandoc-version }} == "latest" ]] && url="https://github.com/jgm/pandoc/releases/latest" || url="https://github.com/jgm/pandoc/releases/tag/${{ matrix.pandoc-version }}"
-        downloadUrl="https://github.com$(curl -L $url | grep -o '/jgm/pandoc/releases/download/.*-amd64\.deb')"
-        wget --quiet "$downloadUrl"
-        sudo dpkg -i "${downloadUrl##*/}"
+        # the reference outputs in tests/files need pandoc 3.7.0.2 or later
+        v=${{ matrix.pandoc-version }}
+        wget --quiet "https://github.com/jgm/pandoc/releases/download/$v/pandoc-$v-1-amd64.deb"
+        sudo dpkg -i "pandoc-$v-1-amd64.deb"
     - name: Tests
       run: |
         make test
@@ -82,19 +68,18 @@ jobs:
         parallel: true
         path-to-lcov: ./coverage.lcov
     - name: Coverage—Codecov
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v5
       with:
-        file: ./coverage.xml
+        files: ./coverage.xml
     # c.f. https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
-    - name: Prepare to publish
-      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.10 }}
+    - name: Build distribution 📦
+      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == '3.14' }}
       run: |
-        # undo the above. see "make editable" that already build the packages
-        rm -f setup.py
-        mv .pyproject.toml pyproject.toml
+        python -m pip install -U build
+        python -m build
     - name: Publish distribution 📦 to PyPI
-      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.10 }}
-      uses: pypa/gh-action-pypi-publish@master
+      if: ${{ startsWith(github.event.ref, 'refs/tags') && matrix.python-version == '3.14' }}
+      uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.pypi_password }}
 
