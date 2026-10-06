@@ -141,6 +141,7 @@ test-py314 = ["test", "py314"]
 [tool.pixi.tasks]
 test = "coverage run -m pytest -vv -n auto"
 coverage = { cmd = "coverage combine && coverage report && coverage xml", depends-on = ["test"] }
+gen-golden = { cmd = "pytest tests/test_golden.py --update-golden", description = "Regenerate tests/golden/*/expected/ from the filters' output" }
 build = "uv build"
 
 [tool.pixi.feature.lint.tasks]
@@ -171,11 +172,6 @@ show_missing = true
 precision = 2
 
 [tool.pytest.ini_options]
-python_files = [
-    'test_*.py',
-    '*_test.py',
-    'tests.py',
-]
 addopts = [
     '-ra',
     '--strict-markers',

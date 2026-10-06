@@ -15,9 +15,9 @@ RSTs = CHANGELOG.rst README.rst
 
 # Main Targets #################################################################
 
-.PHONY: test docs-all docs html epub files dot clean Clean
+.PHONY: test docs-all docs html epub dot clean Clean
 
-all: dot files
+all: dot
 	$(MAKE) test docs-all
 
 test:
@@ -33,8 +33,6 @@ docs: $(RSTs)
 html: dist/docs/
 epub: dist/epub/pantable.epub
 
-files:
-	cd tests/files; $(MAKE)
 dot:
 	cd docs/dot; $(MAKE)
 
