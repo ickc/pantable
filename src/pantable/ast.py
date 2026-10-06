@@ -1713,7 +1713,7 @@ class PanTableStr(PanTableAbstract):
         n = self.n
         col_widths = self.spec.col_widths
 
-        temp: list[list[int | tuple[int, int]]] = [[]] * n
+        temp: list[list[int | tuple[int, int]]] = [[] for _ in range(n)]
         for i in range(self.m):
             for j in range(n):
                 if cells.is_at(i, j):
