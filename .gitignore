@@ -1,7 +1,7 @@
 docs/api/
 docs/dot/pipeline-simple.dot
 
-poetry.lock
+.pixi/
 setup.py
 
 .ipynb_checkpoints
@@ -80,3 +80,6 @@ docs/_build
 
 # Mypy Cache
 .mypy_cache/
+
+# Quarto (it also writes docs/.gitignore)
+docs/_site/

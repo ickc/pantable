@@ -1,0 +1,69 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.environment }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        # the platforms in [tool.pixi.workspace] in pyproject.toml
+        os:
+          - ubuntu-latest # linux-64
+          - ubuntu-24.04-arm # linux-aarch64
+          - macos-15-intel # osx-64
+          - macos-latest # osx-arm64
+          - windows-latest # win-64
+        # python and pandoc versions increase together, see [tool.pixi.environments] in pyproject.toml
+        environment:
+          - test-py310
+          - test-py311
+          - test-py312
+          - test-py313
+          - test-py314
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          environments: ${{ matrix.environment }}
+          locked: true
+      - name: Sanity check
+        run: |
+          pixi run -e ${{ matrix.environment }} pandoc --version
+          pixi run -e ${{ matrix.environment }} python -c 'import numpy, pantable; print(pantable.__version__, numpy.__version__)'
+      - name: Tests
+        run: pixi run -e ${{ matrix.environment }} coverage
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          environments: lint
+          locked: true
+      - run: pixi run -e lint lint
+
+  # what the release workflow publishes: build it, and install the wheel
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.2.0
+      - run: uv build
+      - run: |
+          uv venv
+          uv pip install dist/*.whl
+          .venv/bin/python -c 'import pantable; print(pantable.__version__)'
+          test -x .venv/bin/pantable -a -x .venv/bin/pantable2csv -a -x .venv/bin/pantable2csvx

@@ -1,0 +1,8 @@
+# Each page here is a standalone document, rendered with the filter.
+# example-source.lua appends the page's Markdown and what pandoc makes of it.
+filters:
+  - ../pantable.lua
+  # Before Quarto's own processing, which turns the appended
+  # .panel-tabset into tabs.
+  - path: ../example-source.lua
+    at: pre-ast

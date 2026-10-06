@@ -1,0 +1,64 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "pantable"
+  site-url: "https://ickc.github.io/pantable"
+  description: "CSV tables in pandoc's Markdown, and back"
+  repo-url: https://github.com/ickc/pantable
+  repo-actions: [source, issue]
+  open-graph: true
+  navbar:
+    left:
+      - href: index.md
+        text: Home
+      - text: Examples
+        menu:
+          - href: examples.md
+            text: Overview
+          - href: examples/basics.md
+            text: Basics
+          - href: examples/markdown.md
+            text: Markdown cells
+          - href: examples/widths.md
+            text: Widths
+          - href: examples/include.md
+            text: Including a CSV file
+          - href: examples/fancy-table.md
+            text: Fancy tables
+          - href: examples/to-csv.md
+            text: Tables to CSV
+      - href: library.md
+        text: Library
+      - href: changelog.md
+        text: Changelog
+    right:
+      - icon: github
+        href: https://github.com/ickc/pantable
+        aria-label: GitHub
+  page-footer:
+    left: "© {{< copyright-year 2016 >}} Kolen Cheung · BSD-3-Clause"
+
+shortcodes:
+  # {{< copyright-year 2016 >}}, as in blog.kolen.dev
+  - copyright-year.lua
+
+format:
+  html:
+    theme:
+      light: [flatly, custom.scss]
+      dark: [darkly, custom.scss]
+    respect-user-color-scheme: true
+    html-math-method: mathjax
+    toc: true
+    code-copy: true
+    # TeX Gyre Schola and JetBrains Mono, named in custom.scss, served by
+    # https://font.kolen.dev. Both preconnects are needed: the font fetches
+    # are anonymous-mode CORS and use a different connection pool from the
+    # stylesheet request.
+    include-in-header:
+      - text: |
+          <link rel="preconnect" href="https://font.kolen.dev">
+          <link rel="preconnect" href="https://font.kolen.dev" crossorigin>
+          <link rel="stylesheet" href="https://font.kolen.dev/assets/faces.css">
