@@ -33,7 +33,8 @@ def read_table(path: Path):
 
 
 NATIVE = sorted((GOLDEN / "pantable2csvx").glob("*.native"))
-CODEBLOCKS = sorted((GOLDEN / "pantable").glob("*.md"))
+# pantable leaves a code block with invalid YAML as is
+CODEBLOCKS = sorted(p for p in (GOLDEN / "pantable").glob("*.md") if p.stem != "invalid_yaml")
 
 
 def codeblock_round_trip(text: str) -> str:
