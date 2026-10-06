@@ -36,7 +36,7 @@ def read_table_to_codeblock(path: Path, path_ref: Path) -> tuple[str, str]:
 
 
 def read_table_to_codeblock_io(name: str) -> tuple[str, str]:
-    paths = [dir_ / f"{name}.{ext}" for dir_, ext in zip(DIRS, EXTs)]
+    paths = [dir_ / f"{name}.{ext}" for dir_, ext in zip(DIRS, EXTs, strict=False)]
     return read_table_to_codeblock(*paths)
 
 

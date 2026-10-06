@@ -42,8 +42,8 @@ def load_csv(
                         if i.strip():
                             return table_list
         raise EmptyTableError
-    except FileNotFoundError:
-        raise FileNotFoundError(f"include path {include} not found.")
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"include path {include} not found.") from e
 
 
 def load_csv_array(

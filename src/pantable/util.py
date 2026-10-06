@@ -82,8 +82,7 @@ def iter_convert_texts_panflute_to_markdown(
     def iter_seperator(elems: list[ListContainer], inserter: Para):
         """insert between every element in a ListContainer"""
         for elem in elems:
-            for i in elem:
-                yield i
+            yield from elem
             yield inserter
 
     def iter_split_by_seperator(text: str, seperator: str) -> Iterator[str]:
@@ -155,7 +154,7 @@ def eq_panflute_elem(elem1: Element, elem2: Element) -> bool:
 def eq_panflute_elems(elems1: list[Element], elems2: list[Element]) -> bool:
     if not len(elems1) == len(elems2):
         return False
-    for elem1, elem2 in zip(elems1, elems2):
+    for elem1, elem2 in zip(elems1, elems2, strict=False):
         if not eq_panflute_elem(elem1, elem2):
             return False
     return True

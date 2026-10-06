@@ -464,7 +464,7 @@ class PanCodeBlock:
                 ica=MISSING if ica is None else ica,
             )
         except KeyError:
-            raise ValueError(f"Unspported format {options.format}.")
+            raise ValueError(f"Unspported format {options.format}.") from None
 
     def parse_options(
         self,
@@ -699,7 +699,7 @@ class PanCodeBlock:
         try:
             str_array = load_func[options.format](self.data, options)
         except KeyError:
-            raise ValueError(f"Unknown format: {options.format}")
+            raise ValueError(f"Unknown format: {options.format}") from None
 
         ms: np.ndarray[np.int64] | None
         icas_rowblock: np.ndarray[np.str_] | None
@@ -903,8 +903,8 @@ class Spec:
                 aligns_list.append(align)
                 col_widths[i] = np.nan if width == COLWIDTHDEFAULT else width
             aligns = Align.from_aligns_text(np.array(aligns_list))
-        except ValueError:
-            raise TypeError(f"pantable: cannot parse table spec {spec}")
+        except ValueError as e:
+            raise TypeError(f"pantable: cannot parse table spec {spec}") from e
 
         return cls(
             aligns,
@@ -917,7 +917,7 @@ class Spec:
             if self.col_widths is None
             else [
                 (align, COLWIDTHDEFAULT if np.isnan(width) else width)
-                for align, width in zip(self.aligns.aligns_text, self.col_widths)
+                for align, width in zip(self.aligns.aligns_text, self.col_widths, strict=False)
             ]
         )
 
@@ -1001,7 +1001,7 @@ class TableArray:
                 if self.geometries is None:
                     raise ValueError(
                         "You're trying to put a cell-block in a TableArray object with geometries as None."
-                    )
+                    ) from e
                 else:
                     raise e
 
@@ -1037,9 +1037,9 @@ class TableArray:
             for j in range(n):
                 content = "" if cannonical and not self.is_at(i, j) else contents[i, j]
                 type_ = type(content)
-                if type_ == ListContainer:
+                if type_ is ListContainer:
                     content = stringify(TableCell(*content))
-                elif type_ != str:
+                elif type_ is not str:
                     content = str(content)
                 if width:
                     content = "\n".join(wrap(content, width))
@@ -1299,7 +1299,7 @@ class PanTable(PanTableAbstract):
                 classes=ica.classes,
                 attributes=ica.attributes,
             )
-            for ica, pf_row_array in zip(icas_row, pf_cells)
+            for ica, pf_row_array in zip(icas_row, pf_cells, strict=False)
         )
 
     @property
@@ -1516,6 +1516,7 @@ class PanTable(PanTableAbstract):
                 zip(
                     cache_elems.keys(),
                     iter_convert_texts_panflute_to_markdown(cache_elems.values()),
+                    strict=False,
                 ),
                 zip(cache_none, repeat(None)),
             )
@@ -1811,6 +1812,7 @@ class PanTableMarkdown(PanTableStr):
                 zip(
                     cache_texts.keys(),
                     iter_convert_texts_markdown_to_panflute(cache_texts.values()),
+                    strict=False,
                 ),
                 zip(cache_none, repeat(None)),
             )
