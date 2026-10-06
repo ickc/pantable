@@ -265,6 +265,8 @@ class PanTableOption:
                 self.width = None
             else:
                 for i, width in enumerate(widths):
+                    if width == "D":
+                        continue
                     # convert float to Fraction if lossless
                     temp = str(Fraction(width).limit_denominator())
                     if float(Fraction(temp)) == width:
