@@ -17,7 +17,6 @@ pipeline-simple.dot: pipeline.dot
 
 %.svg: %.dot
 	$(DOT) -T svg $< -o $*.svg -Nfontname=$(FONT) -Efontname=$(FONT) -Gfontname=$(FONT)
-	if command -v svgcleaner >/dev/null; then svgcleaner --multipass $*.svg $*.svg; fi
 
 clean:
 	rm -f $(SVGs)
