@@ -22,3 +22,10 @@ p {
 code {
   font-size: 0.9em;
 }
+
+// Quarto tints inline code only in p, li and td, so code in a heading keeps
+// Bootstrap's light $code-bg, which in darkly is under white text. Give it the
+// same tint as in the body.
+:is(h1, h2, h3, h4, h5, h6) code:not(.sourceCode) {
+  background-color: $code-block-bg-color;
+}
