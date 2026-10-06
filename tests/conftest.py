@@ -41,6 +41,10 @@ def pandoc(
     text: str | None = None,
     filters: tuple[str, ...] = (),
 ) -> subprocess.CompletedProcess[str]:
-    """Run pandoc from the repository root, as the include paths in tests/golden are relative to it."""
+    """Run pandoc from the repository root, as the include paths in tests/golden are relative to it.
+
+    Its output is decoded as is, without translating newlines: pantable writes CSV with CRLF.
+    """
     cmd = ["pandoc", *(f"--filter={filter_path(f)}" for f in filters), *args]
-    return subprocess.run(cmd, input=text, capture_output=True, text=True, check=True, cwd=ROOT)
+    res = subprocess.run(cmd, input=None if text is None else text.encode(), capture_output=True, check=True, cwd=ROOT)
+    return subprocess.CompletedProcess(res.args, res.returncode, res.stdout.decode(), res.stderr.decode())

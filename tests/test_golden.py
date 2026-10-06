@@ -29,5 +29,5 @@ def test_golden(filter_: str, path: Path, request: pytest.FixtureRequest) -> Non
     out = pandoc("-f", FORMATS[path.suffix], "-t", "markdown", str(path.relative_to(ROOT)), filters=(filter_,)).stdout
     expected = path.parent / "expected" / f"{path.stem}.md"
     if request.config.getoption("--update-golden"):
-        expected.write_text(out)
-    assert out == expected.read_text()
+        expected.write_bytes(out.encode())
+    assert out == expected.read_bytes().decode()
