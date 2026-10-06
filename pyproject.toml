@@ -6,7 +6,7 @@ build-backend = "uv_build"
 name = "pantable"
 version = "0.14.2"
 description = "A Python library for writing pandoc filters for tables with batteries included."
-readme = "README.rst"
+readme = "README.md"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
 authors = [{ name = "Kolen Cheung", email = "christian.kolen@gmail.com" }]
@@ -71,11 +71,9 @@ Changelog = "https://github.com/ickc/pantable/blob/master/CHANGELOG.md"
 
 [dependency-groups]
 test = ["pytest", "pytest-xdist", "coverage>=7.10"]
-docs = ["sphinx", "sphinx-bootstrap-theme", "sphinxcontrib-apidoc"]
 lint = ["ruff"]
 dev = [
     { include-group = "test" },
-    { include-group = "docs" },
     { include-group = "lint" },
 ]
 
@@ -83,8 +81,7 @@ dev = [
 source-include = [
     "tests/**",
     "docs/**",
-    "CHANGELOG.rst",
-    "CONTRIBUTING.rst",
+    "CHANGELOG.md",
 ]
 
 # pixi: development environments ###############################################
@@ -150,6 +147,15 @@ lint = "ruff format --check src tests && ruff check src tests"
 
 [tool.pixi.feature.dev.dependencies]
 uv = "*"
+
+[tool.pixi.feature.docs.dependencies]
+quarto = ">=1.4"
+graphviz = "*"
+
+[tool.pixi.feature.docs.tasks]
+docs = { cmd = "quarto render docs", description = "Render the documentation site to docs/_site" }
+docs-preview = { cmd = "quarto preview docs", description = "Serve the documentation site with live reload" }
+dot = { cmd = "make -C docs/dot", description = "Redraw the diagrams in docs/dot" }
 
 [tool.coverage.paths]
 source = [
