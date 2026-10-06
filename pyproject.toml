@@ -67,7 +67,7 @@ pantable2csvx = "pantable.cli.pantable2csvx:main"
 Homepage = "https://github.com/ickc/pantable"
 Repository = "https://github.com/ickc/pantable"
 Documentation = "https://ickc.github.io/pantable"
-Changelog = "https://github.com/ickc/pantable/blob/master/CHANGELOG.md"
+Changelog = "https://github.com/ickc/pantable/blob/main/CHANGELOG.md"
 
 [dependency-groups]
 test = ["pytest", "pytest-xdist", "coverage>=7.10"]

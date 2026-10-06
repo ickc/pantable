@@ -5,7 +5,7 @@
 [![PyPI](https://img.shields.io/pypi/v/pantable.svg)](https://pypi.org/project/pantable)
 [![Supported versions](https://img.shields.io/pypi/pyversions/pantable.svg)](https://pypi.org/project/pantable)
 [![Conda Version](https://img.shields.io/conda/vn/conda-forge/pantable.svg)](https://anaconda.org/conda-forge/pantable)
-[![License](https://img.shields.io/pypi/l/pantable.svg)](https://github.com/ickc/pantable/blob/master/LICENSE)
+[![License](https://img.shields.io/pypi/l/pantable.svg)](https://github.com/ickc/pantable/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/74008159.svg)](https://zenodo.org/badge/latestdoi/74008159)
 
 ## Introduction
@@ -62,7 +62,7 @@ conda install -c conda-forge pantable
 pixi global install pantable
 ```
 
-To install the in-development version: `pip install https://github.com/ickc/pantable/archive/master.zip`.
+To install the in-development version: `pip install https://github.com/ickc/pantable/archive/main.zip`.
 
 ### Supported pandoc versions
 

@@ -6,7 +6,7 @@ title: pantable as a library
 
 Documentation here is sparse, partly because the upstream (pandoc) may change the table AST again. See [Crazy ideas: table structure from upstream GitHub](https://github.com/jgm/pandoc-types/issues/86).
 
-The modules are in [`src/pantable/`](https://github.com/ickc/pantable/tree/master/src/pantable).
+The modules are in [`src/pantable/`](https://github.com/ickc/pantable/tree/main/src/pantable).
 
 For example, looking at the source of `pantable` as a pandoc filter, in `codeblock_to_table.py`, you will see the main function doing the work is now
 
