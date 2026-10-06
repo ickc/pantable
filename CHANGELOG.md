@@ -2,7 +2,7 @@
 
 - v0.15.0: Support pandoc 3 and numpy 2
     - allow numpy 2 (`numpy>=1.16,<3`)
-    - test against pandoc 3.12 and panflute 2.3: the reference outputs in `tests/files` are regenerated, as pandoc 3's markdown writer formats lists and grid tables differently
+    - test against pandoc 3.12 and panflute 2.3: the reference outputs are regenerated, as pandoc 3's markdown writer formats lists and grid tables differently
     - fix option type checking on Python 3.14, where `typing.Union` is a class
     - tests use pytest-xdist instead of the unmaintained pytest-parallel
     - test matrix: Python 3.10–3.14, pandoc 3.7.0.2–3.12, numpy 1.26 and 2; the reference outputs need pandoc 3.7.0.2 or later
