@@ -1,1 +1,3 @@
 pixi.lock merge=binary linguist-language=YAML linguist-generated=true
+# byte for byte, as pandoc and pantable write them: no CRLF conversion on checkout
+tests/golden/** -text

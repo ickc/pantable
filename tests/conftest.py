@@ -28,8 +28,12 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 
 
 def filter_path(name: str) -> str:
-    """The console script installed beside this Python, else the one on PATH."""
-    path = os.pathsep.join((str(Path(sys.executable).parent), os.environ.get("PATH", "")))
+    """The console script installed beside this Python, else the one on PATH.
+
+    A conda environment on Windows has python.exe at its root, and the scripts in Scripts\\.
+    """
+    bin_ = Path(sys.executable).parent
+    path = os.pathsep.join((str(bin_), str(bin_ / "Scripts"), os.environ.get("PATH", "")))
     exe = shutil.which(name, path=path)
     if exe is None:
         raise FileNotFoundError(f"{name} is not installed")
@@ -45,7 +49,8 @@ def pandoc(
     """Run pandoc, by default from the repository root, as the include paths in tests/golden are relative to it.
 
     Its output is decoded as is, without translating newlines: pantable writes CSV with CRLF.
+    pandoc writes LF line endings, on Windows too, as the expected output has.
     """
-    cmd = ["pandoc", *(f"--filter={filter_path(f)}" for f in filters), *args]
+    cmd = ["pandoc", "--eol=lf", *(f"--filter={filter_path(f)}" for f in filters), *args]
     res = subprocess.run(cmd, input=None if text is None else text.encode(), capture_output=True, check=True, cwd=cwd)
     return subprocess.CompletedProcess(res.args, res.returncode, res.stdout.decode(), res.stderr.decode())
