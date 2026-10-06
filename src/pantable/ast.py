@@ -1353,7 +1353,7 @@ class PanTable(PanTableAbstract):
         for i, body in enumerate(bodies):
             ns_head[i] = body.row_head_columns
             icas_rowblock[i + 1] = Ica(body.identifier, body.classes, body.attributes)
-        icas_rowblock[i + 2] = Ica(foot.identifier, foot.classes, foot.attributes)
+        icas_rowblock[m_bodies + 1] = Ica(foot.identifier, foot.classes, foot.attributes)
 
         # there are 1 head,
         # then n bodies, for each body one head and one content,
