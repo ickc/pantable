@@ -83,6 +83,11 @@ source-include = [
     "docs/**",
     "CHANGELOG.md",
 ]
+# what Quarto writes
+source-exclude = [
+    "docs/_site",
+    "docs/.quarto",
+]
 
 # pixi: development environments ###############################################
 # pandoc comes from conda-forge; everything Python comes from PyPI.
@@ -140,6 +145,7 @@ test = "coverage run -m pytest -vv -n auto"
 coverage = { cmd = "coverage combine && coverage report && coverage xml", depends-on = ["test"] }
 gen-golden = { cmd = "pytest tests/test_golden.py --update-golden", description = "Regenerate tests/golden/*/expected/ from the filters' output" }
 build = "uv build"
+bump = { cmd = "tools/bump.sh", description = "Bump the version, commit, tag and push, which releases: pixi run bump [major|minor|patch]" }
 
 [tool.pixi.feature.lint.tasks]
 format = "ruff format src tests && ruff check --fix src tests"
