@@ -3,20 +3,12 @@ from __future__ import annotations
 import re
 from dataclasses import MISSING, dataclass, field, fields
 from fractions import Fraction
+from functools import cached_property
 from itertools import chain, repeat
 from logging import getLogger
 from textwrap import wrap
 from typing import TYPE_CHECKING, ClassVar, List, Optional, Union
 
-from . import PY37
-
-if PY37:
-    try:
-        from backports.cached_property import cached_property
-    except ImportError:
-        raise ImportError('Using Python 3.7? Please run "pip install backports.cached_property".')
-else:
-    from functools import cached_property
 
 if TYPE_CHECKING:
     from typing import Tuple, Dict, Iterator, Set, Callable

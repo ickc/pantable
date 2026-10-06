@@ -3,12 +3,7 @@ from __future__ import annotations
 import types
 from functools import partial
 from logging import getLogger
-from typing import TYPE_CHECKING, Any, Union, _SpecialForm, get_type_hints
-
-from . import PY37
-
-if not PY37:
-    from typing import get_args, get_origin
+from typing import TYPE_CHECKING, Any, Union, _SpecialForm, get_args, get_origin, get_type_hints
 
 import numpy as np
 from panflute.elements import ListContainer, Para, Str
@@ -187,39 +182,21 @@ def parse_markdown_codeblock(text: str) -> dict:
 # typing.Union, and X | Y since Python 3.10
 _UNION_TYPES = (Union, getattr(types, 'UnionType', Union))
 
-if PY37:
-    def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
-        if isinstance(type_hint, _SpecialForm):
-            # case of Any, ClassVar, Final, Literal,
-            # NoReturn, Optional, or Union without parameters
-            yield Any
-            return
-        try:
-            actual_type = type_hint.__origin__
-        except AttributeError:
-            # In case of non-typing types (such as <class 'int'>, for instance)
-            actual_type = type_hint
-        if isinstance(actual_type, _SpecialForm):
-            # case of Union[…] or ClassVar[…] or …
-            for origins in map(_find_type_origin, type_hint.__args__):
-                yield from origins
-        else:
-            yield actual_type
-else:
-    def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
-        if isinstance(type_hint, _SpecialForm):
-            # case of Any, ClassVar, Final, Literal,
-            # NoReturn, Optional, or Union without parameters
-            yield Any
-            return
-        actual_type = get_origin(type_hint) or type_hint
-        # since Python 3.14, Union is a class rather than a _SpecialForm
-        if isinstance(actual_type, _SpecialForm) or actual_type in _UNION_TYPES:
-            # case of Union[…] or ClassVar[…] or …
-            for origins in map(_find_type_origin, get_args(type_hint)):
-                yield from origins
-        else:
-            yield actual_type
+
+def _find_type_origin(type_hint: Any) -> Generator[Any, None, None]:
+    if isinstance(type_hint, _SpecialForm):
+        # case of Any, ClassVar, Final, Literal,
+        # NoReturn, Optional, or Union without parameters
+        yield Any
+        return
+    actual_type = get_origin(type_hint) or type_hint
+    # since Python 3.14, Union is a class rather than a _SpecialForm
+    if isinstance(actual_type, _SpecialForm) or actual_type in _UNION_TYPES:
+        # case of Union[…] or ClassVar[…] or …
+        for origins in map(_find_type_origin, get_args(type_hint)):
+            yield from origins
+    else:
+        yield actual_type
 
 
 def get_types(cls: Any) -> Dict[str, tuple]:
