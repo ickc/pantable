@@ -9068,7 +9068,7 @@ packages:
 - pypi: ./
   name: pantable
   requires_dist:
-  - panflute>=2.3.1,<2.4
+  - panflute>=2.3.1,<3
   - pyyaml>=5,<7
   - numpy>=1.16,<3
   - coloredlogs>=14,<16 ; extra == 'extras'

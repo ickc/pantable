@@ -6,7 +6,7 @@
     - fix option type checking on Python 3.14, where `typing.Union` is a class
     - tests use pytest-xdist instead of the unmaintained pytest-parallel
     - test matrix: Python 3.10–3.14, pandoc 3.7.0.2–3.12, numpy 1.26 and 2; the reference outputs need pandoc 3.7.0.2 or later
-    - requires Python 3.10 or later, and panflute 2.3 (`panflute>=2.3.1,<2.4`)
+    - requires Python 3.10 or later, and panflute 2.3 or later 2.x (`panflute>=2.3.1,<3`)
     - fix `table-width`: columns without a `width` are sized by their content, rather than all equally
     - fix `pantable2csvx` on a table without a body, and on a table with some column widths default
     - packaging: PEP 621 metadata built with uv instead of Poetry; the version is single-sourced from `pyproject.toml`
