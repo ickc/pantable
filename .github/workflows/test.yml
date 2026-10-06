@@ -18,20 +18,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # the platforms in [tool.pixi.workspace] in pyproject.toml
-        os:
-          - ubuntu-latest # linux-64
-          - ubuntu-24.04-arm # linux-aarch64
-          - macos-15-intel # osx-64
-          - macos-latest # osx-arm64
-          - windows-latest # win-64
-        # python and pandoc versions increase together, see [tool.pixi.environments] in pyproject.toml
-        environment:
-          - test-py310
-          - test-py311
-          - test-py312
-          - test-py313
-          - test-py314
+        # Every version on linux-64; python and pandoc versions increase together,
+        # see [tool.pixi.environments] in pyproject.toml
+        os: [ubuntu-latest]
+        environment: [test-py310, test-py311, test-py312, test-py313, test-py314]
+        # and each other platform in [tool.pixi.workspace] once, the oldest
+        # environment on the oldest platform
+        include:
+          - { os: ubuntu-24.04-arm, environment: test-py313 } # linux-aarch64
+          - { os: macos-15-intel, environment: test-py310 } # osx-64
+          - { os: macos-latest, environment: test-py314 } # osx-arm64
+          - { os: windows-latest, environment: test-py314 } # win-64
     steps:
       - uses: actions/checkout@v7
       - uses: prefix-dev/setup-pixi@v0.10.2
