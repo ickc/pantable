@@ -1,0 +1,40 @@
+{
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Cheung, Kolen",
+      "affiliation": "University of Exeter",
+      "orcid": "0000-0002-7764-378X"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Reenberg, Jesper",
+      "type": "Other"
+    },
+    {
+      "name": "Maclennan, Caleb",
+      "type": "Other"
+    },
+    {
+      "name": "WANG, Aiyong",
+      "type": "Other"
+    }
+  ],
+  "license": "bsd-3-clause",
+  "keywords": [
+    "pandoc",
+    "pandoc filter",
+    "panflute",
+    "markdown",
+    "csv",
+    "table"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://ickc.github.io/pantable",
+      "relation": "isDocumentedBy",
+      "scheme": "url"
+    }
+  ]
+}
