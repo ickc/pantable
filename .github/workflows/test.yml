@@ -1,0 +1,70 @@
+name: Test
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # for Codecov OIDC upload
+    strategy:
+      fail-fast: false
+      matrix:
+        # python and pandoc versions increase together, see [tool.pixi.environments] in pyproject.toml
+        environment:
+          - test-py310
+          - test-py311
+          - test-py312
+          - test-py313
+          - test-py314
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          environments: ${{ matrix.environment }}
+          locked: true
+      - name: Sanity check
+        run: |
+          pixi run -e ${{ matrix.environment }} pandoc --version
+          pixi run -e ${{ matrix.environment }} python -c 'import numpy, pantable; print(pantable.__version__, numpy.__version__)'
+      - name: Tests
+        run: pixi run -e ${{ matrix.environment }} coverage
+      - name: Coverage—Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/codecov-action@v7
+        with:
+          files: ./coverage.xml
+          disable_search: true
+          flags: ${{ matrix.environment }}
+          use_oidc: true
+          fail_ci_if_error: false
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          environments: lint
+          locked: true
+      - run: pixi run -e lint lint
+
+  # what the release workflow publishes: build it, and install the wheel
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.2.0
+      - run: uv build
+      - run: |
+          uv venv
+          uv pip install dist/*.whl
+          .venv/bin/python -c 'import pantable; print(pantable.__version__)'
+          test -x .venv/bin/pantable -a -x .venv/bin/pantable2csv -a -x .venv/bin/pantable2csvx
