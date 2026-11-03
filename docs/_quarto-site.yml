@@ -2,6 +2,9 @@
 # https://github.com/ickc/quarto-template (see there for how the two combine).
 project:
   output-dir: _site
+  # The post graph (the template's README, "The post graph"): graph.json and its viewer.
+  post-render:
+    - paragraphic build --preset quarto --groups directories --exclude 404.html
 
 website:
   title: "pantable"
@@ -16,6 +19,8 @@ website:
     left:
       - href: index.md
         text: Home
+      - href: graph.md
+        text: Graph
       - text: Examples
         menu:
           - href: examples.md
@@ -42,3 +47,9 @@ website:
         aria-label: GitHub
   page-footer:
     left: "© {{< copyright-year 2016 >}} Kolen Cheung · BSD-3-Clause"
+
+format:
+  html:
+    # The page's own graph card (the post graph).
+    include-after-body:
+      - _paragraphic.html
