@@ -157,6 +157,12 @@ uv = "*"
 [tool.pixi.feature.docs.dependencies]
 quarto = ">=1.11.9,<2"
 graphviz = "*"
+# paragraphic, the post graph (ickc/quarto-template's README, "The post graph")
+beautifulsoup4 = "*"
+pyyaml = "*"
+
+[tool.pixi.feature.docs.pypi-dependencies]
+paragraphic = { version = ">=0.2.1,<0.3", extras = ["quarto"] }
 
 [tool.pixi.feature.docs.tasks]
 docs = { cmd = "quarto render docs", description = "Render the documentation site to docs/_site" }

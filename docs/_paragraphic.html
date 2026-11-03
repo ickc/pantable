@@ -1,0 +1,19 @@
+<!-- SHARED FILE from https://github.com/ickc/quarto-template (the post graph, opt-in): do not edit it in a site. -->
+<script>
+  // The page's own graph card, from paragraphic (https://github.com/ickc/paragraphic),
+  // whose post-render step writes paragraphic-local.js, paragraphic.css and
+  // graph.json into the site root. They are loaded from the page's offset to
+  // the root (Quarto's quarto:offset meta), not from /, so the card works on a
+  // site served under a path; paragraphic-local.js finds graph.json beside
+  // itself. On DOMContentLoaded, so after quarto-nav.js has rewritten every
+  // <a href>: it throws on the card's SVG links if it finds them first.
+  document.addEventListener("DOMContentLoaded", function () {
+    const root = document.querySelector('meta[name="quarto:offset"]')?.content ?? "/";
+    const css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = root + "paragraphic.css";
+    const js = document.createElement("script");
+    js.src = root + "paragraphic-local.js";
+    document.head.append(css, js);
+  });
+</script>
