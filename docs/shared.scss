@@ -1,0 +1,94 @@
+// SHARED FILE from https://github.com/ickc/quarto-template. Do not edit it in a
+// site: it is overwritten when the site is synced with the template. Put
+// site-specific styles in `custom.scss`, which every theme loads after this.
+
+/*-- scss:defaults --*/
+
+// The families declared by https://font.kolen.dev/assets/faces.css, which the
+// document head links (see `_quarto.yml`). Named here, with fallbacks, rather
+// than read from that stylesheet's custom properties, so the fallback stack
+// survives if font.kolen.dev is unreachable.
+$font-family-base: 'TeX Gyre Schola', Georgia, 'Times New Roman', serif;
+$headings-font-family: $font-family-base;
+$font-family-monospace: 'JetBrains Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+$line-height-base: 1.45;
+// ~17px — Butterick recommends ≥ 15–16px. This and $line-height-base are tuned
+// against Schola.
+$font-size-base: 1.0625rem;
+
+// Flatly and darkly each open their compiled bundle with an `@import` of Google
+// Fonts' Lato. Nothing on the page is set in it once the families above replace
+// it, but the `@import` is still fetched: a render-blocking request to a third
+// origin on every page load. Bootswatch guards the rule with
+// `@if $web-font-path`, so `false` drops it from both bundles.
+$web-font-path: false;
+
+// Quarto builds `--mermaid-font-family` from `$font-family-sans-serif`, which in
+// flatly and darkly is the Lato stack no longer loaded. Diagram labels are body
+// text set in a picture, so give them the body family.
+$mermaid-font-family: $font-family-base;
+
+/*-- scss:rules --*/
+
+// Constrain line length for readability (Butterick: 45–90 chars, aim ~65–72).
+.page-columns .column-body,
+#quarto-content article {
+  max-width: 72ch;
+}
+
+// Paragraph rhythm.
+p {
+  hyphens: auto;
+  text-align: justify;
+}
+
+// Display math sits inside the <p>; as a block of its own, the line before it
+// ends a block and is not justified. Otherwise some browsers stretch a short
+// line such as "Take" across the full width.
+span.math.display {
+  display: block;
+}
+
+dl dt {
+  font-weight: bold;
+}
+
+code {
+  font-size: 0.9em;
+}
+
+// Bootstrap paints every `code` with $code-bg, which stays light (#f8f9fa) in
+// darkly too, and Quarto repaints it only inside p, li and td. So inline code
+// anywhere else — in a heading, or in a definition list's <dd> (whose text is
+// not in a <p>) — was white on white in the dark theme. Give all inline code
+// the colour Quarto gives it in a paragraph. Quarto's `nav li code` rule is
+// more specific, so code in the navbar and the TOC stays unpainted.
+@if variable-exists(code-block-bg-color) {
+  :not(pre) > code:not(.sourceCode) {
+    background-color: $code-block-bg-color;
+  }
+}
+
+// Links are in flatly's and darkly's teal ($link-color), which on the chip of
+// inline code is 2.2:1 in the light theme and 2:1 in the dark one. Linked code
+// in the page takes that teal shaded towards the text colour instead: towards
+// black in the light theme, white in the dark, about 5:1 on the chip.
+main a > code:not(.sourceCode) {
+  color: if(lightness($body-bg) > 50%, shade-color($link-color, 40%), tint-color($link-color, 40%));
+}
+
+// Diagrams are SVGs with a transparent background and dark ink (Graphviz, or
+// drawn by hand), which vanish on the dark theme. Give them the light page they
+// were drawn on — except one marked `.dark-content` (or inside a div that is),
+// the variant drawn for the dark theme, whose light ink would vanish on white.
+body.quarto-dark img[src$=".svg"]:not(.dark-content, .dark-content img) {
+  background: #fff;
+  border-radius: $border-radius;
+  padding: 0.5rem;
+}
+
+// ==highlight== (pandoc's `mark` extension).
+mark {
+  padding: 0 0.15em;
+  border-radius: 0.2em;
+}
