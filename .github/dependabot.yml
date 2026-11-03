@@ -1,10 +1,16 @@
+# SHARED FILE from https://github.com/ickc/quarto-template: edit it there, not
+# here; ickc/project-quarto's bin/sync copies it into every site with workflows.
+#
+# Actions are pinned to commit SHAs with the version as a trailing comment,
+# which Dependabot keeps in step. A release is taken only once it is 7 days
+# old. Dependabot cannot bump the `pixi-version` input of setup-pixi: that is
+# set by hand, to the newest pixi release at least 7 days old.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
-    # let a release settle before taking it
     cooldown:
       default-days: 7
     groups:
