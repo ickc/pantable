@@ -1,0 +1,44 @@
+# This site's own settings, merged on top of the shared `_quarto.yml` from
+# https://github.com/ickc/quarto-template (see there for how the two combine).
+project:
+  output-dir: _site
+
+website:
+  title: "pantable"
+  site-url: "https://ickc.github.io/pantable"
+  description: "CSV tables in pandoc's Markdown, and back"
+  repo-url: https://github.com/ickc/pantable
+  repo-subdir: docs
+  repo-branch: main
+  repo-actions: [source, issue]
+  open-graph: true
+  navbar:
+    left:
+      - href: index.md
+        text: Home
+      - text: Examples
+        menu:
+          - href: examples.md
+            text: Overview
+          - href: examples/basics.md
+            text: Basics
+          - href: examples/markdown.md
+            text: Markdown cells
+          - href: examples/widths.md
+            text: Widths
+          - href: examples/include.md
+            text: Including a CSV file
+          - href: examples/fancy-table.md
+            text: Fancy tables
+          - href: examples/to-csv.md
+            text: Tables to CSV
+      - href: library.md
+        text: Library
+      - href: changelog.md
+        text: Changelog
+    right:
+      - icon: github
+        href: https://github.com/ickc/pantable
+        aria-label: GitHub
+  page-footer:
+    left: "© {{< copyright-year 2016 >}} Kolen Cheung · BSD-3-Clause"
