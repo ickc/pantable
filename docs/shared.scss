@@ -36,6 +36,13 @@ $mermaid-font-family: $font-family-base;
   max-width: 72ch;
 }
 
+// Schola has unaccented Greek but not polytonic or tonos forms, so without
+// this a word such as ἐπιστήμη mixes faces. Gentium's @font-face comes from
+// font.kolen.dev too; the text needs a `[...]{lang=el}` span.
+:lang(el) {
+  font-family: 'Gentium', $font-family-base;
+}
+
 // Paragraph rhythm.
 p {
   hyphens: auto;
@@ -49,12 +56,25 @@ span.math.display {
   display: block;
 }
 
+// A wide equation scrolls on its own rather than widening the page.
+mjx-container[display="true"] {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 dl dt {
   font-weight: bold;
 }
 
 code {
   font-size: 0.9em;
+}
+
+// `code-overflow: wrap` (_quarto.yml) reaches only highlighted blocks
+// (`code.sourceCode`); a block in a language the highlighter doesn't know, such
+// as `text`, is a plain <pre> and would scroll instead. Wrap those the same way.
+pre > code:not(.sourceCode) {
+  white-space: pre-wrap;
 }
 
 // Bootstrap paints every `code` with $code-bg, which stays light (#f8f9fa) in
