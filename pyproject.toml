@@ -155,7 +155,7 @@ lint = "ruff format --check src tests && ruff check src tests"
 uv = "*"
 
 [tool.pixi.feature.docs.dependencies]
-quarto = ">=1.4"
+quarto = ">=1.11.9,<2"
 graphviz = "*"
 
 [tool.pixi.feature.docs.tasks]
