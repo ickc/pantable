@@ -1,0 +1,166 @@
+<!-- SHARED FILE from https://github.com/ickc/quarto-template. Do not edit it in
+a site: it is overwritten when the site is synced with the template. -->
+<script>
+  // The table of contents on a phone. Below 768px Quarto hides every TOC
+  // (nav[role=doc-toc]) along with the whole margin column, and offers nothing
+  // in its place on a site without a website sidebar — and even with one, its
+  // mobile drawer holds only the site's navigation. So: a button, shown at
+  // that width only (shared.scss, .mobile-toc), that opens a panel under the
+  // header with a copy of #TOC. The button goes among the navbar's tools, or,
+  // on a site with a sidebar and no navbar, in the toolbar Quarto shows in its
+  // place, before search.
+  //
+  // The panel stays open while you jump about: a heading scrolls to just below
+  // it rather than under it, the header is held in place (Quarto's headroom
+  // would slide it, and the panel with it, away), and the highlight follows the
+  // section just below it. It closes from its own ✕, the button again,
+  // Escape, a tap outside it, or widening past the breakpoint.
+  document.addEventListener("DOMContentLoaded", function () {
+    const toc = document.querySelector("#TOC > ul");
+    const header = document.getElementById("quarto-header");
+    const tools = header?.querySelector(".quarto-navbar-tools");
+    const toolbar = header?.querySelector(".quarto-secondary-nav .container-fluid");
+    if (!toc || !(tools || toolbar)) return;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    // Styled as its neighbours: a navbar tool, or a button of the toolbar.
+    button.className = tools ? "mobile-toc-toggle quarto-navigation-tool px-1" : "mobile-toc-toggle btn";
+    button.title = "On this page";
+    button.setAttribute("aria-label", "On this page");
+    button.setAttribute("aria-controls", "mobile-toc");
+    button.setAttribute("aria-expanded", "false");
+    button.innerHTML = '<i class="bi bi-list-ul"></i>';
+    if (tools) tools.prepend(button);
+    else toolbar.insertBefore(button, toolbar.querySelector(".quarto-search-button"));
+
+    const panel = document.createElement("nav");
+    panel.id = "mobile-toc";
+    panel.className = "mobile-toc";
+    panel.setAttribute("aria-label", "On this page");
+    panel.hidden = true;
+    panel.innerHTML =
+      '<div class="mobile-toc-head"><span>On this page</span>' +
+      '<button type="button" class="mobile-toc-close" aria-label="Close">' +
+      '<i class="bi bi-x-lg"></i></button></div>';
+    const list = toc.cloneNode(true);
+    // The copies keep the originals' ids; drop them so each id stays unique.
+    list.querySelectorAll("[id]").forEach((el) => el.removeAttribute("id"));
+    panel.append(list);
+    header.append(panel);
+
+    // The panel's lower edge, as it would be with every level open, measured
+    // on opening. Its actual height changes as levels open and close with the
+    // current section, and an edge that moved with it would move the section
+    // it picks, which opens or closes a level again: after a jump, it would
+    // settle on the section above.
+    let reach = 0;
+    function measure() {
+      const shut = [...list.querySelectorAll("ul.collapse")];
+      shut.forEach((ul) => ul.classList.remove("collapse"));
+      reach = panel.offsetHeight;
+      shut.forEach((ul) => ul.classList.add("collapse"));
+    }
+    function edge() {
+      return panel.getBoundingClientRect().top + reach;
+    }
+
+    // The section in view is the last heading at or above that edge — not the
+    // top of the screen, as Quarto's own scroll-spy reckons, since the panel
+    // covers that. Matched by hash, not href: quarto-nav.js rewrites every
+    // href on the page.
+    const entries = [...list.querySelectorAll("a")]
+      .map((a) => [a, a.hash && document.getElementById(decodeURIComponent(a.hash.slice(1)))])
+      .filter(([, target]) => target);
+    const nested = [...list.querySelectorAll("ul")];
+    function syncActive() {
+      const line = edge() + 16;
+      let current = entries[0];
+      for (const entry of entries) {
+        if (entry[1].getBoundingClientRect().top <= line) current = entry;
+      }
+      for (const [a] of entries) a.classList.toggle("active", a === current?.[0]);
+      // Quarto's rule for its own TOC (quarto.js, walk): a nested level shows
+      // when it holds the current section or sits just under it, so the copy,
+      // taken while all are collapsed, opens them the same way.
+      for (const ul of nested) {
+        const under = ul.previousElementSibling;
+        const open = !!ul.querySelector("a.active") || !!under?.classList.contains("active");
+        ul.classList.toggle("collapse", !open);
+      }
+    }
+    // The current entry in view within the panel's own scroll, by setting its
+    // scrollTop: scrollIntoView would scroll the page as well.
+    function revealActive() {
+      const a = list.querySelector("a.active");
+      if (!a) return;
+      const head = panel.querySelector(".mobile-toc-head").offsetHeight;
+      const top = a.getBoundingClientRect().top - panel.getBoundingClientRect().top;
+      if (top < head) panel.scrollTop += top - head;
+      else if (top + a.offsetHeight > panel.clientHeight) {
+        panel.scrollTop += top + a.offsetHeight - panel.clientHeight;
+      }
+    }
+    let pending = false;
+    function onScroll() {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(() => {
+        pending = false;
+        syncActive();
+      });
+    }
+
+    // Held only while open, toggled only on a change of state, so it stays in
+    // step with the hamburger, which toggles the same freeze.
+    function holdHeader() {
+      window.quartoToggleHeadroom?.();
+    }
+
+    function close() {
+      if (panel.hidden) return;
+      panel.hidden = true;
+      button.setAttribute("aria-expanded", "false");
+      window.removeEventListener("scroll", onScroll);
+      holdHeader();
+    }
+    function open() {
+      if (!panel.hidden) return;
+      panel.hidden = false;
+      measure();
+      syncActive();
+      button.setAttribute("aria-expanded", "true");
+      window.addEventListener("scroll", onScroll, { passive: true });
+      holdHeader();
+      revealActive();
+    }
+
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      panel.hidden ? open() : close();
+    });
+    panel.querySelector(".mobile-toc-close").addEventListener("click", close);
+    // A heading lands just below the panel, which stays.
+    list.addEventListener("click", (event) => {
+      const a = event.target.closest("a");
+      const target = a?.hash && document.getElementById(decodeURIComponent(a.hash.slice(1)));
+      if (!target) return;
+      event.preventDefault();
+      const below = edge() + 8;
+      window.scrollTo({ top: window.scrollY + target.getBoundingClientRect().top - below });
+      history.pushState(null, "", a.hash);
+      syncActive();
+      revealActive();
+    });
+    document.addEventListener("click", (event) => {
+      if (!panel.contains(event.target)) close();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") close();
+    });
+    // Widened past the breakpoint (a rotated phone), the margin TOC is back.
+    window.matchMedia("(min-width: 768px)").addEventListener("change", (mq) => {
+      if (mq.matches) close();
+    });
+  });
+</script>

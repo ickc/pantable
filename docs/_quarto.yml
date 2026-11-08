@@ -49,6 +49,11 @@ format:
           <link rel="stylesheet" href="https://font.kolen.dev/assets/faces.css">
       - text: |
           <script>window.MathJax = { output: { font: "mathjax-schola" } };</script>
+    # The table of contents on a phone, where Quarto shows none: a button in
+    # the header opens a copy of it (`_mobile-toc.html`, styled in
+    # `shared.scss`). A site's own `include-after-body` is appended to this.
+    include-after-body:
+      - _mobile-toc.html
     toc: true
     toc-depth: 3
     code-copy: true

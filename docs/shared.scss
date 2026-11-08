@@ -112,3 +112,113 @@ mark {
   padding: 0 0.15em;
   border-radius: 0.2em;
 }
+
+// The navbar below Quarto's 992px breakpoint, where its links fold into the
+// hamburger: the tools (the contents button, the colour toggle) sit at the
+// right beside search, not straight after the title, and at search's size, so
+// the bar reads hamburger, title, then one group of icons.
+@include media-breakpoint-down(lg) {
+  .navbar .navbar-brand-container {
+    max-width: calc(100% - 170px);
+  }
+
+  // Its auto margin would split the free space with the tools' and leave them
+  // midway along the bar.
+  .navbar #quarto-search {
+    margin-left: 0 !important;
+  }
+
+  .navbar .quarto-navbar-tools {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: auto;
+    margin-right: 0.4rem;
+
+    .quarto-navigation-tool {
+      font-size: 1.3rem;
+      line-height: 1;
+      color: $navbar-dark-color;
+    }
+  }
+}
+
+// The table of contents on a phone (_mobile-toc.html): a button among the
+// navbar's tools (or in the toolbar of a site with no navbar) and a panel under
+// the header, below Quarto's 768px breakpoint
+// only, where it hides the margin TOC. Half the screen at most, so a heading
+// chosen from it lands in view below it.
+.mobile-toc-toggle {
+  display: none;
+  // Unstyled as Quarto leaves its own tools: no button border or fill.
+  border: 0;
+  background: none;
+}
+
+@include media-breakpoint-down(md) {
+  .mobile-toc-toggle {
+    display: inline-block;
+  }
+}
+
+.mobile-toc {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 50vh;
+  overflow-y: auto;
+  padding: 0 1.5em 0.75em;
+  background-color: $body-bg;
+  border-bottom: 1px solid $border-color;
+  box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.15);
+  font-size: 0.95rem;
+
+  .mobile-toc-head {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5em 0 0.4em;
+    background-color: $body-bg;
+    font-size: 0.85rem;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .mobile-toc-close {
+    border: 0;
+    background: none;
+    padding: 0.25em 0.4em;
+    margin-right: -0.4em;
+    color: $body-color;
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+  }
+
+  ul ul {
+    padding-left: 1em;
+  }
+
+  a {
+    display: block;
+    padding: 0.3em 0 0.3em 0.6em;
+    border-left: 1px solid $border-color;
+    color: $body-color;
+    text-decoration: none;
+    text-align: left;
+  }
+
+  a.active {
+    color: $link-color;
+    border-left-color: $link-color;
+  }
+}
