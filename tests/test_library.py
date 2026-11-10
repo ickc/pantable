@@ -12,6 +12,7 @@ import pytest
 from panflute import convert_text
 
 from pantable.ast import PanCodeBlock, PanTable
+from pantable.codeblock_to_table import codeblock_to_table
 from pantable.util import convert_texts, convert_texts_fast, eq_panflute_elems, parse_markdown_codeblock
 
 from .conftest import GOLDEN
@@ -99,3 +100,9 @@ def test_convert_texts_markdown_to_panflute(texts: list[str]) -> None:
 def test_convert_texts_panflute_to_markdown(texts: list[str]) -> None:
     elems = convert_texts(texts)
     assert texts == convert_texts_fast(elems, input_format="panflute", output_format="markdown")
+
+
+def test_include_directory_leaves_codeblock(tmp_path) -> None:
+    """An unreadable include path (e.g. a directory) must not crash the
+    filter: the code block is left as is, like a missing file."""
+    assert codeblock_to_table(options={"include": str(tmp_path)}, data="a,b\n1,2\n") is None

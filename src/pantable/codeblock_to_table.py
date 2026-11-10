@@ -28,7 +28,7 @@ def codeblock_to_table(
         return pan_table_str.to_pantable().to_panflute_ast()
     # delete element if table is empty (by returning [])
     # element unchanged if include is invalid (by returning None)
-    except FileNotFoundError as e:
+    except OSError as e:
         logger.error(f"{e} Codeblock shown as is.")
         return None
     except EmptyTableError:
