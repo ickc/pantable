@@ -46,7 +46,7 @@ def pandoc(
     filters: tuple[str, ...] = (),
     cwd: Path = ROOT,
 ) -> subprocess.CompletedProcess[str]:
-    """Run pandoc, by default from the repository root, as the include paths in tests/golden are relative to it.
+    """Run pandoc, by default from the repository root.
 
     Its output is decoded as is, without translating newlines: pantable writes CSV with CRLF.
     pandoc writes LF line endings, on Windows too, as the expected output has.
