@@ -1,5 +1,9 @@
 # Revision history for Pantable
 
+- Unreleased
+    - the CSV can come from a file named by the code block's `include` attribute, ```` ```{.table include="data.csv"} ````: its text is appended to the block's, as [panclude](https://github.com/ickc/panclude) does, so pantable alone and `pandoc -L panclude.lua -F pantable` make the same table; a file that cannot be read leaves the block as it is, with an error
+    - the `include` key in the YAML block and `include-encoding` are unchanged
+    - tests: the include cases use the attribute, and pandoc runs each golden case from its directory, where its include paths start; one test checks that panclude, then pantable, gives the same AST as pantable alone (it fetches `panclude.lua` at a fixed commit, and is skipped offline)
 - v0.15.0: Support pandoc 3 and numpy 2
     - allow numpy 2 (`numpy>=1.16,<3`)
     - test against pandoc 3.12 and panflute 2.3: the reference outputs are regenerated, as pandoc 3's markdown writer formats lists and grid tables differently

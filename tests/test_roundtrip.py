@@ -21,7 +21,7 @@ def read(path: Path) -> str:
 def test_back_and_forth(path: Path) -> None:
     """Converting back and forth runs, such as on a table without a body."""
     filters = ("pantable", "pantable2csvx")
-    md = pandoc("-t", "markdown", read(path), filters=filters).stdout
+    md = pandoc("-t", "markdown", path.name, filters=filters, cwd=path.parent).stdout
     pandoc("-f", "markdown", "-t", "markdown", text=md, filters=filters)
 
 

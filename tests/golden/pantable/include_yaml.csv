@@ -1,0 +1,7 @@
+---
+# The file begins with a YAML block, and the code block has none of its own:
+# it is read as the options, as it would be written in the code block.
+caption: Options from the file
+---
+Fruit,Price
+Oranges,2.10
