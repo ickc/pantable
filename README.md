@@ -118,6 +118,18 @@ pandoc -F pantable -o README.html README.md
 
 Fenced code blocks is used, with a class `table`. See [Example].
 
+The CSV can come from a file instead, named by the code block's `include` attribute; the block then holds the options only, or nothing:
+
+~~~
+```{.table include="fruits.csv"}
+---
+caption: Fruits
+---
+```
+~~~
+
+The file's text is appended to the block's, as [panclude](https://github.com/ickc/panclude) does, so pantable alone and `pandoc -L panclude.lua -F pantable` make the same table. A relative path starts at the directory pandoc runs in. See [Including a CSV file](https://ickc.github.io/pantable/examples/include.html).
+
 Optionally, YAML metadata block can be used within the fenced code block, following standard pandoc YAML metadata block syntax. 7 metadata keys are recognized:
 
 `caption`
@@ -228,14 +240,16 @@ auto-width will be performed such that the sum of `width` equals this number.
     see example below.
 
 `include`
-: the path to an CSV file, can be relative/absolute.
+: the path to an CSV file, can be relative (to the directory pandoc runs in) or absolute.
     If non-empty, override the CSV in the CodeBlock.
+    Still supported, beside the `include` attribute above.
+    Given both, the attribute's file is appended to the block first, then this key reads the CSV from its own file as before.
 
     Default: None
 
 `include-encoding`
 
-: if specified, the file from `include` will be decoded according to this encoding, else assumed to be UTF-8. Hint: if you save the CSV file via Microsoft Excel, you may need to set this to `utf-8-sig`.
+: if specified, the file from the `include` key will be decoded according to this encoding, else assumed to be UTF-8. Hint: if you save the CSV file via Microsoft Excel, you may need to set this to `utf-8-sig`.
 
 `csv-kwargs`
 : If specified, should be a dictionary passed to `csv.reader` as options. e.g.
@@ -411,9 +425,8 @@ The followings are pandoc filters written in Haskell that provide similar functi
 -   [mb21/pandoc-placetable: Pandoc filter to include CSV data (from file or URL)](https://github.com/mb21/pandoc-placetable)
 -   [sergiocorreia/panflute/csv-tables.py](https://github.com/sergiocorreia/panflute/blob/1ddcaba019b26f41f8c4f6f66a8c6540a9c5f31a/docs/source/csv-tables.py)
 
-```table
+```{.table include="comparison.csv"}
 ---
 Caption: Comparison
-include: comparison.csv
 ...
 ```
